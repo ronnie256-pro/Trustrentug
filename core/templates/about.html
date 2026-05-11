@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Our Philosophy | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Philosophy Section */
+  .philosophy {
+    padding: 6rem 0;
+    text-align: center;
+  }
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    margin-top: 4rem;
+  }
+  .feature-card {
+    padding: 2.5rem;
+    background: #fff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    transition: var(--transition-base);
+  }
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-gold);
+  }
+  .feature-icon {
+    font-size: 3rem;
+    color: var(--color-gold);
+    margin-bottom: 1.5rem;
+  }
+  .feature-title {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  /* Why Trust Pipeline */
+  .pipeline-section {
+    background-color: var(--color-emerald-darkest);
+    color: white;
+    padding: 6rem 0;
+  }
+  .pipeline-section h2 {
+    color: var(--color-gold);
+  }
+  .timeline {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(203, 163, 88, 0.3);
+    z-index: 1;
+  }
+  .timeline-step {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 20%;
+  }
+  .timeline-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--color-emerald-dark);
+    border: 2px solid var(--color-gold);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: var(--color-gold);
+  }
+  .timeline-step h4 {
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+  .timeline-step p {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+  }
+    /* Responsive Philosophy */
+    @media (max-width: 992px) {
+        .philosophy-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+        .timeline { flex-direction: column; gap: 2rem; }
+        .timeline::before { display: none; }
+        .timeline-step { width: 100%; display: flex; align-items: center; text-align: left; gap: 1.5rem; }
+        .timeline-icon { margin: 0; flex-shrink: 0; width: 60px; height: 60px; font-size: 1.2rem; }
+    }
+    @media (max-width: 768px) {
+        .philosophy { padding: 3rem 0; }
+        .philosophy h2 { font-size: 1.8rem; }
+        section[style*="padding: 6rem 0"] { padding: 3rem 1.5rem !important; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Values / Philosophy -->
+<section class="philosophy container">
+  <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Not Just Listings. <span class="text-emerald">A Secure Pipeline.</span></h2>
+  <p style="color: var(--color-text-muted); max-width: 600px; margin: 0 auto; font-size: 1.1rem;">We enforce a state-driven workflow. No user can skip steps. Your funds and property are protected by unyielding verification gates.</p>
+
+  <div class="philosophy-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa-solid fa-id-card-clip"></i></div>
+      <h3 class="feature-title">Strict KYC & Identities</h3>
+      <p>Identity is linked and verified via NIN at the source. Both Landlords and Tenants are vetted before entering the marketplace.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+      <h3 class="feature-title">TRUST Check System</h3>
+      <p>Properties pass a 5-step validation: Title checks, physical inspection, and geo-tagging via internal TRUST Agents. No fake listings.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa-solid fa-vault"></i></div>
+      <h3 class="feature-title">Immutable Escrow Core</h3>
+      <p>Payments are isolated in our Escrow Vault. Rent is only released when move-in is confirmed; deposits are held to ensure fair damage resolution.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pipeline Diagram -->
+<section class="pipeline-section">
+  <div class="container text-center">
+    <h2>The End-to-End Control Flow</h2>
+    <p style="opacity: 0.8; margin-top: 1rem;">Our architecture ensures flawless transaction execution.</p>
+
+    <div class="timeline">
+      <div class="timeline-step">
+        <div class="timeline-icon"><i class="fa-solid fa-user-check"></i></div>
+        <h4>1. Identity Verified</h4>
+        <p>Tenant & Landlord KYC</p>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon"><i class="fa-solid fa-house-circle-check"></i></div>
+        <h4>2. Property Vetted</h4>
+        <p>Physical & Title Checks</p>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon"><i class="fa-solid fa-file-contract"></i></div>
+        <h4>3. Digital Escrow</h4>
+        <p>Funds locked securely</p>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon"><i class="fa-solid fa-key"></i></div>
+        <h4>4. Move-in Confirmed</h4>
+        <p>Funds Released to Landlord</p>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+        <h4>5. Guaranteed Exit</h4>
+        <p>Dispute-free deposit return</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="container" style="padding: 6rem 0; text-align: center;">
+  <div style="background: var(--color-bg-base); border: 1px solid var(--color-gold); padding: 5rem; border-radius: var(--radius-lg); position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -50px; right: -50px; font-size: 15rem; color: rgba(203, 163, 88, 0.05); z-index: 0;"><i class="fa-solid fa-shield-halved"></i></div>
+    <div style="position: relative; z-index: 1;">
+      <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Ready to experience a protected transaction?</h2>
+      <a href="/register/" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2.5rem; margin-right: 1rem;">Join as Tenant</a>
+      <a href="/landlord/" class="btn btn-outline-gold" style="font-size: 1.1rem; padding: 1rem 2.5rem; background: white;">List a Property</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

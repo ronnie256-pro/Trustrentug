@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Property | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+.upload-container {
+    max-width: 800px;
+    margin: 4rem auto;
+    background: #fff;
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid var(--color-emerald);
+}
+
+.step-wizard {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    position: relative;
+}
+.step-wizard::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 2px;
+    background: var(--color-border);
+    z-index: 1;
+}
+.wizard-node {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 2px solid var(--color-border);
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+.wizard-node.active {
+    border-color: var(--color-gold);
+    color: var(--color-emerald-dark);
+    background: rgba(203, 163, 88, 0.1);
+}
+.wizard-label {
+    position: absolute;
+    top: 50px;
+    text-align: center;
+    width: 100px;
+    left: -30px;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+.wizard-node.active .wizard-label {
+    color: var(--color-emerald-dark);
+    font-weight: 600;
+}
+
+.section-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1rem;
+}
+
+.file-upload-box {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: var(--color-bg-base);
+    transition: var(--transition-base);
+    cursor: pointer;
+}
+.file-upload-box:hover {
+    border-color: var(--color-gold);
+    background: rgba(203, 163, 88, 0.05);
+}
+.file-upload-box i {
+    font-size: 2.5rem;
+    color: var(--color-emerald);
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="upload-container">
+        
+        <div class="text-center" style="margin-bottom: 3rem;">
+            <h2>Submit Property to Pipeline</h2>
+            <p style="color: var(--color-text-muted);">Once submitted, your property will lock into "PENDING VERIFICATION" status until approved by a TRUST field agent.</p>
+        </div>
+
+        <div class="step-wizard">
+            <div class="wizard-node active">
+                1
+                <span class="wizard-label">Details</span>
+            </div>
+            <div class="wizard-node">
+                2
+                <span class="wizard-label">Location</span>
+            </div>
+            <div class="wizard-node">
+                3
+                <span class="wizard-label">Legal Docs</span>
+            </div>
+        </div>
+
+        <form action="/dashboard/submit-property/" method="POST">
+            {% csrf_token %}
+            
+            <div class="section-header">
+                <h3>Core Property Details</h3>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label" for="category">Property Category</label>
+                    <select id="category" name="category" class="form-control" required onchange="toggleUnitLogic()">
+                        <optgroup label="Single-Unit Properties">
+                            <option value="single_room">Single Room</option>
+                            <option value="self_contained">Self-Contained Room</option>
+                            <option value="studio">Studio Apartment</option>
+                            <option value="1_bed">1 Bedroom Apartment</option>
+                            <option value="2_bed">2 Bedroom Apartment</option>
+                            <option value="3_plus_bed">3+ Bedroom Apartment</option>
+                            <option value="bungalow">Bungalow</option>
+                            <option value="standalone">Standalone House</option>
+                        </optgroup>
+                        <optgroup label="Multi-Unit Structures (Buildings)">
+                            <option value="apartment_block">Apartment Block</option>
+                            <option value="condo_block">Condominium Block</option>
+                            <option value="flat">Flat (Multi-Floor Building)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group" id="is_unit_group">
+                    <label class="form-label" for="is_unit">Is this unit in a building?</label>
+                    <select id="is_unit" name="is_unit" class="form-control" onchange="toggleParentSelection()">
+                        <option value="no">No, this is a standalone unit/building</option>
+                        <option value="yes">Yes, this is a child unit</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" id="parent_selection" style="display: none; background: #fdfaf0; padding: 1.5rem; border: 1px dashed var(--color-gold); border-radius: var(--radius-sm);">
+                <label class="form-label" for="parent_property">Select Parent Building</label>
+                <select id="parent_property" name="parent_property" class="form-control">
+                    <option value="">-- Choose Building --</option>
+                    {% for building in buildings %}
+                        <option value="{{ building.id }}">{{ building.title }} ({{ building.location }})</option>
+                    {% endfor %}
+                </select>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;"><i class="fa-solid fa-circle-info"></i> Renting this unit will NOT affect the availability of other units in this building.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label" for="price">Annual Rent (UGX)</label>
+                    <input type="number" id="price" class="form-control" placeholder="e.g. 12000000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="security_deposit">Security Deposit Requirement</label>
+                    <input type="number" id="security_deposit" class="form-control" placeholder="0.00" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Amenities (Select all that apply)</label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; background: var(--color-bg-base); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+                    <label><input type="checkbox"> Swimming Pool</label>
+                    <label><input type="checkbox"> 24/7 Power</label>
+                    <label><input type="checkbox"> Internal Security</label>
+                    <label><input type="checkbox"> Gym</label>
+                    <label><input type="checkbox"> Elevator</label>
+                    <label><input type="checkbox"> Parking Space</label>
+                </div>
+            </div>
+
+            <div class="section-header" style="margin-top: 3rem;">
+                <h3>Mandatory Document Upload <span style="font-size: 0.8rem; background: var(--color-warning); color: white; padding: 2px 6px; border-radius: 4px; vertical-align: top;">TRUST GATE</span></h3>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted);">Please upload proof of ownership. This will be manually verified by a TRUST admin against government records.</p>
+            </div>
+
+            <div class="file-upload-box" style="margin-bottom: 2rem;">
+                <i class="fa-solid fa-file-shield"></i>
+                <h4 style="margin-bottom: 0.5rem;">Upload C of O or Title Deed</h4>
+                <p style="font-size: 0.85rem; color: var(--color-text-muted);">PDF or JPEG, max 10MB</p>
+                <input type="file" style="display: none;" id="title_doc">
+                <button type="button" class="btn btn-outline" style="margin-top: 1rem;" onclick="document.getElementById('title_doc').click()">Browse Files</button>
+            </div>
+
+            <div style="background: rgba(10, 61, 40, 0.05); padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--color-emerald); margin-bottom: 2rem; font-size: 0.9rem;">
+                <strong>Next Step: Field Inspection</strong><br>
+                Once submitted, a TRUST Agent will be assigned to visit this property to verify geographic coordinates and take official photography. 
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 2rem;">
+                <a href="/landlord/dashboard/" style="color: var(--color-text-muted);">Cancel</a>
+                <button type="submit" class="btn btn-primary">Submit to Pipeline <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i></button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

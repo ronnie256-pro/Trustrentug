@@ -1,0 +1,290 @@
+/* 
+  TRUST Rental Management System 
+  Design System & Styles
+*/
+
+:root {
+  /* Color Palette - Luxury Emerald Green & Gold */
+  --color-emerald-darkest: #041a11;
+  --color-emerald-dark: #072a1c;
+  --color-emerald: #0a3d28;
+  --color-emerald-light: #165b3f;
+  
+  --color-gold: #cba358;
+  --color-gold-light: #e4c585;
+  --color-gold-hover: #b48e47;
+
+  --color-bg-base: #fbfbf9;
+  --color-surface: #ffffff;
+  
+  --color-text-dark: #1f1f1f;
+  --color-text-muted: #666666;
+  --color-border: #e8e8e8;
+
+  --color-success: #2e7d32;
+  --color-error: #d32f2f;
+  --color-warning: #f57c00;
+
+  /* Typography */
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Layout & Spacing */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 16px 32px rgba(0,0,0,0.08);
+  --shadow-gold: 0 8px 24px rgba(203, 163, 88, 0.2);
+
+  /* Transitions */
+  --transition-fast: 0.2s ease-in-out;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg-base);
+  color: var(--color-text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--color-emerald-dark);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+a {
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: var(--transition-base);
+}
+a:hover {
+  color: var(--color-gold-hover);
+}
+
+/* Utilities */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.text-center { text-align: center; }
+.text-emerald { color: var(--color-emerald); }
+.text-gold { color: var(--color-gold); }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: var(--transition-base);
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background-color: var(--color-emerald);
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: var(--color-emerald-dark);
+  box-shadow: var(--shadow-md);
+  color: #fff;
+}
+
+.btn-gold {
+  background-color: var(--color-gold);
+  color: var(--color-emerald-darkest);
+  font-weight: 600;
+}
+.btn-gold:hover {
+  background-color: var(--color-gold-hover);
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.btn-outline {
+  border-color: var(--color-emerald);
+  color: var(--color-emerald);
+  background: transparent;
+}
+.btn-outline:hover {
+  background-color: var(--color-emerald);
+  color: #fff;
+}
+
+.btn-outline-gold {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  background: transparent;
+}
+.btn-outline-gold:hover {
+  background-color: var(--color-gold);
+  color: #fff;
+}
+
+/* Navigation */
+.navbar {
+  background-color: var(--color-emerald-dark);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.nav-links a:hover {
+  color: var(--color-gold);
+}
+
+.nav-auth .btn {
+  margin-left: 1rem;
+}
+
+/* Cards */
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: var(--transition-base);
+  border: 1px solid var(--color-border);
+}
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-dark);
+}
+.form-control {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  transition: var(--transition-base);
+  background-color: var(--color-bg-base);
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(203, 163, 88, 0.1);
+  background-color: #fff;
+}
+
+/* Status Badges */
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-verification {
+  background-color: rgba(245, 124, 0, 0.1);
+  color: var(--color-warning);
+}
+.badge-verified {
+  background-color: rgba(46, 125, 50, 0.1);
+  color: var(--color-success);
+}
+.badge-escrow {
+  background-color: rgba(203, 163, 88, 0.15);
+  color: var(--color-gold-hover);
+}
+
+/* Footer */
+footer {
+  background-color: var(--color-emerald-darkest);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 4rem 0 2rem;
+  margin-top: 4rem;
+}
+footer h4 {
+  color: var(--color-gold);
+  margin-bottom: 1.5rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+.footer-links list-style {
+  padding: 0;
+}
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+}
+.footer-links a:hover {
+  color: var(--color-gold);
+}
+.footer-bottom {
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem;
+  font-size: 0.9rem;
+}

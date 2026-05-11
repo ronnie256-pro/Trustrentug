@@ -1,0 +1,283 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Admin Dashboard | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+    .dashboard-header h2 {
+        margin: 0;
+        font-size: 1.75rem;
+        color: #1e293b;
+    }
+    .dashboard-header p {
+        color: #64748b;
+        margin: 0.25rem 0 0 0;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* Responsive stats and table */
+    @media (max-width: 1200px) {
+        .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+        .stats-row { grid-template-columns: 1fr; }
+        .table-card { overflow-x: auto; }
+        .admin-table { min-width: 800px; }
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .stat-details h4 {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+    .stat-details .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0.5rem 0;
+        color: #1e293b;
+    }
+    .stat-details .trend {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .trend.positive { color: #10b981; }
+    .trend.negative { color: #ef4444; }
+    
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    .icon-blue { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+    .icon-green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .icon-purple { background: rgba(147, 51, 234, 0.1); color: #9333ea; }
+    .icon-orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+    /* Revenue Chart Area */
+    .chart-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 2rem;
+    }
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    .chart-placeholder {
+        width: 100%;
+        height: 250px;
+        background: linear-gradient(180deg, rgba(16, 61, 40, 0.05) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+    .svg-chart {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Table Logic */
+    .table-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+    .table-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .admin-table th {
+        background: #f8fafc;
+        padding: 1rem 2rem;
+        text-align: left;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #64748b;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+    }
+    .admin-table td {
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.9rem;
+    }
+    .progress-bar-container {
+        width: 120px;
+        height: 6px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        overflow: hidden;
+        display: inline-block;
+        margin-right: 0.75rem;
+        vertical-align: middle;
+    }
+    .progress-fill {
+        height: 100%;
+        background: var(--color-emerald);
+        border-radius: 10px;
+    }
+    
+    .status-pill {
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .pill-active { background: #ecfdf5; color: #059669; }
+    .pill-maintenance { background: #fffbeb; color: #d97706; }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="dashboard-header">
+    <h2>Dashboard Overview</h2>
+    <p>Welcome back! Here's what's happening with your properties.</p>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-details">
+            <h4>Total Properties</h4>
+            <div class="value">{{ stats.total_properties }}</div>
+            <div class="trend positive">+12.5% <span style="color:#94a3b8">vs last month</span></div>
+        </div>
+        <div class="stat-icon icon-blue">
+            <i class="fa-solid fa-house"></i>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-details">
+            <h4>Active Tenants</h4>
+            <div class="value">1,248</div>
+            <div class="trend positive">+8.2% <span style="color:#94a3b8">vs last month</span></div>
+        </div>
+        <div class="stat-icon icon-green">
+            <i class="fa-solid fa-users"></i>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-details">
+            <h4>Monthly Revenue</h4>
+            <div class="value">UGX 258M</div>
+            <div class="trend positive">+15.3% <span style="color:#94a3b8">vs last month</span></div>
+        </div>
+        <div class="stat-icon icon-purple">
+            <i class="fa-solid fa-wallet"></i>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-details">
+            <h4>Occupancy Rate</h4>
+            <div class="value">94.2%</div>
+            <div class="trend negative">-2.1% <span style="color:#94a3b8">vs last month</span></div>
+        </div>
+        <div class="stat-icon icon-orange">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Revenue Chart Card -->
+<div class="chart-container">
+    <div class="chart-header">
+        <h3 style="margin:0; font-size: 1.1rem;">Revenue Overview</h3>
+        <select style="padding: 0.4rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.85rem;">
+            <option>Last 12 Months</option>
+        </select>
+    </div>
+    <div class="chart-placeholder">
+        <svg class="svg-chart" viewBox="0 0 1000 250" preserveAspectRatio="none">
+            <path d="M0,150 Q100,140 200,160 T400,150 T600,130 T800,120 T1000,110 L1000,250 L0,250 Z" 
+                  fill="rgba(16, 61, 40, 0.1)" />
+            <path d="M0,150 Q100,140 200,160 T400,150 T600,130 T800,120 T1000,110" 
+                  fill="none" stroke="var(--color-emerald)" stroke-width="3" />
+            <!-- Data points -->
+            <circle cx="0" cy="150" r="4" fill="var(--color-gold)" />
+            <circle cx="200" cy="160" r="4" fill="var(--color-gold)" />
+            <circle cx="400" cy="150" r="4" fill="var(--color-gold)" />
+            <circle cx="600" cy="130" r="4" fill="var(--color-gold)" />
+            <circle cx="800" cy="120" r="4" fill="var(--color-gold)" />
+            <circle cx="1000" cy="110" r="4" fill="var(--color-gold)" />
+        </svg>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 1rem; color: #64748b; font-size: 0.75rem;">
+            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+        </div>
+    </div>
+</div>
+
+<!-- Properties Overview Table -->
+<div class="table-card">
+    <div class="table-header">
+        <h3 style="margin:0; font-size: 1.1rem;">Properties Overview</h3>
+    </div>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Location</th>
+                <th>Units</th>
+                <th>Occupancy</th>
+                <th>Revenue</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for property in properties %}
+            <tr>
+                <td style="font-weight: 600; color: #1e293b;">{{ property.title }}</td>
+                <td style="color: #64748b;">{{ property.location }}</td>
+                <td>{% if property.is_multi_unit %}{{ property.units.count }}{% else %}1{% endif %}</td>
+                <td>
+                    <div class="progress-bar-container">
+                        <div class="progress-fill" style="width: {% if property.is_multi_unit %}85{% else %}100{% endif %}%;"></div>
+                    </div>
+                    <span style="font-size: 0.8rem; font-weight: 500;">{% if property.is_multi_unit %}85%{% else %}100%{% endif %}</span>
+                </td>
+                <td style="font-weight: 600;">UGX {% if property.price %}{{ property.price|floatformat:0 }}M{% else %} -- {% endif %}</td>
+                <td>
+                    <span class="status-pill {% if property.status == 'available' %}pill-active{% else %}pill-maintenance{% endif %}">
+                        {{ property.get_status_display }}
+                    </span>
+                </td>
+                <td><i class="fa-solid fa-ellipsis-vertical" style="color: #94a3b8; cursor: pointer;"></i></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

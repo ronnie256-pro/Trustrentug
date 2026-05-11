@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Register | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+.auth-container {
+    min-height: 80vh;
+    padding: 4rem 2rem;
+    background-color: var(--color-bg-base);
+}
+.auth-card {
+    background: #fff;
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid var(--color-emerald);
+}
+
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.role-label {
+    display: block;
+    cursor: pointer;
+}
+.role-label input { display: none; }
+.role-card {
+    padding: 1.5rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+    transition: var(--transition-base);
+}
+.role-label input:checked + .role-card {
+    border-color: var(--color-gold);
+    background-color: rgba(203, 163, 88, 0.05);
+}
+.role-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-emerald);
+}
+.role-label input:checked + .role-card .role-icon {
+    color: var(--color-gold);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.section-title {
+    margin: 2rem 0 1rem;
+    font-size: 1.1rem;
+    color: var(--color-emerald-dark);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.5rem;
+}
+    /* Responsive Registration */
+    @media (max-width: 768px) {
+        .auth-container { padding: 2rem 1rem; }
+        .auth-card { padding: 2rem 1.5rem; }
+        .role-selector { grid-template-columns: 1fr; }
+        .form-row { grid-template-columns: 1fr; gap: 1rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h2>Join the TRUST Pipeline</h2>
+            <p style="color: var(--color-text-muted);">Step 1: Identity & Role Verification</p>
+        </div>
+        
+        <form action="/register/" method="POST">
+            {% csrf_token %}
+            
+            <h4 class="section-title">I am registering as:</h4>
+            <div class="role-selector">
+                <label class="role-label">
+                    <input type="radio" name="role" value="tenant" checked>
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-user-shield"></i></div>
+                        <h4>Verified Tenant</h4>
+                        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">Access secure escrows & verified properties</p>
+                    </div>
+                </label>
+                
+                <label class="role-label">
+                    <input type="radio" name="role" value="landlord">
+                    <div class="role-card">
+                        <div class="role-icon"><i class="fa-solid fa-house-lock"></i></div>
+                        <h4>Verified Landlord</h4>
+                        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">List securely via the TRUST Check system</p>
+                    </div>
+                </label>
+            </div>
+
+            <h4 class="section-title">Personal Details</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="first_name">First Name (Legal)</label>
+                    <input type="text" id="first_name" name="first_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="last_name">Last Name (Legal)</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+
+            <h4 class="section-title">KYC / Identity Verification (CRITICAL)</h4>
+            <div class="form-group">
+                <label class="form-label" for="nin">National Identity Number (NIN)</label>
+                <div style="position: relative;">
+                    <input type="text" id="nin" name="nin" class="form-control" placeholder="11-digit identification..." style="padding-left: 2.5rem;" required>
+                    <i class="fa-solid fa-id-card" style="position: absolute; left: 1rem; top: 1rem; color: var(--color-text-muted);"></i>
+                </div>
+                <small style="color: var(--color-text-muted); display: block; margin-top: 0.5rem;"><i class="fa-solid fa-lock text-gold"></i> Your identity will be checked against the national registry before your account is activated.</small>
+            </div>
+
+            <h4 class="section-title">Security</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                </div>
+            </div>
+
+            <div style="margin: 2rem 0;">
+                <label style="display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: var(--color-text-muted); cursor: pointer;">
+                    <input type="checkbox" required style="margin-top: 0.2rem; accent-color: var(--color-emerald);">
+                    <span>I agree to the <strong>TRUST Protocol Rules</strong> including mandatory escrow usage, identity vetting, and dispute tracking logic.</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;">
+                Submit for Verification <i class="fa-solid fa-shield-check" style="margin-left: 0.5rem;"></i>
+            </button>
+            
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+                <p>Already verified? <a href="/login/" style="font-weight: 600;">Sign in here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

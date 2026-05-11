@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Search Properties | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+.search-header {
+    background-color: var(--color-emerald-darkest);
+    color: white;
+    padding: 3rem 0;
+}
+.search-bar-inline {
+    display: flex;
+    gap: 1rem;
+    background: #fff;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+}
+.search-bar-inline input, .search-bar-inline select {
+    border: none;
+    padding: 0.8rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+}
+.search-bar-inline input {
+    flex: 2;
+    border-right: 1px solid var(--color-border);
+}
+.search-bar-inline select {
+    flex: 1;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    padding: 3rem 0;
+}
+
+.filters {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    height: fit-content;
+}
+.filter-group {
+    margin-bottom: 1.5rem;
+}
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+.filter-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--color-emerald-dark);
+}
+.checkbox-list label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.property-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+}
+.property-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+    border-color: var(--color-gold);
+}
+.card-img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    position: relative;
+}
+.verified-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--color-emerald);
+    color: var(--color-gold);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+.card-body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.card-price {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-emerald-darkest);
+    margin-bottom: 0.5rem;
+}
+.card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+.card-location {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+.card-amenities {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    border-top: 1px solid var(--color-border);
+    padding-top: 1rem;
+    margin-top: auto;
+}
+.card-amenities span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+    /* Responsive Search */
+    @media (max-width: 992px) {
+        .layout { grid-template-columns: 1fr; }
+        .filters { order: -1; margin-bottom: 2rem; }
+    }
+    @media (max-width: 768px) {
+        .search-bar-inline { flex-direction: column; padding: 1rem; }
+        .search-bar-inline input { border-right: none; border-bottom: 1px solid var(--color-border); }
+        .search-bar-inline button { width: 100%; flex: none; }
+        .results-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-header">
+    <div class="container">
+        <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem; color: var(--color-gold);">Find TRUST-Verified Properties</h2>
+        
+        <div class="search-bar-inline">
+            <input type="text" placeholder="Location, Neighborhood...">
+            <select>
+                <option>All Types</option>
+                <option>Apartment</option>
+                <option>Villa</option>
+                <option>Condo</option>
+            </select>
+            <button class="btn btn-primary" style="flex: 0 0 150px; font-size: 1rem;">Search</button>
+        </div>
+    </div>
+</div>
+
+<div class="container layout">
+    <!-- Filters Sidebar -->
+    <aside class="filters">
+        <div class="filter-group">
+            <h4 class="filter-title">Price Range (Annually)</h4>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="number" class="form-control" placeholder="Min" style="padding: 0.5rem;">
+                <span>to</span>
+                <input type="number" class="form-control" placeholder="Max" style="padding: 0.5rem;">
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h4 class="filter-title">TRUST Status</h4>
+            <div class="checkbox-list">
+                <label><input type="checkbox" checked disabled> <i class="fa-solid fa-shield-check text-success"></i> 100% Verified Only</label>
+                <small style="color: var(--color-text-muted); display: block; margin-top: 0.2rem; font-size: 0.8rem; line-height: 1.3;">Per TRUST philosophy, unverified properties are hidden from search.</small>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h4 class="filter-title">Amenities</h4>
+            <div class="checkbox-list">
+                <label><input type="checkbox"> Swimming Pool</label>
+                <label><input type="checkbox"> 24/7 Power</label>
+                <label><input type="checkbox"> Gym</label>
+                <label><input type="checkbox"> Security</label>
+            </div>
+        </div>
+        
+        <button class="btn btn-outline" style="width: 100%;">Apply Filters</button>
+    </aside>
+
+    <!-- Results Grid -->
+    <main>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <p style="color: var(--color-text-muted);">Showing <strong style="color: var(--color-text-dark);">24</strong> verified properties</p>
+            <select class="form-control" style="width: auto; padding: 0.5rem;">
+                <option>Sort by: Recommended</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+            </select>
+        </div>
+
+        <div class="results-grid">
+            
+            <!-- Result Card -->
+            <a href="/property/1/" class="property-card" style="color: inherit; text-decoration: none;">
+                <div style="position: relative;">
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Apartment" class="card-img">
+                    <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> TRUST Verified</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-price">UGX 45M <span style="font-size: 0.9rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/ year</span></h3>
+                    <h4 class="card-title">Luxury 3-Bed Penthouse</h4>
+                    <p class="card-location"><i class="fa-solid fa-location-dot"></i> Kololo, Kampala</p>
+                    
+                    <div class="card-amenities">
+                        <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 3.5 Baths</span>
+                        <span><i class="fa-solid fa-bolt"></i> 24/7 Power</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Result Card -->
+            <a href="/property/2/" class="property-card" style="color: inherit; text-decoration: none;">
+                <div style="position: relative;">
+                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80" alt="Apartment" class="card-img">
+                    <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> TRUST Verified</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-price">UGX 22M <span style="font-size: 0.9rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/ year</span></h3>
+                    <h4 class="card-title">Greenhouse Condo</h4>
+                    <p class="card-location"><i class="fa-solid fa-location-dot"></i> Naalya, Kampala</p>
+                    
+                    <div class="card-amenities">
+                        <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
+                        <span><i class="fa-solid fa-water-ladder"></i> Pool</span>
+                        <span><i class="fa-solid fa-square-parking"></i> 2 Cars</span>
+                    </div>
+                </div>
+            </a>
+            
+        </div>
+    </main>
+</div>
+{% endblock %}

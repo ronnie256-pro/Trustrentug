@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+.auth-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=2000&q=80') center/cover;
+    position: relative;
+}
+.auth-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(4, 26, 17, 0.85); /* Emerald dark overlay */
+}
+.auth-card {
+    background: #fff;
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 450px;
+    z-index: 10;
+    box-shadow: var(--shadow-lg);
+    border-top: 4px solid var(--color-gold);
+}
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.auth-header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+.auth-header p {
+    color: var(--color-text-muted);
+}
+.form-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+    /* Responsive Auth */
+    @media (max-width: 768px) {
+        .auth-container { padding: 2rem 1rem; }
+        .auth-card { padding: 2rem 1.5rem; }
+        .auth-header h2 { font-size: 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Access your verified TRUST dashboard.</p>
+        </div>
+        
+        <form action="/login/" method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label" for="role">Login as</label>
+                <select name="role" id="role" class="form-control" required style="cursor: pointer;">
+                    <option value="" disabled selected>Select your role...</option>
+                    <option value="owner">Property owner</option>
+                    <option value="tenant">Tenant</option>
+                    <option value="admin">System Admin</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="tenant or owner" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.85rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" style="accent-color: var(--color-gold);"> Remember me
+                </label>
+                <a href="/reset-password/" style="color: var(--color-emerald);">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width: 100%; font-size: 1.1rem; padding: 1rem;">
+                Sign In to Pipeline <i class="fa-solid fa-arrow-right-to-bracket" style="margin-left: 0.5rem;"></i>
+            </button>
+            
+            <div class="form-footer">
+                <p>Not part of TRUST yet? <a href="/register/" style="font-weight: 600;">Apply here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Premium Rental Experience{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Hero Section */
+  .hero {
+    background: linear-gradient(135deg, var(--color-emerald-darkest) 0%, var(--color-emerald) 100%);
+    color: white;
+    padding: 8rem 0 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80') center/cover;
+    opacity: 0.15;
+    z-index: 1;
+    mix-blend-mode: luminosity;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero h1 {
+    color: var(--color-gold);
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .hero p {
+    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+  }
+
+  /* Search Bar Overlay */
+  .search-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .search-wrapper input,
+  .search-wrapper select {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+  }
+
+  .search-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+
+
+
+  /* Property Cards inside Index */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+    text-align: left;
+  }
+
+  .property-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .property-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+    border-color: var(--color-gold);
+  }
+
+  .card-img {
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+    position: relative;
+  }
+
+  .verified-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--color-emerald);
+    color: var(--color-gold);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-body {
+    padding: 1.2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-price {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--color-emerald-darkest);
+    margin-bottom: 0.25rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .card-location {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-amenities {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    border-top: 1px solid var(--color-border);
+    padding-top: 1rem;
+    margin-top: auto;
+  }
+
+  .card-amenities span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  /* Responsive Tweaks */
+  @media (max-width: 992px) {
+    .hero h1 { font-size: 2.5rem; }
+    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 4rem 0 3rem; }
+    .hero h1 { font-size: 2rem; }
+    .search-wrapper { flex-direction: column; padding: 1.5rem; }
+    .search-btn { width: 100%; }
+    .results-grid { grid-template-columns: 1fr; }
+    .property-card { max-width: 100%; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container hero-content">
+    <h1>Rent with Absolute Confidence</h1>
+    <div class="search-wrapper">
+      <input type="text" placeholder="Location, Neighborhood, or Zip">
+      <select>
+        <option value="">Property Type</option>
+        <option value="apartment">Luxury Apartment</option>
+        <option value="house">Villa / House</option>
+        <option value="condo">Condominium</option>
+      </select>
+      <button class="btn btn-gold search-btn"><i class="fa-solid fa-search"></i> Search</button>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Properties Grid -->
+<section class="container" style="padding: 4rem 0;">
+  <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Exclusive <span class="text-gold">Verified</span> Listings</h2>
+  <div class="results-grid">
+    <!-- Row 1 -->
+    <a href="/property/1/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=80"
+          alt="Apartment" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 45M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">Luxury 3-Bed Penthouse</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Kololo</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
+          <span><i class="fa-solid fa-bath"></i> 3.5 Baths</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/property/2/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80"
+          alt="Apartment" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 22M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">Greenhouse Condo</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Naalya</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
+          <span><i class="fa-solid fa-water-ladder"></i> Pool</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/property/3/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=400&q=80"
+          alt="Villa" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 80M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">Emerald Villa</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Muyenga</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 5 Beds</span>
+          <span><i class="fa-solid fa-square-parking"></i> 3 Cars</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/property/4/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=400&q=80"
+          alt="Studio" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 12M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">Gold Premium Studio</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Ntinda, Kampala</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 1 Bed</span>
+          <span><i class="fa-solid fa-wifi"></i> WiFi</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Row 2 -->
+    <a href="/property/5/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80"
+          alt="Apartment" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 30M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">Riverside Apartment</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Kira</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
+          <span><i class="fa-solid fa-bolt"></i> Power</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/property/6/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=400&q=80"
+          alt="Apartment" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 18M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">Urban Minimalist Suite</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Najjera, Kampala</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
+          <span><i class="fa-solid fa-bath"></i> 2 Baths</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/property/7/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=400&q=80"
+          alt="Villa" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 65M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">Grand Heritage Home</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Entebbe</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 6 Beds</span>
+          <span><i class="fa-solid fa-tree"></i> Garden</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/property/8/" class="property-card" style="color: inherit; text-decoration: none;">
+      <div style="position: relative;">
+        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=400&q=80"
+          alt="Studio" class="card-img">
+        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-price">UGX 38M <span
+            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
+            yr</span></h3>
+        <h4 class="card-title">The Glass Condos</h4>
+        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Naguru</p>
+        <div class="card-amenities">
+          <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
+          <span><i class="fa-solid fa-water-ladder"></i> Pool</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  </div>
+</section>
+
+{% endblock %}
