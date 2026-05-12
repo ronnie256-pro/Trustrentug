@@ -85,6 +85,17 @@
     padding-bottom: 0;
     margin-top: 1rem;
 }
+    /* Responsive Checkout */
+    @media (max-width: 992px) {
+        .checkout-wrapper { grid-template-columns: 1fr; margin: 2rem auto; gap: 2rem; }
+        .order-summary { position: static; order: -1; }
+    }
+    @media (max-width: 768px) {
+        .checkout-main { padding: 2rem 1.5rem; }
+        .escrow-banner { flex-direction: column; text-align: center; }
+        .payment-methods { grid-template-columns: 1fr; }
+        .summary-row.total { font-size: 1.1rem; }
+    }
 </style>
 {% endblock %}
 

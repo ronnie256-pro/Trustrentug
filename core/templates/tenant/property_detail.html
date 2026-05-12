@@ -4,115 +4,154 @@
 
 {% block extra_css %}
 <style>
-.gallery {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1rem;
-    height: 500px;
-    margin-top: 2rem;
-}
-.gallery-main {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-}
-.gallery-side {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    gap: 1rem;
-}
-.gallery-sub {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-}
+    .gallery {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+        height: 500px;
+        margin-top: 2rem;
+    }
 
-.content-layout {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 3rem;
-    padding: 3rem 0;
-}
+    .gallery-main {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    }
 
-.property-title {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-.location-text {
-    color: var(--color-text-muted);
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-}
+    .gallery-side {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 1rem;
+    }
 
-.amenities-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-.amenity-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.05rem;
-}
-.amenity-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(10, 61, 40, 0.05);
-    color: var(--color-emerald);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-}
+    .gallery-sub {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    }
 
-.booking-card {
-    background: #fff;
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    border-top: 4px solid var(--color-emerald);
-    position: sticky;
-    top: 100px;
-}
-.price-block {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-}
-.price-main {
-    font-size: 2.5rem;
-    font-family: var(--font-heading);
-    color: var(--color-emerald-dark);
-}
+    .content-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 3rem;
+        padding: 3rem 0;
+    }
 
-.trust-guarantee {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: rgba(203, 163, 88, 0.1);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-gold);
-    font-size: 0.85rem;
-    line-height: 1.4;
-}
+    .property-title {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .location-text {
+        color: var(--color-text-muted);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .amenity-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.05rem;
+    }
+
+    .amenity-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(10, 61, 40, 0.05);
+        color: var(--color-emerald);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .booking-card {
+        background: #fff;
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        border-top: 4px solid var(--color-emerald);
+        position: sticky;
+        top: 100px;
+    }
+
+    .price-block {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .price-main {
+        font-size: 2.5rem;
+        font-family: var(--font-heading);
+        color: var(--color-emerald-dark);
+    }
+
+    .trust-guarantee {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: rgba(203, 163, 88, 0.1);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-gold);
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
     /* Responsive Property Detail */
     @media (max-width: 992px) {
-        .gallery { height: auto; grid-template-columns: 1fr; }
-        .gallery-main { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-        .gallery-side { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; height: 200px; }
-        .gallery-sub { border-radius: 0; }
-        
-        .content-layout { grid-template-columns: 1fr; gap: 2rem; }
-        .booking-card { position: static; }
+        .gallery {
+            height: auto;
+            grid-template-columns: 1fr;
+        }
+
+        .gallery-main {
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .gallery-side {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr;
+            height: 200px;
+        }
+
+        .gallery-sub {
+            border-radius: 0;
+        }
+
+        .content-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .booking-card {
+            position: static;
+        }
     }
+
     @media (max-width: 768px) {
-        .property-title { font-size: 1.8rem; }
-        .price-main { font-size: 2rem; }
-        .amenities-grid { grid-template-columns: 1fr; gap: 1rem; }
+        .property-title {
+            font-size: 1.8rem;
+        }
+
+        .price-main {
+            font-size: 2rem;
+        }
+
+        .amenities-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
     }
 </style>
 {% endblock %}
@@ -120,10 +159,13 @@
 {% block content %}
 <div class="container">
     <div class="gallery">
-        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80" alt="Main" class="gallery-main">
+        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
+            alt="Main" class="gallery-main">
         <div class="gallery-side">
-            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80" alt="Interior" class="gallery-sub" style="border-radius: 0 var(--radius-lg) 0 0;">
-            <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80" alt="Kitchen" class="gallery-sub" style="border-radius: 0 0 var(--radius-lg) 0;">
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
+                alt="Interior" class="gallery-sub" style="border-radius: 0 var(--radius-lg) 0 0;">
+            <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80"
+                alt="Kitchen" class="gallery-sub" style="border-radius: 0 0 var(--radius-lg) 0;">
         </div>
     </div>
 
@@ -136,12 +178,10 @@
                 </span>
             </div>
             <h1 class="property-title">Luxury 3-Bed Penthouse</h1>
-            <p class="location-text"><i class="fa-solid fa-location-dot"></i> Kololo, Kampala &bull; <a href="#" style="text-decoration: underline;">View Map</a></p>
+            <p class="location-text"><i class="fa-solid fa-location-dot"></i> Kololo, Kampala &bull; <a href="#"
+                    style="text-decoration: underline;">View Map</a></p>
 
             <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 3rem;">Property Overview</h3>
-            <p style="color: var(--color-text-muted); line-height: 1.8;">
-                Experience unparalleled luxury in this TRUST-verified penthouse. This unit has been physically inspected by our agents ensuring the title is legitimate and the geographic data is accurate. Features sweeping views, marble flooring, and state of the art appliances.
-            </p>
 
             <div class="amenities-grid">
                 <div class="amenity-item">
@@ -170,11 +210,15 @@
                 </div>
             </div>
 
-            <div style="margin-top: 3rem; padding: 2rem; background: var(--color-bg-base); border-radius: var(--radius-md); border-left: 4px solid var(--color-emerald-light);">
-                <h3 style="margin-bottom: 1rem; font-size: 1.2rem;"><i class="fa-solid fa-file-contract"></i> TRUST Agent Inspection Report</h3>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.5rem;"><strong>Inspector ID:</strong> TR-89942</p>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1rem;"><strong>Date:</strong> 12 March, 2026</p>
-                <p style="font-size: 0.95rem;">"Title ownership confirmed match with landlord NIN. Physical property layout matches submitted documentation. No structural damage observed. Coordinates locked."</p>
+            <div
+                style="margin-top: 3rem; padding: 2rem; background: var(--color-bg-base); border-radius: var(--radius-md); border-left: 4px solid var(--color-emerald-light);">
+                <h3 style="margin-bottom: 1rem; font-size: 1.2rem;"><i class="fa-solid fa-file-contract"></i> TRUST
+                    Agent Inspection Report</h3>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.5rem;"><strong>Inspector
+                        ID:</strong> TR-89942</p>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                    <strong>Date:</strong> 12 March, 2026
+                </p>
             </div>
         </div>
 
@@ -182,9 +226,11 @@
         <aside>
             <div class="booking-card">
                 <div class="price-block">
-                    <span style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Annual Rent</span>
+                    <span style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Annual
+                        Rent</span>
                     <div class="price-main">UGX 45M</div>
-                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">+ UGX 4.5M Refundable Security Deposit</p>
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">+ UGX 4.5M
+                        Refundable Security Deposit</p>
                 </div>
 
                 <div class="form-group">
@@ -192,17 +238,13 @@
                     <input type="date" class="form-control" style="background: var(--color-bg-base);">
                 </div>
 
-                <a href="/checkout/1/" class="btn btn-gold" style="width: 100%; font-size: 1.1rem; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+                <a href="/checkout/1/" class="btn btn-gold"
+                    style="width: 100%; font-size: 1.1rem; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
                     Initiate Booking & Escrow
                 </a>
                 <button class="btn btn-outline" style="width: 100%; font-size: 1rem;">
                     Request Physical Viewing
                 </button>
-
-                <div class="trust-guarantee">
-                    <strong><i class="fa-solid fa-vault"></i> The TRUST Promise</strong><br>
-                    Your money goes directly into an isolated Escrow Vault. The landlord receives zero funds until you click "Confirm Move-In" from your dashboard.
-                </div>
             </div>
         </aside>
     </div>

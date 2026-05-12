@@ -82,6 +82,22 @@
                 flex-wrap: wrap;
             }
         }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        @media (max-width: 992px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+        }
+
+        @media (max-width: 600px) {
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-links { padding: 0; }
+            .footer-bottom { text-align: center; }
+        }
     </style>
 </head>
 

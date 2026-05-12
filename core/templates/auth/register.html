@@ -4,73 +4,113 @@
 
 {% block extra_css %}
 <style>
-.auth-container {
-    min-height: 80vh;
-    padding: 4rem 2rem;
-    background-color: var(--color-bg-base);
-}
-.auth-card {
-    background: #fff;
-    padding: 3rem;
-    border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: var(--shadow-md);
-    border-top: 4px solid var(--color-emerald);
-}
+    .auth-container {
+        min-height: 80vh;
+        padding: 4rem 2rem;
+        background-color: var(--color-bg-base);
+    }
 
-.role-selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
+    .auth-card {
+        background: #fff;
+        padding: 3rem;
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 650px;
+        margin: 0 auto;
+        box-shadow: var(--shadow-md);
+        border-top: 4px solid var(--color-emerald);
+    }
 
-.role-label {
-    display: block;
-    cursor: pointer;
-}
-.role-label input { display: none; }
-.role-card {
-    padding: 1.5rem;
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-md);
-    text-align: center;
-    transition: var(--transition-base);
-}
-.role-label input:checked + .role-card {
-    border-color: var(--color-gold);
-    background-color: rgba(203, 163, 88, 0.05);
-}
-.role-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: var(--color-emerald);
-}
-.role-label input:checked + .role-card .role-icon {
-    color: var(--color-gold);
-}
+    .role-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
+    .role-label {
+        display: block;
+        cursor: pointer;
+    }
 
-.section-title {
-    margin: 2rem 0 1rem;
-    font-size: 1.1rem;
-    color: var(--color-emerald-dark);
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0.5rem;
-}
+    .role-label input {
+        display: none;
+    }
+
+    .role-card {
+        padding: 2rem 1.5rem;
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-md);
+        text-align: center;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .role-label input:checked+.role-card {
+        border-color: var(--color-gold);
+        background-color: rgba(203, 163, 88, 0.05);
+        box-shadow: 0 4px 12px rgba(203, 163, 88, 0.15);
+    }
+
+    .role-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-emerald);
+        transition: color 0.3s ease;
+    }
+
+    .role-label input:checked+.role-card .role-icon {
+        color: var(--color-gold);
+    }
+
+    .role-card h4 {
+        margin-bottom: 0.5rem;
+        font-family: var(--font-heading);
+    }
+
+    .role-card p {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        line-height: 1.4;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .section-title {
+        margin: 2.5rem 0 1.25rem;
+        font-size: 1.2rem;
+        color: var(--color-emerald-dark);
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 0.75rem;
+        font-family: var(--font-heading);
+    }
+
+    #nin-group {
+        transition: all 0.4s ease;
+    }
+
     /* Responsive Registration */
     @media (max-width: 768px) {
-        .auth-container { padding: 2rem 1rem; }
-        .auth-card { padding: 2rem 1.5rem; }
-        .role-selector { grid-template-columns: 1fr; }
-        .form-row { grid-template-columns: 1fr; gap: 1rem; }
+        .auth-container {
+            padding: 2rem 1rem;
+        }
+
+        .auth-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .role-selector {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
     }
 </style>
 {% endblock %}
@@ -78,89 +118,134 @@
 {% block content %}
 <div class="auth-container">
     <div class="auth-card">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <h2>Join the TRUST Pipeline</h2>
-            <p style="color: var(--color-text-muted);">Step 1: Identity & Role Verification</p>
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <h2 style="font-family: var(--font-heading); font-size: 2.25rem; color: var(--color-emerald-darkest);">Join
+                the TRUST Protocol</h2>
+            <p style="color: var(--color-text-muted); margin-top: 0.5rem;">Secure, verified, and professional property
+                transactions.</p>
         </div>
-        
+
         <form action="/register/" method="POST">
             {% csrf_token %}
-            
-            <h4 class="section-title">I am registering as:</h4>
+
+            <h4 class="section-title" style="margin-top: 0;">Select Account Type</h4>
             <div class="role-selector">
                 <label class="role-label">
-                    <input type="radio" name="role" value="tenant" checked>
+                    <input type="radio" name="role" value="tenant" checked onchange="toggleFormFields()">
                     <div class="role-card">
                         <div class="role-icon"><i class="fa-solid fa-user-shield"></i></div>
-                        <h4>Verified Tenant</h4>
-                        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">Access secure escrows & verified properties</p>
+                        <h4>Tenant</h4>
                     </div>
                 </label>
-                
+
                 <label class="role-label">
-                    <input type="radio" name="role" value="landlord">
+                    <input type="radio" name="role" value="landlord" onchange="toggleFormFields()">
                     <div class="role-card">
                         <div class="role-icon"><i class="fa-solid fa-house-lock"></i></div>
-                        <h4>Verified Landlord</h4>
-                        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;">List securely via the TRUST Check system</p>
+                        <h4>Property Owner</h4>
                     </div>
                 </label>
             </div>
 
-            <h4 class="section-title">Personal Details</h4>
+            <h4 class="section-title">Account Details</h4>
             <div class="form-row">
                 <div class="form-group">
-                    <label class="form-label" for="first_name">First Name (Legal)</label>
-                    <input type="text" id="first_name" name="first_name" class="form-control" required>
+                    <label class="form-label" for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" class="form-control" placeholder="John"
+                        required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="last_name">Last Name (Legal)</label>
-                    <input type="text" id="last_name" name="last_name" class="form-control" required>
+                    <label class="form-label" for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Doe" required>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label" for="email">Email Address</label>
-                <input type="email" id="email" name="email" class="form-control" required>
             </div>
 
-            <h4 class="section-title">KYC / Identity Verification (CRITICAL)</h4>
-            <div class="form-group">
-                <label class="form-label" for="nin">National Identity Number (NIN)</label>
-                <div style="position: relative;">
-                    <input type="text" id="nin" name="nin" class="form-control" placeholder="11-digit identification..." style="padding-left: 2.5rem;" required>
-                    <i class="fa-solid fa-id-card" style="position: absolute; left: 1rem; top: 1rem; color: var(--color-text-muted);"></i>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="john@example.com"
+                        required>
                 </div>
-                <small style="color: var(--color-text-muted); display: block; margin-top: 0.5rem;"><i class="fa-solid fa-lock text-gold"></i> Your identity will be checked against the national registry before your account is activated.</small>
+                <div class="form-group">
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="+256 700 000 000"
+                        required>
+                </div>
+            </div>
+
+            <!-- Conditional Field for Landlords -->
+            <div id="nin-group" style="display: none;">
+                <h4 class="section-title">Verification (Landlords Only)</h4>
+                <div class="form-group">
+                    <label class="form-label" for="nin">National Identity Number (NIN)</label>
+                    <div style="position: relative;">
+                        <input type="text" id="nin" name="nin" class="form-control" placeholder="CM-1234567890..."
+                            style="padding-left: 2.5rem;">
+                        <i class="fa-solid fa-id-card"
+                            style="position: absolute; left: 1rem; top: 1.1rem; color: var(--color-gold);"></i>
+                    </div>
+                    <small
+                        style="color: var(--color-text-muted); display: block; margin-top: 0.75rem; line-height: 1.4;">
+                        <i class="fa-solid fa-shield-halved text-emerald"></i> Mandatory for property owners. Your
+                        identity will be verified against the national database before your first listing.
+                    </small>
+                </div>
             </div>
 
             <h4 class="section-title">Security</h4>
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••"
+                        required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="confirm_password">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control"
+                        placeholder="••••••••" required>
                 </div>
             </div>
 
-            <div style="margin: 2rem 0;">
-                <label style="display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.85rem; color: var(--color-text-muted); cursor: pointer;">
-                    <input type="checkbox" required style="margin-top: 0.2rem; accent-color: var(--color-emerald);">
-                    <span>I agree to the <strong>TRUST Protocol Rules</strong> including mandatory escrow usage, identity vetting, and dispute tracking logic.</span>
+            <div
+                style="margin: 2rem 0; padding: 1.25rem; background: var(--color-bg-base); border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+                <label
+                    style="display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.9rem; color: var(--color-text-muted); cursor: pointer;">
+                    <input type="checkbox" required style="margin-top: 0.3rem; accent-color: var(--color-emerald);">
+                    <span>I agree to the <strong>TRUST Protocol</strong> terms, including mandatory escrow usage and
+                        physical property vetting.</span>
                 </label>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;">
-                Submit for Verification <i class="fa-solid fa-shield-check" style="margin-left: 0.5rem;"></i>
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1.2rem;">
+                Create Secure Account <i class="fa-solid fa-arrow-right-long" style="margin-left: 0.75rem;"></i>
             </button>
-            
-            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
-                <p>Already verified? <a href="/login/" style="font-weight: 600;">Sign in here</a></p>
+
+            <div style="text-align: center; margin-top: 2rem; font-size: 0.95rem;">
+                <p>Already joined? <a href="/login/" style="font-weight: 600; color: var(--color-emerald-dark);">Sign in
+                        here</a></p>
             </div>
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleFormFields() {
+        const role = document.querySelector('input[name="role"]:checked').value;
+        const ninGroup = document.getElementById('nin-group');
+        const ninInput = document.getElementById('nin');
+
+        if (role === 'landlord') {
+            ninGroup.style.display = 'block';
+            ninInput.setAttribute('required', 'required');
+        } else {
+            ninGroup.style.display = 'none';
+            ninInput.removeAttribute('required');
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', toggleFormFields);
+</script>
 {% endblock %}

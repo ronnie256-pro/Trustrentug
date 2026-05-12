@@ -4,122 +4,149 @@
 
 {% block extra_css %}
 <style>
-.upload-container {
-    max-width: 800px;
-    margin: 4rem auto;
-    background: #fff;
-    padding: 3rem;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    border-top: 4px solid var(--color-emerald);
-}
+    .upload-container {
+        max-width: 800px;
+        margin: 4rem auto;
+        background: #fff;
+        padding: 3rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        border-top: 4px solid var(--color-emerald);
+    }
 
-.step-wizard {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 3rem;
-    position: relative;
-}
-.step-wizard::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 0; right: 0;
-    height: 2px;
-    background: var(--color-border);
-    z-index: 1;
-}
-.wizard-node {
-    width: 40px;
-    height: 40px;
-    background: #fff;
-    border: 2px solid var(--color-border);
-    border-radius: 50%;
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: var(--color-text-muted);
-}
-.wizard-node.active {
-    border-color: var(--color-gold);
-    color: var(--color-emerald-dark);
-    background: rgba(203, 163, 88, 0.1);
-}
-.wizard-label {
-    position: absolute;
-    top: 50px;
-    text-align: center;
-    width: 100px;
-    left: -30px;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-}
-.wizard-node.active .wizard-label {
-    color: var(--color-emerald-dark);
-    font-weight: 600;
-}
+    .step-wizard {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        position: relative;
+    }
 
-.section-header {
-    margin-bottom: 2rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 1rem;
-}
+    .step-wizard::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--color-border);
+        z-index: 1;
+    }
 
-.file-upload-box {
-    border: 2px dashed var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 3rem 1.5rem;
-    text-align: center;
-    background: var(--color-bg-base);
-    transition: var(--transition-base);
-    cursor: pointer;
-}
-.file-upload-box:hover {
-    border-color: var(--color-gold);
-    background: rgba(203, 163, 88, 0.05);
-}
-.file-upload-box i {
-    font-size: 2.5rem;
-    color: var(--color-emerald);
-    margin-bottom: 1rem;
-}
+    .wizard-node {
+        width: 40px;
+        height: 40px;
+        background: #fff;
+        border: 2px solid var(--color-border);
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+
+    .wizard-node.active {
+        border-color: var(--color-gold);
+        color: var(--color-emerald-dark);
+        background: rgba(203, 163, 88, 0.1);
+    }
+
+    .wizard-label {
+        position: absolute;
+        top: 50px;
+        text-align: center;
+        width: 100px;
+        left: -30px;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+    }
+
+    .wizard-node.active .wizard-label {
+        color: var(--color-emerald-dark);
+        font-weight: 600;
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 1rem;
+    }
+
+    .file-upload-box {
+        border: 2px dashed var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 3rem 1.5rem;
+        text-align: center;
+        background: var(--color-bg-base);
+        transition: var(--transition-base);
+        cursor: pointer;
+    }
+
+    .file-upload-box:hover {
+        border-color: var(--color-gold);
+        background: rgba(203, 163, 88, 0.05);
+    }
+
+    .file-upload-box i {
+        font-size: 2.5rem;
+        color: var(--color-emerald);
+        margin-bottom: 1rem;
+    }
+
+    /* Responsive Add Property */
+    @media (max-width: 768px) {
+        .upload-container {
+            padding: 2rem 1.5rem;
+            margin: 2rem auto;
+        }
+
+        .step-wizard {
+            margin-bottom: 2rem;
+        }
+
+        .wizard-label {
+            display: none;
+        }
+
+        /* Hide labels on very small screens to save space */
+        .form-grid-2 {
+            display: block !important;
+        }
+
+        div[style*="display: grid; grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+        }
+
+        div[style*="grid-template-columns: repeat(3, 1fr)"] {
+            grid-template-columns: 1fr 1fr !important;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="upload-container">
-        
-        <div class="text-center" style="margin-bottom: 3rem;">
-            <h2>Submit Property to Pipeline</h2>
-            <p style="color: var(--color-text-muted);">Once submitted, your property will lock into "PENDING VERIFICATION" status until approved by a TRUST field agent.</p>
-        </div>
 
-        <div class="step-wizard">
-            <div class="wizard-node active">
-                1
-                <span class="wizard-label">Details</span>
-            </div>
-            <div class="wizard-node">
-                2
-                <span class="wizard-label">Location</span>
-            </div>
-            <div class="wizard-node">
-                3
-                <span class="wizard-label">Legal Docs</span>
-            </div>
+        <div class="text-center" style="margin-bottom: 3rem;">
+            <h2>Submit Property to TRUST</h2>
         </div>
 
         <form action="/dashboard/submit-property/" method="POST">
             {% csrf_token %}
-            
+
             <div class="section-header">
                 <h3>Core Property Details</h3>
             </div>
-            
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label class="form-label" for="property_name">Property Name</label>
+                    <input type="text" id="property_name" name="property_name" class="form-control"
+                        placeholder="e.g. Hilltop Apartments" required>
+                </div>
                 <div class="form-group">
                     <label class="form-label" for="category">Property Category</label>
                     <select id="category" name="category" class="form-control" required onchange="toggleUnitLogic()">
@@ -140,70 +167,235 @@
                         </optgroup>
                     </select>
                 </div>
-                <div class="form-group" id="is_unit_group">
-                    <label class="form-label" for="is_unit">Is this unit in a building?</label>
-                    <select id="is_unit" name="is_unit" class="form-control" onchange="toggleParentSelection()">
-                        <option value="no">No, this is a standalone unit/building</option>
-                        <option value="yes">Yes, this is a child unit</option>
-                    </select>
-                </div>
             </div>
 
-            <div class="form-group" id="parent_selection" style="display: none; background: #fdfaf0; padding: 1.5rem; border: 1px dashed var(--color-gold); border-radius: var(--radius-sm);">
+            <div class="form-group" id="parent_selection"
+                style="display: none; background: #fdfaf0; padding: 1.5rem; border: 1px dashed var(--color-gold); border-radius: var(--radius-sm);">
                 <label class="form-label" for="parent_property">Select Parent Building</label>
                 <select id="parent_property" name="parent_property" class="form-control">
                     <option value="">-- Choose Building --</option>
                     {% for building in buildings %}
-                        <option value="{{ building.id }}">{{ building.title }} ({{ building.location }})</option>
+                    <option value="{{ building.id }}">{{ building.title }} ({{ building.location }})</option>
                     {% endfor %}
                 </select>
-                <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;"><i class="fa-solid fa-circle-info"></i> Renting this unit will NOT affect the availability of other units in this building.</p>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.5rem;"><i
+                        class="fa-solid fa-circle-info"></i> Renting this unit will NOT affect the availability of other
+                    units in this building.</p>
             </div>
-            
+            <div class="section-header" style="margin-top: 3rem;">
+                <h3>Property Location</h3>
+            </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                 <div class="form-group">
-                    <label class="form-label" for="price">Annual Rent (UGX)</label>
-                    <input type="number" id="price" class="form-control" placeholder="e.g. 12000000" required>
+                    <label class="form-label" for="neighborhood">Neighborhood</label>
+                    <select id="neighborhood" name="neighborhood" class="form-control" required>
+                        <option value="">-- Select Neighborhood --</option>
+                        <option value="kololo">Kololo</option>
+                        <option value="ntinda">Ntinda</option>
+                        <option value="nakasero">Nakasero</option>
+                        <option value="bugolobi">Bugolobi</option>
+                        <option value="muyenga">Muyenga</option>
+                        <option value="naguru">Naguru</option>
+                        <option value="bukoto">Bukoto</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="security_deposit">Security Deposit Requirement</label>
-                    <input type="number" id="security_deposit" class="form-control" placeholder="0.00" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Amenities (Select all that apply)</label>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; background: var(--color-bg-base); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
-                    <label><input type="checkbox"> Swimming Pool</label>
-                    <label><input type="checkbox"> 24/7 Power</label>
-                    <label><input type="checkbox"> Internal Security</label>
-                    <label><input type="checkbox"> Gym</label>
-                    <label><input type="checkbox"> Elevator</label>
-                    <label><input type="checkbox"> Parking Space</label>
+                    <label class="form-label" for="address">Street Address / Plot No.</label>
+                    <input type="text" id="address" name="address" class="form-control"
+                        placeholder="Plot 45, Acacia Avenue" required>
                 </div>
             </div>
 
             <div class="section-header" style="margin-top: 3rem;">
-                <h3>Mandatory Document Upload <span style="font-size: 0.8rem; background: var(--color-warning); color: white; padding: 2px 6px; border-radius: 4px; vertical-align: top;">TRUST GATE</span></h3>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted);">Please upload proof of ownership. This will be manually verified by a TRUST admin against government records.</p>
+                <h3>Upload these Documents</h3>
+            </div>
+            <style>
+                .document-checklist {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                    margin-bottom: 2rem;
+                }
+
+                .document-slot {
+                    background: var(--color-bg-base);
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-md);
+                    padding: 1.25rem 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    transition: all 0.3s ease;
+                }
+
+                .document-slot.uploaded {
+                    border-color: var(--color-emerald);
+                    background: rgba(10, 61, 40, 0.03);
+                }
+
+                .doc-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                }
+
+                .doc-icon {
+                    width: 45px;
+                    height: 45px;
+                    background: #fff;
+                    border: 1px solid var(--color-border);
+                    border-radius: var(--radius-sm);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.2rem;
+                    color: var(--color-emerald);
+                }
+
+                .document-slot.uploaded .doc-icon {
+                    background: var(--color-emerald);
+                    color: white;
+                    border-color: var(--color-emerald);
+                }
+
+                .doc-status {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    border: 2px solid var(--color-border);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.8rem;
+                    color: transparent;
+                }
+
+                .document-slot.uploaded .doc-status {
+                    background: var(--color-gold);
+                    border-color: var(--color-gold);
+                    color: white;
+                }
+            </style>
+
+            <div class="document-checklist">
+                <!-- Document 1: Building Plans -->
+                <div class="document-slot" id="slot-building_plans">
+                    <div class="doc-info">
+                        <div class="doc-icon"><i class="fa-solid fa-map-location"></i></div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 0.2rem;">Approved Building Plans</h4>
+                            <p style="font-size: 0.8rem; color: var(--color-text-muted);">PDF or JPEG, verified by
+                                physical inspection</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="file" style="display: none;" id="building_plans"
+                            onchange="updateDocStatus('building_plans')">
+                        <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+                            onclick="document.getElementById('building_plans').click()">Upload</button>
+                        <div class="doc-status"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                </div>
+
+                <!-- Document 2: Occupancy Permit -->
+                <div class="document-slot" id="slot-occupancy_permit">
+                    <div class="doc-info">
+                        <div class="doc-icon"><i class="fa-solid fa-house-circle-check"></i></div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 0.2rem;">Occupancy Permit</h4>
+                            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Official habitation
+                                certificate</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="file" style="display: none;" id="occupancy_permit"
+                            onchange="updateDocStatus('occupancy_permit')">
+                        <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+                            onclick="document.getElementById('occupancy_permit').click()">Upload</button>
+                        <div class="doc-status"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                </div>
+
+                <!-- Document 3: LC 1 Letter -->
+                <div class="document-slot" id="slot-lc1_letter">
+                    <div class="doc-info">
+                        <div class="doc-icon"><i class="fa-solid fa-id-card"></i></div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 0.2rem;">LC 1 Letter</h4>
+                            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Local Council chairperson
+                                endorsement</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="file" style="display: none;" id="lc1_letter"
+                            onchange="updateDocStatus('lc1_letter')">
+                        <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+                            onclick="document.getElementById('lc1_letter').click()">Upload</button>
+                        <div class="doc-status"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                </div>
+
+                <!-- Document 4: Tenancy Agreement -->
+                <div class="document-slot" id="slot-tenancy_agreement">
+                    <div class="doc-info">
+                        <div class="doc-icon"><i class="fa-solid fa-file-contract"></i></div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 0.2rem;">Tenancy Agreement</h4>
+                            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Standard template for your
+                                units</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="file" style="display: none;" id="tenancy_agreement"
+                            onchange="updateDocStatus('tenancy_agreement')">
+                        <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+                            onclick="document.getElementById('tenancy_agreement').click()">Upload</button>
+                        <div class="doc-status"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                </div>
+
+                <!-- Document 5: Security Agreement -->
+                <div class="document-slot" id="slot-security_agreement">
+                    <div class="doc-info">
+                        <div class="doc-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 0.2rem;">Security Letter & Agreement</h4>
+                            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Private security firm or local
+                                security details</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="file" style="display: none;" id="security_agreement"
+                            onchange="updateDocStatus('security_agreement')">
+                        <button type="button" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+                            onclick="document.getElementById('security_agreement').click()">Upload</button>
+                        <div class="doc-status"><i class="fa-solid fa-check"></i></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="file-upload-box" style="margin-bottom: 2rem;">
-                <i class="fa-solid fa-file-shield"></i>
-                <h4 style="margin-bottom: 0.5rem;">Upload C of O or Title Deed</h4>
-                <p style="font-size: 0.85rem; color: var(--color-text-muted);">PDF or JPEG, max 10MB</p>
-                <input type="file" style="display: none;" id="title_doc">
-                <button type="button" class="btn btn-outline" style="margin-top: 1rem;" onclick="document.getElementById('title_doc').click()">Browse Files</button>
-            </div>
+            <script>
+                function updateDocStatus(docId) {
+                    const slot = document.getElementById('slot-' + docId);
+                    const input = document.getElementById(docId);
+                    if (input.files && input.files.length > 0) {
+                        slot.classList.add('uploaded');
+                    }
+                }
+            </script>
 
-            <div style="background: rgba(10, 61, 40, 0.05); padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--color-emerald); margin-bottom: 2rem; font-size: 0.9rem;">
+            <div
+                style="background: rgba(10, 61, 40, 0.05); padding: 1.5rem; border-radius: var(--radius-sm); border-left: 4px solid var(--color-emerald); margin-bottom: 2rem; font-size: 0.9rem;">
                 <strong>Next Step: Field Inspection</strong><br>
-                Once submitted, a TRUST Agent will be assigned to visit this property to verify geographic coordinates and take official photography. 
+                Once submitted, a TRUST Agent will be assigned to visit this property to verify geographic coordinates
+                and take official photography.
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 2rem;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 2rem;">
                 <a href="/landlord/dashboard/" style="color: var(--color-text-muted);">Cancel</a>
-                <button type="submit" class="btn btn-primary">Submit to Pipeline <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i></button>
+                <button type="submit" class="btn btn-primary">Submit<i class="fa-solid fa-arrow-right"
+                        style="margin-left: 0.5rem;"></i></button>
             </div>
         </form>
 
