@@ -152,6 +152,67 @@
             grid-template-columns: 1fr;
             gap: 1rem;
         }
+
+        .proximity-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .proximity-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .proximity-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .proximity-card {
+        background: var(--color-bg-base);
+        padding: 1.25rem;
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+    .proximity-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--color-gold);
+    }
+
+    .proximity-icon {
+        font-size: 1.5rem;
+        color: var(--color-emerald);
+        margin-bottom: 0.75rem;
+    }
+
+    .proximity-label {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .proximity-value {
+        font-weight: 700;
+        color: var(--color-emerald-darkest);
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .proximity-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
     }
 </style>
 {% endblock %}
@@ -170,7 +231,7 @@
     </div>
 
     <div class="content-layout">
-        <!-- Main Info -->
+        <!-- Property overview-->
         <div>
             <div>
                 <span class="badge badge-verified" style="margin-bottom: 1rem; display: inline-block;">
@@ -207,6 +268,52 @@
                 <div class="amenity-item">
                     <div class="amenity-icon"><i class="fa-solid fa-shield-halved"></i></div>
                     On-site Security
+                </div>
+            </div>
+
+            <div class="proximity-section">
+                <h3 style="font-family: var(--font-heading); margin-bottom: 1.5rem;">Proximity to services</h3>
+                <div class="proximity-grid">
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-hospital"></i></div>
+                        <div class="proximity-label">Hospital</div>
+                        <div class="proximity-value">1.2 KM</div>
+                    </div>
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-shop"></i></div>
+                        <div class="proximity-label">Markets</div>
+                        <div class="proximity-value">0.5 KM</div>
+                    </div>
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                        <div class="proximity-label">Supermarkets</div>
+                        <div class="proximity-value">0.8 KM</div>
+                    </div>
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-dumbbell"></i></div>
+                        <div class="proximity-label">Gym</div>
+                        <div class="proximity-value">1.5 KM</div>
+                    </div>
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-child-reaching"></i></div>
+                        <div class="proximity-label">Kids Center</div>
+                        <div class="proximity-value">2.0 KM</div>
+                    </div>
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-road"></i></div>
+                        <div class="proximity-label">Main Road</div>
+                        <div class="proximity-value">0.3 KM</div>
+                    </div>
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-city"></i></div>
+                        <div class="proximity-label">City Center</div>
+                        <div class="proximity-value">4.5 KM</div>
+                    </div>
+                    <div class="proximity-card">
+                        <div class="proximity-icon"><i class="fa-solid fa-plane-departure"></i></div>
+                        <div class="proximity-label">Airport</div>
+                        <div class="proximity-value">35.0 KM</div>
+                    </div>
                 </div>
             </div>
 
