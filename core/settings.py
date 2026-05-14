@@ -10,10 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# --- THE PRODUCTION SWITCH ---
+# Keep this as True while working on your laptop.
+# IMPORTANT: Change this to False before you commit and push to GitHub!
+IS_LOCAL = True
 
 
 # Quick-start development settings - unsuitable for production
@@ -22,10 +28,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-!&vh9lmobs+mj(88@^a9on)3jdk^71_3xzxv-_!=ma3dcp#dwp'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+if IS_LOCAL:
+    DEBUG = True
+    ALLOWED_HOSTS = []
+else:
+    DEBUG = False
+    ALLOWED_HOSTS = ['trustrentug.com', 'www.trustrentug.com']
+    CSRF_TRUSTED_ORIGINS = ['https://trustrentug.com', 'https://www.trustrentug.com']
 
 
 # Application definition
@@ -70,15 +79,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# --- DATABASE SELECTION ---
+if IS_LOCAL:
+    # LAPTOP: SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    # VPS: PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'trustrent_db',
+            'USER': 'trust_user',
+            'PASSWORD': '*@trustrentug2026#',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 
 # Password validation
