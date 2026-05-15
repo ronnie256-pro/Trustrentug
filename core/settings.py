@@ -94,7 +94,7 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'trustrent_db',
-            'USER': 'trust_user',
+            'USER': 'trustrent_user',
             'PASSWORD': '*@trustrentug2026#',
             'HOST': 'localhost',
             'PORT': '5432',
