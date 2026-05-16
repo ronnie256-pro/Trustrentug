@@ -31,6 +31,6 @@ urlpatterns = [
     path('search/', TemplateView.as_view(template_name="tenant/search.html"), name='search'),
     path('property/1/', TemplateView.as_view(template_name="tenant/property_detail.html"), name='property_detail'),
     path('checkout/1/', TemplateView.as_view(template_name="tenant/checkout.html"), name='checkout'),
-    path('philosophy/', TemplateView.as_view(template_name="about.html"), name='philosophy'),
+    path('about-us/', TemplateView.as_view(template_name="about.html"), name='about_us'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
 ]

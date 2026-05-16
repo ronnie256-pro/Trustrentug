@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- THE PRODUCTION SWITCH ---
 # Keep this as True while working on your laptop.
 # IMPORTANT: Change this to False before you commit and push to GitHub!
-IS_LOCAL = False
+IS_LOCAL = True
 
 
 # Quick-start development settings - unsuitable for production
