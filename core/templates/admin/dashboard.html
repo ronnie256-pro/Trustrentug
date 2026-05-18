@@ -162,6 +162,7 @@
 {% endblock %}
 
 {% block admin_content %}
+{% if not current_tab or current_tab == 'overview' %}
 <div class="dashboard-header">
     <h2>Dashboard Overview</h2>
     <p>Welcome back! Here's what's happening with your properties.</p>
@@ -280,4 +281,103 @@
         </tbody>
     </table>
 </div>
+{% elif current_tab == 'landlords' %}
+<div class="dashboard-header" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem;">Landlords Directory</h2>
+        <p style="color: #64748b; margin-top: 0.25rem;">Review registered property owners and verified national identity numbers (NIN).</p>
+    </div>
+    <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem;">
+        <i class="fa-solid fa-shield-halved" style="margin-right: 0.5rem;"></i> {{ landlords.count }} Registered Owner{{ landlords.count|pluralize }}
+    </div>
+</div>
+
+<!-- Landlords Table Card -->
+<div class="table-card" style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
+    <div class="table-header" style="padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin:0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-dark);">Property Owner Registry</h3>
+        <span style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-circle" style="color: #10b981; font-size: 0.5rem; margin-right: 0.25rem;"></i> Live Database Connection</span>
+    </div>
+    <div style="overflow-x: auto;">
+        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Landlord Name</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Username</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Email / Account</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Phone Number</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">National ID (NIN)</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Account Status</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for landlord in landlords %}
+                <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 32px; height: 32px; background: rgba(16, 61, 40, 0.1); color: var(--color-emerald); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">
+                            {{ landlord.first_name|slice:":1" }}{{ landlord.last_name|slice:":1" }}
+                        </div>
+                        <div>
+                            <div style="font-size: 0.95rem; color: #1e293b;">{{ landlord.first_name }} {{ landlord.last_name }}</div>
+                            <small style="color: #94a3b8; font-weight: normal; font-size: 0.75rem;">ID: #{{ landlord.id }}</small>
+                        </div>
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: var(--color-gold); font-family: monospace; font-size: 0.95rem; font-weight: 600;">
+                        @{{ landlord.username }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #64748b; font-family: monospace; font-size: 0.9rem;">
+                        {{ landlord.email }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 500;">
+                        <i class="fa-solid fa-phone" style="color: var(--color-gold); font-size: 0.8rem; margin-right: 0.5rem;"></i> {{ landlord.profile.phone|default:"Not Provided" }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        {% if landlord.profile.nin %}
+                        <span style="font-family: monospace; color: #1e293b; font-weight: 600; background: #f1f5f9; padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-id-card" style="color: var(--color-gold);"></i> {{ landlord.profile.nin }}
+                        </span>
+                        {% else %}
+                        <span style="color: #94a3b8; font-style: italic; font-size: 0.85rem;">None</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        {% if landlord.profile.is_approved %}
+                        <span class="status-pill pill-active" style="display: inline-flex; align-items: center; gap: 0.35rem; background: #ecfdf5; color: #059669;">
+                            <i class="fa-solid fa-circle-check" style="font-size: 0.7rem;"></i> Approved
+                        </span>
+                        {% else %}
+                        <span class="status-pill" style="display: inline-flex; align-items: center; gap: 0.35rem; background: #fffbeb; color: #d97706; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">
+                            <i class="fa-solid fa-clock-rotate-left" style="font-size: 0.7rem;"></i> Pending Vetting
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        {% if not landlord.profile.is_approved %}
+                        <form action="/admin-dashboard/landlord/approve/{{ landlord.id }}/" method="POST" style="margin: 0; display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-gold" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); border: none;">
+                                <i class="fa-solid fa-circle-check"></i> Approve Owner
+                            </button>
+                        </form>
+                        {% else %}
+                        <span style="color: #10b981; font-weight: 500; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <i class="fa-solid fa-circle-check"></i> Complete
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 3rem 2rem; text-align: center; color: #94a3b8;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem; color: #cbd5e1;"><i class="fa-solid fa-users-slash"></i></div>
+                        <p style="margin: 0; font-size: 0.95rem;">No property owners registered yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

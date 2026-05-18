@@ -25,7 +25,7 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html"), name='home'),
     path('login/', views.login_view, name='login'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
-    path('register/', TemplateView.as_view(template_name="auth/register.html"), name='register'),
+    path('register/', views.register_view, name='register'),
     path('landlord/', views.landlord_dashboard, name='landlord_dashboard'),
     path('landlord/property/add/', views.add_property, name='add_property'),
     path('search/', TemplateView.as_view(template_name="tenant/search.html"), name='search'),
@@ -33,4 +33,5 @@ urlpatterns = [
     path('checkout/1/', TemplateView.as_view(template_name="tenant/checkout.html"), name='checkout'),
     path('about-us/', TemplateView.as_view(template_name="about.html"), name='about_us'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard/landlord/approve/<int:user_id>/', views.approve_landlord, name='approve_landlord'),
 ]

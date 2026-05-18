@@ -137,8 +137,11 @@
             <i class="fa-solid fa-shield-halved"></i> TRUST
         </div>
         <nav class="sidebar-nav">
-            <a href="/admin-dashboard/" class="nav-item active">
+            <a href="/admin-dashboard/" class="nav-item {% if not current_tab or current_tab == 'overview' %}active{% endif %}">
                 <i class="fa-solid fa-gauge-high"></i> Dashboard
+            </a>
+            <a href="/admin-dashboard/?tab=landlords" class="nav-item {% if current_tab == 'landlords' %}active{% endif %}">
+                <i class="fa-solid fa-user-tie"></i> Landlords
             </a>
             <a href="#" class="nav-item">
                 <i class="fa-solid fa-house-chimney"></i> Properties
