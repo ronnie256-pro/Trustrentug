@@ -11,3 +11,6 @@ env/
 # Media and Static
 media/
 static/
+__pycache__/
+*.pyc
+*.pyo
