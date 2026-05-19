@@ -184,3 +184,8 @@ def add_property(request):
         
     buildings = Property.objects.filter(is_multi_unit=True)
     return render(request, 'landlord/add_property.html', {'buildings': buildings})
+
+def home_view(request):
+    # Fetch parent (standalone or building) properties that are approved/available
+    properties = Property.objects.filter(parent=None).prefetch_related('units')
+    return render(request, 'index.html', {'properties': properties})

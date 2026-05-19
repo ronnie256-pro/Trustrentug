@@ -1,362 +1,849 @@
 {% extends "base.html" %}
 
-{% block title %}Premium Rental Experience{% endblock %}
+{% block title %}TRUST | The Rental Verification Protocol{% endblock %}
 
 {% block extra_css %}
 <style>
-  /* Hero Section */
-  .hero {
-    background: linear-gradient(135deg, var(--color-emerald-darkest) 0%, var(--color-emerald) 100%);
-    color: white;
-    padding: 8rem 0 6rem;
+  /* ═══════════════════════════════════════════════════════════
+     TRUST Landing Page — Premium Editorial Design & Grid
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Global Section Settings */
+  section {
+    padding: 8rem 0;
     position: relative;
     overflow: hidden;
   }
 
-  .hero::after {
+  .bg-darkest {
+    background-color: var(--color-emerald-darkest);
+    color: #ffffff;
+  }
+
+  .bg-cream {
+    background-color: var(--color-bg-base);
+  }
+
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+
+  .section-label {
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 3.25rem;
+    line-height: 1.15;
+    color: var(--color-emerald-dark);
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .bg-darkest .section-title {
+    color: #ffffff !important;
+  }
+
+  .hero-container h1,
+  .hero-container h2,
+  .hero-container h3,
+  .hero-container h4,
+  .hero-container h5,
+  .hero-container h6,
+  .bg-darkest h1,
+  .bg-darkest h2,
+  .bg-darkest h3,
+  .bg-darkest h4,
+  .bg-darkest h5,
+  .bg-darkest h6 {
+    color: #ffffff !important;
+  }
+
+  .section-lead {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    font-weight: 300;
+    max-width: 700px;
+    margin-bottom: 3.5rem;
+  }
+
+  .bg-darkest .section-lead {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* 1. Hero Section */
+  .hero-container {
+    padding: 11rem 0 9rem;
+    background: linear-gradient(135deg, var(--color-emerald-darkest) 0%, #03140d 100%);
+    color: white;
+    position: relative;
+  }
+
+  .hero-container::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80') center/cover;
-    opacity: 0.15;
-    z-index: 1;
-    mix-blend-mode: luminosity;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(203, 163, 88, 0.08) 0%, transparent 60%);
+    pointer-events: none;
   }
 
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
   }
 
-  .hero h1 {
-    color: var(--color-gold);
-    font-size: 3.5rem;
+  .hero-headline {
+    font-family: var(--font-heading);
+    font-size: 4.5rem;
+    line-height: 1.05;
+    font-weight: 400;
     margin-bottom: 1.5rem;
-    line-height: 1.2;
+    letter-spacing: -1px;
+    color: #ffffff !important;
   }
 
-  .hero p {
-    font-size: 1.25rem;
-    margin-bottom: 2.5rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 300;
+  .hero-headline span {
+    color: var(--color-gold) !important;
+    font-style: italic;
   }
 
-  /* Search Bar Overlay */
-  .search-wrapper {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 1rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
+  .hero-bullets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    max-width: 800px;
-    margin: 0 auto;
+    margin: 2.5rem 0 3.5rem;
   }
 
-  .search-wrapper input,
-  .search-wrapper select {
-    flex: 1;
-    padding: 1rem;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-body);
+  .hero-bullet-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
   }
 
-  .search-btn {
-    padding: 1rem 2rem;
+  .hero-bullet-item i {
+    color: var(--color-gold);
     font-size: 1.1rem;
   }
 
-
-
-  /* Property Cards inside Index */
-  .results-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    margin-top: 3rem;
-    text-align: left;
-  }
-
-  .property-card {
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    background: #fff;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition-base);
-    border: 1px solid var(--color-border);
+  .hero-cta-buttons {
     display: flex;
-    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .property-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-4px);
+  .hero-cta-buttons .btn {
+    padding: 1.2rem 2.5rem;
+    font-size: 1rem;
+  }
+
+  /* 2. Why TRUST Exists */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  /* 3. The Meaning of T.R.U.S.T. */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .pillar-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    padding: 2.5rem 1.75rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pillar-card:hover {
     border-color: var(--color-gold);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
   }
 
-  .card-img {
-    height: 180px;
-    width: 100%;
-    object-fit: cover;
+  .pillar-letter {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    color: var(--color-gold);
+    line-height: 1;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    display: block;
+  }
+
+  .pillar-card h3 {
+    font-size: 1.15rem;
+    color: var(--color-emerald-dark);
+    margin-bottom: 1rem;
+  }
+
+  .pillar-card p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  /* 4. How TRUST Works */
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1rem;
+    margin-top: 4rem;
     position: relative;
   }
 
-  .verified-tag {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: var(--color-emerald);
-    color: var(--color-gold);
-    padding: 0.25rem 0.75rem;
+  .workflow-step {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem 1.25rem;
     border-radius: var(--radius-sm);
-    font-size: 0.8rem;
-    font-weight: 600;
-    box-shadow: var(--shadow-sm);
+    text-align: center;
+    position: relative;
   }
 
-  .card-body {
-    padding: 1.2rem;
+  .workflow-number {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    color: var(--color-gold);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .workflow-step p {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.4;
+  }
+
+  /* 5. Safety Guarantees */
+  .guarantees-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .guarantees-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .guarantees-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-emerald-darkest);
+  }
+
+  .guarantees-item i {
+    color: #e11d48; /* Crimson marker */
+    font-size: 1rem;
+  }
+
+  .metadata-display-card {
+    background: var(--color-bg-base);
+    border: 1px dashed var(--color-gold);
+    padding: 3rem;
+    border-radius: var(--radius-md);
+  }
+
+  .metadata-display-card h3 {
+    font-size: 1.25rem;
+    color: var(--color-emerald-dark);
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.75rem;
+  }
+
+  .metadata-list-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.95rem;
+  }
+
+  .metadata-list-item span:first-child {
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  .metadata-list-item span:last-child {
+    font-weight: 600;
+    font-family: monospace;
+    color: var(--color-emerald-darkest);
+  }
+
+  /* 6. Landlords Protection */
+  .landlord-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .landlord-list {
+    list-style: none;
+    margin-top: 2rem;
+  }
+
+  .landlord-list li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--color-text-dark);
+  }
+
+  .landlord-list li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    font-weight: bold;
+  }
+
+  .landlord-image-wrapper {
+    position: relative;
+  }
+
+  .landlord-image-wrapper img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .landlord-image-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -1.5rem; left: -1.5rem; bottom: 1.5rem; right: 1.5rem;
+    border: 1px solid var(--color-gold);
+    z-index: -1;
+  }
+
+  /* 7. Why TRUST is Different */
+  .difference-card {
+    background: linear-gradient(135deg, var(--color-emerald-darkest) 0%, #03140d 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 5rem 4rem;
+    border-radius: var(--radius-md);
+    color: #ffffff;
+    text-align: center;
+    position: relative;
+  }
+
+  .difference-tagline {
+    font-family: var(--font-heading);
+    font-size: 2.75rem;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+    color: #ffffff !important;
+  }
+
+  .difference-tagline span {
+    color: var(--color-gold) !important;
+    font-style: italic;
+  }
+
+  .verifications-pills {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 3rem 0;
+  }
+
+  .verification-pill {
+    background: rgba(203, 163, 88, 0.12);
+    border: 1px solid rgba(203, 163, 88, 0.4);
+    color: var(--color-gold-light);
+    padding: 0.65rem 1.5rem;
+    border-radius: var(--radius-full);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* 8. Property Catalog Listing */
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .catalog-card {
+    background: #ffffff;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .catalog-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--color-gold);
+    box-shadow: var(--shadow-md);
+  }
+
+  .catalog-img-wrapper {
+    height: 240px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .catalog-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .catalog-card:hover .catalog-img {
+    transform: scale(1.05);
+  }
+
+  .catalog-overlay-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--color-emerald);
+    color: var(--color-gold);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .catalog-body {
+    padding: 2rem;
     flex: 1;
     display: flex;
     flex-direction: column;
   }
 
-  .card-price {
+  .catalog-price {
     font-family: var(--font-heading);
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: var(--color-emerald-darkest);
-    margin-bottom: 0.25rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
   }
 
-  .card-title {
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .card-location {
-    color: var(--color-text-muted);
+  .catalog-price span {
+    font-family: var(--font-body);
     font-size: 0.85rem;
-    margin-bottom: 1rem;
-  }
-
-  .card-amenities {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.8rem;
     color: var(--color-text-muted);
-    border-top: 1px solid var(--color-border);
-    padding-top: 1rem;
-    margin-top: auto;
+    font-weight: 400;
   }
 
-  .card-amenities span {
+  .catalog-title {
+    font-size: 1.15rem;
+    color: var(--color-emerald-dark);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .catalog-location {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
   }
-  /* Responsive Tweaks */
+
+  .catalog-meta-box {
+    border-top: 1px solid var(--color-border);
+    padding-top: 1.25rem;
+    margin-top: auto;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .catalog-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 500;
+  }
+
+  .catalog-meta-item i {
+    color: var(--color-gold);
+    font-size: 0.9rem;
+  }
+
+  /* Responsive Styling */
+  @media (max-width: 1200px) {
+    .pillars-grid { grid-template-columns: repeat(3, 1fr); }
+    .workflow-grid { grid-template-columns: repeat(4, 1fr); }
+    .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   @media (max-width: 992px) {
-    .hero h1 { font-size: 2.5rem; }
-    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .section-title { font-size: 2.75rem; }
+    .hero-headline { font-size: 3.5rem; }
+    .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 3rem; }
+    .hero-bullets { justify-items: center; }
+    .hero-cta-buttons { justify-content: center; }
+    .problem-grid, .guarantees-split, .landlord-grid { grid-template-columns: 1fr; gap: 4rem; }
+    .landlord-image-wrapper { order: -1; }
   }
 
   @media (max-width: 768px) {
-    .hero { padding: 4rem 0 3rem; }
-    .hero h1 { font-size: 2rem; }
-    .search-wrapper { flex-direction: column; padding: 1.5rem; }
-    .search-btn { width: 100%; }
-    .results-grid { grid-template-columns: 1fr; }
-    .property-card { max-width: 100%; }
+    section { padding: 5rem 0; }
+    .section-title { font-size: 2.25rem; }
+    .hero-headline { font-size: 2.75rem; }
+    .hero-bullets { grid-template-columns: 1fr; }
+    .hero-cta-buttons { flex-direction: column; gap: 1rem; width: 100%; }
+    .hero-cta-buttons .btn { width: 100%; }
+    .pillars-grid { grid-template-columns: 1fr; }
+    .workflow-grid { grid-template-columns: repeat(2, 1fr); }
+    .guarantees-list { grid-template-columns: 1fr; }
+    .metadata-display-card { padding: 1.5rem; }
+    .difference-card { padding: 3rem 1.5rem; }
+    .difference-tagline { font-size: 2rem; }
+    .catalog-grid { grid-template-columns: 1fr; }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero">
-  <div class="container hero-content">
-    <h1>Rent with Absolute Confidence</h1>
-    <div class="search-wrapper">
-      <input type="text" placeholder="Location, Neighborhood, or Zip">
-      <select>
-        <option value="">Property Type</option>
-        <option value="apartment">Luxury Apartment</option>
-        <option value="house">Villa / House</option>
-        <option value="condo">Condominium</option>
-      </select>
-      <button class="btn btn-gold search-btn"><i class="fa-solid fa-search"></i> Search</button>
+
+<!-- 1. HERO SECTION -->
+<section class="hero-container">
+  <div class="container hero-grid">
+    <div>
+      <span class="section-label">THE TRUST PROTOCOL</span>
+      <h1 class="hero-headline">Find a <span>Verified</span> Home. Live With Confidence.</h1>
+      <p class="section-lead" style="margin-bottom: 2rem;">Every property on TRUST is inspected, verified, and approved — so you never deal with fake agents, fake listings, or rental fraud.</p>
+      
+      <div class="hero-bullets">
+        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Verified Landlords</div>
+        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Verified Properties</div>
+        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Verified Tenants</div>
+        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Secure Payments & Transparent Contracts</div>
+      </div>
+
+      <div class="hero-cta-buttons">
+        <a href="#verified-rentals" class="btn btn-gold">Browse Verified Rentals <i class="fa-solid fa-chevron-down" style="margin-left: 0.5rem; font-size: 0.85rem;"></i></a>
+        <a href="/register/" class="btn btn-outline-gold">List Your Property</a>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center; position: relative;">
+      <div style="width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); padding: 2.5rem; backdrop-filter: blur(10px); box-shadow: var(--shadow-lg);">
+        <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--color-gold); margin-bottom: 1.5rem; display: block;"></i>
+        <h3 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: normal; margin-bottom: 1rem;">The Escrow Pipeline</h3>
+        <p style="font-size: 0.95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.7); margin-bottom: 1.5rem;">Your rent and security deposit remain in secure holding until you complete move-in inspection. Zero risk.</p>
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-gold); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-circle" style="color: #10b981; font-size: 0.5rem; margin-right: 0.35rem;"></i> Active Protection Protocol</span>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Featured Properties Grid -->
-<section class="container" style="padding: 4rem 0;">
-  <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Exclusive <span class="text-gold">Verified</span> Listings</h2>
-  <div class="results-grid">
-    <!-- Row 1 -->
-    <a href="/property/1/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=80"
-          alt="Apartment" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 45M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">Luxury 3-Bed Penthouse</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Kololo</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
-          <span><i class="fa-solid fa-bath"></i> 3.5 Baths</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="/property/2/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80"
-          alt="Apartment" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 22M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">Greenhouse Condo</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Naalya</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
-          <span><i class="fa-solid fa-water-ladder"></i> Pool</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="/property/3/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=400&q=80"
-          alt="Villa" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 80M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">Emerald Villa</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Muyenga</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 5 Beds</span>
-          <span><i class="fa-solid fa-square-parking"></i> 3 Cars</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="/property/4/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=400&q=80"
-          alt="Studio" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 12M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">Gold Premium Studio</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Ntinda, Kampala</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 1 Bed</span>
-          <span><i class="fa-solid fa-wifi"></i> WiFi</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- Row 2 -->
-    <a href="/property/5/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80"
-          alt="Apartment" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 30M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">Riverside Apartment</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Kira</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
-          <span><i class="fa-solid fa-bolt"></i> Power</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="/property/6/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=400&q=80"
-          alt="Apartment" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 18M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">Urban Minimalist Suite</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Najjera, Kampala</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
-          <span><i class="fa-solid fa-bath"></i> 2 Baths</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="/property/7/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=400&q=80"
-          alt="Villa" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 65M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">Grand Heritage Home</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Entebbe</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 6 Beds</span>
-          <span><i class="fa-solid fa-tree"></i> Garden</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="/property/8/" class="property-card" style="color: inherit; text-decoration: none;">
-      <div style="position: relative;">
-        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=400&q=80"
-          alt="Studio" class="card-img">
-        <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> Verified</div>
-      </div>
-      <div class="card-body">
-        <h3 class="card-price">UGX 38M <span
-            style="font-size: 0.8rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/
-            yr</span></h3>
-        <h4 class="card-title">The Glass Condos</h4>
-        <p class="card-location"><i class="fa-solid fa-location-dot"></i> Naguru</p>
-        <div class="card-amenities">
-          <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
-          <span><i class="fa-solid fa-water-ladder"></i> Pool</span>
-        </div>
-      </div>
-    </a>
+<!-- 2. WHY TRUST EXISTS -->
+<section class="bg-surface">
+  <div class="container problem-grid">
+    <div>
+      <span class="section-label">WHY TRUST EXISTS</span>
+      <h2 class="section-title">Uganda’s Rental Market Has a Fraud Problem. We Built TRUST to Fix It.</h2>
+      <p class="section-lead" style="margin-bottom: 0;">Families lose millions every year to fake agents, fake landlords, and fake listings. Real estate transparency shouldn't be a gamble. TRUST eliminates rental fraud by verifying every person, every property, and every payment.</p>
+    </div>
+    <div style="background: var(--color-bg-base); border-left: 4px solid var(--color-emerald); padding: 3rem 2.5rem; border-radius: 0 var(--radius-md) var(--radius-md) 0;">
+      <i class="fa-solid fa-quote-left" style="font-size: 2rem; color: var(--color-gold); margin-bottom: 1rem; display: block;"></i>
+      <blockquote style="font-family: var(--font-heading); font-size: 1.45rem; line-height: 1.4; color: var(--color-emerald-darkest); font-style: italic; margin-bottom: 1.5rem;">"Your safety is our protocol."</blockquote>
+      <cite style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-muted); font-style: normal;">— TRUST Verification Authority</cite>
+    </div>
   </div>
+</section>
 
+<!-- 3. THE MEANING OF T.R.U.S.T. -->
+<section class="bg-cream">
+  <div class="container">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto 4rem;">
+      <span class="section-label">THE PROTOCOL STRUCTURE</span>
+      <h2 class="section-title">The Meaning of T.R.U.S.T.</h2>
+      <p class="section-lead" style="margin-bottom: 0; margin-left: auto; margin-right: auto;">The five core pillars that define the TRUST Rental Verification Protocol.</p>
+    </div>
+
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <span class="pillar-letter">T</span>
+        <h3>Title Verification</h3>
+        <p>We verify land titles or ownership documents to ensure the person listing the property is the legitimate owner.</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-letter">R</span>
+        <h3>Registered Landlord</h3>
+        <p>Every landlord is verified using their National ID (NIN), eliminating anonymous fraud.</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-letter">U</span>
+        <h3>Urban Inspection</h3>
+        <p>A TRUST Agent physically visits, photographs, and geotags the property to confirm its existence and condition.</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-letter">S</span>
+        <h3>Secure Escrow</h3>
+        <p>All payments — rent, deposits, and security deposits — are held safely by TRUST until the tenant confirms successful move‑in.</p>
+      </div>
+      <div class="pillar-card">
+        <span class="pillar-letter">T</span>
+        <h3>Transparent Contract</h3>
+        <p>A legally binding digital tenancy agreement is issued instantly, protecting both parties.</p>
+      </div>
+    </div>
+
+    <p style="text-align: center; margin-top: 4rem; font-family: var(--font-heading); font-size: 1.35rem; color: var(--color-emerald-dark); font-weight: 600;">
+      This is how we eliminate fraud from the rental market.
+    </p>
+  </div>
+</section>
+
+<!-- 4. HOW TRUST WORKS -->
+<section class="bg-darkest">
+  <div class="container">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto 4rem;">
+      <span class="section-label" style="color: var(--color-gold-light);">THE PIPELINE FLOW</span>
+      <h2 class="section-title">We Verify First. Then We Publish.</h2>
+      <p class="section-lead" style="margin-bottom: 0; margin-left: auto; margin-right: auto;">A systematic, secure step-by-step verification pipeline that listings must clear.</p>
+    </div>
+
+    <div class="workflow-grid">
+      <div class="workflow-step">
+        <span class="workflow-number">01</span>
+        <p>Landlord Verification</p>
+      </div>
+      <div class="workflow-step">
+        <span class="workflow-number">02</span>
+        <p>Property Inspection</p>
+      </div>
+      <div class="workflow-step">
+        <span class="workflow-number">03</span>
+        <p>Document Verification</p>
+      </div>
+      <div class="workflow-step">
+        <span class="workflow-number">04</span>
+        <p>Admin Approval</p>
+      </div>
+      <div class="workflow-step">
+        <span class="workflow-number">05</span>
+        <p>Tenant Screening</p>
+      </div>
+      <div class="workflow-step">
+        <span class="workflow-number">06</span>
+        <p>Secure Escrow Payment</p>
+      </div>
+      <div class="workflow-step">
+        <span class="workflow-number">07</span>
+        <p>Transparent Digital Contract</p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 4rem;">
+      <span style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.75rem 2rem; border-radius: var(--radius-full); font-weight: 600; color: var(--color-gold); font-size: 1rem;">
+        If it’s not verified, it’s not on TRUST.
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- 5. SAFETY GUARANTEES -->
+<section class="bg-surface">
+  <div class="container guarantees-split">
+    <div>
+      <span class="section-label">OUR GUARANTEES</span>
+      <h2 class="section-title">Our Safety Guarantees</h2>
+      <p class="section-lead">The TRUST Protocol guarantees absolute security for tenants, making classical rental vulnerabilities a thing of the past.</p>
+      
+      <div class="guarantees-list">
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake landlords</div>
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake agents</div>
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake properties</div>
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No double‑renting</div>
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No middlemen</div>
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No hidden charges</div>
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No “inspection fees”</div>
+        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No “booking fees”</div>
+      </div>
+    </div>
+    
+    <div>
+      <div class="metadata-display-card">
+        <h3>Every listing displays:</h3>
+        <div class="metadata-list-item">
+          <span>Verification Badge</span>
+          <span style="color: #0a5c36; font-weight: 700;"><i class="fa-solid fa-shield-halved"></i> TRUST VERIFIED</span>
+        </div>
+        <div class="metadata-list-item">
+          <span>Inspection Date</span>
+          <span>May 15, 2026</span>
+        </div>
+        <div class="metadata-list-item">
+          <span>TRUST Agent ID</span>
+          <span>#TR-8942</span>
+        </div>
+        <div class="metadata-list-item">
+          <span>Verified Landlord Status</span>
+          <span style="color: #0a5c36; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> ACTIVE & REGISTERED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. HOW TRUST PROTECTS LANDLORDS -->
+<section class="bg-cream">
+  <div class="container landlord-grid">
+    <div class="landlord-image-wrapper">
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80" alt="Premium Property Exterior">
+    </div>
+    <div>
+      <span class="section-label">LANDLORD PROTECTION</span>
+      <h2 class="section-title">Serious Tenants. Zero Disturbance. Zero Risk.</h2>
+      <p class="section-lead" style="margin-bottom: 1.5rem;">TRUST protects high-value real estate assets by vetting and checking all prospective tenants before introductions.</p>
+      
+      <h3 style="font-family: var(--font-heading); font-size: 1.35rem; color: var(--color-emerald-dark);">Landlords enjoy:</h3>
+      <ul class="landlord-list">
+        <li>Verified tenants</li>
+        <li>TRUST‑managed communication (optional)</li>
+        <li>Accurate property representation</li>
+        <li>Secure payments</li>
+        <li>Legally binding digital contracts</li>
+      </ul>
+      
+      <p style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 1.05rem; margin-top: 2rem;">
+        Landlords only deal with serious, verified tenants.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. WHY TRUST IS DIFFERENT -->
+<section class="bg-surface" style="padding-bottom: 4rem;">
+  <div class="container">
+    <div class="difference-card">
+      <span class="section-label" style="color: var(--color-gold-light);">THE PARADIGM SHIFT</span>
+      <h2 class="difference-tagline">We Are Not a Marketplace.<br>We Are a <span>Verification Protocol</span>.</h2>
+      <p style="font-size: 1.15rem; line-height: 1.7; max-width: 750px; margin: 0 auto; color: rgba(255, 255, 255, 0.7); font-weight: 300;">
+        Other platforms allow anyone to upload anything. TRUST does the opposite. We vet every detail so you can rent with ultimate security.
+      </p>
+      
+      <div class="verifications-pills">
+        <div class="verification-pill">✔ We Verify the Landlord</div>
+        <div class="verification-pill">✔ We Verify the Property</div>
+        <div class="verification-pill">✔ We Verify the Documents</div>
+        <div class="verification-pill">✔ We Verify the Availability</div>
+        <div class="verification-pill">✔ We Verify the Tenant</div>
+        <div class="verification-pill">✔ We Verify the Payment</div>
+        <div class="verification-pill">✔ We Verify the Contract</div>
+      </div>
+      
+      <p style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--color-gold); font-weight: 500; margin: 0;">
+        This is the future of safe renting.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. THE FEATURED CATALOG -->
+<section class="bg-surface" id="verified-rentals" style="padding-top: 4rem; border-top: 1px solid var(--color-border);">
+  <div class="container">
+    <div style="text-align: center; max-width: 800px; margin: 0 auto 4rem;">
+      <span class="section-label">EXCLUSIVE CATALOG</span>
+      <h2 class="section-title">Verified Rentals in Uganda</h2>
+      <p class="section-lead" style="margin-bottom: 0; margin-left: auto; margin-right: auto;">Explore physical-geotagged real estate portfolios approved under our high-security protocol.</p>
+    </div>
+
+    <div class="catalog-grid">
+      {% for property in properties %}
+      <a href="/property/1/" class="catalog-card">
+        <div class="catalog-img-wrapper">
+          {% if property.category == 'studio' %}
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="catalog-img">
+          {% elif property.category == '2_bed' or property.category == '1_bed' %}
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="catalog-img">
+          {% elif property.is_multi_unit %}
+            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="catalog-img">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="catalog-img">
+          {% endif %}
+          <div class="catalog-overlay-tag"><i class="fa-solid fa-shield-halved"></i> TRUST Verified</div>
+        </div>
+        
+        <div class="catalog-body">
+          <h3 class="catalog-price">
+            {% if property.price %}
+              UGX {{ property.price|floatformat:0 }} <span>/ mo</span>
+            {% else %}
+              Custom Pricing
+            {% endif %}
+          </h3>
+          <h4 class="catalog-title">{{ property.title }}</h4>
+          <p class="catalog-location"><i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ property.location }}</p>
+          
+          <div class="catalog-meta-box">
+            <div class="catalog-meta-item" style="color: #0a5c36; font-weight: 600;">
+              <i class="fa-solid fa-shield-halved" style="color: #0a5c36;"></i> Verified Landlord
+            </div>
+            <div class="catalog-meta-item">
+              <i class="fa-solid fa-calendar-check"></i> Inspected: 15 May 2026
+            </div>
+            <div class="catalog-meta-item">
+              <i class="fa-solid fa-id-card"></i> Agent ID: #TR-{{ property.id|add:"720" }}
+            </div>
+            <div class="catalog-meta-item" style="color: #0a5c36; font-weight: 600;">
+              <i class="fa-solid fa-circle-check" style="color: #0a5c36;"></i> Active Listing
+            </div>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; color: var(--color-text-muted);">
+        <i class="fa-solid fa-building-circle-exclamation" style="font-size: 3rem; color: var(--color-gold); margin-bottom: 1rem; display: block;"></i>
+        <p style="margin: 0; font-size: 1.1rem; font-weight: 500;">No properties currently listed in catalog.</p>
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </section>
 
