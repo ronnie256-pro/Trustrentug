@@ -276,6 +276,17 @@
                 </div>
 
                 <div class="info-row">
+                    <span class="info-label">Bedrooms Qty (Landlord Value)</span>
+                    <span class="info-value">
+                        {% if property.bedrooms %}
+                            {{ property.bedrooms }} Bedrooms
+                        {% else %}
+                            Not Set
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="info-row">
                     <span class="info-label">Monthly Rate (Price/Month)</span>
                     <span class="info-value" style="color: var(--color-emerald-dark);">
                         {% if property.price_per_month %}
@@ -343,6 +354,50 @@
                 <div class="info-row">
                     <span class="info-label">Submit Date</span>
                     <span class="info-value">{{ property.created_at|date:"M d, Y H:i"|default:"Recently" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attached Amenities & Proximity Services -->
+        <div style="padding: 2rem; border-top: 1px solid #e2e8f0; background: #fafafa;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem;">
+                <!-- Left Column: Amenities -->
+                <div>
+                    <h4 style="margin: 0 0 1.25rem 0; color: var(--color-emerald-dark); font-size: 1.1rem; font-family: var(--font-heading); border-bottom: 2px solid rgba(16, 61, 40, 0.08); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-list-check" style="color: var(--color-gold);"></i> Attached Amenities & Features
+                    </h4>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        {% for a in property_amenities %}
+                        <span style="font-size: 0.8rem; background: white; border: 1px solid #cbd5e1; color: #334155; padding: 0.35rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                            <i class="fa-solid {{ a.icon_class }}" style="color: var(--color-emerald); font-size: 0.85rem;"></i>
+                            {{ a.name }}
+                        </span>
+                        {% empty %}
+                        <span style="font-size: 0.9rem; color: #64748b; font-style: italic;">No specific amenities attached to this property.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Right Column: Proximities -->
+                <div>
+                    <h4 style="margin: 0 0 1.25rem 0; color: var(--color-emerald-dark); font-size: 1.1rem; font-family: var(--font-heading); border-bottom: 2px solid rgba(16, 61, 40, 0.08); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-map-location-dot" style="color: var(--color-gold);"></i> Proximity to Local Services
+                    </h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem;">
+                        {% for px in property_proximities %}
+                        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.6rem 0.8rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                            <div style="display: flex; align-items: center; gap: 0.45rem; overflow: hidden; flex: 1;">
+                                <i class="fa-solid {{ px.icon_class }}" style="color: var(--color-emerald); font-size: 0.85rem; flex-shrink: 0;"></i>
+                                <span style="font-size: 0.8rem; font-weight: 600; color: #334155; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ px.item.name }}</span>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-gold); background: rgba(203, 163, 88, 0.1); padding: 0.15rem 0.45rem; border-radius: 4px; flex-shrink: 0;">{{ px.distance_km }} KM</span>
+                        </div>
+                        {% empty %}
+                        <span style="font-size: 0.9rem; color: #64748b; font-style: italic;">No proximity reference locations recorded.</span>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

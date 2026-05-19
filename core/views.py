@@ -1,8 +1,122 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem
 from django.contrib.auth.models import User
+
+AMENITY_ICONS = {
+    # Core Details
+    'bedrooms': 'fa-bed',
+    'bathrooms': 'fa-bath',
+    'rent': 'fa-money-bill-wave',
+    'location': 'fa-location-dot',
+    'parking': 'fa-car',
+    'water': 'fa-droplet',
+    'power': 'fa-bolt',
+
+    # Luxury / Optional
+    'swimming pool': 'fa-water',
+    'gym': 'fa-dumbbell',
+    'sauna': 'fa-spa',
+    'rooftop': 'fa-building',
+    'smart home': 'fa-house-laptop',
+    'solar backup': 'fa-solar-panel',
+
+    # Indoor Comfort & Amenities
+    'sitting room': 'fa-couch',
+    'dining area': 'fa-utensils',
+    'kitchen': 'fa-kitchen-set',
+    'pantry': 'fa-box-archive',
+    'laundry area': 'fa-soap',
+    'balcony': 'fa-door-open',
+    'walk-in closet': 'fa-shirt',
+    'furnished / unfurnished': 'fa-chair',
+    'air conditioning': 'fa-wind',
+    'ceiling fans': 'fa-fan',
+    'water heater': 'fa-fire-burner',
+    'dstv connection': 'fa-tv',
+    'wi-fi / internet ready': 'fa-wifi',
+    'smart tv': 'fa-tv',
+    'built-in wardrobes': 'fa-door-closed',
+    'tiled floors': 'fa-border-all',
+    'gypsum ceiling': 'fa-window-maximize',
+    'modern finishing': 'fa-star',
+
+    # Utilities & Infrastructure
+    'power supply': 'fa-plug',
+    'backup generator': 'fa-bolt-lightning',
+    'solar power': 'fa-solar-panel',
+    'water supply': 'fa-faucet',
+    'water tank capacity': 'fa-bucket',
+    'borehole access': 'fa-arrow-down-long',
+    'garbage collection': 'fa-trash-can',
+    'sewage system': 'fa-water-ladder',
+    'internet connectivity': 'fa-wifi',
+    'cctv surveillance': 'fa-video',
+    'intercom system': 'fa-phone-volume',
+
+    # Security Features
+    'security guards': 'fa-user-shield',
+    'perimeter wall': 'fa-border-outer',
+    'electric fence': 'fa-bolt-lightning',
+    'cctv cameras': 'fa-video',
+    'biometric access': 'fa-fingerprint',
+    'gated community': 'fa-door-closed',
+    'smart locks': 'fa-key',
+    'security alarm system': 'fa-bell',
+    'fire extinguishers': 'fa-fire-extinguisher',
+    'emergency exit': 'fa-person-running',
+
+    # Outdoor Amenities
+    'private swimming pool': 'fa-swimming-pool',
+    'shared swimming pool': 'fa-water',
+    'dedicated parking spots': 'fa-square-p',
+    'visitor parking': 'fa-car-side',
+    'garden / compound': 'fa-seedling',
+    'children’s play area': 'fa-gamepad',
+    'rooftop terrace': 'fa-umbrella-beach',
+    'outdoor kitchen': 'fa-fire',
+    'bbq area': 'fa-fire-burner',
+    'paved compound': 'fa-road',
+    'car wash area': 'fa-spray-can-sparkles',
+
+    # Building Features
+    'elevator / lift': 'fa-arrows-up-down',
+    'staircase access': 'fa-stairs',
+    'wheelchair accessibility': 'fa-wheelchair',
+    'reception area': 'fa-bell-concierge',
+    'gym / fitness center': 'fa-dumbbell',
+    'sauna / steam room': 'fa-spa',
+    'conference room': 'fa-users-rectangle',
+    'common lounge': 'fa-couch',
+    'mini supermarket': 'fa-basket-shopping',
+    'pharmacy access': 'fa-prescription-bottle-medical',
+
+    # Proximities
+    'hospital': 'fa-hospital',
+    'clinic': 'fa-house-chimney-medical',
+    'pharmacy': 'fa-prescription-bottle-medical',
+    'medical center': 'fa-house-medical',
+    'market': 'fa-shop',
+    'supermarket': 'fa-cart-shopping',
+    'shopping mall': 'fa-bag-shopping',
+    'convenience store': 'fa-store',
+    'hardware shop': 'fa-hammer',
+    'main road': 'fa-road',
+    'taxi stage': 'fa-van-shuttle',
+    'bus terminal': 'fa-bus',
+    'boda stage': 'fa-motorcycle',
+    'airport': 'fa-plane',
+    'restaurant': 'fa-bowl-food',
+    'café': 'fa-mug-hot',
+    'bar / lounge': 'fa-martini-glass-citrus',
+    'cinema': 'fa-film',
+    'sports center': 'fa-circle-play',
+    'church': 'fa-church',
+    'mosque': 'fa-mosque',
+    'temple': 'fa-synagogue',
+}
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -147,6 +261,7 @@ def admin_dashboard(request):
             agent_name = request.POST.get('agent_name', '').strip()
             agent_email = request.POST.get('agent_email', '').strip()
             agent_phone = request.POST.get('agent_phone', '').strip()
+            agent_id_input = request.POST.get('agent_id', '').strip()
             agent_role_id = request.POST.get('agent_role_id')
             agent_image = request.FILES.get('agent_image')
             
@@ -155,19 +270,99 @@ def admin_dashboard(request):
                     role_obj = None
                     if agent_role_id:
                         role_obj = AgentRole.objects.get(id=agent_role_id)
+                    
+                    # Validate custom agent ID format (numeric) if provided
+                    if agent_id_input and not agent_id_input.isdigit():
+                        messages.error(request, "Custom Agent ID must be numeric only.")
+                        return redirect('/admin-dashboard/?tab=agents')
+                        
                     InspectionAgent.objects.create(
                         name=agent_name,
                         email=agent_email,
                         phone=agent_phone,
                         role=role_obj,
-                        image=agent_image
+                        image=agent_image,
+                        agent_id=agent_id_input if agent_id_input else None
                     )
                     messages.success(request, f"Inspection Agent '{agent_name}' has been registered successfully!")
                 except Exception as e:
-                    messages.error(request, f"Error registering agent: An agent with this email might already exist.")
+                    messages.error(request, f"Error registering agent: An agent with this email or ID might already exist.")
             else:
                 messages.error(request, "Name, Email, and Phone number are required to register an agent.")
             return redirect('/admin-dashboard/?tab=agents')
+
+        elif action == 'add_amenity':
+            name = request.POST.get('name', '').strip()
+            category = request.POST.get('category', '').strip()
+            layer = request.POST.get('layer', 'luxury')
+            if name and category:
+                try:
+                    PropertyAmenity.objects.get_or_create(name=name, defaults={'category': category, 'layer': layer})
+                    messages.success(request, f"Property Amenity '{name}' has been added successfully!")
+                except Exception as e:
+                    messages.error(request, "Error adding amenity.")
+            else:
+                messages.error(request, "Name and Category are required.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'toggle_amenity':
+            amenity_id = request.POST.get('amenity_id')
+            try:
+                amenity = PropertyAmenity.objects.get(id=amenity_id)
+                amenity.is_active = not amenity.is_active
+                amenity.save()
+                messages.success(request, f"Amenity '{amenity.name}' active status has been updated!")
+            except Exception as e:
+                messages.error(request, "Error toggling amenity.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'delete_amenity':
+            amenity_id = request.POST.get('amenity_id')
+            try:
+                amenity = PropertyAmenity.objects.get(id=amenity_id)
+                name = amenity.name
+                amenity.delete()
+                messages.success(request, f"Amenity '{name}' deleted successfully!")
+            except Exception as e:
+                messages.error(request, "Error deleting amenity.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'add_proximity_category':
+            name = request.POST.get('name', '').strip()
+            if name:
+                try:
+                    ProximityCategory.objects.get_or_create(name=name)
+                    messages.success(request, f"Proximity Category '{name}' created successfully!")
+                except Exception as e:
+                    messages.error(request, "Error creating proximity category.")
+            else:
+                messages.error(request, "Category name cannot be empty.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'add_proximity_item':
+            category_id = request.POST.get('category_id')
+            name = request.POST.get('name', '').strip()
+            if name and category_id:
+                try:
+                    category = ProximityCategory.objects.get(id=category_id)
+                    ProximityItem.objects.get_or_create(category=category, name=name)
+                    messages.success(request, f"Proximity service item '{name}' added successfully to category '{category.name}'!")
+                except Exception as e:
+                    messages.error(request, "Error adding proximity service item.")
+            else:
+                messages.error(request, "Name and Category are required.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'delete_proximity_item':
+            item_id = request.POST.get('item_id')
+            try:
+                item = ProximityItem.objects.get(id=item_id)
+                name = item.name
+                item.delete()
+                messages.success(request, f"Proximity item '{name}' deleted successfully!")
+            except Exception as e:
+                messages.error(request, "Error deleting proximity item.")
+            return redirect('/admin-dashboard/?tab=settings')
 
     # Fetch properties based on active tab
     if tab == 'properties':
@@ -183,6 +378,25 @@ def admin_dashboard(request):
     agent_roles = AgentRole.objects.all().order_by('name')
     inspections = Inspection.objects.all().select_related('property').prefetch_related('reports', 'reports__agent', 'reports__agent__role').order_by('-created_at')
     
+    amenities = list(PropertyAmenity.objects.all().order_by('layer', 'category', 'name'))
+    for a in amenities:
+        key = a.name.strip().lower()
+        a.icon_class = AMENITY_ICONS.get(key, 'fa-circle-check')
+
+    proximity_categories = list(ProximityCategory.objects.prefetch_related('items').all().order_by('name'))
+    for cat in proximity_categories:
+        for item in cat.items.all():
+            key = item.name.strip().lower()
+            item.icon_class = AMENITY_ICONS.get(key, 'fa-location-dot')
+
+    amenity_categories = [
+        {'id': 'indoor', 'name': 'Indoor Comfort', 'icon': 'fa-couch'},
+        {'id': 'utilities', 'name': 'Utilities & Infrastructure', 'icon': 'fa-plug'},
+        {'id': 'security', 'name': 'Security Features', 'icon': 'fa-shield-halved'},
+        {'id': 'outdoor', 'name': 'Outdoor & Paving', 'icon': 'fa-tree'},
+        {'id': 'building', 'name': 'Building & Gym', 'icon': 'fa-building'},
+    ]
+
     stats = {
         'total_properties': Property.objects.count(),
         'pending': Property.objects.filter(status='pending_verification').count(),
@@ -197,6 +411,9 @@ def admin_dashboard(request):
         'agents': agents,
         'agent_roles': agent_roles,
         'inspections': inspections,
+        'amenities': amenities,
+        'proximity_categories': proximity_categories,
+        'amenity_categories': amenity_categories,
         'current_tab': tab
     })
 
@@ -290,6 +507,7 @@ def add_property(request):
         # Create property listing
         price_per_month = request.POST.get('price_per_month')
         price_per_year = request.POST.get('price_per_year')
+        bedrooms_count = request.POST.get('bedrooms_count')
         
         property_obj = Property(
             owner=request.user,
@@ -298,6 +516,7 @@ def add_property(request):
             parent=parent,
             location=location,
             is_multi_unit=is_multi_unit,
+            bedrooms=int(bedrooms_count) if (bedrooms_count and bedrooms_count.isdigit()) else None,
             status='pending_verification',  # Marked as pending until admin manually verifies files and approves
             description="Luxury property submitted through the TRUST security protocol.",
             price_per_month=price_per_month if price_per_month else None,
@@ -328,11 +547,58 @@ def add_property(request):
             property_obj.security_agreement = request.FILES['security_agreement']
             
         property_obj.save()
+
+        # Handle selected amenities
+        amenity_ids = request.POST.getlist('selected_amenities')
+        if amenity_ids:
+            property_obj.amenities.set(amenity_ids)
+
+        # Handle selected proximity items and their custom distances
+        from core.models import ProximityItem, PropertyProximity
+        for key, value in request.POST.items():
+            if key.startswith('proximity_item_'):
+                item_id = key.split('_')[-1]
+                distance_val = request.POST.get(f'proximity_distance_{item_id}', '').strip()
+                if distance_val:
+                    try:
+                        item_obj = ProximityItem.objects.get(id=item_id)
+                        PropertyProximity.objects.create(
+                            property=property_obj,
+                            item=item_obj,
+                            distance_km=distance_val
+                        )
+                    except Exception:
+                        pass
+
         messages.success(request, f"Property '{title}' was submitted successfully and is now pending manual security vetting by the TRUST board!")
         return redirect('landlord_dashboard')
         
     buildings = Property.objects.filter(is_multi_unit=True)
-    return render(request, 'landlord/add_property.html', {'buildings': buildings})
+    amenities = list(PropertyAmenity.objects.all().order_by('layer', 'category', 'name'))
+    for a in amenities:
+        key = a.name.strip().lower()
+        a.icon_class = AMENITY_ICONS.get(key, 'fa-circle-check')
+        
+    proximity_categories = list(ProximityCategory.objects.prefetch_related('items').all().order_by('name'))
+    for cat in proximity_categories:
+        for item in cat.items.all():
+            key = item.name.strip().lower()
+            item.icon_class = AMENITY_ICONS.get(key, 'fa-location-dot')
+
+    amenity_categories = [
+        {'id': 'indoor', 'name': 'Indoor Comfort', 'icon': 'fa-couch'},
+        {'id': 'utilities', 'name': 'Utilities & Infrastructure', 'icon': 'fa-plug'},
+        {'id': 'security', 'name': 'Security Features', 'icon': 'fa-shield-halved'},
+        {'id': 'outdoor', 'name': 'Outdoor & Paving', 'icon': 'fa-tree'},
+        {'id': 'building', 'name': 'Building & Gym', 'icon': 'fa-building'},
+    ]
+
+    return render(request, 'landlord/add_property.html', {
+        'buildings': buildings,
+        'amenities': amenities,
+        'proximity_categories': proximity_categories,
+        'amenity_categories': amenity_categories,
+    })
 
 def approve_property(request, property_id):
     if not request.user.is_authenticated or not request.user.is_superuser:
@@ -393,10 +659,24 @@ def admin_property_detail(request, property_id):
         if inspection:
             reports = inspection.reports.all().select_related('agent', 'agent__role')
             
+        # Fetch dynamic amenities
+        property_amenities = list(property_obj.amenities.all())
+        for a in property_amenities:
+            key = a.name.strip().lower()
+            a.icon_class = AMENITY_ICONS.get(key, 'fa-circle-check')
+
+        # Fetch dynamic proximity items with custom distances
+        property_proximities = list(property_obj.proximities.all().select_related('item', 'item__category'))
+        for px in property_proximities:
+            key = px.item.name.strip().lower()
+            px.icon_class = AMENITY_ICONS.get(key, 'fa-location-dot')
+
         return render(request, 'admin/property_detail.html', {
             'property': property_obj,
             'inspection': inspection,
-            'reports': reports
+            'reports': reports,
+            'property_amenities': property_amenities,
+            'property_proximities': property_proximities,
         })
     except Property.DoesNotExist:
         messages.error(request, 'Property not found.')
@@ -472,18 +752,35 @@ def agent_report_auth(request):
         phone = request.POST.get('phone', '').strip()
         email = request.POST.get('email', '').strip()
         
-        agent = InspectionAgent.objects.filter(
-            agent_id__iexact=agent_id,
-            phone=phone,
-            email__iexact=email
-        ).select_related('role').first()
+        agent = InspectionAgent.objects.filter(agent_id__iexact=agent_id).select_related('role').first()
         
         if agent:
-            request.session['verified_agent_id'] = agent.id
-            messages.success(request, f"Welcome back, Inspector {agent.name}! Credentials successfully verified.")
-            return redirect('agent_submit_report')
+            # Flexible case-insensitive email match
+            email_matches = agent.email.strip().lower() == email.lower()
+            
+            # Flexible phone matching that ignores spaces, country code formats, etc.
+            def clean_phone(p_str):
+                return "".join(c for c in p_str if c.isdigit())
+            
+            input_phone_clean = clean_phone(phone)
+            db_phone_clean = clean_phone(agent.phone)
+            
+            phone_matches = False
+            if input_phone_clean and db_phone_clean:
+                if input_phone_clean == db_phone_clean:
+                    phone_matches = True
+                elif input_phone_clean.endswith(db_phone_clean) or db_phone_clean.endswith(input_phone_clean):
+                    if len(input_phone_clean) >= 9 and len(db_phone_clean) >= 9:
+                        phone_matches = input_phone_clean[-9:] == db_phone_clean[-9:]
+            
+            if email_matches and phone_matches:
+                request.session['verified_agent_id'] = agent.id
+                messages.success(request, f"Welcome back, Inspector {agent.name}! Credentials successfully verified.")
+                return redirect('agent_submit_report')
+            else:
+                messages.error(request, "Access Denied: Invalid Agent credentials. Please verify your ID, Phone, and Email address.")
         else:
-            messages.error(request, "Access Denied: Invalid Agent credentials. Please verify your ID, Phone, and Email address.")
+            messages.error(request, "Access Denied: Invalid Agent ID. Please check the ID provided by the TRUST administrator.")
             
     return render(request, 'agent/auth_report.html')
 

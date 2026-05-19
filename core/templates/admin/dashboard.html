@@ -679,7 +679,12 @@
 
                 <div>
                     <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Phone Number</label>
-                    <input type="text" name="agent_phone" required placeholder="e.g. +256 701 123456" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                    <input type="text" name="agent_phone" required placeholder="e.g. 0780520511" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Agent ID (Optional - Numeric Only)</label>
+                    <input type="text" name="agent_id" placeholder="e.g. 12345 (Leave blank to auto-generate)" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
                 </div>
 
                 <div>
@@ -848,6 +853,257 @@
                     {% endfor %}
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+</div>
+{% elif current_tab == 'settings' %}
+<div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem;">
+    <!-- LEFT PANEL: Property Amenities & Layers Manager -->
+    <div class="col-lg-7" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-hotel" style="color: var(--color-gold);"></i> TRUST Property Amenities & Detail Layers
+                </h3>
+                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Manage Core, Verification, and Luxury/Optional features across the TRUST property registry</p>
+            </div>
+            
+            <div style="padding: 2rem; display: flex; flex-direction: column; gap: 2rem;">
+                <!-- 3 Primary Scaling Layers -->
+                <div>
+                    <h4 style="margin: 0 0 1rem 0; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-emerald-dark); font-weight: 700; display: flex; align-items: center; gap: 0.35rem;">
+                        <i class="fa-solid fa-layer-group"></i> Primary Detail Layers
+                    </h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+                        <!-- Core Details -->
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-top: 3px solid var(--color-emerald);">
+                            <h5 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #1e293b;">1. Core Details</h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                                {% for a in amenities %}
+                                    {% if a.layer == 'core' %}
+                                    <span style="font-size: 0.75rem; background: white; border: 1px solid #cbd5e1; color: #334155; padding: 0.2rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                        <i class="fa-solid {{ a.icon_class }}" style="color: var(--color-emerald); font-size: 0.75rem;"></i>
+                                        {{ a.name }}
+                                        <form action="{% url 'admin_dashboard' %}" method="POST" style="margin: 0; display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_amenity">
+                                            <input type="hidden" name="amenity_id" value="{{ a.id }}">
+                                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i class="fa-solid fa-xmark"></i></button>
+                                        </form>
+                                    </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Luxury Amenities -->
+                        <div style="background: #fdfefe; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-top: 3px solid #0284c7;">
+                            <h5 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #0284c7;">2. Luxury Extras</h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                                {% for a in amenities %}
+                                    {% if a.layer == 'luxury' %}
+                                    <span style="font-size: 0.75rem; background: white; border: 1px solid #cbd5e1; color: #334155; padding: 0.2rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                        <i class="fa-solid {{ a.icon_class }}" style="color: #0284c7; font-size: 0.75rem;"></i>
+                                        {{ a.name }}
+                                        <form action="{% url 'admin_dashboard' %}" method="POST" style="margin: 0; display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_amenity">
+                                            <input type="hidden" name="amenity_id" value="{{ a.id }}">
+                                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i class="fa-solid fa-xmark"></i></button>
+                                        </form>
+                                    </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 0;">
+
+                <!-- Detailed Categories list -->
+                <div>
+                    <h4 style="margin: 0 0 1.25rem 0; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-emerald-dark); font-weight: 700;">
+                        <i class="fa-solid fa-sliders"></i> Features By Discipline Categories
+                    </h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        {% for cat in amenity_categories %}
+                        <div style="border: 1px solid #f1f5f9; border-radius: 8px; padding: 1rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.015);">
+                            <h5 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; display: flex; align-items: center; justify-content: space-between;">
+                                <span>
+                                    <i class="fa-solid {{ cat.icon }}"></i> {{ cat.name }}
+                                </span>
+                            </h5>
+                            
+                             <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                                {% for a in amenities %}
+                                    {% if a.layer == cat.id %}
+                                    <span style="font-size: 0.75rem; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; padding: 0.2rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                        <i class="fa-solid {{ a.icon_class }}" style="color: #64748b; font-size: 0.75rem;"></i>
+                                        {{ a.name }}
+                                        <form action="{% url 'admin_dashboard' %}" method="POST" style="margin: 0; display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete_amenity">
+                                            <input type="hidden" name="amenity_id" value="{{ a.id }}">
+                                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i class="fa-solid fa-xmark"></i></button>
+                                        </form>
+                                    </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FORM: Register New Amenity Option -->
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h3 style="margin: 0; font-size: 1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-square-plus"></i> Add Custom Amenity to Registry
+                </h3>
+            </div>
+            
+            <form method="POST" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_amenity">
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Amenity / Detail Name</label>
+                        <input type="text" name="name" required placeholder="e.g. Fiber Internet" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Assigned Layer</label>
+                        <select name="layer" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; background: white; font-size: 0.85rem;">
+                            <option value="core">Core Details (Layer 1)</option>
+                            <option value="luxury">Luxury Amenities (Layer 2)</option>
+                            <option value="indoor">Indoor Amenities</option>
+                            <option value="utilities">Utilities & Infrastructure</option>
+                            <option value="security">Security Features</option>
+                            <option value="outdoor">Outdoor Amenities</option>
+                            <option value="building">Building Features</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Category Tag</label>
+                    <input type="text" name="category" required placeholder="e.g. Technology" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.75rem; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-save"></i> Save Amenity to System
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Proximity to Services Configuration -->
+    <div class="col-lg-5" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-map-pin" style="color: var(--color-gold);"></i> Proximity to Services Reference
+                </h3>
+                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Manage proximity listings for Ugandan urban regions (Kampala, Entebbe, Wakiso)</p>
+            </div>
+            
+            <div style="padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                {% for category in proximity_categories %}
+                <div style="border-bottom: 1px dashed #f1f5f9; padding-bottom: 1.25rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; font-size: 0.85rem; font-weight: 700; color: var(--color-emerald-dark); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
+                        <span>
+                            {% if category.name == 'Healthcare' %}<i class="fa-solid fa-user-doctor"></i>
+                            {% elif category.name == 'Shopping & Daily Needs' %}<i class="fa-solid fa-cart-shopping"></i>
+                            {% elif category.name == 'Education' %}<i class="fa-solid fa-graduation-cap"></i>
+                            {% elif category.name == 'Transportation' %}<i class="fa-solid fa-bus"></i>
+                            {% elif category.name == 'Recreation & Lifestyle' %}<i class="fa-solid fa-dumbbell"></i>
+                            {% elif category.name == 'Government & Security' %}<i class="fa-solid fa-building-shield"></i>
+                            {% elif category.name == 'Religious Centers' %}<i class="fa-solid fa-church"></i>
+                            {% elif category.name == 'Financial Services' %}<i class="fa-solid fa-wallet"></i>
+                            {% elif category.name == 'Business & Work' %}<i class="fa-solid fa-briefcase"></i>
+                            {% endif %}
+                            {{ category.name }}
+                        </span>
+                    </h4>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                        {% for item in category.items.all %}
+                        <span style="font-size: 0.75rem; background: #ecfdf5; border: 1px solid rgba(16, 61, 40, 0.1); color: var(--color-emerald-dark); padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <i class="fa-solid {{ item.icon_class }}" style="color: var(--color-emerald); font-size: 0.75rem;"></i>
+                            {{ item.name }}
+                            <form action="{% url 'admin_dashboard' %}" method="POST" style="margin: 0; display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_proximity_item">
+                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i class="fa-solid fa-xmark"></i></button>
+                            </form>
+                        </span>
+                        {% empty %}
+                        <span style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No specific service tags recorded.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- FORM 1: Add Proximity Category -->
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h4 style="margin: 0; font-size: 0.9rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-circle-plus"></i> Add Proximity Category
+                </h4>
+            </div>
+            <form method="POST" style="padding: 1.25rem; display: flex; gap: 0.75rem; margin: 0; align-items: flex-end;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_proximity_category">
+                <div style="flex: 1;">
+                    <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">Category Name</label>
+                    <input type="text" name="name" required placeholder="e.g. Nature & Parks" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.8rem;">
+                </div>
+                <button type="submit" class="btn" style="padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.15); cursor: pointer; height: 35px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                    <i class="fa-solid fa-plus" style="margin-right: 0.25rem;"></i> Save
+                </button>
+            </form>
+        </div>
+
+        <!-- FORM 2: Add Proximity Service Item -->
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h4 style="margin: 0; font-size: 0.9rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-circle-plus"></i> Add Proximity Service Name
+                </h4>
+            </div>
+            <form method="POST" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_proximity_item">
+                
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">Select Proximity Category</label>
+                    <select name="category_id" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; background: white; font-size: 0.8rem;">
+                        {% for category in proximity_categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">Service / Facility Name</label>
+                    <input type="text" name="name" required placeholder="e.g. Pharmacy, Boda Stage" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.8rem;">
+                </div>
+                
+                <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.6rem; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.35rem; font-size: 0.8rem;">
+                    <i class="fa-solid fa-save"></i> Add Facility Item
+                </button>
+            </form>
         </div>
     </div>
 </div>

@@ -29,6 +29,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('register/', views.register_view, name='register'),
     path('landlord/', views.landlord_dashboard, name='landlord_dashboard'),
+    path('landlord/dashboard/', views.landlord_dashboard),
     path('landlord/property/add/', views.add_property, name='add_property'),
     path('search/', TemplateView.as_view(template_name="tenant/search.html"), name='search'),
     path('property/1/', TemplateView.as_view(template_name="tenant/property_detail.html"), name='property_detail'),

@@ -41,6 +41,7 @@ class Property(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='units')
     
     is_multi_unit = models.BooleanField(default=False)
+    bedrooms = models.IntegerField(null=True, blank=True)
     
     # Images (Hero + 3 Gallery supporting photos)
     hero_image = models.FileField(upload_to='properties/hero/', null=True, blank=True)
@@ -55,6 +56,7 @@ class Property(models.Model):
     tenancy_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
     security_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
     
+    amenities = models.ManyToManyField('PropertyAmenity', blank=True, related_name='properties')
     property_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -72,9 +74,9 @@ class Property(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.property_id:
-            import random, string
+            import random
             while True:
-                code = "PROP-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                code = str(random.randint(100000, 999999))
                 if not Property.objects.filter(property_id=code).exists():
                     self.property_id = code
                     break
@@ -119,9 +121,9 @@ class InspectionAgent(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.agent_id:
-            import random, string
+            import random
             while True:
-                code = "AGNT-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                code = str(random.randint(100000, 999999))
                 if not InspectionAgent.objects.filter(agent_id=code).exists():
                     self.agent_id = code
                     break
@@ -154,3 +156,52 @@ class InspectionReport(models.Model):
 
     def __str__(self):
         return f"Report by {self.agent.name if self.agent else 'Unknown'} for {self.inspection.property.title}"
+
+class PropertyAmenity(models.Model):
+    LAYER_CHOICES = [
+        ('core', 'Core Details'),
+        ('verification', 'Verification Details'),
+        ('luxury', 'Luxury/Optional Amenities'),
+        ('indoor', 'Indoor Amenities'),
+        ('utilities', 'Utilities & Infrastructure'),
+        ('security', 'Security Features'),
+        ('outdoor', 'Outdoor Amenities'),
+        ('building', 'Building Features'),
+        ('location', 'Location & Convenience'),
+        ('rental', 'Rental & Management Features'),
+        ('commercial', 'Land & Commercial Property Features'),
+    ]
+    name = models.CharField(max_length=100, unique=True)
+    category = models.CharField(max_length=100) # e.g. "Indoor", "Utilities", "Security", etc.
+    layer = models.CharField(max_length=50, choices=LAYER_CHOICES, default='luxury')
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.get_layer_display()})"
+
+class ProximityCategory(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+class ProximityItem(models.Model):
+    category = models.ForeignKey(ProximityCategory, on_delete=models.CASCADE, related_name='items')
+    name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} in {self.category.name}"
+
+class PropertyProximity(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='proximities')
+    item = models.ForeignKey(ProximityItem, on_delete=models.CASCADE)
+    distance_km = models.DecimalField(max_digits=5, decimal_places=2) # e.g. 1.25 KM
+    
+    class Meta:
+        unique_together = ('property', 'item')
+        
+    def __str__(self):
+        return f"{self.item.name} is {self.distance_km} KM from {self.property.title}"
