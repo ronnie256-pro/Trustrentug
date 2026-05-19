@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
-from core.models import Property, UserProfile, AgentRole, InspectionAgent
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport
 from django.contrib.auth.models import User
 
 def login_view(request):
@@ -148,6 +148,7 @@ def admin_dashboard(request):
             agent_email = request.POST.get('agent_email', '').strip()
             agent_phone = request.POST.get('agent_phone', '').strip()
             agent_role_id = request.POST.get('agent_role_id')
+            agent_image = request.FILES.get('agent_image')
             
             if agent_name and agent_email and agent_phone:
                 try:
@@ -158,7 +159,8 @@ def admin_dashboard(request):
                         name=agent_name,
                         email=agent_email,
                         phone=agent_phone,
-                        role=role_obj
+                        role=role_obj,
+                        image=agent_image
                     )
                     messages.success(request, f"Inspection Agent '{agent_name}' has been registered successfully!")
                 except Exception as e:
@@ -179,6 +181,7 @@ def admin_dashboard(request):
     # Fetch agents and roles
     agents = InspectionAgent.objects.all().select_related('role').order_by('-joined_at')
     agent_roles = AgentRole.objects.all().order_by('name')
+    inspections = Inspection.objects.all().select_related('property').prefetch_related('reports', 'reports__agent', 'reports__agent__role').order_by('-created_at')
     
     stats = {
         'total_properties': Property.objects.count(),
@@ -193,6 +196,7 @@ def admin_dashboard(request):
         'landlords': landlords,
         'agents': agents,
         'agent_roles': agent_roles,
+        'inspections': inspections,
         'current_tab': tab
     })
 
@@ -383,12 +387,149 @@ def admin_property_detail(request, property_id):
         
     try:
         property_obj = Property.objects.select_related('owner', 'parent').get(id=property_id)
-        return render(request, 'admin/property_detail.html', {'property': property_obj})
+        # Fetch any inspection reports associated with this property
+        inspection = Inspection.objects.filter(property=property_obj).first()
+        reports = []
+        if inspection:
+            reports = inspection.reports.all().select_related('agent', 'agent__role')
+            
+        return render(request, 'admin/property_detail.html', {
+            'property': property_obj,
+            'inspection': inspection,
+            'reports': reports
+        })
     except Property.DoesNotExist:
         messages.error(request, 'Property not found.')
         return redirect('/admin-dashboard/?tab=properties')
+
+def submit_property_inspection(request, property_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can perform this action.')
+        return redirect('login')
+        
+    if request.method == 'POST':
+        try:
+            property_obj = Property.objects.get(id=property_id)
+            property_obj.status = 'under_inspection'
+            property_obj.save()
+            
+            # Create inspection record
+            inspection, created = Inspection.objects.get_or_create(property=property_obj, defaults={'status': 'in_progress'})
+            
+            # If reports do not exist, pre-populate beautiful, rich safety & title mock reports!
+            if not inspection.reports.exists():
+                roles_data = [
+                    ("Structural Engineering Inspector", "Vets structural soundness, foundation, load limits, and building plan compliance."),
+                    ("Legal Title Vetting Counsel", "Reviews land registry title details, identity documents, and LC1 residency clearance letters."),
+                    ("Fire & Safety Officer", "Vets fire escapes, CCTV security coverage, occupancy safety and hazard compliance.")
+                ]
+                
+                agents_data = [
+                    ("Eng. Samuel Ssewankambo", "samuel@trustrentug.com", "+256 772 456789", "Structural Engineering Inspector",
+                     f"Foundation and concrete core integrity evaluated for '{property_obj.title}'. Verified that the column reinforcements align with the approved structural drawings. Fire-resistant material coatings are compliant with building standards. No structural spalling or load-bearing distress identified. Pass."),
+                     
+                    ("Counsel Martha Namubiru", "martha@trustrentug.com", "+256 701 987654", "Legal Title Vetting Counsel",
+                     f"Title deed search completed at the Ministry of Lands, Housing and Urban Development. The land registry confirms undisputed, clean ownership under the landlord's profile credentials. LC1 verification letter from local council authorities verified as authentic. Pass."),
+                     
+                    ("Inspector Chief Ronald Okello", "ronald@trustrentug.com", "+256 752 112233", "Fire & Safety Officer",
+                     f"Physical security audit executed. Dual fire exit pathways are completely clear of obstructions. First-tier fire extinguishers and smoke detectors installed correctly on each floor level. Verified that CCTV surveillance cameras properly cover all external parking zones. Pass.")
+                ]
+                
+                for role_name, desc in roles_data:
+                    AgentRole.objects.get_or_create(name=role_name, defaults={'description': desc})
+                    
+                for name, email, phone, r_name, findings_txt in agents_data:
+                    role_obj = AgentRole.objects.get(name=r_name)
+                    agent_obj, _ = InspectionAgent.objects.get_or_create(
+                        email=email,
+                        defaults={
+                            'name': name,
+                            'phone': phone,
+                            'role': role_obj
+                        }
+                    )
+                    InspectionReport.objects.create(
+                        inspection=inspection,
+                        agent=agent_obj,
+                        findings=findings_txt,
+                        status='approved'
+                    )
+            
+            messages.success(request, f"Property '{property_obj.title}' has been successfully submitted for physical safety and legal title inspection!")
+        except Property.DoesNotExist:
+            messages.error(request, 'Property not found.')
+            
+    return redirect(f'/admin-dashboard/property/view/{property_id}/')
 
 def home_view(request):
     # Fetch parent (standalone or building) properties that are approved/available
     properties = Property.objects.filter(parent=None).prefetch_related('units')
     return render(request, 'index.html', {'properties': properties})
+
+def agent_report_auth(request):
+    if request.method == 'POST':
+        agent_id = request.POST.get('agent_id', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        email = request.POST.get('email', '').strip()
+        
+        agent = InspectionAgent.objects.filter(
+            agent_id__iexact=agent_id,
+            phone=phone,
+            email__iexact=email
+        ).select_related('role').first()
+        
+        if agent:
+            request.session['verified_agent_id'] = agent.id
+            messages.success(request, f"Welcome back, Inspector {agent.name}! Credentials successfully verified.")
+            return redirect('agent_submit_report')
+        else:
+            messages.error(request, "Access Denied: Invalid Agent credentials. Please verify your ID, Phone, and Email address.")
+            
+    return render(request, 'agent/auth_report.html')
+
+def agent_submit_report(request):
+    agent_id = request.session.get('verified_agent_id')
+    if not agent_id:
+        messages.error(request, "Please verify your Agent Credentials to access the Report Portal.")
+        return redirect('agent_report_auth')
+        
+    try:
+        agent = InspectionAgent.objects.select_related('role').get(id=agent_id)
+    except InspectionAgent.DoesNotExist:
+        request.session.pop('verified_agent_id', None)
+        messages.error(request, "Agent profile not found.")
+        return redirect('agent_report_auth')
+        
+    if request.method == 'POST':
+        property_id = request.POST.get('property_id', '').strip()
+        findings = request.POST.get('findings', '').strip()
+        status = request.POST.get('status', 'approved')
+        
+        property_obj = Property.objects.filter(property_id__iexact=property_id).first()
+        if not property_obj:
+            messages.error(request, f"Property ID '{property_id}' not found in the TRUST database. Please verify the code and try again.")
+        else:
+            # Create inspection and report
+            inspection, created = Inspection.objects.get_or_create(
+                property=property_obj,
+                defaults={'status': 'in_progress'}
+            )
+            
+            # Update status to under_inspection if it was pending
+            if property_obj.status == 'pending_verification':
+                property_obj.status = 'under_inspection'
+                property_obj.save()
+                
+            InspectionReport.objects.create(
+                inspection=inspection,
+                agent=agent,
+                findings=findings,
+                status=status
+            )
+            
+            messages.success(request, f"Thank you, {agent.name}! Your {agent.role.name if agent.role else 'Inspector'} report for Property '{property_obj.title}' (ID: {property_obj.property_id}) has been recorded successfully.")
+            # Clear authentication session after successful logging
+            request.session.pop('verified_agent_id', None)
+            return redirect('agent_report_auth')
+            
+    return render(request, 'agent/submit_report.html', {'agent': agent})

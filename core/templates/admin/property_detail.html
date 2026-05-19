@@ -265,6 +265,11 @@
             <div class="info-section">
                 <h4><i class="fa-solid fa-circle-info"></i> Listing Specifications</h4>
                 
+                <div class="info-row" style="background: rgba(16, 61, 40, 0.03); padding: 0.75rem 0.5rem; border-radius: 4px; border: 1px dashed rgba(16, 61, 40, 0.2); margin-bottom: 0.5rem; justify-content: space-between; align-items: center;">
+                    <span class="info-label" style="color: var(--color-emerald-dark); font-weight: 700;">Unique Property ID</span>
+                    <span class="info-value"><code style="font-family: monospace; font-size: 1rem; color: var(--color-emerald-dark); font-weight: 700; background: white; padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1);">{{ property.property_id }}</code></span>
+                </div>
+
                 <div class="info-row">
                     <span class="info-label">Category</span>
                     <span class="info-value">{{ property.get_category_display }}</span>
@@ -490,16 +495,75 @@
             </div>
         </div>
 
+        <!-- Inspection Reports Section -->
+        {% if inspection %}
+        <div style="padding: 2rem; border-top: 1px solid #e2e8f0; background: #fffdf5;">
+            <h4 style="margin: 0 0 1rem 0; color: var(--color-emerald-dark); font-size: 1.1rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-clipboard-check"></i> Captured Vetting & Security Reports
+            </h4>
+            
+            <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem;">
+                {% for r in reports %}
+                <div style="background: white; border-radius: 8px; border: 1px solid rgba(16, 61, 40, 0.1); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            {% if r.agent.image %}
+                            <img src="{{ r.agent.image.url }}" alt="{{ r.agent.name }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(16, 61, 40, 0.15);">
+                            {% else %}
+                            <div style="width: 36px; height: 36px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                                {{ r.agent.name|slice:":2"|upper }}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ r.agent.name }}</div>
+                                <div style="font-size: 0.75rem; color: var(--color-gold); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">{{ r.agent.role.name }}</div>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.75rem; font-weight: 600; background: #ecfdf5; color: #059669; padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
+                            <i class="fa-solid fa-circle-check"></i> {{ r.get_status_display }}
+                        </span>
+                    </div>
+                    <div style="font-size: 0.9rem; color: #475569; line-height: 1.5; text-align: justify; font-style: italic;">
+                        "{{ r.findings }}"
+                    </div>
+                    <div style="font-size: 0.75rem; color: #94a3b8; text-align: right;">
+                        Report Submitted: {{ r.created_at|date:"M d, Y H:i" }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Action Bar at Bottom -->
         <div class="action-bar">
             <div>
                 {% if property.status == 'pending_verification' %}
-                <form action="{% url 'approve_property' property.id %}" method="POST" style="margin: 0;">
+                <form action="{% url 'approve_property' property.id %}" method="POST" style="margin: 0; display: inline-block; margin-right: 1rem;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-gold" style="padding: 0.75rem 1.75rem; font-size: 0.95rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; gap: 0.5rem; color: white;">
                         <i class="fa-solid fa-shield-check"></i> Approve Property & Make Live
                     </button>
                 </form>
+                
+                <form action="{% url 'submit_property_inspection' property.id %}" method="POST" style="margin: 0; display: inline-block;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn" style="padding: 0.75rem 1.75rem; font-size: 0.95rem; border-radius: 8px; font-weight: 600; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.2); cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-clipboard-check"></i> Submit for Physical Inspection
+                    </button>
+                </form>
+                {% elif property.status == 'under_inspection' %}
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 0.95rem; background: rgba(203, 163, 88, 0.1); color: var(--color-gold); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <i class="fa-solid fa-magnifying-glass-location"></i> Submitted for Inspection
+                    </span>
+                    <form action="{% url 'approve_property' property.id %}" method="POST" style="margin: 0; display: inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-gold" style="padding: 0.75rem 1.75rem; font-size: 0.95rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; gap: 0.5rem; color: white;">
+                            <i class="fa-solid fa-shield-check"></i> Vetting Passed - Approve Now
+                        </button>
+                    </form>
+                </div>
                 {% else %}
                 <span style="color: #059669; font-weight: 700; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.5rem;">
                     <i class="fa-solid fa-circle-check"></i> Fully Approved & Active on TRUST Portal

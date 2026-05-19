@@ -25,6 +25,7 @@ class Property(models.Model):
         ('rented', 'Rented'),
         ('under_maintenance', 'Under Maintenance'),
         ('pending_verification', 'Pending Verification'),
+        ('under_inspection', 'Under Inspection'),
     ]
 
     title = models.CharField(max_length=255)
@@ -54,6 +55,7 @@ class Property(models.Model):
     tenancy_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
     security_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
     
+    property_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -67,6 +69,16 @@ class Property(models.Model):
         if self.parent:
             return f"{self.title} (Unit in {self.parent.title})"
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.property_id:
+            import random, string
+            while True:
+                code = "PROP-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                if not Property.objects.filter(property_id=code).exists():
+                    self.property_id = code
+                    break
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Properties"
@@ -98,7 +110,47 @@ class InspectionAgent(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=50)
     role = models.ForeignKey(AgentRole, on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
+    image = models.FileField(upload_to='agents/', null=True, blank=True)
+    agent_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     joined_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.agent_id:
+            import random, string
+            while True:
+                code = "AGNT-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+                if not InspectionAgent.objects.filter(agent_id=code).exists():
+                    self.agent_id = code
+                    break
+        super().save(*args, **kwargs)
+
+class Inspection(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending Inspection'),
+        ('in_progress', 'Inspection in Progress'),
+        ('completed', 'Inspection Completed'),
+    ]
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='inspections')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='in_progress')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Inspection for {self.property.title} ({self.get_status_display()})"
+
+class InspectionReport(models.Model):
+    STATUS_CHOICES = [
+        ('approved', 'Approved / Safe'),
+        ('flagged', 'Flagged / Minor Concerns'),
+        ('rejected', 'Rejected / Unsafe'),
+    ]
+    inspection = models.ForeignKey(Inspection, on_delete=models.CASCADE, related_name='reports')
+    agent = models.ForeignKey(InspectionAgent, on_delete=models.SET_NULL, null=True, blank=True, related_name='reports')
+    findings = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='approved')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report by {self.agent.name if self.agent else 'Unknown'} for {self.inspection.property.title}"

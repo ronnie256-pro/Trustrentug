@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Agent Vetting Portal | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-bg {
+        background: linear-gradient(135deg, rgba(16, 61, 40, 0.9), rgba(16, 36, 61, 0.95)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        color: white;
+        text-align: center;
+    }
+
+    .form-group {
+        text-align: left;
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--color-gold);
+        box-shadow: 0 0 10px rgba(203, 163, 88, 0.3);
+    }
+
+    .btn-portal {
+        width: 100%;
+        padding: 0.85rem;
+        background: linear-gradient(135deg, var(--color-gold), #b38b42);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .btn-portal:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(203, 163, 88, 0.4);
+    }
+
+    .btn-portal:active {
+        transform: translateY(0);
+    }
+
+    .portal-logo {
+        font-size: 3rem;
+        color: var(--color-gold);
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-bg">
+    <div class="glass-card">
+        <div class="portal-logo">
+            <i class="fa-solid fa-user-shield animate__animated animate__pulse animate__infinite"></i>
+        </div>
+        <h2 style="font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 0.5rem;">Agent Vetting Portal</h2>
+        <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 2rem;">
+            Authenticate using your secure credentials to submit a physical safety and occupancy report.
+        </p>
+
+        <!-- Message Alerts -->
+        {% if messages %}
+        <div style="margin-bottom: 1.5rem;">
+            {% for message in messages %}
+            <div style="padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; text-align: left; {% if message.tags == 'error' %}background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5;{% else %}background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #a7f3d0;{% endif %}">
+                <i class="{% if message.tags == 'error' %}fa-solid fa-circle-exclamation{% else %}fa-solid fa-circle-check{% endif %}" style="margin-right: 0.35rem;"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'agent_report_auth' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="agent_id">Unique Agent ID</label>
+                <input type="text" id="agent_id" name="agent_id" required placeholder="e.g. AGNT-A2F8D4" class="form-control" style="font-family: monospace;">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="name@trustrentug.com" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Registered Phone Number</label>
+                <input type="text" id="phone" name="phone" required placeholder="e.g. +256 701 123456" class="form-control">
+            </div>
+
+            <button type="submit" class="btn-portal">
+                <i class="fa-solid fa-key"></i> Authenticate & Enter Portal
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
