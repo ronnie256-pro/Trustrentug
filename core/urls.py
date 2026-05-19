@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
+from django.conf import settings
+from django.conf.urls.static import static
 from core import views
 
 urlpatterns = [
@@ -34,4 +36,12 @@ urlpatterns = [
     path('about-us/', TemplateView.as_view(template_name="about.html"), name='about_us'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-dashboard/landlord/approve/<int:user_id>/', views.approve_landlord, name='approve_landlord'),
+    path('admin-dashboard/property/approve/<int:property_id>/', views.approve_property, name='approve_property'),
+    path('admin-dashboard/property/view/<int:property_id>/', views.admin_property_detail, name='admin_property_detail'),
+    path('property/delete/<int:property_id>/', views.delete_property, name='delete_property'),
+    path('admin-dashboard/agent/delete/<int:agent_id>/', views.delete_agent, name='delete_agent'),
+    path('admin-dashboard/agent-role/delete/<int:role_id>/', views.delete_agent_role, name='delete_agent_role'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

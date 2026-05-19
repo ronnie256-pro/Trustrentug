@@ -471,5 +471,274 @@
         </table>
     </div>
 </div>
+{% elif current_tab == 'properties' %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem;">Properties Vetting Directory</h2>
+        <p style="color: #64748b; margin-top: 0.25rem;">Review uploaded physical vetting documents, view property media, and list verified properties.</p>
+    </div>
+    <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
+        <i class="fa-solid fa-house-shield" style="margin-right: 0.5rem;"></i> {{ properties.count }} Total Submission{{ properties.count|pluralize }}
+    </div>
+</div>
+
+<!-- Properties Table Card -->
+<div class="table-card"
+    style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
+    <div class="table-header"
+        style="padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin:0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-dark);">
+            Physical Security Listing Approvals</h3>
+        <span style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-circle"
+                style="color: #cbd5e1; font-size: 0.5rem; margin-right: 0.25rem;"></i> Vetting Required</span>
+    </div>
+    <div style="overflow-x: auto;">
+        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                        Property Owner</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                        Property Name</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                        Location</th>
+                    <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 150px;">
+                        View</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for property in properties %}
+                <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'"
+                    onmouseout="this.style.backgroundColor='transparent'">
+                    <!-- 1. Property Owner -->
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">
+                            {{ property.owner.first_name }} {{ property.owner.last_name }}
+                        </div>
+                        <small style="color: #64748b; display: block; margin-top: 0.15rem;">
+                            @{{ property.owner.username }}
+                        </small>
+                        <small style="color: #94a3b8; display: block; margin-top: 0.15rem;">
+                            {{ property.owner.email }}
+                        </small>
+                    </td>
+
+                    <!-- 2. Property Name -->
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ property.title }}</div>
+                        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203,163,88,0.1); color: var(--color-gold); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; margin-top: 0.25rem; display: inline-block;">
+                            {{ property.get_category_display }}
+                        </span>
+                        
+                        {% if property.status == 'available' %}
+                        <span style="font-size: 0.75rem; background: #ecfdf5; color: #059669; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.25rem; display: inline-block;">
+                            Approved
+                        </span>
+                        {% else %}
+                        <span style="font-size: 0.75rem; background: #fffbeb; color: #d97706; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.25rem; display: inline-block;">
+                            Pending Vetting
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 3. Location -->
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 500;">
+                        <i class="fa-solid fa-location-dot" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ property.location }}
+                    </td>
+
+                    <!-- 4. View details button -->
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                        <a href="{% url 'admin_property_detail' property.id %}" class="btn btn-gold" style="padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); border: none; font-weight: 600; text-decoration: none; color: white;">
+                            <i class="fa-solid fa-eye"></i> View details
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
+                        <div style="font-size: 2.25rem; margin-bottom: 1.25rem; color: #cbd5e1;"><i class="fa-solid fa-house-laptop"></i></div>
+                        <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No properties submitted for verification yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% elif current_tab == 'agents' %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <div>
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; margin: 0;">Inspection Agents Directory</h2>
+        <p style="color: #64748b; margin-top: 0.25rem; margin-bottom: 0;">Add, manage, and assign security vetting roles to trusted field inspectors.</p>
+    </div>
+    <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <i class="fa-solid fa-user-shield"></i> {{ agents|length }} Registered Agents
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 1.5rem; align-items: start;">
+    <!-- LEFT COLUMN: AGENTS DIRECTORY TABLE -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+        <div style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-users"></i> Registered Inspection Agents
+            </h3>
+        </div>
+        
+        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Agent Name</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Assigned Role</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Contact Info</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Date Joined</th>
+                    <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 100px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for agent in agents %}
+                <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem; display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 32px; height: 32px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;">
+                                {{ agent.name|slice:":2"|upper }}
+                            </div>
+                            {{ agent.name }}
+                        </div>
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        {% if agent.role %}
+                        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203, 163, 88, 0.1); color: var(--color-gold); padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 600;">
+                            {{ agent.role.name }}
+                        </span>
+                        {% else %}
+                        <span style="font-size: 0.75rem; background: #f1f5f9; color: #94a3b8; padding: 0.25rem 0.6rem; border-radius: 4px; font-style: italic;">
+                            No Role Assigned
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: #334155;">
+                        <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+                            <span><i class="fa-regular fa-envelope" style="color: #94a3b8; margin-right: 0.35rem;"></i> {{ agent.email }}</span>
+                            <span><i class="fa-solid fa-phone" style="color: #94a3b8; margin-right: 0.35rem;"></i> {{ agent.phone }}</span>
+                        </div>
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: #64748b;">
+                        {{ agent.joined_at|date:"M d, Y" }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                        <form action="{% url 'delete_agent' agent.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently remove inspection agent {{ agent.name }} from TRUST?');" style="margin: 0; display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.35rem 0.6rem; font-size: 1rem; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(239, 68, 68, 0.08)'" onmouseout="this.style.backgroundColor='transparent'">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
+                        <div style="font-size: 2.25rem; margin-bottom: 1.25rem; color: #cbd5e1;"><i class="fa-solid fa-user-shield"></i></div>
+                        <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No inspection agents registered yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- RIGHT COLUMN: ADD AGENT & ROLE FORMS -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <!-- FORM 1: REGISTER INSPECTION AGENT -->
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h3 style="margin: 0; font-size: 1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-user-plus"></i> Register New Agent
+                </h3>
+            </div>
+            <form method="POST" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_agent">
+                
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Full Name</label>
+                    <input type="text" name="agent_name" required placeholder="e.g. John Doe" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Email Address</label>
+                    <input type="email" name="agent_email" required placeholder="john@trustrentug.com" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Phone Number</label>
+                    <input type="text" name="agent_phone" required placeholder="e.g. +256 701 123456" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Inspection Role</label>
+                    <select name="agent_role_id" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; background: white; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                        <option value="">-- Select Role (None) --</option>
+                        {% for role in agent_roles %}
+                        <option value="{{ role.id }}">{{ role.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.75rem; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; color: white; margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none;">
+                    <i class="fa-solid fa-user-check"></i> Register Agent
+                </button>
+            </form>
+        </div>
+
+        <!-- FORM 2: ADD AGENT ROLE -->
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h3 style="margin: 0; font-size: 1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-circle-plus"></i> Add Agent Role
+                </h3>
+            </div>
+            
+            <!-- List current roles with delete badges -->
+            <div style="padding: 1.25rem 1.5rem 0.5rem 1.5rem;">
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Current Roles</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    {% for role in agent_roles %}
+                    <span style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">
+                        {{ role.name }}
+                        <form action="{% url 'delete_agent_role' role.id %}" method="POST" onsubmit="return confirm('Deleting role {{ role.name }} will set related agents\' roles to NULL. Continue?');" style="margin: 0; display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; color: #ef4444; font-size: 0.7rem; cursor: pointer; padding: 0 0.15rem; display: inline-flex; align-items: center;">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </form>
+                    </span>
+                    {% empty %}
+                    <span style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">No roles created yet.</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <form method="POST" style="padding: 1.25rem 1.5rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_role">
+                
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Role Title</label>
+                    <input type="text" name="role_name" required placeholder="e.g. Lead Field Inspector" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Description (Optional)</label>
+                    <textarea name="role_description" placeholder="Brief summary of duties..." rows="2" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; resize: none; font-family: inherit; font-size: 0.85rem; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'"></textarea>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; padding: 0.75rem; border-radius: 6px; font-weight: 600; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s;" onmouseover="this.style.background='var(--color-emerald-dark)'; this.style.color='white';" onmouseout="this.style.background='rgba(16, 61, 40, 0.08)'; this.style.color='var(--color-emerald-dark)';">
+                    <i class="fa-solid fa-plus"></i> Save Role
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

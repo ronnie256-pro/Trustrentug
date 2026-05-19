@@ -246,8 +246,24 @@
                         {{ property.get_status_display }}
                     </span>
                 </td>
-                <td style="font-weight: 600;">{{ property.price|floatformat:0 }}M</td>
-                <td><i class="fa-solid fa-chevron-right" style="color: #cbd5e1; cursor: pointer;"></i></td>
+                <td style="font-weight: 600;">
+                    {% if property.price_per_month %}
+                        UGX {{ property.price_per_month|floatformat:0 }} / Mo
+                    {% else %}
+                        UGX {{ property.price|floatformat:0 }} / Mo
+                    {% endif %}
+                    {% if property.price_per_year %}
+                        <div style="font-size: 0.75rem; color: var(--color-gold); font-weight: 500; margin-top: 0.15rem;">UGX {{ property.price_per_year|floatformat:0 }} / Yr</div>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{% url 'delete_property' property.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this property listing? This action cannot be undone.');" style="margin: 0; display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem; padding: 0.25rem 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Property">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                    </form>
+                </td>
             </tr>
             {% if property.is_multi_unit %}
                 {% for unit in property.units.all %}
@@ -260,8 +276,21 @@
                             {{ unit.get_status_display }}
                         </span>
                     </td>
-                    <td style="font-size: 0.85rem; color: #64748b;">{{ unit.price|floatformat:0 }}M</td>
-                    <td></td>
+                    <td style="font-size: 0.85rem; color: #64748b; font-weight: 600;">
+                        {% if unit.price_per_month %}
+                            UGX {{ unit.price_per_month|floatformat:0 }} / Mo
+                        {% else %}
+                            UGX {{ unit.price|floatformat:0 }} / Mo
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{% url 'delete_property' unit.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this unit? This action cannot be undone.');" style="margin: 0; display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0.25rem 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Unit">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             {% endif %}

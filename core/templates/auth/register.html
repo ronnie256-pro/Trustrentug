@@ -1,24 +1,60 @@
 {% extends "base.html" %}
 
 {% block title %}Register | TRUST{% endblock %}
-
 {% block extra_css %}
 <style>
     .auth-container {
-        min-height: 80vh;
-        padding: 4rem 2rem;
-        background-color: var(--color-bg-base);
+        min-height: 100vh;
+        padding: 6rem 2rem;
+        background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .auth-container::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(135deg, rgba(3, 20, 13, 0.72) 0%, rgba(3, 20, 13, 0.85) 100%);
+        z-index: 1;
+        pointer-events: none;
     }
 
     .auth-card {
-        background: #fff;
-        padding: 3rem;
+        background: rgba(4, 26, 17, 0.75);
+        padding: 3.5rem;
         border-radius: var(--radius-lg);
         width: 100%;
         max-width: 650px;
         margin: 0 auto;
-        box-shadow: var(--shadow-md);
-        border-top: 4px solid var(--color-emerald);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px) saturate(120%);
+        -webkit-backdrop-filter: blur(20px) saturate(120%);
+        position: relative;
+        z-index: 2;
+        color: #ffffff;
+    }
+
+    .auth-card h2,
+    .auth-card h3,
+    .auth-card h4,
+    .auth-card p,
+    .auth-card .form-label {
+        color: #ffffff !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .auth-card .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.9rem;
     }
 
     .role-selector {
@@ -38,39 +74,38 @@
     }
 
     .role-card {
-        padding: 2rem 1.5rem;
-        border: 2px solid var(--color-border);
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: var(--radius-md);
         text-align: center;
         transition: all 0.3s ease;
         height: 100%;
+        color: #ffffff;
+        backdrop-filter: blur(8px);
     }
 
     .role-label input:checked+.role-card {
         border-color: var(--color-gold);
-        background-color: rgba(203, 163, 88, 0.05);
-        box-shadow: 0 4px 12px rgba(203, 163, 88, 0.15);
+        background-color: rgba(203, 163, 88, 0.15);
+        box-shadow: 0 8px 24px rgba(203, 163, 88, 0.25);
     }
 
     .role-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: var(--color-emerald);
+        font-size: 2.25rem;
+        margin-bottom: 0.75rem;
+        color: var(--color-gold);
         transition: color 0.3s ease;
     }
 
-    .role-label input:checked+.role-card .role-icon {
-        color: var(--color-gold);
-    }
-
     .role-card h4 {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
         font-family: var(--font-heading);
     }
 
     .role-card p {
-        font-size: 0.85rem;
-        color: var(--color-text-muted);
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7) !important;
         line-height: 1.4;
     }
 
@@ -78,29 +113,63 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .auth-card .form-control {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: #ffffff !important;
+        border-radius: var(--radius-sm);
+        padding: 0.85rem 1rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .auth-card .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    .auth-card .form-control:focus {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: var(--color-gold) !important;
+        box-shadow: 0 0 0 3px rgba(203, 163, 88, 0.25) !important;
+        outline: none;
     }
 
     .section-title {
         margin: 2.5rem 0 1.25rem;
-        font-size: 1.2rem;
-        color: var(--color-emerald-dark);
-        border-bottom: 1px solid var(--color-border);
+        font-size: 1.25rem;
+        color: var(--color-gold) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding-bottom: 0.75rem;
         font-family: var(--font-heading);
     }
 
-    #nin-group {
-        transition: all 0.4s ease;
+    .agreement-box {
+        margin: 2rem 0;
+        padding: 1.25rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .agreement-box span {
+        color: rgba(255, 255, 255, 0.8) !important;
     }
 
     /* Responsive Registration */
     @media (max-width: 768px) {
         .auth-container {
-            padding: 2rem 1rem;
+            padding: 4rem 1rem;
         }
 
         .auth-card {
-            padding: 2rem 1.5rem;
+            padding: 2.5rem 1.5rem;
         }
 
         .role-selector {
@@ -190,8 +259,8 @@
                             style="position: absolute; left: 1rem; top: 1.1rem; color: var(--color-gold);"></i>
                     </div>
                     <small
-                        style="color: var(--color-text-muted); display: block; margin-top: 0.75rem; line-height: 1.4;">
-                        <i class="fa-solid fa-shield-halved text-emerald"></i> Mandatory for property owners. Your
+                        style="color: rgba(255, 255, 255, 0.7); display: block; margin-top: 0.75rem; line-height: 1.4;">
+                        <i class="fa-solid fa-shield-halved" style="color: var(--color-gold);"></i> Mandatory for property owners. Your
                         identity will be verified against the national database before your first listing.
                     </small>
                 </div>
@@ -211,22 +280,21 @@
                 </div>
             </div>
 
-            <div
-                style="margin: 2rem 0; padding: 1.25rem; background: var(--color-bg-base); border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+            <div class="agreement-box">
                 <label
-                    style="display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.9rem; color: var(--color-text-muted); cursor: pointer;">
-                    <input type="checkbox" required style="margin-top: 0.3rem; accent-color: var(--color-emerald);">
+                    style="display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); cursor: pointer;">
+                    <input type="checkbox" required style="margin-top: 0.3rem; accent-color: var(--color-gold);">
                     <span>I agree to the <strong>TRUST Protocol</strong> terms, including mandatory escrow usage and
                         physical property vetting.</span>
                 </label>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1.2rem;">
+            <button type="submit" class="btn btn-gold" style="width: 100%; font-size: 1.1rem; padding: 1.2rem; font-weight: 600; border-radius: var(--radius-sm);">
                 Create Secure Account <i class="fa-solid fa-arrow-right-long" style="margin-left: 0.75rem;"></i>
             </button>
 
             <div style="text-align: center; margin-top: 2rem; font-size: 0.95rem;">
-                <p>Already joined? <a href="/login/" style="font-weight: 600; color: var(--color-emerald-dark);">Sign in
+                <p style="color: rgba(255, 255, 255, 0.75) !important;">Already joined? <a href="/login/" style="font-weight: 600; color: var(--color-gold);">Sign in
                         here</a></p>
             </div>
         </form>

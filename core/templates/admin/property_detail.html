@@ -1,0 +1,522 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Property Vetting Details | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        transition: color 0.2s ease;
+    }
+    
+    .back-btn:hover {
+        color: var(--color-emerald-dark);
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .detail-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    .info-section h4 {
+        margin: 0 0 1rem 0;
+        color: var(--color-emerald-dark);
+        font-size: 1.1rem;
+        font-family: var(--font-heading);
+        border-bottom: 2px solid rgba(16, 61, 40, 0.08);
+        padding-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed #f1f5f9;
+        font-size: 0.95rem;
+    }
+
+    .info-label {
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .info-value {
+        color: #1e293b;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .gallery-container {
+        padding: 2rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 992px) {
+        .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .gallery-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        aspect-ratio: 4/3;
+        background: #f8fafc;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.05);
+    }
+
+    .gallery-badge {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        background: rgba(16, 61, 40, 0.85);
+        backdrop-filter: blur(4px);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .docs-container {
+        padding: 2rem;
+        border-top: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+
+    .docs-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .doc-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.2s ease;
+    }
+
+    .doc-card:hover {
+        border-color: var(--color-emerald);
+        box-shadow: 0 4px 12px rgba(16, 61, 40, 0.05);
+    }
+
+    .doc-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .doc-icon {
+        font-size: 1.5rem;
+        color: var(--color-gold);
+    }
+
+    .doc-name {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 0.9rem;
+    }
+
+    .doc-action {
+        color: var(--color-emerald-dark);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.35rem 0.75rem;
+        background: rgba(16, 61, 40, 0.05);
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .doc-action:hover {
+        background: var(--color-emerald-dark);
+        color: white;
+    }
+
+    .action-bar {
+        padding: 1.5rem 2rem;
+        background: #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid" style="padding: 1rem 2rem;">
+    <!-- Back Button -->
+    <a href="/admin-dashboard/?tab=properties" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Properties Vetting Directory
+    </a>
+
+    <!-- Main Detail Card -->
+    <div class="detail-card">
+        <!-- Header Info -->
+        <div class="detail-header">
+            <div>
+                <h2 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.75rem;">
+                    {{ property.title }}
+                </h2>
+                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.95rem;">
+                    <i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ property.location }}
+                </p>
+            </div>
+            <div>
+                {% if property.status == 'available' %}
+                <span style="font-size: 0.85rem; background: #ecfdf5; color: #059669; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-circle-check"></i> Approved & Listed
+                </span>
+                {% elif property.status == 'pending_verification' %}
+                <span style="font-size: 0.85rem; background: #fffbeb; color: #d97706; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-magnifying-glass-location"></i> Verification Required
+                </span>
+                {% else %}
+                <span style="font-size: 0.85rem; background: #f1f5f9; color: #64748b; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    {{ property.get_status_display }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+            <!-- Property Details -->
+            <div class="info-section">
+                <h4><i class="fa-solid fa-circle-info"></i> Listing Specifications</h4>
+                
+                <div class="info-row">
+                    <span class="info-label">Category</span>
+                    <span class="info-value">{{ property.get_category_display }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Monthly Rate (Price/Month)</span>
+                    <span class="info-value" style="color: var(--color-emerald-dark);">
+                        {% if property.price_per_month %}
+                            UGX {{ property.price_per_month|floatformat:0 }}
+                        {% else %}
+                            UGX {{ property.price|floatformat:0 }}
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Yearly Rate (Price/Year)</span>
+                    <span class="info-value" style="color: var(--color-emerald-dark);">
+                        {% if property.price_per_year %}
+                            UGX {{ property.price_per_year|floatformat:0 }}
+                        {% else %}
+                            Not Specified
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Building / Parent Type</span>
+                    <span class="info-value">
+                        {% if property.parent %}
+                            Unit of {{ property.parent.title }}
+                        {% else %}
+                            Standalone / Independent
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Property Description</span>
+                    <span class="info-value" style="font-weight: 400; text-align: justify; display: block; max-width: 350px; word-wrap: break-word;">
+                        {{ property.description|default:"No description provided" }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Owner & Registration Details -->
+            <div class="info-section">
+                <h4><i class="fa-solid fa-user-shield"></i> Legal Owner Information</h4>
+
+                <div class="info-row">
+                    <span class="info-label">Owner Name</span>
+                    <span class="info-value">{{ property.owner.first_name }} {{ property.owner.last_name }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Username</span>
+                    <span class="info-value">@{{ property.owner.username }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Email Address</span>
+                    <span class="info-value">{{ property.owner.email }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Phone Number</span>
+                    <span class="info-value">{{ property.owner.phone_number|default:"+256 XXX XXXXXX" }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Submit Date</span>
+                    <span class="info-value">{{ property.created_at|date:"M d, Y H:i"|default:"Recently" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Gallery -->
+        <div class="gallery-container">
+            <h4 style="margin: 0 0 1rem 0; color: var(--color-emerald-dark); font-size: 1.1rem; font-family: var(--font-heading);"><i class="fa-solid fa-images"></i> Uploaded Media & Photographic Proof</h4>
+            <div class="gallery-grid">
+                <!-- Hero Image -->
+                <div class="gallery-item">
+                    <span class="gallery-badge">Hero Image</span>
+                    {% if property.hero_image %}
+                    <a href="{{ property.hero_image.url }}" target="_blank">
+                        <img src="{{ property.hero_image.url }}" alt="Hero Image">
+                    </a>
+                    {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.9rem;">
+                        No Hero Image
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Gallery 1 -->
+                <div class="gallery-item">
+                    <span class="gallery-badge">Gallery #1</span>
+                    {% if property.image_1 %}
+                    <a href="{{ property.image_1.url }}" target="_blank">
+                        <img src="{{ property.image_1.url }}" alt="Gallery 1">
+                    </a>
+                    {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.9rem;">
+                        No Image
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Gallery 2 -->
+                <div class="gallery-item">
+                    <span class="gallery-badge">Gallery #2</span>
+                    {% if property.image_2 %}
+                    <a href="{{ property.image_2.url }}" target="_blank">
+                        <img src="{{ property.image_2.url }}" alt="Gallery 2">
+                    </a>
+                    {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.9rem;">
+                        No Image
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Gallery 3 -->
+                <div class="gallery-item">
+                    <span class="gallery-badge">Gallery #3</span>
+                    {% if property.image_3 %}
+                    <a href="{{ property.image_3.url }}" target="_blank">
+                        <img src="{{ property.image_3.url }}" alt="Gallery 3">
+                    </a>
+                    {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.9rem;">
+                        No Image
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Vetting Legal Documents -->
+        <div class="docs-container">
+            <h4 style="margin: 0 0 1rem 0; color: var(--color-emerald-dark); font-size: 1.1rem; font-family: var(--font-heading);"><i class="fa-solid fa-folder-open"></i> Uploaded Security & Title Documents</h4>
+            <div class="docs-list">
+                <!-- Building Plans -->
+                <div class="doc-card">
+                    <div class="doc-info">
+                        <i class="fa-solid fa-file-pdf doc-icon"></i>
+                        <div>
+                            <div class="doc-name">Architectural Building Plans</div>
+                            <small style="color: #64748b;">{% if property.building_plans %}PDF Document{% else %}Not Provided{% endif %}</small>
+                        </div>
+                    </div>
+                    {% if property.building_plans %}
+                    <a href="{{ property.building_plans.url }}" download class="doc-action">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Occupancy Permit -->
+                <div class="doc-card">
+                    <div class="doc-info">
+                        <i class="fa-solid fa-house-circle-check doc-icon"></i>
+                        <div>
+                            <div class="doc-name">Occupancy Permit / Authority Letter</div>
+                            <small style="color: #64748b;">{% if property.occupancy_permit %}PDF Document{% else %}Not Provided{% endif %}</small>
+                        </div>
+                    </div>
+                    {% if property.occupancy_permit %}
+                    <a href="{{ property.occupancy_permit.url }}" download class="doc-action">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- LC 1 Letter -->
+                <div class="doc-card">
+                    <div class="doc-info">
+                        <i class="fa-solid fa-id-card doc-icon"></i>
+                        <div>
+                            <div class="doc-name">LC 1 Chairman Reference Letter</div>
+                            <small style="color: #64748b;">{% if property.lc1_letter %}PDF Document{% else %}Not Provided{% endif %}</small>
+                        </div>
+                    </div>
+                    {% if property.lc1_letter %}
+                    <a href="{{ property.lc1_letter.url }}" download class="doc-action">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Lease Agreement -->
+                <div class="doc-card">
+                    <div class="doc-info">
+                        <i class="fa-solid fa-file-contract doc-icon"></i>
+                        <div>
+                            <div class="doc-name">Tenancy / Lease Agreement Template</div>
+                            <small style="color: #64748b;">{% if property.tenancy_agreement %}PDF Document{% else %}Not Provided{% endif %}</small>
+                        </div>
+                    </div>
+                    {% if property.tenancy_agreement %}
+                    <a href="{{ property.tenancy_agreement.url }}" download class="doc-action">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Security Agreement -->
+                <div class="doc-card">
+                    <div class="doc-info">
+                        <i class="fa-solid fa-shield-halved doc-icon"></i>
+                        <div>
+                            <div class="doc-name">Physical Security Agreement Letter</div>
+                            <small style="color: #64748b;">{% if property.security_agreement %}PDF Document{% else %}Not Provided{% endif %}</small>
+                        </div>
+                    </div>
+                    {% if property.security_agreement %}
+                    <a href="{{ property.security_agreement.url }}" download class="doc-action">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Bar at Bottom -->
+        <div class="action-bar">
+            <div>
+                {% if property.status == 'pending_verification' %}
+                <form action="{% url 'approve_property' property.id %}" method="POST" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-gold" style="padding: 0.75rem 1.75rem; font-size: 0.95rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; gap: 0.5rem; color: white;">
+                        <i class="fa-solid fa-shield-check"></i> Approve Property & Make Live
+                    </button>
+                </form>
+                {% else %}
+                <span style="color: #059669; font-weight: 700; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-circle-check"></i> Fully Approved & Active on TRUST Portal
+                </span>
+                {% endif %}
+            </div>
+            
+            <div>
+                <!-- Delete property listing -->
+                <form action="{% url 'delete_property' property.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this property listing from TRUST? This action cannot be undone.');" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn" style="padding: 0.75rem 1.75rem; font-size: 0.95rem; border-radius: 8px; font-weight: 600; background: rgba(239, 68, 68, 0.08); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-trash-can"></i> Delete Property Permanently
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

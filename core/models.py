@@ -32,12 +32,27 @@ class Property(models.Model):
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending_verification')
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    price_per_month = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    price_per_year = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     location = models.CharField(max_length=255)
     
     # Parent-Child relationship
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='units')
     
     is_multi_unit = models.BooleanField(default=False)
+    
+    # Images (Hero + 3 Gallery supporting photos)
+    hero_image = models.FileField(upload_to='properties/hero/', null=True, blank=True)
+    image_1 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+    image_2 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+    image_3 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+
+    # Documents
+    building_plans = models.FileField(upload_to='properties/documents/', null=True, blank=True)
+    occupancy_permit = models.FileField(upload_to='properties/documents/', null=True, blank=True)
+    lc1_letter = models.FileField(upload_to='properties/documents/', null=True, blank=True)
+    tenancy_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
+    security_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -70,3 +85,20 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
+
+class AgentRole(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+class InspectionAgent(models.Model):
+    name = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=50)
+    role = models.ForeignKey(AgentRole, on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
