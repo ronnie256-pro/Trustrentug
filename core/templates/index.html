@@ -858,7 +858,8 @@
   .marquee-track {
     display: flex;
     width: max-content;
-    gap: 2rem;
+    /* NO gap here — gap is handled inside each group via padding-right.
+       This ensures translateX(-50%) lands exactly on the clone start. */
     animation: marquee-scroll 45s linear infinite;
   }
 
@@ -871,6 +872,8 @@
     gap: 2rem;
     align-items: center;
     flex-shrink: 0;
+    /* Trailing padding equals the card gap so the seam is invisible */
+    padding-right: 2rem;
   }
 
   .marquee-card-wrapper {
@@ -985,12 +988,10 @@
 
 
   @keyframes marquee-scroll {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(calc(-50% - 1rem));
-    }
+    0%   { transform: translateX(0); }
+    /* -50% is now exactly one group width (including its trailing padding)
+       so the loop is pixel-perfect regardless of image load timing. */
+    100% { transform: translateX(-50%); }
   }
 
   /* Responsive Grid Adjustments */
