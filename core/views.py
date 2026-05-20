@@ -835,8 +835,8 @@ def property_detail_view(request, property_id):
 def checkout_view(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id)
     
-    # Pre-calculate prices
-    price = property_obj.price or 0
+    # Pre-calculate prices (convert to float for format calculation compatibility)
+    price = float(property_obj.price) if property_obj.price else 0.0
     security_deposit = price * 0.1
     pipeline_fee = price * 0.01
     total_escrow = price + security_deposit + pipeline_fee

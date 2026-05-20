@@ -842,6 +842,171 @@
     font-size: 0.85rem;
   }
 
+  /* Full-Width Seamless Marquee CSS */
+  .marquee-container {
+    overflow: hidden;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    display: flex;
+    padding: 1.5rem 0;
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    gap: 2rem;
+    animation: marquee-scroll 45s linear infinite;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  .marquee-group {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .marquee-card-wrapper {
+    flex: 0 0 320px;
+    width: 320px;
+    height: 100%;
+    border: 3px solid rgba(4, 120, 87, 0.45) !important; /* Thick Deep Emerald Border */
+    box-shadow: 0 10px 30px rgba(10, 61, 40, 0.07) !important;
+    background: rgba(255, 255, 255, 0.18) !important; /* Elegant sheer frosted glass */
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    position: relative; /* for absolute stars/fireworks placement */
+    overflow: hidden;
+    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+    animation: card-breath 6s ease-in-out infinite alternate;
+  }
+
+  .marquee-card-wrapper:hover {
+    border-color: rgba(4, 120, 87, 0.95) !important;
+    box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.03) translateY(-4px) !important;
+    animation-play-state: paused; /* gracefully pause breathing on hover! */
+  }
+
+  /* Fireworks & Shooting Star Container */
+  .firework-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .shooting-star {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: #ffd700;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #ffd700, 0 0 24px #ffd700;
+    bottom: -15px;
+    left: -15px;
+    opacity: 0;
+    animation: fly-star 6s infinite ease-in-out;
+  }
+
+  @keyframes fly-star {
+    0% {
+      bottom: -5%;
+      left: -5%;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    5% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+    22% {
+      bottom: 92%;
+      left: 92%;
+      opacity: 1;
+      transform: scale(1);
+    }
+    23%, 100% {
+      bottom: 92%;
+      left: 92%;
+      opacity: 0;
+      transform: scale(0);
+    }
+  }
+
+  .firework-container .spark {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: explode-sparks 6s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+  }
+
+  .firework-container .spark-1 { --dx: 38px; --dy: -38px; --color: #ff2a5f; }
+  .firework-container .spark-2 { --dx: -38px; --dy: -38px; --color: #00f3ff; }
+  .firework-container .spark-3 { --dx: 45px; --dy: 10px; --color: #ffd700; }
+  .firework-container .spark-4 { --dx: -45px; --dy: 15px; --color: #ff9f00; }
+  .firework-container .spark-5 { --dx: 0px; --dy: -55px; --color: #ff00ff; }
+  .firework-container .spark-6 { --dx: 28px; --dy: 42px; --color: #00ff66; }
+
+  @keyframes explode-sparks {
+    0%, 21% {
+      transform: translate(0, 0) scale(0);
+      opacity: 0;
+    }
+    22% {
+      transform: translate(0, 0) scale(1.2);
+      opacity: 1;
+      background: var(--color);
+      box-shadow: 0 0 12px var(--color), 0 0 24px var(--color);
+    }
+    40% {
+      transform: translate(var(--dx), var(--dy)) scale(0.9);
+      opacity: 0.9;
+    }
+    55%, 100% {
+      transform: translate(calc(var(--dx) * 1.3), calc(var(--dy) * 1.3)) scale(0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes card-breath {
+    0% {
+      box-shadow: 0 8px 25px rgba(10, 61, 40, 0.08) !important;
+      border-color: rgba(4, 120, 87, 0.35) !important;
+      transform: scale(0.96);
+    }
+    100% {
+      box-shadow: 0 20px 45px rgba(4, 120, 87, 0.28) !important;
+      border-color: rgba(4, 120, 87, 0.95) !important;
+      transform: scale(1.04);
+    }
+  }
+
+  @keyframes marquee-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-50% - 1rem));
+    }
+  }
+
   /* Responsive Grid Adjustments */
   @media (max-width: 1200px) {
     .glass-grid {
@@ -941,47 +1106,116 @@
 </section>
 
 <!-- RECENTLY ADDED LANDINGS SECTION (CLEAN CARDS) -->
-<section class="glass-section">
-  <div class="container">
-    <div class="glass-grid">
-      {% for property in properties|slice:":4" %}
-      <a href="/property/{{ property.id }}/" class="glass-card">
-        <div class="glass-img-wrapper">
-          {% if property.hero_image %}
-          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img">
-          {% elif property.category == 'studio' %}
-          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img">
-          {% elif property.category == '2_bed' or property.category == '1_bed' %}
-          <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img">
-          {% elif property.is_multi_unit %}
-          <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img">
-          {% else %}
-          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img">
-          {% endif %}
-          <div class="glass-tag">NEWLY VETTED</div>
-        </div>
+<section class="glass-section" style="padding: 1.25rem 0; overflow: hidden; background: linear-gradient(180deg, #fdfbf7 0%, #f4efdf 100%); border-top: 1px solid rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.03);">
 
-        <div class="glass-body">
-          <h3 class="glass-price">
-            {% if property.price %}
-            UGX {{ property.price|floatformat:0 }} <span>/ mo</span>
+  <!-- Full-Width Seamless Marquee Loop -->
+  <div class="marquee-container" style="box-shadow: inset 0 15px 30px rgba(0,0,0,0.02), inset 0 -15px 30px rgba(0,0,0,0.02); padding: 1.5rem 0;">
+    <div class="marquee-track">
+      <!-- First Group -->
+      <div class="marquee-group">
+        {% for property in properties %}
+        <a href="/property/{{ property.id }}/" class="glass-card marquee-card-wrapper" style="animation-delay: {{ forloop.counter }}s;">
+          <!-- Shooting Star and Fireworks Explosion -->
+          <div class="firework-container">
+            <div class="shooting-star" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-1" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-2" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-3" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-4" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-5" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-6" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          </div>
+
+          <div class="glass-img-wrapper">
+            {% if property.hero_image %}
+            <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img">
+            {% elif property.category == 'studio' %}
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
+            {% elif property.category == '2_bed' or property.category == '1_bed' %}
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
+            {% elif property.is_multi_unit %}
+            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
             {% else %}
-            Custom Pricing
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
             {% endif %}
-          </h3>
-          <h4 class="glass-title">{{ property.title }}</h4>
-          <p class="glass-location"><i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ property.location }}</p>
+            <div class="glass-tag" style="background: var(--color-emerald); color: var(--color-gold);">NEWLY VETTED</div>
+          </div>
+
+          <div class="glass-body">
+            <h3 class="glass-price">
+              {% if property.price %}
+              UGX {{ property.price|floatformat:0 }} <span>/ mo</span>
+              {% else %}
+              Custom Pricing
+              {% endif %}
+            </h3>
+            <h4 class="glass-title">{{ property.title }}</h4>
+            <p class="glass-location" style="margin-bottom: 0;"><i class="fa-solid fa-location-dot" style="color: var(--color-emerald-light);"></i> {{ property.location }}</p>
+          </div>
+        </a>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem 0; color: var(--color-text-muted); width: 100vw;">
+          <p>No recently added properties found.</p>
         </div>
-      </a>
-      {% empty %}
-      <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 0; color: var(--color-text-muted);">
-        <p>No recently added properties found.</p>
+        {% endfor %}
       </div>
-      {% endfor %}
+
+      <!-- Second Group (Duplicated for Seamless Loop) -->
+      <div class="marquee-group">
+        {% for property in properties %}
+        <a href="/property/{{ property.id }}/" class="glass-card marquee-card-wrapper" style="animation-delay: {{ forloop.counter }}s;">
+          <!-- Shooting Star and Fireworks Explosion -->
+          <div class="firework-container">
+            <div class="shooting-star" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-1" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-2" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-3" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-4" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-5" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+            <div class="spark spark-6" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          </div>
+
+          <div class="glass-img-wrapper">
+            {% if property.hero_image %}
+            <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img">
+            {% elif property.category == 'studio' %}
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
+            {% elif property.category == '2_bed' or property.category == '1_bed' %}
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
+            {% elif property.is_multi_unit %}
+            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
+              alt="{{ property.title }}" class="glass-img">
+            {% endif %}
+            <div class="glass-tag" style="background: var(--color-emerald); color: var(--color-gold);">NEWLY VETTED</div>
+          </div>
+
+          <div class="glass-body">
+            <h3 class="glass-price">
+              {% if property.price %}
+              UGX {{ property.price|floatformat:0 }} <span>/ mo</span>
+              {% else %}
+              Custom Pricing
+              {% endif %}
+            </h3>
+            <h4 class="glass-title">{{ property.title }}</h4>
+            <p class="glass-location" style="margin-bottom: 0;"><i class="fa-solid fa-location-dot" style="color: var(--color-emerald-light);"></i> {{ property.location }}</p>
+          </div>
+        </a>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem 0; color: var(--color-text-muted); width: 100vw;">
+          <p>No recently added properties found.</p>
+        </div>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </section>
