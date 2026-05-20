@@ -885,15 +885,13 @@
     position: relative; /* for absolute stars/fireworks placement */
     overflow: hidden;
     transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
-    animation: card-breath 6s ease-in-out infinite alternate;
   }
 
   .marquee-card-wrapper:hover {
     border-color: rgba(4, 120, 87, 0.95) !important;
     box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
     background: rgba(255, 255, 255, 0.3) !important;
-    transform: scale(1.03) translateY(-4px) !important;
-    animation-play-state: paused; /* gracefully pause breathing on hover! */
+    transform: translateY(-6px) !important; /* Gentle premium card lift */
   }
 
   /* Fireworks & Shooting Star Container */
@@ -985,18 +983,6 @@
     }
   }
 
-  @keyframes card-breath {
-    0% {
-      box-shadow: 0 8px 25px rgba(10, 61, 40, 0.08) !important;
-      border-color: rgba(4, 120, 87, 0.35) !important;
-      transform: scale(0.96);
-    }
-    100% {
-      box-shadow: 0 20px 45px rgba(4, 120, 87, 0.28) !important;
-      border-color: rgba(4, 120, 87, 0.95) !important;
-      transform: scale(1.04);
-    }
-  }
 
   @keyframes marquee-scroll {
     0% {
