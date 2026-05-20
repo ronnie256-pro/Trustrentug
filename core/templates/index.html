@@ -858,13 +858,13 @@
   .marquee-track {
     display: flex;
     width: max-content;
-    /* NO gap here — gap is handled inside each group via padding-right.
-       This ensures translateX(-50%) lands exactly on the clone start. */
-    animation: marquee-scroll 45s linear infinite;
+    /* Animation is driven by JS after images load — see bottom <script> */
+    will-change: transform;
   }
 
-  .marquee-track:hover {
-    animation-play-state: paused;
+  /* JS sets data-paused="true" on hover */
+  .marquee-track[data-paused="true"] {
+    /* Visual indicator only — JS reads this attribute to pause */
   }
 
   .marquee-group {
@@ -987,12 +987,6 @@
   }
 
 
-  @keyframes marquee-scroll {
-    0%   { transform: translateX(0); }
-    /* -50% is now exactly one group width (including its trailing padding)
-       so the loop is pixel-perfect regardless of image load timing. */
-    100% { transform: translateX(-50%); }
-  }
 
   /* Responsive Grid Adjustments */
   @media (max-width: 1200px) {
@@ -1333,6 +1327,74 @@
         bgVid.play();
       });
     }
+
+    // =====================================================
+    // JS-DRIVEN MARQUEE — production-proof seamless loop
+    // Waits for ALL images to load before measuring width,
+    // so network latency never causes the blank-gap bug.
+    // =====================================================
+    (function initMarquee() {
+      const track = document.querySelector('.marquee-track');
+      const group1 = document.querySelector('.marquee-group');
+      if (!track || !group1) return;
+
+      // Pixels per frame. 60 fps × speed ≈ 45 s per full group width.
+      // We'll recalculate actual speed after images load.
+      const DURATION_S = 45; // desired loop duration in seconds
+      let speed = 1;         // will be set after measurement
+      let offset = 0;
+      let paused = false;
+      let rafId = null;
+
+      // Pause on hover
+      track.addEventListener('mouseenter', () => { paused = true; });
+      track.addEventListener('mouseleave', () => { paused = false; });
+
+      function step() {
+        if (!paused) {
+          offset += speed;
+          const groupWidth = group1.offsetWidth; // live measurement every frame
+          if (offset >= groupWidth) offset = 0;  // seamless reset
+          track.style.transform = 'translateX(-' + offset + 'px)';
+        }
+        rafId = requestAnimationFrame(step);
+      }
+
+      function start() {
+        // Measure group width AFTER images are loaded
+        const groupWidth = group1.offsetWidth;
+        // speed = pixels per frame so that one full group takes DURATION_S seconds at 60fps
+        speed = groupWidth / (DURATION_S * 60);
+        if (speed <= 0) speed = 0.5; // safety floor
+        offset = 0;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(step);
+      }
+
+      // Wait for every marquee image to finish loading before starting
+      const imgs = track.querySelectorAll('img');
+      let pending = imgs.length;
+
+      if (pending === 0) {
+        start();
+        return;
+      }
+
+      function onImageSettled() {
+        pending--;
+        if (pending <= 0) start();
+      }
+
+      imgs.forEach(function(img) {
+        if (img.complete && img.naturalWidth > 0) {
+          onImageSettled();
+        } else {
+          img.addEventListener('load',  onImageSettled, { once: true });
+          img.addEventListener('error', onImageSettled, { once: true });
+        }
+      });
+    })();
+
   });
 </script>
 
