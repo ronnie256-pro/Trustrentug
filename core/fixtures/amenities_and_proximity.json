@@ -1,0 +1,914 @@
+[
+{
+    "model": "core.propertyamenity",
+    "pk": 1,
+    "fields": {
+        "name": "Bedrooms",
+        "category": "Core",
+        "layer": "core",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 2,
+    "fields": {
+        "name": "Bathrooms",
+        "category": "Core",
+        "layer": "core",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 4,
+    "fields": {
+        "name": "Location",
+        "category": "Core",
+        "layer": "core",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 5,
+    "fields": {
+        "name": "Parking",
+        "category": "Core",
+        "layer": "core",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 6,
+    "fields": {
+        "name": "Water",
+        "category": "Core",
+        "layer": "core",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 7,
+    "fields": {
+        "name": "Power",
+        "category": "Core",
+        "layer": "core",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 13,
+    "fields": {
+        "name": "Swimming Pool",
+        "category": "Luxury",
+        "layer": "luxury",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 14,
+    "fields": {
+        "name": "Gym",
+        "category": "Luxury",
+        "layer": "luxury",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 15,
+    "fields": {
+        "name": "Sauna",
+        "category": "Luxury",
+        "layer": "luxury",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 16,
+    "fields": {
+        "name": "Rooftop",
+        "category": "Luxury",
+        "layer": "luxury",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 17,
+    "fields": {
+        "name": "Smart Home",
+        "category": "Luxury",
+        "layer": "luxury",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 18,
+    "fields": {
+        "name": "Solar Backup",
+        "category": "Luxury",
+        "layer": "luxury",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 19,
+    "fields": {
+        "name": "Sitting Room",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 20,
+    "fields": {
+        "name": "Dining Area",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 21,
+    "fields": {
+        "name": "Kitchen",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 22,
+    "fields": {
+        "name": "Pantry",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 23,
+    "fields": {
+        "name": "Laundry Area",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 24,
+    "fields": {
+        "name": "Balcony",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 25,
+    "fields": {
+        "name": "Walk-in Closet",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 26,
+    "fields": {
+        "name": "Furnished / Unfurnished",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 27,
+    "fields": {
+        "name": "Air Conditioning",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 28,
+    "fields": {
+        "name": "Ceiling Fans",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 29,
+    "fields": {
+        "name": "Water Heater",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 31,
+    "fields": {
+        "name": "Wi-Fi / Internet Ready",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 33,
+    "fields": {
+        "name": "Built-in Wardrobes",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 34,
+    "fields": {
+        "name": "Tiled Floors",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 35,
+    "fields": {
+        "name": "Gypsum Ceiling",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 36,
+    "fields": {
+        "name": "Modern Finishing",
+        "category": "Indoor",
+        "layer": "indoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 38,
+    "fields": {
+        "name": "Backup Generator",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 39,
+    "fields": {
+        "name": "Solar Power",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 41,
+    "fields": {
+        "name": "Water Tank Capacity",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 42,
+    "fields": {
+        "name": "Borehole Access",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 43,
+    "fields": {
+        "name": "Garbage Collection",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 45,
+    "fields": {
+        "name": "Internet Connectivity",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 46,
+    "fields": {
+        "name": "CCTV Surveillance",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 47,
+    "fields": {
+        "name": "Intercom System",
+        "category": "Utilities",
+        "layer": "utilities",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 48,
+    "fields": {
+        "name": "Security Guards",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 49,
+    "fields": {
+        "name": "Perimeter Wall",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 50,
+    "fields": {
+        "name": "Electric Fence",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 52,
+    "fields": {
+        "name": "Biometric Access",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 53,
+    "fields": {
+        "name": "Gated Community",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 54,
+    "fields": {
+        "name": "Smart Locks",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 55,
+    "fields": {
+        "name": "Security Alarm System",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 56,
+    "fields": {
+        "name": "Fire Extinguishers",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 57,
+    "fields": {
+        "name": "Emergency Exit",
+        "category": "Security",
+        "layer": "security",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 58,
+    "fields": {
+        "name": "Private Swimming Pool",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 59,
+    "fields": {
+        "name": "Shared Swimming Pool",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 60,
+    "fields": {
+        "name": "Dedicated Parking Spots",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 61,
+    "fields": {
+        "name": "Visitor Parking",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 62,
+    "fields": {
+        "name": "Garden / Compound",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 63,
+    "fields": {
+        "name": "Children’s Play Area",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 64,
+    "fields": {
+        "name": "Rooftop Terrace",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 65,
+    "fields": {
+        "name": "Outdoor Kitchen",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 66,
+    "fields": {
+        "name": "BBQ Area",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 67,
+    "fields": {
+        "name": "Paved Compound",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 68,
+    "fields": {
+        "name": "Car Wash Area",
+        "category": "Outdoor",
+        "layer": "outdoor",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 69,
+    "fields": {
+        "name": "Elevator / Lift",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 70,
+    "fields": {
+        "name": "Staircase Access",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 71,
+    "fields": {
+        "name": "Wheelchair Accessibility",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 72,
+    "fields": {
+        "name": "Reception Area",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 73,
+    "fields": {
+        "name": "Gym / Fitness Center",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 74,
+    "fields": {
+        "name": "Sauna / Steam Room",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 75,
+    "fields": {
+        "name": "Conference Room",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 76,
+    "fields": {
+        "name": "Common Lounge",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 77,
+    "fields": {
+        "name": "Mini Supermarket",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.propertyamenity",
+    "pk": 78,
+    "fields": {
+        "name": "Pharmacy Access",
+        "category": "Building",
+        "layer": "building",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximitycategory",
+    "pk": 1,
+    "fields": {
+        "name": "Healthcare",
+        "description": "",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximitycategory",
+    "pk": 2,
+    "fields": {
+        "name": "Shopping & Daily Needs",
+        "description": "",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximitycategory",
+    "pk": 4,
+    "fields": {
+        "name": "Transportation",
+        "description": "",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximitycategory",
+    "pk": 5,
+    "fields": {
+        "name": "Recreation & Lifestyle",
+        "description": "",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximitycategory",
+    "pk": 7,
+    "fields": {
+        "name": "Religious Centers",
+        "description": "",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 1,
+    "fields": {
+        "category": 1,
+        "name": "Hospital",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 2,
+    "fields": {
+        "category": 1,
+        "name": "Clinic",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 3,
+    "fields": {
+        "category": 1,
+        "name": "Pharmacy",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 4,
+    "fields": {
+        "category": 1,
+        "name": "Medical Center",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 5,
+    "fields": {
+        "category": 2,
+        "name": "Market",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 6,
+    "fields": {
+        "category": 2,
+        "name": "Supermarket",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 7,
+    "fields": {
+        "category": 2,
+        "name": "Shopping Mall",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 8,
+    "fields": {
+        "category": 2,
+        "name": "Convenience Store",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 9,
+    "fields": {
+        "category": 2,
+        "name": "Hardware Shop",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 15,
+    "fields": {
+        "category": 4,
+        "name": "Main Road",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 16,
+    "fields": {
+        "category": 4,
+        "name": "Taxi Stage",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 17,
+    "fields": {
+        "category": 4,
+        "name": "Bus Terminal",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 18,
+    "fields": {
+        "category": 4,
+        "name": "Boda Stage",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 19,
+    "fields": {
+        "category": 4,
+        "name": "Airport",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 20,
+    "fields": {
+        "category": 5,
+        "name": "Gym",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 21,
+    "fields": {
+        "category": 5,
+        "name": "Restaurant",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 22,
+    "fields": {
+        "category": 5,
+        "name": "Café",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 23,
+    "fields": {
+        "category": 5,
+        "name": "Bar / Lounge",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 24,
+    "fields": {
+        "category": 5,
+        "name": "Cinema",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 25,
+    "fields": {
+        "category": 5,
+        "name": "Sports Center",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 30,
+    "fields": {
+        "category": 7,
+        "name": "Church",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 31,
+    "fields": {
+        "category": 7,
+        "name": "Mosque",
+        "is_active": true
+    }
+},
+{
+    "model": "core.proximityitem",
+    "pk": 32,
+    "fields": {
+        "category": 7,
+        "name": "Temple",
+        "is_active": true
+    }
+}
+]
