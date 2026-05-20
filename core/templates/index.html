@@ -945,9 +945,11 @@
   <div class="container">
     <div class="glass-grid">
       {% for property in properties|slice:":4" %}
-      <a href="/property/1/" class="glass-card">
+      <a href="/property/{{ property.id }}/" class="glass-card">
         <div class="glass-img-wrapper">
-          {% if property.category == 'studio' %}
+          {% if property.hero_image %}
+          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img">
+          {% elif property.category == 'studio' %}
           <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
             alt="{{ property.title }}" class="glass-img">
           {% elif property.category == '2_bed' or property.category == '1_bed' %}
@@ -973,18 +975,6 @@
           </h3>
           <h4 class="glass-title">{{ property.title }}</h4>
           <p class="glass-location"><i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ property.location }}</p>
-
-          <div class="glass-meta">
-            <div class="glass-meta-item">
-              <i class="fa-solid fa-shield-halved"></i> Inspected & Approved
-            </div>
-            <div class="glass-meta-item">
-              <i class="fa-solid fa-calendar-check"></i> Vetted: May 2026
-            </div>
-            <div class="glass-meta-item">
-              <i class="fa-solid fa-id-card"></i> Agent ID: #TR-{{ property.id|add:"720" }}
-            </div>
-          </div>
         </div>
       </a>
       {% empty %}

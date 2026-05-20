@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
+from django.db.models import Q
 from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem
 from django.contrib.auth.models import User
 
@@ -742,9 +743,120 @@ def submit_property_inspection(request, property_id):
     return redirect(f'/admin-dashboard/property/view/{property_id}/')
 
 def home_view(request):
-    # Fetch parent (standalone or building) properties that are approved/available
-    properties = Property.objects.filter(parent=None).prefetch_related('units')
+    # Fetch parent (standalone or building) properties that are approved/available, newest first
+    properties = Property.objects.filter(parent=None, status='available').prefetch_related('units').order_by('-created_at')
     return render(request, 'index.html', {'properties': properties})
+
+def search_view(request):
+    # Only show available properties that are parent listings or individual standalone properties
+    properties = Property.objects.filter(status='available', parent=None)
+    
+    # 1. Location search
+    q = request.GET.get('q', '').strip()
+    if q:
+        properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
+        
+    # 2. Type search
+    p_type = request.GET.get('type', '').strip().lower()
+    if p_type and p_type != 'all types':
+        if p_type == 'apartment':
+            properties = properties.filter(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block', 'flat'])
+        elif p_type == 'villa':
+            properties = properties.filter(category__in=['bungalow', 'standalone'])
+        elif p_type == 'condo':
+            properties = properties.filter(category__in=['condo_block'])
+            
+    # 3. Price filters (min_price, max_price)
+    min_price = request.GET.get('min_price', '').strip()
+    if min_price and min_price.isdigit():
+        properties = properties.filter(price__gte=int(min_price))
+        
+    max_price = request.GET.get('max_price', '').strip()
+    if max_price and max_price.isdigit():
+        properties = properties.filter(price__lte=int(max_price))
+        
+    # 4. Amenities filters
+    selected_amenities = []
+    if request.GET.get('pool') == 'on':
+        properties = properties.filter(amenities__name__icontains='pool')
+        selected_amenities.append('pool')
+    if request.GET.get('power') == 'on':
+        properties = properties.filter(Q(amenities__name__icontains='power') | Q(amenities__name__icontains='generator'))
+        selected_amenities.append('power')
+    if request.GET.get('gym') == 'on':
+        properties = properties.filter(amenities__name__icontains='gym')
+        selected_amenities.append('gym')
+    if request.GET.get('security') == 'on':
+        properties = properties.filter(Q(amenities__name__icontains='security') | Q(amenities__name__icontains='guard') | Q(amenities__name__icontains='cctv'))
+        selected_amenities.append('security')
+        
+    properties = properties.distinct().order_by('-created_at')
+    total_count = properties.count()
+    
+    return render(request, 'tenant/search.html', {
+        'properties': properties,
+        'total_count': total_count,
+        'q': q,
+        'type': p_type,
+        'min_price': min_price,
+        'max_price': max_price,
+        'selected_amenities': selected_amenities
+    })
+
+def property_detail_view(request, property_id):
+    property_obj = get_object_or_404(Property, id=property_id)
+    
+    # Fetch dynamic amenities
+    property_amenities = list(property_obj.amenities.all())
+    for a in property_amenities:
+        key = a.name.strip().lower()
+        a.icon_class = AMENITY_ICONS.get(key, 'fa-circle-check')
+        
+    # Fetch dynamic proximity items with custom distances
+    property_proximities = list(property_obj.proximities.all().select_related('item', 'item__category'))
+    for px in property_proximities:
+        key = px.item.name.strip().lower()
+        px.icon_class = AMENITY_ICONS.get(key, 'fa-location-dot')
+        
+    # Get first inspection (reports)
+    inspection = Inspection.objects.filter(property=property_obj).first()
+    reports = []
+    if inspection:
+        reports = inspection.reports.all().select_related('agent', 'agent__role')
+        
+    return render(request, 'tenant/property_detail.html', {
+        'property': property_obj,
+        'property_amenities': property_amenities,
+        'property_proximities': property_proximities,
+        'inspection': inspection,
+        'reports': reports,
+    })
+
+def checkout_view(request, property_id):
+    property_obj = get_object_or_404(Property, id=property_id)
+    
+    # Pre-calculate prices
+    price = property_obj.price or 0
+    security_deposit = price * 0.1
+    pipeline_fee = price * 0.01
+    total_escrow = price + security_deposit + pipeline_fee
+    
+    # Make pretty currency formats
+    def format_ugx(val):
+        if val >= 1000000:
+            return f"UGX {val/1000000:.2f}M".replace('.00M', 'M')
+        elif val >= 1000:
+            return f"UGX {val/1000:.0f}K"
+        return f"UGX {val:.0f}"
+        
+    context = {
+        'property': property_obj,
+        'price_formatted': format_ugx(price),
+        'security_deposit_formatted': format_ugx(security_deposit),
+        'pipeline_fee_formatted': format_ugx(pipeline_fee),
+        'total_escrow_formatted': format_ugx(total_escrow)
+    }
+    return render(request, 'tenant/checkout.html', context)
 
 def agent_report_auth(request):
     if request.method == 'POST':

@@ -161,28 +161,37 @@
     <div class="container">
         <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem; color: var(--color-gold);">Find TRUST-Verified Properties</h2>
         
-        <div class="search-bar-inline">
-            <input type="text" placeholder="Location, Neighborhood...">
-            <select>
-                <option>All Types</option>
-                <option>Apartment</option>
-                <option>Villa</option>
-                <option>Condo</option>
+        <form method="GET" action="{% url 'search' %}" class="search-bar-inline">
+            <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Location, Neighborhood...">
+            <select name="type">
+                <option value="" {% if not type %}selected{% endif %}>All Types</option>
+                <option value="apartment" {% if type == 'apartment' %}selected{% endif %}>Apartment</option>
+                <option value="villa" {% if type == 'villa' %}selected{% endif %}>Villa</option>
+                <option value="condo" {% if type == 'condo' %}selected{% endif %}>Condo</option>
             </select>
-            <button class="btn btn-primary" style="flex: 0 0 150px; font-size: 1rem;">Search</button>
-        </div>
+            {% if min_price %}<input type="hidden" name="min_price" value="{{ min_price }}">{% endif %}
+            {% if max_price %}<input type="hidden" name="max_price" value="{{ max_price }}">{% endif %}
+            {% if 'pool' in selected_amenities %}<input type="hidden" name="pool" value="on">{% endif %}
+            {% if 'power' in selected_amenities %}<input type="hidden" name="power" value="on">{% endif %}
+            {% if 'gym' in selected_amenities %}<input type="hidden" name="gym" value="on">{% endif %}
+            {% if 'security' in selected_amenities %}<input type="hidden" name="security" value="on">{% endif %}
+            <button type="submit" class="btn btn-primary" style="flex: 0 0 150px; font-size: 1rem;">Search</button>
+        </form>
     </div>
 </div>
 
 <div class="container layout">
     <!-- Filters Sidebar -->
-    <aside class="filters">
+    <form method="GET" action="{% url 'search' %}" class="filters">
+        <input type="hidden" name="q" value="{{ q|default:'' }}">
+        <input type="hidden" name="type" value="{{ type|default:'' }}">
+
         <div class="filter-group">
             <h4 class="filter-title">Price Range (Annually)</h4>
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <input type="number" class="form-control" placeholder="Min" style="padding: 0.5rem;">
+                <input type="number" name="min_price" value="{{ min_price|default:'' }}" class="form-control" placeholder="Min" style="padding: 0.5rem;">
                 <span>to</span>
-                <input type="number" class="form-control" placeholder="Max" style="padding: 0.5rem;">
+                <input type="number" name="max_price" value="{{ max_price|default:'' }}" class="form-control" placeholder="Max" style="padding: 0.5rem;">
             </div>
         </div>
 
@@ -197,20 +206,20 @@
         <div class="filter-group">
             <h4 class="filter-title">Amenities</h4>
             <div class="checkbox-list">
-                <label><input type="checkbox"> Swimming Pool</label>
-                <label><input type="checkbox"> 24/7 Power</label>
-                <label><input type="checkbox"> Gym</label>
-                <label><input type="checkbox"> Security</label>
+                <label><input type="checkbox" name="pool" {% if 'pool' in selected_amenities %}checked{% endif %}> Swimming Pool</label>
+                <label><input type="checkbox" name="power" {% if 'power' in selected_amenities %}checked{% endif %}> 24/7 Power / Gen</label>
+                <label><input type="checkbox" name="gym" {% if 'gym' in selected_amenities %}checked{% endif %}> Gym</label>
+                <label><input type="checkbox" name="security" {% if 'security' in selected_amenities %}checked{% endif %}> Security</label>
             </div>
         </div>
         
-        <button class="btn btn-outline" style="width: 100%;">Apply Filters</button>
-    </aside>
+        <button type="submit" class="btn btn-outline" style="width: 100%;">Apply Filters</button>
+    </form>
 
     <!-- Results Grid -->
     <main>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <p style="color: var(--color-text-muted);">Showing <strong style="color: var(--color-text-dark);">24</strong> verified properties</p>
+            <p style="color: var(--color-text-muted);">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> verified properties</p>
             <select class="form-control" style="width: auto; padding: 0.5rem;">
                 <option>Sort by: Recommended</option>
                 <option>Price: Low to High</option>
@@ -219,45 +228,40 @@
         </div>
 
         <div class="results-grid">
-            
-            <!-- Result Card -->
-            <a href="/property/1/" class="property-card" style="color: inherit; text-decoration: none;">
+            {% for property in properties %}
+            <a href="/property/{{ property.id }}/" class="property-card" style="color: inherit; text-decoration: none;">
                 <div style="position: relative;">
-                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Apartment" class="card-img">
+                    {% if property.hero_image %}
+                    <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="card-img">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
+                    {% endif %}
                     <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> TRUST Verified</div>
                 </div>
                 <div class="card-body">
-                    <h3 class="card-price">UGX 45M <span style="font-size: 0.9rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/ year</span></h3>
-                    <h4 class="card-title">Luxury 3-Bed Penthouse</h4>
-                    <p class="card-location"><i class="fa-solid fa-location-dot"></i> Kololo, Kampala</p>
+                    <h3 class="card-price">
+                        {% if property.price %}
+                        UGX {{ property.price|floatformat:0 }} <span>/ mo</span>
+                        {% else %}
+                        Custom Pricing
+                        {% endif %}
+                    </h3>
+                    <h4 class="card-title">{{ property.title }}</h4>
+                    <p class="card-location"><i class="fa-solid fa-location-dot"></i> {{ property.location }}</p>
                     
                     <div class="card-amenities">
-                        <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
-                        <span><i class="fa-solid fa-bath"></i> 3.5 Baths</span>
-                        <span><i class="fa-solid fa-bolt"></i> 24/7 Power</span>
+                        <span><i class="fa-solid fa-bed"></i> {{ property.bedrooms|default:1 }} Bed{% if property.bedrooms > 1 %}s{% endif %}</span>
+                        <span><i class="fa-solid fa-shield-halved"></i> Inspected</span>
                     </div>
                 </div>
             </a>
-
-            <!-- Result Card -->
-            <a href="/property/2/" class="property-card" style="color: inherit; text-decoration: none;">
-                <div style="position: relative;">
-                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80" alt="Apartment" class="card-img">
-                    <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> TRUST Verified</div>
-                </div>
-                <div class="card-body">
-                    <h3 class="card-price">UGX 22M <span style="font-size: 0.9rem; color: var(--color-text-muted); font-family: var(--font-body); font-weight: 400;">/ year</span></h3>
-                    <h4 class="card-title">Greenhouse Condo</h4>
-                    <p class="card-location"><i class="fa-solid fa-location-dot"></i> Naalya, Kampala</p>
-                    
-                    <div class="card-amenities">
-                        <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
-                        <span><i class="fa-solid fa-water-ladder"></i> Pool</span>
-                        <span><i class="fa-solid fa-square-parking"></i> 2 Cars</span>
-                    </div>
-                </div>
-            </a>
-            
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 0; color: var(--color-text-muted);">
+                <i class="fa-solid fa-circle-question" style="font-size: 3rem; margin-bottom: 1rem; color: var(--color-gold);"></i>
+                <p style="font-size: 1.1rem; font-weight: 500;">No properties match your active search filters.</p>
+                <a href="{% url 'search' %}" class="btn btn-outline" style="margin-top: 1rem; display: inline-block;">Clear All Filters</a>
+            </div>
+            {% endfor %}
         </div>
     </main>
 </div>

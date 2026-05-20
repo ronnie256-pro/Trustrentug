@@ -164,29 +164,33 @@
         <h3 style="color: var(--color-gold); font-family: var(--font-heading); margin-bottom: 1.5rem;">Booking Summary</h3>
         
         <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            {% if property.hero_image %}
+            <img src="{{ property.hero_image.url }}" style="width: 80px; height: 60px; object-fit: cover; border-radius: var(--radius-sm);" alt="{{ property.title }}">
+            {% else %}
             <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=100&q=80" style="width: 80px; height: 60px; object-fit: cover; border-radius: var(--radius-sm);" alt="Prop">
+            {% endif %}
             <div>
-                <div style="font-weight: 600; font-size: 0.9rem; line-height: 1.2; margin-bottom: 0.3rem;">Luxury 3-Bed Penthouse</div>
-                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Kololo, Kampala</div>
+                <div style="font-weight: 600; font-size: 0.9rem; line-height: 1.2; margin-bottom: 0.3rem;">{{ property.title }}</div>
+                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">{{ property.location }}</div>
             </div>
         </div>
 
         <div class="summary-row">
-            <span>First Year Rent</span>
-            <span>UGX 45M</span>
+            <span>Rent / Price</span>
+            <span>{{ price_formatted }}</span>
         </div>
         <div class="summary-row">
             <span>Security Deposit <br><small style="color: rgba(255,255,255,0.5);">(Held by TRUST)</small></span>
-            <span>UGX 4.5M</span>
+            <span>{{ security_deposit_formatted }}</span>
         </div>
         <div class="summary-row">
             <span>TRUST Pipeline Fee <br><small style="color: rgba(255,255,255,0.5);">(1% Verification Fee)</small></span>
-            <span>UGX 450K</span>
+            <span>{{ pipeline_fee_formatted }}</span>
         </div>
 
         <div class="summary-row total">
             <span>Total Escrow Lock</span>
-            <span>UGX 49.95M</span>
+            <span>{{ total_escrow_formatted }}</span>
         </div>
         
         <p style="margin-top: 1.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-align: center;">

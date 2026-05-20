@@ -4,32 +4,265 @@
 
 {% block extra_css %}
 <style>
-    .gallery {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 1rem;
+    /* Premium Detail Page Wrapper to reduce white background */
+    .detail-page-wrapper {
+        background: linear-gradient(180deg, #f7f6f2 0%, #efede7 100%);
+        padding: 3rem 0 5rem;
+        min-height: 80vh;
+    }
+
+    /* Elevating Booking Card to glassmorphism */
+    .booking-card {
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.45) !important;
+        border-top: 4px solid var(--color-emerald) !important;
+        box-shadow: var(--shadow-md) !important;
+    }
+
+    /* Elevating proximity cards */
+    .proximity-card {
+        background: rgba(255, 255, 255, 0.65) !important;
+        border: 1px solid rgba(203, 163, 88, 0.15) !important;
+    }
+
+    /* Elevating amenities */
+    .amenity-icon {
+        background: rgba(10, 61, 40, 0.08) !important;
+    }
+
+    /* Premium Accordion Styling */
+    .report-accordion {
+        margin-top: 3rem;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid var(--color-emerald-light);
+    }
+
+    .accordion-trigger {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 2rem;
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--color-emerald-dark);
+        text-align: left;
+        transition: background 0.3s ease;
+    }
+
+    .accordion-trigger:hover {
+        background: rgba(10, 61, 40, 0.03);
+    }
+
+    .arrow-icon {
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .accordion-trigger.active .arrow-icon {
+        transform: rotate(180deg);
+        color: var(--color-gold);
+    }
+
+    /* Collapsible content wrapper */
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: transparent;
+    }
+
+    .accordion-content.active {
+        max-height: 1000px; /* high value for animation space */
+    }
+
+    /* Inner Category Accordions */
+    .category-accordion {
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .category-trigger {
+        font-family: var(--font-body);
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 1rem 2.5rem;
+        color: var(--color-text-dark);
+    }
+
+    .category-content {
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .report-details-inner {
+        padding: 1.25rem 3rem;
+    }
+
+    .findings-quote {
+        font-style: italic;
+        font-size: 0.95rem;
+        color: var(--color-text-dark);
+        background: #ffffff;
+        padding: 1rem 1.5rem;
+        border-left: 3px solid var(--color-gold);
+        border-radius: var(--radius-sm);
+        margin: 0.75rem 0 0;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    /* Premium Interactive Image Slider */
+    .slider-container {
+        position: relative;
+        width: 100%;
         height: 500px;
         margin-top: 2rem;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        background: #0b0c10;
     }
 
-    .gallery-main {
+    .slider-screen {
         width: 100%;
         height: 100%;
-        object-fit: cover;
-        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .gallery-side {
-        display: grid;
-        grid-template-rows: 1fr 1fr;
+    .slider-slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+        z-index: 1;
+        object-fit: cover;
+    }
+
+    .slider-slide.active {
+        opacity: 1;
+        z-index: 2;
+    }
+
+    /* Slider Nav Arrows */
+    .slider-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .slider-arrow:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 8px 32px rgba(203, 163, 88, 0.4);
+        border-color: var(--color-gold);
+    }
+
+    .slider-arrow-prev {
+        left: 20px;
+    }
+
+    .slider-arrow-next {
+        right: 20px;
+    }
+
+    /* Image Counter Badge */
+    .slider-badge {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(10, 61, 40, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 0.4rem 1rem;
+        border-radius: var(--radius-full);
+        color: var(--color-gold-light);
+        font-weight: 600;
+        font-size: 0.85rem;
+        z-index: 10;
+        letter-spacing: 1px;
+    }
+
+    /* Thumbnail Gallery with Glassmorphism */
+    .thumbnail-gallery {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
         gap: 1rem;
+        margin-top: 1rem;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        overflow-x: auto;
     }
 
-    .gallery-sub {
+    .thumbnail-item {
+        position: relative;
+        flex: 0 0 100px;
+        height: 70px;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .thumbnail-item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        transition: transform 0.3s ease;
+    }
+
+    .thumbnail-item:hover {
+        border-color: rgba(203, 163, 88, 0.6);
+        transform: translateY(-2px);
+    }
+
+    .thumbnail-item:hover img {
+        transform: scale(1.08);
+    }
+
+    .thumbnail-item.active {
+        border-color: var(--color-gold);
+        box-shadow: 0 0 12px rgba(203, 163, 88, 0.45);
     }
 
     .content-layout {
@@ -110,23 +343,8 @@
 
     /* Responsive Property Detail */
     @media (max-width: 992px) {
-        .gallery {
-            height: auto;
-            grid-template-columns: 1fr;
-        }
-
-        .gallery-main {
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-        }
-
-        .gallery-side {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr;
-            height: 200px;
-        }
-
-        .gallery-sub {
-            border-radius: 0;
+        .slider-container {
+            height: 350px;
         }
 
         .content-layout {
@@ -218,16 +436,67 @@
 {% endblock %}
 
 {% block content %}
+<div class="detail-page-wrapper">
 <div class="container">
-    <div class="gallery">
-        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
-            alt="Main" class="gallery-main">
-        <div class="gallery-side">
-            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
-                alt="Interior" class="gallery-sub" style="border-radius: 0 var(--radius-lg) 0 0;">
-            <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=600&q=80"
-                alt="Kitchen" class="gallery-sub" style="border-radius: 0 0 var(--radius-lg) 0;">
+    <!-- Premium Dynamic Image Slider -->
+    <div class="slider-container">
+        <div class="slider-screen">
+            {% if property.hero_image %}
+            <img src="{{ property.hero_image.url }}" alt="{{ property.title }} - Main" class="slider-slide active">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80" alt="Fallback Main" class="slider-slide active">
+            {% endif %}
+
+            {% if property.image_1 %}
+            <img src="{{ property.image_1.url }}" alt="{{ property.title }} - Gallery 1" class="slider-slide">
+            {% endif %}
+
+            {% if property.image_2 %}
+            <img src="{{ property.image_2.url }}" alt="{{ property.title }} - Gallery 2" class="slider-slide">
+            {% endif %}
+
+            {% if property.image_3 %}
+            <img src="{{ property.image_3.url }}" alt="{{ property.title }} - Gallery 3" class="slider-slide">
+            {% endif %}
+
+            <!-- Navigation Controls -->
+            <button class="slider-arrow slider-arrow-prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="slider-arrow slider-arrow-next"><i class="fa-solid fa-chevron-right"></i></button>
+
+            <!-- Counter Badge -->
+            <div class="slider-badge">1 / 1</div>
         </div>
+    </div>
+
+    <!-- Glassmorphism Thumbnails Grid -->
+    <div class="thumbnail-gallery">
+        {% if property.hero_image %}
+        <div class="thumbnail-item active">
+            <img src="{{ property.hero_image.url }}" alt="Thumbnail Main">
+        </div>
+        {% else %}
+        <div class="thumbnail-item active">
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=150&q=80" alt="Thumbnail Fallback">
+        </div>
+        {% endif %}
+
+        {% if property.image_1 %}
+        <div class="thumbnail-item">
+            <img src="{{ property.image_1.url }}" alt="Thumbnail 1">
+        </div>
+        {% endif %}
+
+        {% if property.image_2 %}
+        <div class="thumbnail-item">
+            <img src="{{ property.image_2.url }}" alt="Thumbnail 2">
+        </div>
+        {% endif %}
+
+        {% if property.image_3 %}
+        <div class="thumbnail-item">
+            <img src="{{ property.image_3.url }}" alt="Thumbnail 3">
+        </div>
+        {% endif %}
     </div>
 
     <div class="content-layout">
@@ -238,94 +507,93 @@
                     <i class="fa-solid fa-shield-check"></i> TRUST Appraised
                 </span>
             </div>
-            <h1 class="property-title">Luxury 3-Bed Penthouse</h1>
-            <p class="location-text"><i class="fa-solid fa-location-dot"></i> Kololo, Kampala &bull; <a href="#"
-                    style="text-decoration: underline;">View Map</a></p>
+            <h1 class="property-title">{{ property.title }}</h1>
+            <p class="location-text"><i class="fa-solid fa-location-dot"></i> {{ property.location }}</p>
 
-            <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 3rem;">Property Overview</h3>
+            {% if property.description %}
+            <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 2rem;">Description</h3>
+            <p style="font-size: 1rem; line-height: 1.6; color: var(--color-text-dark); margin-bottom: 2rem;">{{ property.description }}</p>
+            {% endif %}
+
+            <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 3rem;">Property Amenities</h3>
 
             <div class="amenities-grid">
                 <div class="amenity-item">
                     <div class="amenity-icon"><i class="fa-solid fa-bed"></i></div>
-                    3 Bedrooms
+                    {{ property.bedrooms|default:1 }} Bedroom{% if property.bedrooms > 1 %}s{% endif %}
                 </div>
+                {% for amenity in property_amenities %}
                 <div class="amenity-item">
-                    <div class="amenity-icon"><i class="fa-solid fa-bath"></i></div>
-                    3.5 Bathrooms
+                    <div class="amenity-icon"><i class="fa-solid {{ amenity.icon_class }}"></i></div>
+                    {{ amenity.name }}
                 </div>
-                <div class="amenity-item">
-                    <div class="amenity-icon"><i class="fa-solid fa-bolt"></i></div>
-                    24/7 Power Supply
-                </div>
-                <div class="amenity-item">
-                    <div class="amenity-icon"><i class="fa-solid fa-water-ladder"></i></div>
-                    Private Swimming Pool
-                </div>
-                <div class="amenity-item">
-                    <div class="amenity-icon"><i class="fa-solid fa-car"></i></div>
-                    2 Dedicated Parking Spots
-                </div>
-                <div class="amenity-item">
-                    <div class="amenity-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                    On-site Security
-                </div>
+                {% empty %}
+                {% if not property.bedrooms %}
+                <p style="color: var(--color-text-muted);">No recorded amenities available.</p>
+                {% endif %}
+                {% endfor %}
             </div>
 
             <div class="proximity-section">
-                <h3 style="font-family: var(--font-heading); margin-bottom: 1.5rem;">Proximity to services</h3>
+                <h3 style="font-family: var(--font-heading); margin-bottom: 1.5rem;">Proximity to Local Services</h3>
                 <div class="proximity-grid">
+                    {% for proximity in property_proximities %}
                     <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-hospital"></i></div>
-                        <div class="proximity-label">Hospital</div>
-                        <div class="proximity-value">1.2 KM</div>
+                        <div class="proximity-icon"><i class="fa-solid {{ proximity.icon_class }}"></i></div>
+                        <div class="proximity-label">{{ proximity.item.name }}</div>
+                        <div class="proximity-value">{{ proximity.distance_km }} KM</div>
                     </div>
-                    <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-shop"></i></div>
-                        <div class="proximity-label">Markets</div>
-                        <div class="proximity-value">0.5 KM</div>
+                    {% empty %}
+                    <div style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); padding: 1.5rem 0;">
+                        No local proximity services configured for this property address.
                     </div>
-                    <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-                        <div class="proximity-label">Supermarkets</div>
-                        <div class="proximity-value">0.8 KM</div>
-                    </div>
-                    <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-dumbbell"></i></div>
-                        <div class="proximity-label">Gym</div>
-                        <div class="proximity-value">1.5 KM</div>
-                    </div>
-                    <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-child-reaching"></i></div>
-                        <div class="proximity-label">Kids Center</div>
-                        <div class="proximity-value">2.0 KM</div>
-                    </div>
-                    <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-road"></i></div>
-                        <div class="proximity-label">Main Road</div>
-                        <div class="proximity-value">0.3 KM</div>
-                    </div>
-                    <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-city"></i></div>
-                        <div class="proximity-label">City Center</div>
-                        <div class="proximity-value">4.5 KM</div>
-                    </div>
-                    <div class="proximity-card">
-                        <div class="proximity-icon"><i class="fa-solid fa-plane-departure"></i></div>
-                        <div class="proximity-label">Airport</div>
-                        <div class="proximity-value">35.0 KM</div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
-            <div
-                style="margin-top: 3rem; padding: 2rem; background: var(--color-bg-base); border-radius: var(--radius-md); border-left: 4px solid var(--color-emerald-light);">
-                <h3 style="margin-bottom: 1rem; font-size: 1.2rem;"><i class="fa-solid fa-file-contract"></i> TRUST
-                    Agent Inspection Report</h3>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.5rem;"><strong>Inspector
-                        ID:</strong> TR-89942</p>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1rem;">
-                    <strong>Date:</strong> 12 March, 2026
-                </p>
+            <!-- Interactive Accordion for Inspection Reports -->
+            <div class="report-accordion">
+                <button class="accordion-trigger main-trigger" id="main-report-btn">
+                    <span>
+                        <i class="fa-solid fa-clipboard-check text-emerald" style="margin-right: 0.5rem;"></i>
+                        Property Inspection Report
+                    </span>
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </button>
+                
+                <div class="accordion-content" id="main-report-content">
+                    {% for report in reports %}
+                    <div class="category-accordion">
+                        <button class="accordion-trigger category-trigger">
+                            <span>
+                                <i class="fa-solid fa-circle-check text-success" style="margin-right: 0.5rem; font-size: 0.95rem;"></i>
+                                {{ report.agent.role.name }} Report
+                            </span>
+                            <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                        </button>
+                        <div class="accordion-content category-content">
+                            <div class="report-details-inner">
+                                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">
+                                    <strong>Inspector:</strong> {{ report.agent.name }} (Agent ID: #TR-{{ report.agent.agent_id }})
+                                </p>
+                                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.75rem;">
+                                    <strong>Status:</strong> 
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;">
+                                        {{ report.get_status_display }}
+                                    </span>
+                                </p>
+                                <blockquote class="findings-quote">
+                                    "{{ report.findings }}"
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="color: var(--color-text-muted); font-size: 0.95rem; padding: 1.5rem; margin: 0;">
+                        This property is pending physical vetting and report generation by active safety inspectors.
+                    </p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
@@ -333,11 +601,19 @@
         <aside>
             <div class="booking-card">
                 <div class="price-block">
-                    <span style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Annual
-                        Rent</span>
-                    <div class="price-main">UGX 45M</div>
-                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">+ UGX 4.5M
-                        Refundable Security Deposit</p>
+                    <span style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Rent / Price</span>
+                    <div class="price-main">
+                        {% if property.price %}
+                        UGX {{ property.price|floatformat:0 }}
+                        {% else %}
+                        Custom Price
+                        {% endif %}
+                    </div>
+                    {% if property.price %}
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">
+                        + 10% Refundable Security Deposit & Escrow protection
+                    </p>
+                    {% endif %}
                 </div>
 
                 <div class="form-group">
@@ -345,7 +621,7 @@
                     <input type="date" class="form-control" style="background: var(--color-bg-base);">
                 </div>
 
-                <a href="/checkout/1/" class="btn btn-gold"
+                <a href="/checkout/{{ property.id }}/" class="btn btn-gold"
                     style="width: 100%; font-size: 1.1rem; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
                     Initiate Booking & Escrow
                 </a>
@@ -356,4 +632,99 @@
         </aside>
     </div>
 </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.slider-slide');
+    const thumbs = document.querySelectorAll('.thumbnail-item');
+    const prevBtn = document.querySelector('.slider-arrow-prev');
+    const nextBtn = document.querySelector('.slider-arrow-next');
+    const badge = document.querySelector('.slider-badge');
+    
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+        if (index < 0) {
+            currentIndex = totalSlides - 1;
+        } else if (index >= totalSlides) {
+            currentIndex = 0;
+        } else {
+            currentIndex = index;
+        }
+
+        slides.forEach((slide, i) => {
+            if (i === currentIndex) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+
+        thumbs.forEach((thumb, i) => {
+            if (i === currentIndex) {
+                thumb.classList.add('active');
+                thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+                thumb.classList.remove('active');
+            }
+        });
+
+        if (badge) {
+            badge.textContent = `${currentIndex + 1} / ${totalSlides}`;
+        }
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            showSlide(currentIndex - 1);
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            showSlide(currentIndex + 1);
+        });
+    }
+
+    thumbs.forEach((thumb, index) => {
+        thumb.addEventListener('click', function(e) {
+            e.preventDefault();
+            showSlide(index);
+        });
+    });
+
+    showSlide(0);
+
+    // Collapsible Main Report Accordion
+    const mainBtn = document.getElementById('main-report-btn');
+    const mainContent = document.getElementById('main-report-content');
+
+    if (mainBtn && mainContent) {
+        mainBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.classList.toggle('active');
+            mainContent.classList.toggle('active');
+        });
+    }
+
+    // Collapsible Category Accordions
+    const catTriggers = document.querySelectorAll('.category-trigger');
+    catTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content) {
+                content.classList.toggle('active');
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
