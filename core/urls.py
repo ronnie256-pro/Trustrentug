@@ -43,8 +43,24 @@ urlpatterns = [
     path('property/delete/<int:property_id>/', views.delete_property, name='delete_property'),
     path('admin-dashboard/agent/delete/<int:agent_id>/', views.delete_agent, name='delete_agent'),
     path('admin-dashboard/agent-role/delete/<int:role_id>/', views.delete_agent_role, name='delete_agent_role'),
+    path('admin-dashboard/viewing/<int:viewing_id>/', views.admin_viewing_detail, name='admin_viewing_detail'),
+    path('admin-dashboard/viewing/status/<int:viewing_id>/', views.admin_viewing_status_update, name='admin_viewing_status_update'),
     path('agent/report/', views.agent_report_auth, name='agent_report_auth'),
     path('agent/submit-report/', views.agent_submit_report, name='agent_submit_report'),
+    
+    # Tenant Dashboard Routes
+    path('tenant/dashboard/', views.tenant_dashboard, name='tenant_dashboard'),
+    path('tenant/profile/update/', views.tenant_update_profile, name='tenant_update_profile'),
+    path('tenant/booking/create/<int:property_id>/', views.tenant_create_booking, name='tenant_create_booking'),
+    path('tenant/viewing/request/<int:property_id>/', views.tenant_request_viewing, name='tenant_request_viewing'),
+    path('tenant/schedule-move-in/<int:property_id>/', views.tenant_schedule_move_in, name='tenant_schedule_move_in'),
+    path('tenant/maintenance/report/<int:property_id>/', views.tenant_report_maintenance, name='tenant_report_maintenance'),
+    path('tenant/agreement/upload/<int:rental_id>/', views.tenant_upload_agreement, name='tenant_upload_agreement'),
+    path('tenant/occupants/upload/<int:rental_id>/', views.tenant_upload_occupants, name='tenant_upload_occupants'),
+    path('tenant/payment/process/<int:property_id>/', views.tenant_process_payment, name='tenant_process_payment'),
+    path('tenant/booking/cancel/<int:booking_id>/', views.tenant_cancel_booking, name='tenant_cancel_booking'),
+    path('tenant/favorite/add/<int:property_id>/', views.tenant_add_favorite, name='tenant_add_favorite'),
+    path('tenant/favorite/remove/<int:favorite_id>/', views.tenant_remove_favorite, name='tenant_remove_favorite'),
 ]
 
 if settings.DEBUG:

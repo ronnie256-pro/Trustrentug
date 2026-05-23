@@ -515,8 +515,7 @@
 
                 {% if property.description %}
                 <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 2rem;">Description</h3>
-                <p style="font-size: 1rem; line-height: 1.6; color: var(--color-text-dark); margin-bottom: 2rem;">{{
-                    property.description }}</p>
+                <p style="font-size: 1rem; line-height: 1.6; color: var(--color-text-dark); margin-bottom: 2rem;">{{ property.description }}</p>
                 {% endif %}
 
                 <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 3rem;">Property Amenities
@@ -612,9 +611,8 @@
             <!-- Booking Sidebar -->
             <aside>
                 <div class="booking-card">
-                    <div class="price-block">
-                        <span style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Rent
-                            / Price</span>
+                    <div class="price-block" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border);">
+                        <span style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Rent / Price</span>
                         <div class="price-main">
                             {% if property.price %}
                             UGX {{ property.price|floatformat:0 }}
@@ -622,25 +620,23 @@
                             Custom Price
                             {% endif %}
                         </div>
-                        {% if property.price %}
-                        <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">
-                            + 10% Refundable Security Deposit & Escrow protection
-                        </p>
-                        {% endif %}
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Proposed Move-in Date</label>
-                        <input type="date" class="form-control" style="background: var(--color-bg-base);">
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <form id="book-property-form" action="{% url 'tenant_create_booking' property.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="button" id="book-property-btn" class="btn btn-gold" style="width: 100%; font-size: 1.1rem; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 8px;">
+                                <i class="fa-solid fa-credit-card"></i> Book Property
+                            </button>
+                        </form>
+                        
+                        <form action="{% url 'tenant_add_favorite' property.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline" style="width: 100%; font-size: 1rem; padding: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
+                                <i class="fa-solid fa-heart"></i> Add to Favorite
+                            </button>
+                        </form>
                     </div>
-
-                    <a href="/checkout/{{ property.id }}/" class="btn btn-gold"
-                        style="width: 100%; font-size: 1.1rem; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
-                        Initiate Booking & Escrow
-                    </a>
-                    <button class="btn btn-outline" style="width: 100%; font-size: 1rem;">
-                        Request Physical Viewing
-                    </button>
                 </div>
             </aside>
         </div>
@@ -738,6 +734,145 @@
                 }
             });
         });
+
+        // Physical Inspection Modal Logic
+        const inspectionModal = document.getElementById('inspection-verification-modal');
+        const panelQuestion = document.getElementById('panel-question');
+        const panelScheduler = document.getElementById('panel-scheduler');
+
+        window.openInspectionModal = function() {
+            if (inspectionModal) {
+                panelQuestion.style.display = 'block';
+                panelScheduler.style.display = 'none';
+                inspectionModal.style.display = 'flex';
+            }
+        };
+
+        window.closeInspectionModal = function() {
+            if (inspectionModal) {
+                inspectionModal.style.display = 'none';
+            }
+        };
+
+        const bookPropertyBtn = document.getElementById('book-property-btn');
+        if (bookPropertyBtn) {
+            bookPropertyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                {% if not user.is_authenticated %}
+                    window.location.href = "{% url 'register' %}?next={{ request.path }}";
+                {% else %}
+                    openInspectionModal();
+                {% endif %}
+            });
+        }
+
+        const btnProceedBooking = document.getElementById('btn-proceed-booking');
+        if (btnProceedBooking) {
+            btnProceedBooking.addEventListener('click', function() {
+                const form = document.getElementById('book-property-form');
+                if (form) {
+                    form.submit();
+                }
+            });
+        }
+
+        const btnShowScheduler = document.getElementById('btn-show-scheduler');
+        if (btnShowScheduler) {
+            btnShowScheduler.addEventListener('click', function() {
+                panelQuestion.style.display = 'none';
+                panelScheduler.style.display = 'block';
+            });
+        }
+
+        const btnBackToQuestion = document.getElementById('btn-back-to-question');
+        if (btnBackToQuestion) {
+            btnBackToQuestion.addEventListener('click', function() {
+                panelScheduler.style.display = 'none';
+                panelQuestion.style.display = 'block';
+            });
+        }
+
+        // Auto-open modal if URL query parameter 'book' is true/1
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('book') === 'true' || urlParams.get('book') === '1') {
+            {% if not user.is_authenticated %}
+                window.location.href = "{% url 'register' %}?next=" + encodeURIComponent(window.location.pathname + "?book=true");
+            {% else %}
+                openInspectionModal();
+            {% endif %}
+        }
     });
 </script>
+
+<!-- Physical Inspection Verification Modal -->
+<div id="inspection-verification-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 1.5rem; transition: opacity 0.3s ease;">
+    <div style="background: white; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); max-width: 500px; width: 100%; overflow: hidden; transform: scale(0.95); transition: transform 0.3s ease; animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, var(--color-emerald-darkest), var(--color-emerald)); padding: 1.5rem; color: white; display: flex; align-items: center; gap: 1rem;">
+            <i class="fa-solid fa-house-circle-check" style="font-size: 2rem; color: var(--color-gold);"></i>
+            <div>
+                <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; color: white;">Physical Inspection Verification</h3>
+                <small style="opacity: 0.85; color: #cbd5e1; display: block; margin-top: 0.15rem;">TRUST Safety and Standard Policy</small>
+            </div>
+        </div>
+        
+        <!-- Panel 1: The Question -->
+        <div id="panel-question" style="padding: 1.75rem;">
+            <h4 style="margin: 0 0 1rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
+                Have you visited this property in-person yet?
+            </h4>
+            <p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
+                This is a significant commitment. To ensure absolute satisfaction with the layout, neighborhood, and physical condition of the unit, we strongly advise scheduling a free escorted walk-through before making a booking lock payment.
+            </p>
+            <div style="background: #fffdf5; border-left: 4px solid var(--color-gold); padding: 0.85rem 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+                <span style="font-size: 0.82rem; color: #854d0e; line-height: 1.5; display: block; font-weight: 500;">
+                    <i class="fa-solid fa-circle-exclamation"></i> <strong>Non-Refundable Policy:</strong> Booking fees and escrow security deposits are strictly non-refundable once committed.
+                </span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button type="button" id="btn-proceed-booking" class="btn btn-gold" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 6px;">
+                    Yes, I have visited (Proceed with Booking)
+                </button>
+                <button type="button" id="btn-show-scheduler" class="btn btn-outline" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 6px;">
+                    No, Schedule Physical Inspection
+                </button>
+                <button type="button" onclick="closeInspectionModal()" class="btn" style="background: transparent; color: var(--color-text-muted); border: none; padding: 0.4rem; font-size: 0.85rem; cursor: pointer; text-decoration: underline; margin-top: 0.25rem;">
+                    Go Back
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel 2: Viewing Request Scheduler -->
+        <div id="panel-scheduler" style="padding: 1.75rem; display: none;">
+            <h4 style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
+                Schedule Physical Inspection
+            </h4>
+            <p style="margin: 0 0 1.25rem 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.4;">
+                Select your preferred date/time below. A TRUST agent will coordinate with the landlord to confirm your walkthrough.
+            </p>
+            
+            <form action="{% url 'tenant_request_viewing' property.id %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Preferred Date & Time</label>
+                    <input type="datetime-local" name="preferred_date" class="form-control" style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border);" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Special Notes or Requests (Optional)</label>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Describe any preferences, companion details, or custom timing requests..." style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border); resize: none;"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                    <button type="button" id="btn-back-to-question" class="btn btn-outline" style="border: 1px solid #cbd5e1; color: #475569; padding: 0.6rem 1.2rem; font-size: 0.88rem; cursor: pointer; background: white; border-radius: 6px;">
+                        Back
+                    </button>
+                    <button type="submit" class="btn btn-gold" style="border: none; padding: 0.6rem 1.5rem; font-size: 0.88rem; font-weight: 600; border-radius: 6px; cursor: pointer;">
+                        Confirm Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

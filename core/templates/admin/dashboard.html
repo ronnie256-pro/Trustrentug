@@ -764,98 +764,106 @@
             <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
                     <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-clipboard-check"></i> Property Inspections Report Directory
+                        <i class="fa-solid fa-calendar-check"></i> Tenant Inspection Schedules Directory
                     </h3>
-                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Track physical, structural, fire-safety, and legal vetting reports submitted by agents</p>
+                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Review, coordinate, and update incoming physical walk-through requests submitted by tenants</p>
+                </div>
+                <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
+                    <i class="fa-solid fa-clock"></i> {{ viewing_requests.count }} Total Request{{ viewing_requests.count|pluralize }}
                 </div>
             </div>
             
-            <div style="padding: 2rem;">
-                <div style="display: flex; flex-direction: column; gap: 2.5rem;">
-                    {% for inspection in inspections %}
-                    <div style="border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.015);">
-                        <!-- Inspection Header Card -->
-                        <div style="background: #f8fafc; padding: 1.25rem 1.75rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                            <div>
-                                <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.05rem;">
-                                    <i class="fa-solid fa-hotel" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ inspection.property.title }}
-                                </h4>
-                                <span style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem; display: block;">
-                                    <i class="fa-solid fa-location-dot"></i> {{ inspection.property.location }}
-                                </span>
-                            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Tenant Details</th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Property Details</th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Owner / Landlord Details</th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Schedule / Status</th>
+                            <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 120px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in viewing_requests %}
+                        <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                             
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                {% if inspection.property.status == 'available' %}
-                                <span style="font-size: 0.75rem; background: #ecfdf5; color: #059669; border: 1px solid rgba(5, 150, 105, 0.2); padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600;">
-                                    <i class="fa-solid fa-circle-check"></i> Vetted & Approved
-                                </span>
-                                {% else %}
-                                <span style="font-size: 0.75rem; background: #fffbeb; color: #d97706; border: 1px solid rgba(217, 119, 6, 0.2); padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600;">
-                                    <i class="fa-solid fa-magnifying-glass-location"></i> Vetting in Progress
-                                </span>
-                                {% endif %}
-                                
-                                <a href="/admin-dashboard/property/view/{{ inspection.property.id }}/" class="btn btn-gold" style="padding: 0.4rem 0.9rem; font-size: 0.8rem; border-radius: 6px; font-weight: 600; text-decoration: none; color: white; display: inline-flex; align-items: center; gap: 0.25rem;">
-                                    <i class="fa-solid fa-eye"></i> View Property
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Inspection Reports List (By Agent / Role) -->
-                        <div style="padding: 1.5rem; background: #fffdf9;">
-                            <h5 style="margin: 0 0 1rem 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #475569; font-weight: 700; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem;">
-                                <i class="fa-solid fa-clipboard-list" style="color: var(--color-emerald-dark);"></i> Agent Vetting Submissions
-                            </h5>
-                            
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
-                                {% for report in inspection.reports.all %}
-                                <div style="background: white; border: 1px solid rgba(16, 61, 40, 0.08); border-radius: 8px; padding: 1.25rem; box-shadow: 0 2px 5px rgba(0,0,0,0.01); display: flex; flex-direction: column; justify-content: space-between; gap: 0.75rem;">
+                            <!-- Tenant Details -->
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    {% if req.tenant.profile.image %}
+                                    <img src="{{ req.tenant.profile.image.url }}" alt="{{ req.tenant.username }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(16, 61, 40, 0.15);">
+                                    {% else %}
+                                    <div style="width: 40px; height: 40px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem;">
+                                        {{ req.tenant.username|first|upper }}
+                                    </div>
+                                    {% endif %}
                                     <div>
-                                        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
-                                            {% if report.agent.image %}
-                                            <img src="{{ report.agent.image.url }}" alt="{{ report.agent.name }}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
-                                            {% else %}
-                                            <div style="width: 28px; height: 28px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem;">
-                                                {{ report.agent.name|slice:":2"|upper }}
-                                            </div>
-                                            {% endif %}
-                                            <div>
-                                                <div style="font-weight: 600; color: #1e293b; font-size: 0.85rem; line-height: 1.2;">{{ report.agent.name }}</div>
-                                                <div style="font-size: 0.7rem; color: var(--color-gold); font-weight: 600; text-transform: uppercase;">{{ report.agent.role.name }}</div>
-                                            </div>
-                                        </div>
-                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #475569; line-height: 1.5; text-align: justify; font-style: italic;">
-                                            "{{ report.findings }}"
-                                        </p>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #f1f5f9; padding-top: 0.5rem; margin-top: 0.25rem;">
-                                        <span style="font-size: 0.7rem; background: #ecfdf5; color: #059669; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.15rem;">
-                                            <i class="fa-solid fa-circle-check"></i> {{ report.get_status_display }}
-                                        </span>
-                                        <span style="font-size: 0.7rem; color: #94a3b8;">{{ report.created_at|date:"M d, Y" }}</span>
+                                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.tenant.first_name }} {{ req.tenant.last_name }}</div>
+                                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.15rem;"><i class="fa-solid fa-envelope"></i> {{ req.tenant.email }}</div>
+                                        <div style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-phone"></i> {{ req.tenant.profile.phone|default:"N/A" }}</div>
                                     </div>
                                 </div>
-                                {% empty %}
-                                <div style="grid-column: 1 / -1; padding: 1.5rem; text-align: center; color: #94a3b8; font-style: italic; font-size: 0.9rem;">
-                                    No vetting submissions compiled yet by registered agents for this property.
+                            </td>
+
+                            <!-- Property Details -->
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.property.title }}</div>
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203,163,88,0.1); color: var(--color-gold); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; display: inline-block; margin-top: 0.25rem; margin-bottom: 0.25rem;">
+                                    {{ req.property.get_category_display }}
+                                </span>
+                                <div style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-location-dot"></i> {{ req.property.location }}</div>
+                            </td>
+
+                            <!-- Owner Details -->
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.property.owner.first_name }} {{ req.property.owner.last_name }}</div>
+                                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.15rem;"><i class="fa-solid fa-envelope"></i> {{ req.property.owner.email }}</div>
+                                <div style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-phone"></i> {{ req.property.owner.profile.phone|default:"N/A" }}</div>
+                            </td>
+
+                            <!-- Schedule / Status -->
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
+                                <div style="background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; font-family: monospace; font-size: 0.85rem; font-weight: 600; color: #334155;">
+                                    <i class="fa-solid fa-clock" style="color: var(--color-gold);"></i> {{ req.preferred_date|date:"M d, Y @ H:i" }}
                                 </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div style="text-align: center; padding: 5rem 2rem; color: #94a3b8;">
-                        <div style="font-size: 3rem; margin-bottom: 1.5rem; color: #cbd5e1;"><i class="fa-solid fa-folder-open"></i></div>
-                        <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #64748b;">No Active Inspections Found</h4>
-                        <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem;">Submit a property for physical safety vetting to list it here.</p>
-                    </div>
-                    {% endfor %}
-                </div>
+                                <div style="margin-top: 0.5rem;">
+                                    {% if req.status == 'approved' %}
+                                    <span style="font-size: 0.75rem; background: #ecfdf5; color: #059669; border: 1px solid rgba(5, 150, 105, 0.2); padding: 0.25rem 0.65rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                        <i class="fa-solid fa-circle-check"></i> Approved
+                                    </span>
+                                    {% elif req.status == 'declined' %}
+                                    <span style="font-size: 0.75rem; background: #fef2f2; color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.2); padding: 0.25rem 0.65rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                        <i class="fa-solid fa-circle-xmark"></i> Declined
+                                    </span>
+                                    {% else %}
+                                    <span style="font-size: 0.75rem; background: #fffbeb; color: #d97706; border: 1px solid rgba(217, 119, 6, 0.2); padding: 0.25rem 0.65rem; border-radius: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                        <i class="fa-solid fa-magnifying-glass-location"></i> Pending Vetting
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- View Action -->
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center; vertical-align: middle;">
+                                <a href="{% url 'admin_viewing_detail' req.id %}" class="btn btn-gold" style="padding: 0.45rem 1rem; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none; font-weight: 600; color: white;">
+                                    <i class="fa-solid fa-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
+                                <div style="font-size: 2.5rem; margin-bottom: 1.25rem; color: #cbd5e1;"><i class="fa-solid fa-calendar-xmark"></i></div>
+                                <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No tenant physical viewing requests received yet.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
 </div>
 {% elif current_tab == 'settings' %}
 <div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem;">

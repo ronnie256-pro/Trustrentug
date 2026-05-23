@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Portal | TRUST</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+            font-family: var(--font-body);
+        }
+
+        .tenant-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--color-emerald-darkest);
+            color: white;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .sidebar-brand {
+            padding: 2.25rem 2rem;
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            color: var(--color-gold);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-brand i {
+            color: var(--color-gold);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 2rem;
+            color: rgba(255, 255, 255, 0.65);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 1.1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
+            width: 22px;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-item.active {
+            color: var(--color-gold);
+            background-color: rgba(203, 163, 88, 0.08);
+            border-left-color: var(--color-gold);
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tenant-main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .tenant-topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-emerald-dark);
+            cursor: pointer;
+        }
+
+        .tenant-topbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .user-avatar-wrapper {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--color-gold-muted);
+            border: 2px solid var(--color-gold);
+            color: var(--color-emerald-darkest);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            object-fit: cover;
+        }
+
+        .tenant-content {
+            padding: 3rem;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        /* Mobile Breakpoint */
+        @media (max-width: 992px) {
+            .tenant-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .tenant-sidebar.open {
+                transform: translateX(0);
+            }
+
+            .tenant-main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .tenant-topbar {
+                padding: 0 1.5rem;
+            }
+
+            .tenant-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Responsive left sidebar navigation system -->
+    <aside class="tenant-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-shield-halved"></i> TRUST
+        </div>
+        <nav class="sidebar-nav">
+            <a href="?tab=profile" class="nav-item {% if current_tab == 'profile' %}active{% endif %}">
+                <i class="fa-solid fa-user-tie"></i> 1. Profile
+            </a>
+            <a href="?tab=my_property" class="nav-item {% if current_tab == 'my_property' %}active{% endif %}">
+                <i class="fa-solid fa-house-chimney-user"></i> 2. My Property
+            </a>
+            <a href="?tab=payments" class="nav-item {% if current_tab == 'payments' %}active{% endif %}">
+                <i class="fa-solid fa-wallet"></i> 3. Payments
+            </a>
+            <a href="?tab=move_in" class="nav-item {% if current_tab == 'move_in' %}active{% endif %}">
+                <i class="fa-solid fa-truck-ramp-box"></i> 4. Move-in
+            </a>
+            <a href="?tab=maintenance" class="nav-item {% if current_tab == 'maintenance' %}active{% endif %}">
+                <i class="fa-solid fa-screwdriver-wrench"></i> 5. Maintenance
+            </a>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 1rem 0; padding-top: 1rem;">
+                <a href="/" class="nav-item" style="color: rgba(255,255,255,0.5);">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Home
+                </a>
+                <a href="/search/" class="nav-item" style="color: rgba(255,255,255,0.5);">
+                    <i class="fa-solid fa-magnifying-glass"></i> Find a Property
+                </a>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <form action="/logout/" method="post">
+                {% csrf_token %}
+                <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; cursor: pointer; text-align: left; padding: 0.5rem 0; color: rgba(255,255,255,0.65);">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="tenant-main">
+        <header class="tenant-topbar">
+            <button class="hamburger" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="user-info">
+                {% if profile.national_id_or_passport %}
+                <span class="badge badge-verified" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-check"></i> Profile Vetted</span>
+                {% else %}
+                <span class="badge badge-verification" style="font-size: 0.75rem;"><i class="fa-solid fa-clock"></i> Identity Pending</span>
+                {% endif %}
+                
+                <span style="font-weight: 600; color: var(--color-emerald-darkest);">{{ user.first_name|default:user.username|title }} (Tenant)</span>
+                
+                <div class="user-avatar-wrapper">
+                    {% if profile.image %}
+                    <img src="{{ profile.image.url }}" alt="Profile avatar" class="user-avatar">
+                    {% else %}
+                    <div class="user-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+        
+        <!-- Toast Notification system injection -->
+        {% if messages %}
+        <div id="toast-container" style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.75rem; max-width: 380px; pointer-events: none;">
+            {% for message in messages %}
+            <div class="toast-msg" data-type="{{ message.tags }}"
+                 style="pointer-events: all;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0.9rem 1.2rem;
+                        border-radius: var(--radius-md);
+                        border-left: 4px solid {% if message.tags == 'error' %}#ef4444{% elif message.tags == 'success' %}#10b981{% else %}#f59e0b{% endif %};
+                        background: {% if message.tags == 'error' %}rgba(254,242,242,0.97){% elif message.tags == 'success' %}rgba(236,253,245,0.97){% else %}rgba(255,251,235,0.97){% endif %};
+                        box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+                        backdrop-filter: blur(12px);
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: {% if message.tags == 'error' %}#991b1b{% elif message.tags == 'success' %}#065f46{% else %}#92400e{% endif %};
+                        animation: toast-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+                <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% elif message.tags == 'success' %}fa-circle-check{% else %}fa-circle-info{% endif %}"
+                   style="font-size: 1.1rem; flex-shrink: 0; color: {% if message.tags == 'error' %}#ef4444{% elif message.tags == 'success' %}#10b981{% else %}#f59e0b{% endif %};"></i>
+                <span style="flex: 1; line-height: 1.4;">{{ message }}</span>
+                <button onclick="this.closest('.toast-msg').remove()" style="background: none; border: none; cursor: pointer; padding: 0.1rem 0.2rem; opacity: 0.45; font-size: 1rem; color: inherit; flex-shrink: 0;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        <style>
+            @keyframes toast-in {
+                from { opacity: 0; transform: translateX(60px) scale(0.95); }
+                to   { opacity: 1; transform: translateX(0)   scale(1); }
+            }
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.toast-msg').forEach(function (toast) {
+                    if (toast.dataset.type !== 'error') {
+                        setTimeout(() => {
+                            toast.style.opacity = '0';
+                            toast.style.transform = 'translateX(60px) scale(0.95)';
+                            toast.style.transition = 'opacity 0.4s, transform 0.4s';
+                            setTimeout(() => toast.remove(), 400);
+                        }, 3000);
+                    }
+                });
+            });
+        </script>
+        {% endif %}
+
+        <div class="tenant-content">
+            {% block tenant_content %}{% endblock %}
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

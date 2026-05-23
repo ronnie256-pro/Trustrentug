@@ -96,6 +96,17 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=50, blank=True)
     nin = models.CharField(max_length=100, blank=True)
     is_approved = models.BooleanField(default=False)
+    
+    # Expanded Tenant Profile fields
+    phone_2 = models.CharField(max_length=50, blank=True, null=True)
+    image = models.FileField(upload_to='profiles/', blank=True, null=True)
+    profession = models.CharField(max_length=100, blank=True, null=True)
+    place_of_work = models.CharField(max_length=100, blank=True, null=True)
+    marriage_status = models.CharField(max_length=50, blank=True, null=True)
+    number_of_children = models.IntegerField(default=0, blank=True, null=True)
+    emergency_conditions = models.TextField(blank=True, null=True)
+    doctor_contact = models.CharField(max_length=100, blank=True, null=True)
+    national_id_or_passport = models.FileField(upload_to='documents/identity/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
@@ -205,3 +216,91 @@ class PropertyProximity(models.Model):
         
     def __str__(self):
         return f"{self.item.name} is {self.distance_km} KM from {self.property.title}"
+
+# --- NEW TENANT DASHBOARD MODELS ---
+
+class TenantBooking(models.Model):
+    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='bookings')
+    booked_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(
+        max_length=20, 
+        choices=[('reserved', 'Reserved'), ('active', 'Active'), ('expired', 'Expired'), ('paid_rent', 'Paid Rent & Finalized')], 
+        default='reserved'
+    )
+    booking_fee = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    
+    def is_expired(self):
+        from django.utils import timezone
+        if not self.expires_at:
+            return False
+        return timezone.now() > self.expires_at and self.status == 'active'
+
+    def __str__(self):
+        return f"Booking for {self.property.title} by {self.tenant.username}"
+
+class TenantRental(models.Model):
+    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rentals')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rentals')
+    start_date = models.DateField(auto_now_add=True)
+    move_in_date = models.DateField(null=True, blank=True)
+    status = models.CharField(
+        max_length=20, 
+        choices=[('active', 'Active'), ('terminated', 'Terminated')], 
+        default='active'
+    )
+    signed_agreement = models.FileField(upload_to='agreements/signed/', null=True, blank=True)
+    co_occupants_image = models.FileField(upload_to='occupants/', null=True, blank=True)
+    
+    def __str__(self):
+        return f"Rental of {self.property.title} by {self.tenant.username}"
+
+class ViewingRequest(models.Model):
+    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='viewing_requests')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='viewing_requests')
+    preferred_date = models.DateTimeField()
+    status = models.CharField(
+        max_length=20, 
+        choices=[('pending', 'Pending Review'), ('approved', 'Approved'), ('declined', 'Declined')], 
+        default='pending'
+    )
+    notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Viewing for {self.property.title} requested by {self.tenant.username}"
+
+class MaintenanceRequest(models.Model):
+    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='maintenance_requests')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='maintenance_requests')
+    issue_description = models.TextField()
+    category = models.CharField(max_length=100) # Plumbing, Electrical, Structural, Security, Other
+    reported_to = models.CharField(
+        max_length=20, 
+        choices=[('landlord', 'Landlord'), ('agent', 'Trust Agent')], 
+        default='landlord'
+    )
+    status = models.CharField(
+        max_length=20, 
+        choices=[('pending', 'Pending'), ('in_progress', 'In Progress'), ('resolved', 'Resolved')], 
+        default='pending'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Maintenance for {self.property.title} reported to {self.reported_to}"
+
+class FavoriteProperty(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_properties')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='favorited_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'property')
+        verbose_name_plural = 'Favorite Properties'
+
+    def __str__(self):
+        return f"{self.user.username} favorited {self.property.title}"
+

@@ -842,6 +842,56 @@
     font-size: 0.85rem;
   }
 
+  /* Vetted Properties Grid Layout */
+  .vetted-grid-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 1600px) {
+    .vetted-grid-container {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media (max-width: 1200px) {
+    .vetted-grid-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    .vetted-grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .vetted-grid-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .vetted-card-grid-wrapper {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgba(4, 120, 87, 0.45) !important; /* Thick Deep Emerald Border */
+    box-shadow: 0 10px 30px rgba(10, 61, 40, 0.07) !important;
+    background: rgba(255, 255, 255, 0.18) !important; /* Sheer frosted glass */
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    position: relative; /* absolute stars/fireworks placement */
+    overflow: hidden;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  }
+
+  .vetted-card-grid-wrapper:hover {
+    border-color: rgba(4, 120, 87, 0.95) !important;
+    box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-6px) !important; /* Gentle premium card lift */
+  }
+
   /* Full-Width Seamless Marquee CSS */
   .marquee-container {
     overflow: hidden;
@@ -1087,117 +1137,63 @@
 </section>
 
 <!-- RECENTLY ADDED LANDINGS SECTION (CLEAN CARDS) -->
-<section class="glass-section" style="padding: 1.25rem 0; overflow: hidden; background: linear-gradient(180deg, #fdfbf7 0%, #f4efdf 100%); border-top: 1px solid rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.03);">
-
-  <!-- Full-Width Seamless Marquee Loop -->
-  <div class="marquee-container" style="box-shadow: inset 0 15px 30px rgba(0,0,0,0.02), inset 0 -15px 30px rgba(0,0,0,0.02); padding: 1.5rem 0;">
-    <div class="marquee-track">
-      <!-- First Group -->
-      <div class="marquee-group">
-        {% for property in properties %}
-        <a href="/property/{{ property.id }}/" class="glass-card marquee-card-wrapper" style="animation-delay: {{ forloop.counter }}s;">
-          <!-- Shooting Star and Fireworks Explosion -->
-          <div class="firework-container">
-            <div class="shooting-star" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-1" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-2" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-3" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-4" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-5" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-6" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          </div>
-
-          <div class="glass-img-wrapper">
-            {% if property.hero_image %}
-            <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img">
-            {% elif property.category == 'studio' %}
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% elif property.category == '2_bed' or property.category == '1_bed' %}
-            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% elif property.is_multi_unit %}
-            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% else %}
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% endif %}
-            <div class="glass-tag" style="background: var(--color-emerald); color: var(--color-gold);">NEWLY VETTED</div>
-          </div>
-
-          <div class="glass-body">
-            <h3 class="glass-price">
-              {% if property.price %}
-              UGX {{ property.price|floatformat:0 }} <span>/ mo</span>
-              {% else %}
-              Custom Pricing
-              {% endif %}
-            </h3>
-            <h4 class="glass-title">{{ property.title }}</h4>
-            <p class="glass-location" style="margin-bottom: 0;"><i class="fa-solid fa-location-dot" style="color: var(--color-emerald-light);"></i> {{ property.location }}</p>
-          </div>
-        </a>
-        {% empty %}
-        <div style="text-align: center; padding: 3rem 0; color: var(--color-text-muted); width: 100vw;">
-          <p>No recently added properties found.</p>
+<section class="glass-section" style="padding: 4rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #f4efdf 100%); border-top: 1px solid rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.03); width: 100%;">
+  <div style="max-width: 100%; margin: 0; padding: 0 3.5rem; width: 100%; box-sizing: border-box;">
+    
+    <!-- Premium Vetted Grid Layout -->
+    <div class="vetted-grid-container">
+      {% for property in properties|slice:":12" %}
+      <a href="/property/{{ property.id }}/" class="vetted-card-grid-wrapper animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter }}00ms;">
+        <!-- Shooting Star and Fireworks Explosion -->
+        <div class="firework-container">
+          <div class="shooting-star" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          <div class="spark spark-1" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          <div class="spark spark-2" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          <div class="spark spark-3" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          <div class="spark spark-4" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          <div class="spark spark-5" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
+          <div class="spark spark-6" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
         </div>
-        {% endfor %}
-      </div>
 
-      <!-- Second Group (Duplicated for Seamless Loop) -->
-      <div class="marquee-group">
-        {% for property in properties %}
-        <a href="/property/{{ property.id }}/" class="glass-card marquee-card-wrapper" style="animation-delay: {{ forloop.counter }}s;">
-          <!-- Shooting Star and Fireworks Explosion -->
-          <div class="firework-container">
-            <div class="shooting-star" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-1" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-2" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-3" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-4" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-5" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-            <div class="spark spark-6" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          </div>
-
-          <div class="glass-img-wrapper">
-            {% if property.hero_image %}
-            <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img">
-            {% elif property.category == 'studio' %}
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% elif property.category == '2_bed' or property.category == '1_bed' %}
-            <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% elif property.is_multi_unit %}
-            <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% else %}
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-              alt="{{ property.title }}" class="glass-img">
-            {% endif %}
-            <div class="glass-tag" style="background: var(--color-emerald); color: var(--color-gold);">NEWLY VETTED</div>
-          </div>
-
-          <div class="glass-body">
-            <h3 class="glass-price">
-              {% if property.price %}
-              UGX {{ property.price|floatformat:0 }} <span>/ mo</span>
-              {% else %}
-              Custom Pricing
-              {% endif %}
-            </h3>
-            <h4 class="glass-title">{{ property.title }}</h4>
-            <p class="glass-location" style="margin-bottom: 0;"><i class="fa-solid fa-location-dot" style="color: var(--color-emerald-light);"></i> {{ property.location }}</p>
-          </div>
-        </a>
-        {% empty %}
-        <div style="text-align: center; padding: 3rem 0; color: var(--color-text-muted); width: 100vw;">
-          <p>No recently added properties found.</p>
+        <div class="glass-img-wrapper" style="position: relative; height: 200px; overflow: hidden; border-top-left-radius: 9px; border-top-right-radius: 9px;">
+          {% if property.hero_image %}
+          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          {% elif property.category == 'studio' %}
+          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          {% elif property.category == '2_bed' or property.category == '1_bed' %}
+          <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
+            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          {% elif property.is_multi_unit %}
+          <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
+            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          {% else %}
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
+            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          {% endif %}
+          <div class="glass-tag" style="position: absolute; top: 1rem; left: 1rem; background: var(--color-emerald); color: var(--color-gold); font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 4px; z-index: 20; letter-spacing: 0.05em; text-transform: uppercase;">NEWLY VETTED</div>
         </div>
-        {% endfor %}
+
+        <div class="glass-body" style="padding: 1.5rem;">
+          <h3 class="glass-price" style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.2rem; font-weight: 700;">
+            {% if property.price %}
+            UGX {{ property.price|floatformat:0 }} <span style="font-size: 0.75rem; color: #64748b; font-weight: 500;">/ mo</span>
+            {% else %}
+            Custom Pricing
+            {% endif %}
+          </h3>
+          <h4 class="glass-title" style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.95rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">{{ property.title }}</h4>
+          <p class="glass-location" style="margin: 0; color: #64748b; font-size: 0.8rem; display: flex; align-items: center; gap: 0.35rem;"><i class="fa-solid fa-location-dot" style="color: var(--color-emerald-light);"></i> {{ property.location }}</p>
+        </div>
+      </a>
+      {% empty %}
+      <div style="text-align: center; padding: 5rem 0; color: #94a3b8; grid-column: 1 / -1;">
+        <i class="fa-solid fa-house-circle-xmark" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+        <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No recently added vetted properties found.</p>
       </div>
+      {% endfor %}
     </div>
+
   </div>
 </section>
 

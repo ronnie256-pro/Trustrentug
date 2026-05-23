@@ -1,0 +1,266 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="animate__animated animate__fadeIn" style="max-width: 1200px; margin: 0 auto;">
+    
+    <!-- Breadcrumbs & Navigation -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="/admin-dashboard/?tab=inspections" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Inspections
+            </a>
+            <span style="color: #94a3b8;">/</span>
+            <span style="color: #64748b; font-size: 0.9rem;">Viewing Request Details</span>
+        </div>
+        
+        <div>
+            {% if viewing.status == 'approved' %}
+            <span style="font-size: 0.85rem; background: #ecfdf5; color: #059669; border: 1px solid rgba(5, 150, 105, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <i class="fa-solid fa-circle-check"></i> SCHEDULE APPROVED
+            </span>
+            {% elif viewing.status == 'declined' %}
+            <span style="font-size: 0.85rem; background: #fef2f2; color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <i class="fa-solid fa-circle-xmark"></i> SCHEDULE DECLINED
+            </span>
+            {% else %}
+            <span style="font-size: 0.85rem; background: #fffbeb; color: #d97706; border: 1px solid rgba(217, 119, 6, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <i class="fa-solid fa-hourglass-half"></i> PENDING COORDINATION
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- System Banner Card -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.01); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem;">
+        <div>
+            <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: var(--color-gold); display: block; margin-bottom: 0.35rem;">Scheduled Physical Inspection Request</span>
+            <h2 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.75rem; line-height: 1.2;">
+                Vetting Coordinations for {{ viewing.property.title }}
+            </h2>
+            <div style="display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                <span style="font-size: 0.85rem; color: #475569; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-calendar-day" style="color: var(--color-gold);"></i> <strong>Date:</strong> {{ viewing.preferred_date|date:"l, F d, Y" }}
+                </span>
+                <span style="font-size: 0.85rem; color: #475569; display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-clock" style="color: var(--color-gold);"></i> <strong>Time:</strong> {{ viewing.preferred_date|date:"H:i A (EST)" }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Approval / Rejection Actions -->
+        {% if viewing.status == 'pending' %}
+        <div style="display: flex; gap: 0.75rem;">
+            <form action="{% url 'admin_viewing_status_update' viewing.id %}" method="POST" style="margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="declined">
+                <button type="submit" class="btn" style="background: white; border: 1px solid #dc2626; color: #dc2626; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='white'">
+                    <i class="fa-solid fa-xmark"></i> Decline Request
+                </button>
+            </form>
+            <form action="{% url 'admin_viewing_status_update' viewing.id %}" method="POST" style="margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="approved">
+                <button type="submit" class="btn btn-gold" style="background: var(--color-gold); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; transition: all 0.2s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+                    <i class="fa-solid fa-check"></i> Approve & Schedule
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <div>
+            <span style="font-size: 0.85rem; color: #64748b; font-style: italic;">
+                Request finalized on {{ viewing.created_at|date:"M d, Y" }}. No further actions required.
+            </span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Two Column Vetting Layout -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; margin-bottom: 3rem;">
+        
+        <!-- LEFT COLUMN: TENANT SECURITY & PROFILE DETAILS -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Tenant Card -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-user-shield"></i> Tenant Vetting Profile
+                    </h3>
+                    <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">ID: #{{ viewing.tenant.id }}</span>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    <!-- Head Details -->
+                    <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 2rem; border-bottom: 1px dashed #f1f5f9; padding-bottom: 1.5rem;">
+                        {% if viewing.tenant.profile.image %}
+                        <img src="{{ viewing.tenant.profile.image.url }}" alt="{{ viewing.tenant.username }}" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-gold); box-shadow: var(--shadow-sm);">
+                        {% else %}
+                        <div style="width: 75px; height: 75px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.75rem;">
+                            {{ viewing.tenant.username|first|upper }}
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.35rem; color: #1e293b; font-family: var(--font-heading);">{{ viewing.tenant.first_name }} {{ viewing.tenant.last_name }}</h4>
+                            <span style="color: #64748b; font-size: 0.9rem; display: block; margin-top: 0.25rem;">
+                                <i class="fa-solid fa-id-badge" style="color: var(--color-gold); margin-right: 0.35rem;"></i> Verified Tenant Account
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Variables Table Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em;">Email Address</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155; font-family: monospace;">{{ viewing.tenant.email }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em;">Phone Number</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.tenant.profile.phone|default:"Not Listed" }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em;">Profession / Occupation</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.tenant.profile.profession|default:"Not Listed" }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em;">Place of Work</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.tenant.profile.place_of_work|default:"Not Listed" }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em;">Marriage Status</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.tenant.profile.marriage_status|default:"Not Listed" }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em;">Number of Children</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.tenant.profile.number_of_children|default:"0" }}</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem;">
+                        <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Emergency Conditions / Health Notes</span>
+                        <p style="margin: 0; font-size: 0.95rem; color: #dc2626; font-weight: 600; background: #fff5f5; border: 1px solid rgba(220, 38, 38, 0.1); padding: 0.75rem 1rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.5rem; width: 100%;">
+                            <i class="fa-solid fa-heart-pulse"></i> {{ viewing.tenant.profile.emergency_conditions|default:"No critical emergency medical conditions reported." }}
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Personal Doctor's Contact Info</span>
+                        <p style="margin: 0; font-size: 0.95rem; color: #475569; font-weight: 500; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 6px;">
+                            <i class="fa-solid fa-user-doctor" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ viewing.tenant.profile.personal_doctor_contact|default:"No primary care coordinates registered." }}
+                        </p>
+                    </div>
+
+                    <!-- Uploaded National ID Vetting -->
+                    <div style="margin-top: 2rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem;">
+                        <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Verified Legal Identification Vetting</span>
+                        {% if viewing.tenant.profile.national_id_or_passport %}
+                        <a href="{{ viewing.tenant.profile.national_id_or_passport.url }}" target="_blank" class="btn btn-gold" style="padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-size: 0.9rem;">
+                            <i class="fa-solid fa-file-arrow-down"></i> Download Passport / National ID File
+                        </a>
+                        {% else %}
+                        <span style="color: #ef4444; font-weight: 600; font-size: 0.85rem; background: #fef2f2; border: 1px solid rgba(239, 68, 68, 0.1); padding: 0.75rem 1rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.5rem; width: 100%;">
+                            <i class="fa-solid fa-circle-exclamation"></i> Tenant has not uploaded legal Passport or National ID document yet.
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Card -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-pencil"></i> Special Accommodations & Coordinator Notes
+                    </h3>
+                </div>
+                <div style="padding: 1.5rem 1.75rem;">
+                    <p style="margin: 0; font-size: 0.95rem; color: #475569; line-height: 1.6; text-align: justify; font-style: italic;">
+                        {% if viewing.notes %}
+                        "{{ viewing.notes }}"
+                        {% else %}
+                        No customized notes or accessibility requirements entered by the tenant.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: PROPERTY DETAILS & LANDLORD CONTACT -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Property Details Card -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-house-circle-check"></i> Property Specs & Details
+                    </h3>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem;">{{ viewing.property.title }}</h4>
+                    <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203,163,88,0.1); color: var(--color-gold); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; display: inline-block; margin-bottom: 1rem;">
+                        {{ viewing.property.get_category_display }}
+                    </span>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem;">
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Location Coordinates</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;"><i class="fa-solid fa-location-dot" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ viewing.property.location }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Price per Month</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155; font-family: monospace;">UGX {{ viewing.property.price|default:"50,000"|floatformat:0 }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Bedrooms</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.property.bedrooms|default:"1" }} Bed{{ viewing.property.bedrooms|pluralize }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Landlord Contacts Card -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-user-shield"></i> Landlord / Property Owner Contacts
+                    </h3>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    <!-- Landlord Identity details -->
+                    <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 2rem;">
+                        {% if viewing.property.owner.profile.image %}
+                        <img src="{{ viewing.property.owner.profile.image.url }}" alt="{{ viewing.property.owner.username }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-emerald); box-shadow: var(--shadow-sm);">
+                        {% else %}
+                        <div style="width: 60px; height: 60px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">
+                            {{ viewing.property.owner.username|first|upper }}
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.2rem; color: #1e293b; font-family: var(--font-heading);">
+                                {{ viewing.property.owner.first_name }} {{ viewing.property.owner.last_name }}
+                            </h4>
+                            <span style="color: #10b981; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">
+                                <i class="fa-solid fa-circle-check"></i> Approved Landlord
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Contact particulars -->
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem;">
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Landlord Email</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155; font-family: monospace;">{{ viewing.property.owner.email }}</span>
+                        </div>
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Landlord Contact Line</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;"><i class="fa-solid fa-phone" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ viewing.property.owner.profile.phone|default:"Not Available" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

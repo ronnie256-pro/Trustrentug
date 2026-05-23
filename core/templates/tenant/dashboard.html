@@ -1,0 +1,1211 @@
+{% extends "tenant/base_tenant.html" %}
+
+{% block title %}Tenant Dashboard | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Premium editorial dashboard aesthetics */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1rem;
+    }
+
+    .section-header h2 {
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        color: var(--color-emerald-darkest);
+        margin: 0;
+    }
+
+    .section-header p {
+        color: var(--color-text-muted);
+        margin: 0.25rem 0 0 0;
+        font-size: 0.95rem;
+    }
+
+    /* Glassmorphism Premium Cards */
+    .premium-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .premium-card:hover {
+        border-color: var(--color-gold);
+    }
+
+    .card-header-lux {
+        background: linear-gradient(to right, var(--color-emerald-darkest), var(--color-emerald));
+        padding: 1.5rem 2rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-header-lux h3 {
+        color: white !important;
+        margin: 0;
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+    }
+
+    .card-body-lux {
+        padding: 2rem;
+    }
+
+    /* Form Styles */
+    .grid-forms {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .grid-forms {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Visual Expiration Timer */
+    .timer-alert {
+        background-color: rgba(239, 68, 68, 0.05);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-left: 5px solid #ef4444;
+        border-radius: 12px;
+        padding: 1.5rem;
+        color: #1e293b;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .timer-countdown {
+        font-family: monospace;
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #ef4444;
+        letter-spacing: 2px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    /* Landlord Avatar */
+    .landlord-avatar-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid var(--color-gold);
+        background: var(--color-bg-base);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .landlord-avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Payment Gateways */
+    .payment-methods-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 992px) {
+        .payment-methods-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    @media (max-width: 576px) {
+        .payment-methods-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .payment-method-card {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1.25rem 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .payment-method-card input {
+        display: none;
+    }
+
+    .payment-method-card i {
+        font-size: 1.75rem;
+        color: var(--color-emerald-dark);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .payment-method-card span {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-text-dark);
+    }
+
+    .payment-method-card:hover {
+        border-color: var(--color-gold-light);
+        background: rgba(203, 163, 88, 0.03);
+    }
+
+    .payment-method-card.selected {
+        border-color: var(--color-gold);
+        background: rgba(203, 163, 88, 0.08);
+        box-shadow: 0 4px 12px rgba(203, 163, 88, 0.15);
+    }
+
+    /* Folders & Documents */
+    .docs-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .docs-list {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .doc-item-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s ease;
+    }
+
+    .doc-item-card:hover {
+        background: #f1f5f9;
+        border-color: var(--color-gold-light);
+    }
+
+    .timeline-requests {
+        position: relative;
+        padding-left: 2rem;
+        border-left: 2px solid #e2e8f0;
+        margin-left: 1rem;
+    }
+
+    .timeline-node {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-node::before {
+        content: '';
+        position: absolute;
+        left: calc(-2rem - 6px);
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--color-gold);
+        border: 2px solid white;
+        box-shadow: 0 0 0 3px rgba(203, 163, 88, 0.2);
+    }
+
+    .timeline-node.resolved::before {
+        background: var(--color-success);
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block tenant_content %}
+<div class="dashboard-grid">
+
+    <!-- ==========================================
+         TAB 1: PROFILE MANAGEMENT
+         ========================================== -->
+    {% if current_tab == 'profile' %}
+    <section>
+        <div class="section-header">
+            <h2>Tenant Profile Registry</h2>
+            <p>Maintain your verified credentials and critical contact logs inside the TRUST security protocol.</p>
+        </div>
+
+        <form action="{% url 'tenant_update_profile' %}" method="POST" enctype="multipart/form-data" class="premium-card">
+            {% csrf_token %}
+            <div class="card-header-lux">
+                <h3>Personal Credentials Log</h3>
+                <span style="font-size: 0.8rem; opacity: 0.85;"><i class="fa-solid fa-lock"></i> Escrow Secure</span>
+            </div>
+            
+            <div class="card-body-lux">
+                <div style="display: flex; gap: 2rem; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap;">
+                    <div class="user-avatar-wrapper" style="width: 100px; height: 100px;">
+                        {% if profile.image %}
+                        <img src="{{ profile.image.url }}" alt="Profile avatar" class="landlord-avatar">
+                        {% else %}
+                        <div class="user-avatar" style="width: 100%; height: 100%; font-size: 2.5rem;">
+                            {{ user.username|first|upper }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.15rem; color: var(--color-emerald-darkest);">Upload Profile Picture</h4>
+                        <p style="margin: 0.25rem 0 1rem 0; font-size: 0.85rem; color: var(--color-text-muted);">Choose a professional headshot under 5MB.</p>
+                        <input type="file" name="image" class="form-control" style="padding: 0.5rem;" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="grid-forms">
+                    <!-- Standard Personal Details -->
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control" value="{{ user.email }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Primary Mobile Phone (Contact 1)</label>
+                        <input type="text" name="phone" class="form-control" value="{{ profile.phone }}" placeholder="+256 ...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Secondary Phone (Contact 2)</label>
+                        <input type="text" name="phone_2" class="form-control" value="{{ profile.phone_2|default:'' }}" placeholder="+256 ...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Profession</label>
+                        <input type="text" name="profession" class="form-control" value="{{ profile.profession|default:'' }}" placeholder="Software Architect / Business Lead">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Place of Work</label>
+                        <input type="text" name="place_of_work" class="form-control" value="{{ profile.place_of_work|default:'' }}" placeholder="Company Name / Institution">
+                    </div>
+                    
+                    <!-- Household Details -->
+                    <div class="form-group">
+                        <label class="form-label">Marriage Status</label>
+                        <select name="marriage_status" class="form-control">
+                            <option value="Single" {% if profile.marriage_status == 'Single' %}selected{% endif %}>Single</option>
+                            <option value="Married" {% if profile.marriage_status == 'Married' %}selected{% endif %}>Married</option>
+                            <option value="Divorced" {% if profile.marriage_status == 'Divorced' %}selected{% endif %}>Divorced</option>
+                            <option value="Widowed" {% if profile.marriage_status == 'Widowed' %}selected{% endif %}>Widowed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number of Children</label>
+                        <input type="number" name="number_of_children" class="form-control" value="{{ profile.number_of_children|default:'0' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Personal Doctor's Contact</label>
+                        <input type="text" name="doctor_contact" class="form-control" value="{{ profile.doctor_contact|default:'' }}" placeholder="Doctor Name, Phone Number">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">Emergency Health / Critical Conditions (if any)</label>
+                    <textarea name="emergency_conditions" class="form-control" rows="3" placeholder="Enter any medical alerts, allergies, or physical considerations here...">{{ profile.emergency_conditions|default:'' }}</textarea>
+                </div>
+
+                <!-- Identity verification upload -->
+                <div class="form-group" style="margin-top: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px dashed var(--color-border);">
+                    <h4 style="margin:0 0 0.5rem 0; font-size: 1rem; color: var(--color-emerald-darkest);">Upload Verification Documents</h4>
+                    <p style="margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--color-text-muted);">To complete profile manual vetting, please upload a clear scanned copy of your **National ID Card** or **Passport**.</p>
+                    
+                    {% if profile.national_id_or_passport %}
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--color-success); font-size: 0.9rem; margin-bottom: 1rem; font-weight: 600;">
+                        <i class="fa-solid fa-file-shield" style="font-size: 1.25rem;"></i> Identity document is recorded (Vetted). 
+                        <a href="{{ profile.national_id_or_passport.url }}" target="_blank" style="margin-left: 1rem; text-decoration: underline; font-size: 0.85rem;">View Uploaded File</a>
+                    </div>
+                    {% endif %}
+                    <input type="file" name="national_id_or_passport" class="form-control" style="padding: 0.5rem;" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+
+                <div style="margin-top: 2.5rem; text-align: right;">
+                    <button type="submit" class="btn btn-gold" style="padding: 1rem 2.5rem;">Save Vetted Settings</button>
+                </div>
+            </div>
+        </form>
+    </section>
+    {% endif %}
+
+
+    <!-- ==========================================
+         TAB 2: MY PROPERTY WORKSPACE
+         ========================================== -->
+    {% if current_tab == 'my_property' %}
+    <section>
+        <div class="section-header">
+            <h2>Occupied Property Workspace</h2>
+            <p>Track structural inspections, view verification legal portfolios, and manage rental logistics.</p>
+        </div>
+
+        {% if active_rental %}
+        <!-- Active Rented Property Card -->
+        <div class="premium-card">
+            <div class="card-header-lux">
+                <h3>Active Rented Unit: {{ active_rental.property.title }}</h3>
+                <span class="badge badge-verified"><i class="fa-solid fa-key"></i> Occupied</span>
+            </div>
+            
+            <div class="card-body-lux">
+                <div style="display: flex; gap: 2rem; margin-bottom: 3rem; flex-wrap: wrap; align-items: flex-start;">
+                    {% if active_rental.property.hero_image %}
+                    <img src="{{ active_rental.property.hero_image.url }}" alt="{{ active_rental.property.title }}" style="width: 280px; height: 180px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" style="width: 280px; height: 180px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    {% endif %}
+                    
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 1.5rem; color: var(--color-emerald-darkest); margin: 0 0 0.5rem 0;">{{ active_rental.property.title }}</h4>
+                        <p style="color: var(--color-text-muted); font-size: 0.95rem; margin: 0 0 1.25rem 0;"><i class="fa-solid fa-location-dot"></i> {{ active_rental.property.location }}</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <small style="color: var(--color-text-muted); text-transform: uppercase; font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Escrow Rental Rate</small>
+                                <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--color-emerald);">UGX {{ active_rental.property.price|floatformat:0 }} <small style="font-size: 0.8rem; font-family: var(--font-body); font-weight: 400;">/ mo</small></span>
+                            </div>
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <small style="color: var(--color-text-muted); text-transform: uppercase; font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Lease Commencement Date</small>
+                                <span style="font-size: 1.1rem; font-weight: 600; color: var(--color-emerald-darkest);">{{ active_rental.start_date|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem;">
+                    <!-- Landlord Profile Detail Card -->
+                    <div>
+                        <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-circle-user"></i> Property Owner Details</h4>
+                        
+                        <div style="display: flex; gap: 1.5rem; align-items: center; background: #fafafa; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <div class="landlord-avatar-wrapper">
+                                {% if landlord_profile.image %}
+                                <img src="{{ landlord_profile.image.url }}" alt="{{ landlord_user.username }}" class="landlord-avatar">
+                                {% else %}
+                                <div style="font-size: 2.25rem; font-weight: bold; color: var(--color-emerald);">{{ landlord_user.username|first|upper }}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h5 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest);">{{ landlord_user.first_name }} {{ landlord_user.last_name }}</h5>
+                                <span class="badge badge-verified" style="font-size: 0.65rem; padding: 0.1rem 0.5rem; margin-top: 0.25rem; display: inline-block;"><i class="fa-solid fa-shield-check"></i> TRUST Approved Landlord</span>
+                                
+                                <div style="margin-top: 0.75rem; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span><i class="fa-solid fa-envelope" style="color: var(--color-gold); width: 20px;"></i> {{ landlord_user.email }}</span>
+                                    <span><i class="fa-solid fa-phone" style="color: var(--color-gold); width: 20px;"></i> {{ landlord_profile.phone }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Scheduling Move-In -->
+                        <div style="margin-top: 2rem; background: rgba(10, 61, 40, 0.02); padding: 1.5rem; border: 1px dashed var(--color-emerald); border-radius: 12px;">
+                            <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem; color: var(--color-emerald-darkest); font-weight: 600;">Schedule Physical Move-In</h4>
+                            <p style="margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--color-text-muted);">Notify management and lock in the truck access permissions.</p>
+                            
+                            <form action="{% url 'tenant_schedule_move_in' active_rental.property.id %}" method="POST" style="display: flex; gap: 1rem;">
+                                {% csrf_token %}
+                                <input type="date" name="move_in_date" class="form-control" style="flex: 1;" value="{{ active_rental.move_in_date|date:'Y-m-d' }}" required>
+                                <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Schedule</button>
+                            </form>
+                            {% if active_rental.move_in_date %}
+                            <div style="color: var(--color-success); font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem;">
+                                <i class="fa-solid fa-circle-check"></i> Move-in locked for: {{ active_rental.move_in_date|date:"F d, Y" }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Documents Folder -->
+                    <div>
+                        <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-folder-closed"></i> Legal Documents Folder</h4>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            {% for doc in legal_documents %}
+                            <div class="doc-item-card">
+                                <span style="font-size: 0.9rem; font-weight: 500; color: var(--color-text-dark);"><i class="fa-solid fa-file-pdf" style="color: #ef4444; margin-right: 0.5rem;"></i> {{ doc.name }}</span>
+                                <a href="{{ doc.file.url }}" download class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;"><i class="fa-solid fa-download"></i> Get</a>
+                            </div>
+                            {% empty %}
+                            <div style="text-align: center; padding: 2rem; color: var(--color-text-muted); background: #f8fafc; border-radius: 8px;">
+                                <i class="fa-solid fa-folder-open" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                <p style="margin: 0; font-size: 0.85rem;">No downloadable verification papers logged for this property yet.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vetting & Inspection Reports -->
+                <div style="margin-top: 3.5rem;">
+                    <h4 style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-emerald-darkest); margin: 0 0 1.5rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-clipboard-check"></i> Verification Inspection Reports</h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1rem;">
+                        {% for report in inspection_reports %}
+                        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                <div>
+                                    <h5 style="margin: 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600;">{{ report.agent.name }}</h5>
+                                    <small style="color: var(--color-gold); font-weight: 500; font-size: 0.75rem;">{{ report.agent.role.name }}</small>
+                                </div>
+                                <span class="badge {% if report.status == 'approved' %}badge-verified{% else %}badge-verification{% endif %}" style="font-size: 0.65rem;">{{ report.get_status_display }}</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5; font-style: italic; flex: 1;">"{{ report.findings|truncatechars:180 }}"</p>
+                        </div>
+                        {% empty %}
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--color-text-muted); background: #f8fafc; border-radius: 8px; border: 1px dashed var(--color-border);">
+                            <i class="fa-solid fa-shield-circle-exclamation" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--color-gold);"></i>
+                            <p style="margin: 0; font-weight: 500;">Structural and legal inspections are complete but reports are archived by system administrators.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% elif active_bookings or reserved_bookings or favorite_properties %}
+        
+            {% for booking in active_bookings %}
+            <!-- Active Reserved Booking Card (starts 48h timer) -->
+            <div class="premium-card" style="margin-bottom: 2.5rem;">
+                <div class="card-header-lux" style="background: linear-gradient(to right, #7c2d12, #9a3412);">
+                    <h3>Locked Exclusive Booking: {{ booking.property.title }}</h3>
+                    <span class="badge badge-verification" style="background: rgba(255,255,255,0.15); color: white;"><i class="fa-solid fa-lock"></i> Exclusivity Timer Active</span>
+                </div>
+                
+                <div class="card-body-lux">
+                    <!-- rigid 48-hour visual countdown timer -->
+                    <div class="timer-alert">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; font-size: 2.25rem;"></i>
+                        <div style="flex: 1;">
+                            <strong style="font-size: 1.1rem; color: #7f1d1d; display: block; margin-bottom: 0.25rem;">Strict 48-Hour Booking Expiration Policy</strong>
+                            <span style="font-size: 0.85rem; color: #b91c1c; line-height: 1.4; display: block; max-width: 800px;">This listing has been temporarily locked for you. You must complete rent payments within the 48-hour window, otherwise the booking automatically expires, is re-listed, and deposits made are **non-refundable**.</span>
+                        </div>
+                        <div style="text-align: center; padding-left: 2rem; border-left: 1px solid rgba(239, 68, 68, 0.2);">
+                            <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem; letter-spacing: 1px;">Reserved Time Remaining</div>
+                            <div class="timer-countdown booking-timer-countdown" id="booking-timer-{{ booking.id }}" data-expires="{{ booking.expires_at|date:'c' }}">48:00:00</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: flex-start;">
+                        <div>
+                            <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-house-shield"></i> Booked Listing Details</h4>
+                            
+                            <div style="display: flex; gap: 1.5rem; align-items: center; background: #fafafa; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                                {% if booking.property.hero_image %}
+                                <img src="{{ booking.property.hero_image.url }}" alt="{{ booking.property.title }}" style="width: 140px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                {% else %}
+                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" style="width: 140px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                {% endif %}
+                                <div>
+                                    <h5 style="margin: 0; font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">{{ booking.property.title }}</h5>
+                                    <p style="margin: 0.2rem 0; font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-solid fa-location-dot"></i> {{ booking.property.location }}</p>
+                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 1.1rem; display: block; margin-top: 0.5rem;">UGX {{ booking.property.price|floatformat:0 }} / mo</span>
+                                    <button onclick="openCancelModal('{{ booking.id }}', '{{ booking.property.title }}', '{% url 'tenant_cancel_booking' booking.id %}')" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; margin-top: 0.75rem; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; transition: all 0.2s ease; background: transparent; border-radius: 4px;">
+                                        <i class="fa-solid fa-trash-can"></i> Cancel Booking
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Landlord profile details card for booked property -->
+                        <div>
+                            <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-circle-user"></i> Property Owner Details</h4>
+                            
+                            <div style="display: flex; gap: 1.5rem; align-items: center; background: #fafafa; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+                                <div class="landlord-avatar-wrapper">
+                                    {% if booking.property.owner.profile.image %}
+                                    <img src="{{ booking.property.owner.profile.image.url }}" alt="{{ booking.property.owner.username }}" class="landlord-avatar">
+                                    {% else %}
+                                    <div style="font-size: 2.25rem; font-weight: bold; color: var(--color-emerald);">{{ booking.property.owner.username|first|upper }}</div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest);">{{ booking.property.owner.first_name }} {{ booking.property.owner.last_name }}</h5>
+                                    <span class="badge badge-verified" style="font-size: 0.65rem; padding: 0.1rem 0.5rem; margin-top: 0.25rem; display: inline-block;"><i class="fa-solid fa-shield-check"></i> TRUST Approved Landlord</span>
+                                    
+                                    <div style="margin-top: 0.75rem; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                                        <span><i class="fa-solid fa-envelope" style="color: var(--color-gold); width: 20px;"></i> {{ booking.property.owner.email }}</span>
+                                        <span><i class="fa-solid fa-phone" style="color: var(--color-gold); width: 20px;"></i> {{ booking.property.owner.profile.phone }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick checkout link -->
+                            <div style="text-align: center; background: var(--color-emerald-darkest); color: white; padding: 1.5rem; border-radius: 12px;">
+                                <p style="margin: 0 0 1rem 0; font-size: 0.88rem; color: rgba(255,255,255,0.8);">Confirm this unit and transfer security deposits to start move-in steps.</p>
+                                <a href="?tab=payments&booking_id={{ booking.id }}" class="btn btn-gold" style="width:100%;"><i class="fa-solid fa-credit-card"></i> Proceed to Escrow Payments</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if reserved_bookings %}
+            <!-- Pending Bookings (Awaiting Payment) -->
+            <div class="premium-card" style="margin-bottom: 2.5rem;">
+                <div class="card-header-lux" style="background: linear-gradient(to right, #b45309, #d97706);">
+                    <h3>Pending Bookings (Awaiting Payment)</h3>
+                    <span class="badge" style="background: rgba(255,255,255,0.15); color: white;"><i class="fa-solid fa-clock"></i> {{ reserved_bookings.count }} Pending</span>
+                </div>
+                <div class="card-body-lux">
+                    <p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--color-text-muted);">
+                        You have initiated bookings for the properties below. Please note that these properties are not exclusively locked until you pay the booking fee. Bookings expire after 48 hours.
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                        {% for booking in reserved_bookings %}
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; display: flex; gap: 1.5rem; transition: transform 0.2s ease;">
+                            <a href="{% url 'property_detail' booking.property.id %}" style="display: block; flex-shrink: 0;">
+                                {% if booking.property.hero_image %}
+                                <img src="{{ booking.property.hero_image.url }}" alt="{{ booking.property.title }}" style="width: 130px; height: 95px; object-fit: cover; border-radius: 6px; transition: opacity 0.2s ease;">
+                                {% else %}
+                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" style="width: 130px; height: 95px; object-fit: cover; border-radius: 6px; transition: opacity 0.2s ease;">
+                                {% endif %}
+                            </a>
+                            <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    <h4 style="margin: 0; font-size: 1.05rem; font-weight: 600;">
+                                        <a href="{% url 'property_detail' booking.property.id %}" style="color: var(--color-emerald-darkest); text-decoration: none;">
+                                            {{ booking.property.title }}
+                                        </a>
+                                    </h4>
+                                    <small style="color: var(--color-text-muted); font-size: 0.78rem; display: block; margin-top: 0.2rem;"><i class="fa-solid fa-location-dot"></i> {{ booking.property.location }}</small>
+                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 0.95rem; display: block; margin-top: 0.4rem;">UGX {{ booking.property.price|floatformat:0 }} / mo</span>
+                                </div>
+                                <div style="margin-top: 0.8rem; display: flex; gap: 0.5rem; align-items: center;">
+                                    <a href="?tab=payments&booking_id={{ booking.id }}" class="btn btn-gold" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                        <i class="fa-solid fa-credit-card"></i> Pay Booking Fee
+                                    </a>
+                                    <button onclick="openCancelModal('{{ booking.id }}', '{{ booking.property.title }}', '{% url 'tenant_cancel_booking' booking.id %}')" class="btn btn-outline" style="padding: 0.4rem 0.6rem; font-size: 0.75rem; border-color: #ef4444; color: #ef4444; background: transparent; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;" title="Cancel Booking">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- My Favorite Properties List -->
+            <div class="premium-card">
+                <div class="card-header-lux" style="background: linear-gradient(to right, var(--color-emerald-darkest), var(--color-emerald));">
+                    <h3>My Favorite Properties</h3>
+                    <span class="badge badge-verified" style="background: rgba(255,255,255,0.15); color: white;"><i class="fa-solid fa-heart"></i> {{ favorite_properties.count }} Saved</span>
+                </div>
+                <div class="card-body-lux">
+                    <p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--color-text-muted);">
+                        Below are your saved favorite properties. You can view their full specifications or initiate a booking checkout instantly.
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                        {% for fav in favorite_properties %}
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; display: flex; gap: 1.5rem; transition: transform 0.2s ease;">
+                            <a href="{% url 'property_detail' fav.property.id %}" style="display: block; flex-shrink: 0;">
+                                {% if fav.property.hero_image %}
+                                <img src="{{ fav.property.hero_image.url }}" alt="{{ fav.property.title }}" style="width: 130px; height: 95px; object-fit: cover; border-radius: 6px; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                {% else %}
+                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" style="width: 130px; height: 95px; object-fit: cover; border-radius: 6px; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                {% endif %}
+                            </a>
+                            <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                                <div>
+                                    <h4 style="margin: 0; font-size: 1.05rem; font-weight: 600;">
+                                        <a href="{% url 'property_detail' fav.property.id %}" style="color: var(--color-emerald-darkest); text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='var(--color-gold)'" onmouseout="this.style.color='var(--color-emerald-darkest)'">
+                                            {{ fav.property.title }}
+                                        </a>
+                                    </h4>
+                                    <small style="color: var(--color-text-muted); font-size: 0.78rem; display: block; margin-top: 0.2rem;"><i class="fa-solid fa-location-dot"></i> {{ fav.property.location }}</small>
+                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 0.95rem; display: block; margin-top: 0.4rem;">UGX {{ fav.property.price|floatformat:0 }} / mo</span>
+                                </div>
+                                <div style="margin-top: 0.8rem; display: flex; gap: 0.5rem; align-items: center;">
+                                    <a href="{% url 'property_detail' fav.property.id %}?book=true" class="btn btn-gold" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 4px; text-decoration: none;">
+                                        <i class="fa-solid fa-credit-card"></i> Book Property
+                                    </a>
+                                    <a href="{% url 'property_detail' fav.property.id %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border-color: var(--color-emerald); color: var(--color-emerald); background: transparent; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: all 0.2s ease;">
+                                        <i class="fa-solid fa-circle-info"></i> Details
+                                    </a>
+                                    <a href="{% url 'tenant_remove_favorite' fav.id %}" class="btn btn-outline" style="padding: 0.4rem 0.6rem; font-size: 0.75rem; border-color: #ef4444; color: #ef4444; background: transparent; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Remove from Favorites">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--color-text-muted);">
+                            <i class="fa-solid fa-heart-broken" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--color-gold);"></i>
+                            <p style="margin: 0; font-size: 0.88rem;">No favorite properties saved under your account yet.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                // Multi-property 48 hours countdown timer logic
+                document.addEventListener("DOMContentLoaded", function() {
+                    const timers = document.querySelectorAll(".booking-timer-countdown");
+                    timers.forEach(function(timerEl) {
+                        const expiresAt = new Date(timerEl.dataset.expires).getTime();
+                        
+                        function updateTimer() {
+                            const now = new Date().getTime();
+                            const distance = expiresAt - now;
+                            
+                            if (distance < 0) {
+                                timerEl.innerText = "EXPIRED";
+                                clearInterval(x);
+                                location.reload();
+                                return;
+                            }
+                            
+                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                            
+                            const pad = (num) => String(num).padStart(2, '0');
+                            timerEl.innerText = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                        }
+                        
+                        updateTimer();
+                        const x = setInterval(updateTimer, 1000);
+                    });
+                });
+            </script>
+
+        {% else %}
+        <!-- Empty state dashboard for property tab -->
+        <div style="text-align: center; padding: 6rem 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <i class="fa-solid fa-hotel" style="font-size: 4rem; color: var(--color-gold); margin-bottom: 1.5rem;"></i>
+            <h3 style="font-family: var(--font-heading); font-size: 1.75rem; color: var(--color-emerald-darkest); margin-bottom: 0.5rem;">No Active Occupations Logged</h3>
+            <p style="color: var(--color-text-muted); max-width: 500px; margin: 0 auto 2.5rem auto;">You do not currently have any live active rental leases or reserved property bookings locked under your name.</p>
+            
+            <div style="max-width: 800px; margin: 0 auto; text-align: left; background: #f8fafc; border-radius: 8px; padding: 2rem; border: 1px solid #e2e8f0;">
+                <h4 style="margin: 0 0 1rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest);"><i class="fa-solid fa-bolt-lightning" style="color: var(--color-gold);"></i> Quick Demonstration Seeding</h4>
+                <p style="margin: 0 0 1.5rem 0; font-size: 0.88rem; color: var(--color-text-muted);">Choose a verified luxury property below to create an instant booking reservation and evaluate the secure payment gateways:</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+                    {% for prop in available_properties %}
+                    <div style="background: white; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 8px; display: flex; flex-direction: column;">
+                        <h5 style="margin: 0 0 0.25rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600;">{{ prop.title }}</h5>
+                        <small style="color: var(--color-text-muted); font-size: 0.75rem; display: block; margin-bottom: 0.75rem;"><i class="fa-solid fa-location-dot"></i> {{ prop.location }}</small>
+                        <span style="font-weight: 700; color: var(--color-emerald); font-size: 0.95rem; display: block; margin-bottom: 1rem;">UGX {{ prop.price|floatformat:0 }} / mo</span>
+                        <a href="{% url 'tenant_create_booking' prop.id %}" class="btn btn-gold" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; text-align: center; margin-top: auto;">Reserve property</a>
+                    </div>
+                    {% empty %}
+                    <div style="grid-column: 1 / -1; text-align: center; font-size: 0.85rem; color: var(--color-text-muted);">All database listings are currently occupied or locked by inspections. Run `seed_properties.py` script.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+
+    <!-- ==========================================
+         TAB 3: PAYMENTS & ESCROW PORTAL
+         ========================================== -->
+    {% if current_tab == 'payments' %}
+    <section>
+        <div class="section-header">
+            <h2>TRUST Escrow Payment Portal</h2>
+            <p>Complete bookings and make security deposits protected by automatic, decentralized escrow-enforcement gates.</p>
+        </div>
+
+        {% if active_booking %}
+        <!-- Checkout Interface for active booking -->
+        <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: flex-start;">
+            
+            <form action="{% url 'tenant_process_payment' active_booking.property.id %}" method="POST" class="premium-card" id="payment-form">
+                {% csrf_token %}
+                <div class="card-header-lux">
+                    <h3>Secure Checkout Gateway</h3>
+                    <span class="badge badge-escrow" style="background: rgba(203,163,88,0.15); color: var(--color-gold-light);"><i class="fa-solid fa-shield-halved"></i> Escrow Secured</span>
+                </div>
+                
+                <div class="card-body-lux">
+                    <!-- Cost breakdown calculations -->
+                    <h4 style="font-size: 1rem; color: var(--color-emerald-darkest); margin: 0 0 1rem 0; font-weight: 600;">Select Transaction Scope</h4>
+                    
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <select name="payment_type" class="form-control" id="payment-type-selector" onchange="calculateAmounts()">
+                            <option value="booking">Pay Non-Refundable Booking Fee (Reserve 48h Listing Lock)</option>
+                            <option value="rent">Pay First Month Rent & Escrow Bond (Secure Occupancy Lease)</option>
+                        </select>
+                    </div>
+
+                    <h4 style="font-size: 1rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; font-weight: 600;">Select Payment Channel</h4>
+                    
+                    <div class="payment-methods-grid">
+                        <label class="payment-method-card selected" onclick="selectPaymentMethod(this)">
+                            <input type="radio" name="payment_method" value="mobile_money" checked>
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>Mobile Money</span>
+                        </label>
+                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
+                            <input type="radio" name="payment_method" value="card">
+                            <i class="fa-solid fa-credit-card"></i>
+                            <span>Visa / Mastercard</span>
+                        </label>
+                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
+                            <input type="radio" name="payment_method" value="paypal">
+                            <i class="fa-brands fa-paypal"></i>
+                            <span>PayPal</span>
+                        </label>
+                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
+                            <input type="radio" name="payment_method" value="stripe">
+                            <i class="fa-brands fa-stripe"></i>
+                            <span>Stripe</span>
+                        </label>
+                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
+                            <input type="radio" name="payment_method" value="cash">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Cash / Office</span>
+                        </label>
+                    </div>
+
+                    <!-- Dynamic payment input details -->
+                    <div id="channel-inputs-wrapper" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+                        <!-- Mobile Money -->
+                        <div id="input-mobile_money">
+                            <h5 style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">Uganda Mobile Money Gateway</h5>
+                            <div style="display: flex; gap: 1rem;">
+                                <select class="form-control" style="width: 140px;">
+                                    <option>MTN MoMo</option>
+                                    <option>Airtel Money</option>
+                                </select>
+                                <input type="text" class="form-control" placeholder="07... Mobile Money number" required>
+                            </div>
+                            <small style="color: var(--color-text-muted); display: block; margin-top: 0.5rem;">A prompt code will be sent instantly to authorize checkout on your handset.</small>
+                        </div>
+                        
+                        <!-- Credit Card -->
+                        <div id="input-card" style="display: none;">
+                            <h5 style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">Card Details</h5>
+                            <div class="form-group" style="margin-bottom: 0.75rem;">
+                                <input type="text" class="form-control" placeholder="Card Number (16 Digits)">
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <input type="text" class="form-control" placeholder="MM/YY">
+                                <input type="text" class="form-control" placeholder="CVV">
+                            </div>
+                        </div>
+
+                        <!-- PayPal / Stripe -->
+                        <div id="input-paypal" style="display: none;">
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-brands fa-paypal"></i> Click the confirm checkout button to redirect to Paypal credentials authorization page.</p>
+                        </div>
+                        <div id="input-stripe" style="display: none;">
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-brands fa-stripe"></i> Dynamic Stripe transaction checkout sheet will load securely on approval click.</p>
+                        </div>
+
+                        <!-- Cash at Office -->
+                        <div id="input-cash" style="display: none;">
+                            <h5 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">TRUST Headquarters Address</h5>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5;">Please visit our secure desk at: **Level 4, Imperial Mall Chambers, Entebbe Road, Kampala**. Provide ID booking reference number **#{{ active_booking.property.property_id }}** to make cash payment.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-gold" style="width: 100%; padding: 1.15rem; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-lock-open"></i> Confirm Payment Authorized
+                    </button>
+                </div>
+            </form>
+
+            <!-- Invoice Cost Calculations panel -->
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; box-shadow: var(--shadow-sm);">
+                <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.5rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">Itemized Escrow Invoice</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Reserved Property</span>
+                        <strong style="color: var(--color-text-dark);">{{ active_booking.property.title }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Location</span>
+                        <span style="font-size: 0.85rem;">{{ active_booking.property.location }}</span>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid var(--color-border); margin: 0.5rem 0;">
+
+                    <!-- Booking Fee breakdown (active dynamic display) -->
+                    <div id="booking-invoice-display">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--color-text-muted);">Non-Refundable Booking Lock Deposit (5%)</span>
+                            <strong>UGX {{ active_booking.booking_fee|floatformat:0 }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; background: rgba(16, 185, 129, 0.05); padding: 0.5rem; border-radius: 4px; color: var(--color-success); font-size: 0.85rem;">
+                            <span><span><i class="fa-solid fa-shield-check"></i> 48-Hour Listing Exclusivity</span></span>
+                            <span>Included</span>
+                        </div>
+                        <hr style="border: none; border-top: 1px dashed var(--color-border); margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-family: var(--font-heading); color: var(--color-emerald-darkest);">
+                            <span>Total Due Today</span>
+                            <span style="color: var(--color-emerald); font-weight: 700;">UGX {{ active_booking.booking_fee|floatformat:0 }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Rent Fee breakdown -->
+                    <div id="rent-invoice-display" style="display: none;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--color-text-muted);">Monthly Base Rent Rate</span>
+                            <strong>UGX {{ active_booking.property.price|floatformat:0 }}</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--color-text-muted);">Security Bond Escrow Deposit (10%)</span>
+                            <strong id="invoice-security">UGX ...</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--color-text-muted);">TRUST System Infrastructure Escrow Fee (1%)</span>
+                            <strong id="invoice-fee">UGX ...</strong>
+                        </div>
+                        <div style="background: rgba(203, 163, 88, 0.08); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--color-gold); font-size: 0.82rem; color: var(--color-text-dark); line-height: 1.4; margin-top: 1rem;">
+                            <strong>Escrow Lock Terms:</strong> Your funds will reside securely inside the TRUST platform escrow vault. Funds are only released to the owner upon successful move-in, and full security clearance of legal vetting protocols.
+                        </div>
+                        <hr style="border: none; border-top: 1px dashed var(--color-border); margin: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-family: var(--font-heading); color: var(--color-emerald-darkest);">
+                            <span>Total Escrow Due</span>
+                            <span style="color: var(--color-emerald); font-weight: 700;" id="invoice-total">UGX ...</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+            // Client side dynamic invoice calculations
+            const basePrice = parseFloat("{{ active_booking.property.price|default:'0' }}");
+            
+            function calculateAmounts() {
+                const selector = document.getElementById("payment-type-selector");
+                const bDisplay = document.getElementById("booking-invoice-display");
+                const rDisplay = document.getElementById("rent-invoice-display");
+                
+                if (selector.value === "booking") {
+                    bDisplay.style.display = "block";
+                    rDisplay.style.display = "none";
+                } else {
+                    bDisplay.style.display = "none";
+                    rDisplay.style.display = "block";
+                    
+                    const security = basePrice * 0.1;
+                    const fee = basePrice * 0.01;
+                    const total = basePrice + security + fee;
+                    
+                    const fmt = (val) => "UGX " + Math.round(val).toLocaleString();
+                    document.getElementById("invoice-security").innerText = fmt(security);
+                    document.getElementById("invoice-fee").innerText = fmt(fee);
+                    document.getElementById("invoice-total").innerText = fmt(total);
+                }
+            }
+
+            function selectPaymentMethod(labelElement) {
+                // Remove selected class from all sibling cards
+                document.querySelectorAll(".payment-method-card").forEach(el => el.classList.remove("selected"));
+                labelElement.classList.add("selected");
+                
+                const checkedRadioVal = labelElement.querySelector("input[type='radio']").value;
+                
+                // Hide all dynamic inputs
+                document.querySelectorAll("#channel-inputs-wrapper > div").forEach(div => div.style.display = "none");
+                
+                // Show active input
+                const activeDiv = document.getElementById("input-" + checkedRadioVal);
+                if (activeDiv) activeDiv.style.display = "block";
+            }
+
+            calculateAmounts();
+        </script>
+
+        {% else %}
+        <!-- Empty state dashboard for payments tab -->
+        <div style="text-align: center; padding: 6rem 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <i class="fa-solid fa-file-invoice-dollar" style="font-size: 4rem; color: var(--color-gold); margin-bottom: 1.5rem;"></i>
+            <h3 style="font-family: var(--font-heading); font-size: 1.75rem; color: var(--color-emerald-darkest); margin-bottom: 0.5rem;">No Pending Checkout Invoices</h3>
+            <p style="color: var(--color-text-muted); max-width: 500px; margin: 0 auto 2.5rem auto;">You must reserve a property under the "My Property" tab or find an available listing in search to generate secure invoice gates.</p>
+            <a href="?tab=my_property" class="btn btn-outline">Check Property Reservations</a>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+
+    <!-- ==========================================
+         TAB 4: MOVE-IN PORTAL
+         ========================================== -->
+    {% if current_tab == 'move_in' %}
+    <section>
+        <div class="section-header">
+            <h2>TRUST Premium Move-In Portal</h2>
+            <p>Download legal rental covenants, submit verified tenancy documentation, and record property occupant listings.</p>
+        </div>
+
+        {% if active_rental %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: flex-start;">
+            
+            <!-- Tenancy Agreement Upload Card -->
+            <div class="premium-card">
+                <div class="card-header-lux">
+                    <h3>Standard Tenancy Agreement Covenants</h3>
+                    <span><i class="fa-solid fa-file-signature"></i> Contract</span>
+                </div>
+                
+                <div class="card-body-lux">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                        <i class="fa-solid fa-file-pdf" style="font-size: 3rem; color: #ef4444;"></i>
+                        <div style="flex:1;">
+                            <h4 style="margin: 0 0 0.25rem 0; font-size: 1rem; color: var(--color-emerald-darkest); font-weight: 600;">Standard TRUST Tenancy Template</h4>
+                            <p style="margin: 0; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4;">Official vetted lease standard approved by TRUST Legal Counsel. Download and sign.</p>
+                        </div>
+                        <a href="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267" download class="btn btn-gold" style="padding: 0.75rem 1.25rem; font-size: 0.88rem;"><i class="fa-solid fa-file-arrow-down"></i> Get PDF</a>
+                    </div>
+
+                    <form action="{% url 'tenant_upload_agreement' active_rental.id %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <h4 style="font-size: 1rem; color: var(--color-emerald-darkest); margin: 0 0 0.5rem 0; font-weight: 600;">Upload Signed Agreement Copy</h4>
+                        <p style="margin: 0 0 1.25rem 0; font-size: 0.85rem; color: var(--color-text-muted);">Please upload the scanned document with signatures from both you and the landlord.</p>
+                        
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input type="file" name="signed_agreement" class="form-control" style="padding: 0.5rem; flex: 1;" accept=".pdf,.doc,.docx" required>
+                            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Upload Document</button>
+                        </div>
+                    </form>
+
+                    {% if active_rental.signed_agreement %}
+                    <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 0.5rem; color: var(--color-success); font-size: 0.88rem; font-weight: 600;">
+                        <i class="fa-solid fa-circle-check" style="font-size: 1.1rem;"></i> Tenancy agreement upload logged successfully. 
+                        <a href="{{ active_rental.signed_agreement.url }}" target="_blank" style="margin-left: 1rem; text-decoration: underline; font-size: 0.8rem;">View File</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Co-Occupants Upload Card -->
+            <div class="premium-card">
+                <div class="card-header-lux">
+                    <h3>Emergency Co-Occupants Registry</h3>
+                    <span><i class="fa-solid fa-people-group"></i> Security Log</span>
+                </div>
+                
+                <div class="card-body-lux">
+                    <p style="margin: 0 0 1.5rem 0; font-size: 0.88rem; color: var(--color-text-muted); line-height: 1.5;">Per TRUST physical safety regulations, please upload a clear portrait image of **all members/family** who will co-occupy this rented property. This forms part of local emergency support registries.</p>
+                    
+                    <form action="{% url 'tenant_upload_occupants' active_rental.id %}" method="POST" enctype="multipart/form-data" style="margin-bottom: 2rem;">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 0.85rem;">Upload Occupants Portrait Photo</label>
+                            <input type="file" name="co_occupants_image" class="form-control" style="padding: 0.5rem;" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn btn-gold" style="width: 100%;">Record Occupants Registry</button>
+                    </form>
+
+                    {% if active_rental.co_occupants_image %}
+                    <div style="border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+                        <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600;">Current Occupants Photo</h4>
+                        <img src="{{ active_rental.co_occupants_image.url }}" alt="Co-occupants" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        {% else %}
+        <!-- Empty state dashboard for Move-in tab -->
+        <div style="text-align: center; padding: 6rem 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <i class="fa-solid fa-truck-moving" style="font-size: 4rem; color: var(--color-gold); margin-bottom: 1.5rem;"></i>
+            <h3 style="font-family: var(--font-heading); font-size: 1.75rem; color: var(--color-emerald-darkest); margin-bottom: 0.5rem;">Move-in Portal Locked</h3>
+            <p style="color: var(--color-text-muted); max-width: 500px; margin: 0 auto 2.5rem auto;">Lease documentation is only active for current verified tenants. Complete rent and escrow bonds under "Payments" to unlock.</p>
+            <a href="?tab=payments" class="btn btn-outline">Go to Payments</a>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+
+    <!-- ==========================================
+         TAB 5: MAINTENANCE REPORTER
+         ========================================== -->
+    {% if current_tab == 'maintenance' %}
+    <section>
+        <div class="section-header">
+            <h2>Maintenance Report Network</h2>
+            <p>Lodge utility issues, schedule fixes, and route reports straight to either the Landlord or TRUST Board Agents.</p>
+        </div>
+
+        {% if active_rental %}
+        <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 3.5rem; align-items: flex-start;">
+            
+            <!-- Issue Reporter Form -->
+            <form action="{% url 'tenant_report_maintenance' active_rental.property.id %}" method="POST" class="premium-card">
+                {% csrf_token %}
+                <div class="card-header-lux">
+                    <h3>Report Utility / Structural Issue</h3>
+                    <span><i class="fa-solid fa-screwdriver-wrench"></i> Report Portal</span>
+                </div>
+                
+                <div class="card-body-lux">
+                    <div class="grid-forms">
+                        <div class="form-group">
+                            <label class="form-label">Issue Category</label>
+                            <select name="category" class="form-control">
+                                <option>Plumbing / Water leak</option>
+                                <option>Electrical / Power fault</option>
+                                <option>Structural distorts / Walls</option>
+                                <option>Security breach / Lock fault</option>
+                                <option>General / Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Route Alert Recipient</label>
+                            <select name="reported_to" class="form-control">
+                                <option value="landlord">Property Owner (Direct Landlord)</option>
+                                <option value="agent">TRUST Board (Third-Party Agent Network)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label">Describe problem in detail</label>
+                        <textarea name="issue_description" class="form-control" rows="4" placeholder="Detail precisely what structural distortion, leakage, or electrical failure is experienced..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-gold" style="width: 100%; padding: 1rem; margin-top: 1rem;">Dispatch Maintenance Report</button>
+                </div>
+            </form>
+
+            <!-- History Timeline -->
+            <div>
+                <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.5rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-clock-rotate-left"></i> Reported Maintenance Logs</h4>
+                
+                <div class="timeline-requests">
+                    {% for req in maintenance_requests %}
+                    <div class="timeline-node {% if req.status == 'resolved' %}resolved{% endif %}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                            <div>
+                                <span style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.95rem;">{{ req.category }}</span>
+                                <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.15rem;">Reported to: **{{ req.reported_to|upper }}** on {{ req.created_at|date:"F d, Y" }}</div>
+                            </div>
+                            <span class="status-pill {% if req.status == 'resolved' %}pill-active{% else %}pill-pending{% endif %}" style="font-size: 0.7rem;">{{ req.get_status_display }}</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.4; margin: 0; background: #fafafa; padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid #f1f5f9;">"{{ req.issue_description }}"</p>
+                    </div>
+                    {% empty %}
+                    <div style="text-align: center; padding: 4rem 2rem; color: var(--color-text-muted);">
+                        <i class="fa-solid fa-clipboard-question" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--color-gold);"></i>
+                        <p style="margin: 0; font-size: 0.88rem;">No maintenance cases filed under your tenancy logs yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        {% else %}
+        <!-- Empty state dashboard for maintenance tab -->
+        <div style="text-align: center; padding: 6rem 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <i class="fa-solid fa-helmet-safety" style="font-size: 4rem; color: var(--color-gold); margin-bottom: 1.5rem;"></i>
+            <h3 style="font-family: var(--font-heading); font-size: 1.75rem; color: var(--color-emerald-darkest); margin-bottom: 0.5rem;">Maintenance Reporter Locked</h3>
+            <p style="color: var(--color-text-muted); max-width: 500px; margin: 0 auto 2.5rem auto;">Lease maintenance claims are only active for current verified tenants. Complete rent and escrow bonds under "Payments" to unlock.</p>
+            <a href="?tab=payments" class="btn btn-outline">Go to Payments</a>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+
+<!-- Cancel Booking Confirmation Modal -->
+<div id="cancel-booking-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 1.5rem; transition: opacity 0.3s ease;">
+    <div style="background: white; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); max-width: 500px; width: 100%; overflow: hidden; transform: scale(0.95); transition: transform 0.3s ease; animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #7f1d1d, #b91c1c); padding: 1.5rem; color: white; display: flex; align-items: center; gap: 1rem;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem;"></i>
+            <div>
+                <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; color: white;">Irreversible Action Warning</h3>
+                <small style="opacity: 0.85; color: #fecaca; display: block; margin-top: 0.15rem;">Please read the non-refundable terms below carefully</small>
+            </div>
+        </div>
+        <!-- Body -->
+        <div style="padding: 1.75rem;">
+            <p style="margin: 0 0 1.25rem 0; font-size: 0.95rem; color: #1e293b; line-height: 1.6; font-weight: 500;">
+                Are you absolutely sure you want to cancel your exclusive booking lock for <strong style="color: #7f1d1d;" id="modal-property-title">this property</strong>?
+            </p>
+            <div style="background: #fff5f5; border-left: 4px solid #ef4444; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; text-align: left;">
+                <strong style="font-size: 0.85rem; color: #b91c1c; font-weight: 700; line-height: 1.5; display: block; margin-bottom: 0.25rem;">
+                    ⚠️ CRITICAL ESCROW REGULATORY POLICY:
+                </strong>
+                <span style="font-size: 0.83rem; color: #b91c1c; line-height: 1.5; display: block;">
+                    Once you click "Proceed", this property will be released instantly and re-listed for other tenants. All booking fees paid are <strong>non-refundable</strong> under any circumstances.
+                </span>
+            </div>
+        </div>
+        <!-- Footer Actions -->
+        <div style="background: #f8fafc; padding: 1.25rem 1.75rem; display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #e2e8f0;">
+            <button onclick="closeCancelModal()" class="btn btn-outline" style="border: 1px solid #cbd5e1; color: #475569; padding: 0.6rem 1.2rem; font-size: 0.88rem; cursor: pointer; background: white; border-radius: 6px;">
+                Cancel
+            </button>
+            <a id="modal-confirm-link" href="#" class="btn" style="background: #ef4444; color: white; border: none; padding: 0.6rem 1.5rem; font-size: 0.88rem; font-weight: 600; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s ease;">
+                Proceed
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes modalEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+</style>
+
+<script>
+function openCancelModal(bookingId, propertyTitle, cancelUrl) {
+    const modal = document.getElementById('cancel-booking-modal');
+    document.getElementById('modal-property-title').innerText = propertyTitle;
+    document.getElementById('modal-confirm-link').setAttribute('href', cancelUrl);
+    modal.style.display = 'flex';
+}
+
+function closeCancelModal() {
+    document.getElementById('cancel-booking-modal').style.display = 'none';
+}
+</script>
+
+{% endblock %}

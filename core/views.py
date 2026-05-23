@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -378,6 +378,7 @@ def admin_dashboard(request):
     agents = InspectionAgent.objects.all().select_related('role').order_by('-joined_at')
     agent_roles = AgentRole.objects.all().order_by('name')
     inspections = Inspection.objects.all().select_related('property').prefetch_related('reports', 'reports__agent', 'reports__agent__role').order_by('-created_at')
+    viewing_requests = ViewingRequest.objects.all().select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile').order_by('-created_at')
     
     amenities = list(PropertyAmenity.objects.all().order_by('layer', 'category', 'name'))
     for a in amenities:
@@ -412,6 +413,7 @@ def admin_dashboard(request):
         'agents': agents,
         'agent_roles': agent_roles,
         'inspections': inspections,
+        'viewing_requests': viewing_requests,
         'amenities': amenities,
         'proximity_categories': proximity_categories,
         'amenity_categories': amenity_categories,
@@ -942,3 +944,392 @@ def agent_submit_report(request):
             return redirect('agent_report_auth')
             
     return render(request, 'agent/submit_report.html', {'agent': agent})
+
+# --- TENANT DASHBOARD VIEWS ---
+
+from decimal import Decimal
+from django.utils import timezone
+
+def tenant_dashboard(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the tenant dashboard.')
+        return redirect('login')
+        
+    # Get user profile, create if missing
+    profile, created = UserProfile.objects.get_or_create(user=request.user, defaults={'role': 'tenant'})
+    
+    current_tab = request.GET.get('tab', 'profile')
+    
+    # Query relative data
+    bookings = TenantBooking.objects.filter(tenant=request.user).order_by('-booked_at')
+    active_bookings = bookings.filter(status='active')
+    reserved_bookings = bookings.filter(status='reserved')
+    favorite_properties = FavoriteProperty.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Check if active bookings are expired, and auto-release them
+    for booking in active_bookings:
+        if booking.is_expired():
+            booking.status = 'expired'
+            booking.save()
+            prop = booking.property
+            prop.status = 'available'
+            prop.save()
+            messages.warning(request, f"Your booking reservation for '{prop.title}' has expired after 48 hours and has been re-listed.")
+            
+    # For checkout context in Payments tab
+    booking_id = request.GET.get('booking_id')
+    active_booking = None
+    if booking_id:
+        active_booking = bookings.filter(id=booking_id).first()
+    if not active_booking:
+        active_booking = reserved_bookings.first()
+        
+    active_rental = TenantRental.objects.filter(tenant=request.user, status='active').select_related('property', 'property__owner').first()
+    
+    viewing_requests = ViewingRequest.objects.filter(tenant=request.user).order_by('-created_at')
+    maintenance_requests = MaintenanceRequest.objects.filter(tenant=request.user).order_by('-created_at')
+    
+    # Fetch Landlord profile details
+    landlord_profile = None
+    landlord_user = None
+    if active_rental:
+        landlord_user = active_rental.property.owner
+    elif active_booking:
+        landlord_user = active_booking.property.owner
+        
+    if landlord_user:
+        try:
+            landlord_profile = landlord_user.profile
+        except UserProfile.DoesNotExist:
+            pass
+            
+    # Legal documents folder & inspections for currently rented property
+    legal_documents = []
+    inspection_reports = []
+    if active_rental:
+        prop = active_rental.property
+        if prop.building_plans:
+            legal_documents.append({'name': 'Approved Building Plans', 'file': prop.building_plans})
+        if prop.occupancy_permit:
+            legal_documents.append({'name': 'Government Occupancy Permit', 'file': prop.occupancy_permit})
+        if prop.lc1_letter:
+            legal_documents.append({'name': 'LC1 Residency Clearance', 'file': prop.lc1_letter})
+        if prop.tenancy_agreement:
+            legal_documents.append({'name': 'Official Tenancy Agreement template', 'file': prop.tenancy_agreement})
+        if prop.security_agreement:
+            legal_documents.append({'name': 'TRUST Security Protocol Agreement', 'file': prop.security_agreement})
+            
+        inspection = Inspection.objects.filter(property=prop).first()
+        if inspection:
+            inspection_reports = inspection.reports.all().select_related('agent', 'agent__role')
+            
+    # List of all available properties for new bookings list
+    available_properties = Property.objects.filter(status='available', parent=None)
+    
+    context = {
+        'profile': profile,
+        'current_tab': current_tab,
+        'bookings': bookings,
+        'active_bookings': active_bookings,
+        'reserved_bookings': reserved_bookings,
+        'active_booking': active_booking,
+        'favorite_properties': favorite_properties,
+        'active_rental': active_rental,
+        'viewing_requests': viewing_requests,
+        'maintenance_requests': maintenance_requests,
+        'landlord_user': landlord_user,
+        'landlord_profile': landlord_profile,
+        'legal_documents': legal_documents,
+        'inspection_reports': inspection_reports,
+        'available_properties': available_properties,
+    }
+    return render(request, 'tenant/dashboard.html', context)
+
+def tenant_update_profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    if request.method == 'POST':
+        profile = request.user.profile
+        
+        # Text fields
+        request.user.first_name = request.POST.get('first_name', '').strip()
+        request.user.last_name = request.POST.get('last_name', '').strip()
+        request.user.email = request.POST.get('email', '').strip()
+        request.user.save()
+        
+        profile.phone = request.POST.get('phone', '').strip()
+        profile.phone_2 = request.POST.get('phone_2', '').strip()
+        profile.profession = request.POST.get('profession', '').strip()
+        profile.place_of_work = request.POST.get('place_of_work', '').strip()
+        profile.marriage_status = request.POST.get('marriage_status', '').strip()
+        profile.emergency_conditions = request.POST.get('emergency_conditions', '').strip()
+        profile.doctor_contact = request.POST.get('doctor_contact', '').strip()
+        
+        children_count = request.POST.get('number_of_children', '0')
+        profile.number_of_children = int(children_count) if children_count.isdigit() else 0
+        
+        # Files
+        if 'image' in request.FILES:
+            profile.image = request.FILES['image']
+        if 'national_id_or_passport' in request.FILES:
+            profile.national_id_or_passport = request.FILES['national_id_or_passport']
+            
+        profile.save()
+        messages.success(request, 'Your premium tenant profile registry has been successfully updated!')
+        
+    return redirect('/tenant/dashboard/?tab=profile')
+
+def tenant_add_favorite(request, property_id):
+    if not request.user.is_authenticated:
+        messages.info(request, "Please create a tenant account first to save properties to your favorite list.")
+        return redirect('register')
+        
+    property_obj = get_object_or_404(Property, id=property_id)
+    FavoriteProperty.objects.get_or_create(user=request.user, property=property_obj)
+    messages.success(request, f"Property '{property_obj.title}' has been successfully added to your favorite properties list!")
+    return redirect('/tenant/dashboard/?tab=my_property')
+
+def tenant_remove_favorite(request, favorite_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    favorite = get_object_or_404(FavoriteProperty, id=favorite_id, user=request.user)
+    prop_title = favorite.property.title
+    favorite.delete()
+    messages.success(request, f"Property '{prop_title}' has been removed from your favorites list.")
+    return redirect('/tenant/dashboard/?tab=my_property')
+
+def tenant_create_booking(request, property_id):
+    if not request.user.is_authenticated:
+        messages.info(request, "Please create a tenant account to book this property.")
+        return redirect('register')
+        
+    property_obj = get_object_or_404(Property, id=property_id)
+    
+    existing_booking = TenantBooking.objects.filter(tenant=request.user, property=property_obj, status__in=['reserved', 'active']).first()
+    if existing_booking:
+        messages.info(request, f"You already have an active/pending booking for '{property_obj.title}'.")
+        return redirect('/tenant/dashboard/?tab=my_property')
+        
+    # Calculate non-refundable booking fee (Fixed to 50,000 UGX for simplicity)
+    booking_fee = Decimal('50000')
+    
+    # In initial 'reserved' state, no expiration timer exists yet
+    booking = TenantBooking.objects.create(
+        tenant=request.user,
+        property=property_obj,
+        expires_at=None,
+        booking_fee=booking_fee,
+        status='reserved'
+    )
+    
+    messages.success(request, f"Booking reservation for '{property_obj.title}' has been successfully initiated! Complete the booking fee payment below to lock it exclusively.")
+    return redirect(f'/tenant/dashboard/?tab=payments&booking_id={booking.id}')
+
+def tenant_cancel_booking(request, booking_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    booking = get_object_or_404(TenantBooking, id=booking_id, tenant=request.user)
+    
+    # Check if the booking is active or reserved
+    if booking.status in ['reserved', 'active']:
+        old_status = booking.status
+        booking.status = 'expired'  # Mark as expired/inactive
+        booking.save()
+        
+        # Release the property if it was locked under inspection
+        prop = booking.property
+        if old_status == 'active':
+            prop.status = 'available'
+            prop.save()
+            messages.warning(request, f"Your active booking for '{prop.title}' has been cancelled and the property has been re-listed. Note that all booking deposits are non-refundable.")
+        else:
+            messages.success(request, f"Property '{prop.title}' has been removed from your reserved list.")
+            
+    return redirect('/tenant/dashboard/?tab=my_property')
+
+def tenant_process_payment(request, property_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    property_obj = get_object_or_404(Property, id=property_id)
+    payment_type = request.POST.get('payment_type') # 'booking' or 'rent'
+    payment_method = request.POST.get('payment_method') # 'mobile_money', 'card', 'paypal', 'stripe', 'cash'
+    
+    if payment_type == 'booking':
+        # Find reserved booking to activate, or fallback to active
+        booking = TenantBooking.objects.filter(tenant=request.user, property=property_obj, status='reserved').first()
+        if not booking:
+            booking = TenantBooking.objects.filter(tenant=request.user, property=property_obj, status='active').first()
+            
+        if booking:
+            booking.payment_method = payment_method
+            booking.status = 'active'
+            # Start the 48-hour expiration timer here
+            booking.expires_at = timezone.now() + timezone.timedelta(hours=48)
+            booking.save()
+            
+            # Lock property only upon official booking lock
+            property_obj.status = 'under_inspection'
+            property_obj.save()
+            
+            messages.success(request, f"Booking fee of UGX {booking.booking_fee:,.0f} received via {payment_method.replace('_', ' ').title()}. Property locked successfully and your 48-hour exclusive lock timer has started!")
+        else:
+            messages.error(request, "No active booking reservation found for this property.")
+            
+    elif payment_type == 'rent':
+        # Create active lease rental
+        rental = TenantRental.objects.create(
+            tenant=request.user,
+            property=property_obj,
+            status='active'
+        )
+        
+        # Finalize any active bookings
+        bookings = TenantBooking.objects.filter(tenant=request.user, property=property_obj, status='active')
+        for b in bookings:
+            b.status = 'paid_rent'
+            b.save()
+            
+        # Update property status to rented
+        property_obj.status = 'rented'
+        property_obj.save()
+        
+        price = float(property_obj.price) if property_obj.price else 0.0
+        total_escrow = price * 1.11 # Rent + 10% security deposit + 1% escrow fee
+        
+        messages.success(request, f"Escrow Enforced Payment of UGX {total_escrow:,.0f} processed successfully via {payment_method.replace('_', ' ').title()}! Funds are locked in the TRUST Escrow Vault.")
+        return redirect('/tenant/dashboard/?tab=my_property')
+        
+    return redirect('/tenant/dashboard/?tab=payments')
+
+def tenant_request_viewing(request, property_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    property_obj = get_object_or_404(Property, id=property_id)
+    pref_date_str = request.POST.get('preferred_date')
+    notes = request.POST.get('notes', '').strip()
+    
+    if pref_date_str:
+        try:
+            # Parse datetime
+            pref_date = timezone.datetime.strptime(pref_date_str, '%Y-%m-%dT%H:%M')
+            pref_date = timezone.make_aware(pref_date)
+            
+            ViewingRequest.objects.create(
+                tenant=request.user,
+                property=property_obj,
+                preferred_date=pref_date,
+                notes=notes
+            )
+            messages.success(request, "Physical viewing request logged successfully! The property manager will contact you to confirm.")
+        except Exception as e:
+            messages.error(request, "Error scheduling viewing: Please enter a valid date and time format.")
+    else:
+        messages.error(request, "Preferred date and time is required.")
+        
+    return redirect('/tenant/dashboard/?tab=my_property')
+
+def tenant_schedule_move_in(request, property_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    rental = TenantRental.objects.filter(tenant=request.user, property_id=property_id, status='active').first()
+    if rental:
+        move_date_str = request.POST.get('move_in_date')
+        if move_date_str:
+            try:
+                move_date = timezone.datetime.strptime(move_date_str, '%Y-%m-%d').date()
+                rental.move_in_date = move_date
+                rental.save()
+                messages.success(request, f"Your move-in checklist date is scheduled for {move_date.strftime('%B %d, %Y')}!")
+            except Exception as e:
+                messages.error(request, "Error saving date format.")
+        else:
+            messages.error(request, "Move-in date is required.")
+    else:
+        messages.error(request, "No active rental agreement found for this property.")
+        
+    return redirect('/tenant/dashboard/?tab=my_property')
+
+def tenant_upload_agreement(request, rental_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    rental = get_object_or_404(TenantRental, id=rental_id, tenant=request.user)
+    if request.method == 'POST' and 'signed_agreement' in request.FILES:
+        rental.signed_agreement = request.FILES['signed_agreement']
+        rental.save()
+        messages.success(request, "Tenancy agreement uploaded successfully! It is now pending verification review by legal advisors.")
+    else:
+        messages.error(request, "Please select a valid PDF or Document file to upload.")
+        
+    return redirect('/tenant/dashboard/?tab=move_in')
+
+def tenant_upload_occupants(request, rental_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    rental = get_object_or_404(TenantRental, id=rental_id, tenant=request.user)
+    if request.method == 'POST' and 'co_occupants_image' in request.FILES:
+        rental.co_occupants_image = request.FILES['co_occupants_image']
+        rental.save()
+        messages.success(request, "Co-occupants photo successfully recorded in the TRUST property security log.")
+    else:
+        messages.error(request, "Please select a valid image file to upload.")
+        
+    return redirect('/tenant/dashboard/?tab=move_in')
+
+def tenant_report_maintenance(request, property_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    property_obj = get_object_or_404(Property, id=property_id)
+    issue = request.POST.get('issue_description', '').strip()
+    cat = request.POST.get('category', 'General')
+    target = request.POST.get('reported_to', 'landlord')
+    
+    if issue:
+        MaintenanceRequest.objects.create(
+            tenant=request.user,
+            property=property_obj,
+            issue_description=issue,
+            category=cat,
+            reported_to=target
+        )
+        messages.success(request, f"Maintenance issue reported to the {target.replace('_', ' ').title()} successfully! Status can be tracked on this page.")
+    else:
+        messages.error(request, "Issue description is required to file a report.")
+        
+    return redirect('/tenant/dashboard/?tab=maintenance')
+
+def admin_viewing_detail(request, viewing_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+        
+    viewing_request = get_object_or_404(ViewingRequest.objects.select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile'), id=viewing_id)
+    return render(request, 'admin/viewing_detail.html', {
+        'viewing': viewing_request,
+        'current_tab': 'inspections'
+    })
+
+def admin_viewing_status_update(request, viewing_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can perform this action.')
+        return redirect('login')
+        
+    if request.method == 'POST':
+        viewing = get_object_or_404(ViewingRequest, id=viewing_id)
+        status = request.POST.get('status')
+        if status in ['approved', 'declined']:
+            viewing.status = status
+            viewing.save()
+            messages.success(request, f"Inspection request status has been updated to {status.capitalize()} successfully!")
+        else:
+            messages.error(request, "Invalid status action.")
+            
+    return redirect('/admin-dashboard/?tab=inspections')
