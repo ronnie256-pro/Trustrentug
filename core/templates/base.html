@@ -191,6 +191,64 @@
             });
         </script>
         {% endif %}
+        {% if active_popup %}
+        <!-- Glassmorphic Popup Modal Overlay -->
+        <div id="dynamic-system-popup" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 25, 20, 0.45); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+            <div style="background: rgba(255, 255, 255, 0.95); border: 2px solid var(--color-gold); border-radius: 16px; width: 100%; max-width: 580px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; animation: popupScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; display: flex; flex-direction: column;">
+                <!-- Header -->
+                <div style="background: linear-gradient(to right, var(--color-emerald-darkest), var(--color-emerald)); padding: 1.5rem 2rem; color: white; display: flex; align-items: center; justify-content: space-between; position: relative;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        {% if active_popup.popup_type == 'marketing' %}
+                        <i class="fa-solid fa-rectangle-ad" style="color: var(--color-gold); font-size: 1.4rem;"></i>
+                        {% else %}
+                        <i class="fa-solid fa-circle-info" style="color: var(--color-gold); font-size: 1.4rem;"></i>
+                        {% endif %}
+                        <h4 style="margin: 0; font-family: var(--font-heading); color: white; font-size: 1.15rem; font-weight: 600;">{{ active_popup.title }}</h4>
+                    </div>
+                    <button onclick="dismissSystemPopup()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.25rem; opacity: 0.8; transition: opacity 0.2s; font-family: inherit;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">&times;</button>
+                </div>
+
+                <!-- Body Content -->
+                <div style="padding: 2rem; max-height: 70vh; overflow-y: auto;">
+                    {% if active_popup.image %}
+                    <div style="width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid #e2e8f0; max-height: 240px;">
+                        <img src="{{ active_popup.image.url }}" alt="{{ active_popup.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    {% endif %}
+                    
+                    <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: #334155;">
+                        {{ active_popup.content|safe }}
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="padding: 1.25rem 2rem; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end;">
+                    <button onclick="dismissSystemPopup()" class="btn btn-gold" style="padding: 0.6rem 2rem; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; color: white;">
+                        Got it, close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            @keyframes popupScaleIn {
+                from { opacity: 0; transform: scale(0.9) translateY(20px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
+            }
+        </style>
+
+        <script>
+            function dismissSystemPopup() {
+                const popup = document.getElementById('dynamic-system-popup');
+                if (popup) {
+                    popup.style.opacity = '0';
+                    popup.style.transform = 'scale(0.95) translateY(10px)';
+                    popup.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    setTimeout(() => popup.remove(), 300);
+                }
+            }
+        </script>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 

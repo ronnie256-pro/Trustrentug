@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -458,6 +458,42 @@ def admin_dashboard(request):
                 messages.error(request, f"Error deleting {area_type}.")
             return redirect('/admin-dashboard/?tab=settings')
 
+        elif action == 'add_popup_logic':
+            title = request.POST.get('title', '').strip()
+            popup_type = request.POST.get('popup_type')
+            display_page = request.POST.get('display_page')
+            trigger_event = request.POST.get('trigger_event')
+            content = request.POST.get('content', '').strip()
+            image = request.FILES.get('image')
+            
+            if title and content and popup_type and display_page and trigger_event:
+                try:
+                    PopupLogic.objects.create(
+                        title=title,
+                        popup_type=popup_type,
+                        display_page=display_page,
+                        trigger_event=trigger_event,
+                        content=content,
+                        image=image
+                    )
+                    messages.success(request, f"Popup Logic '{title}' created successfully!")
+                except Exception as e:
+                    messages.error(request, f"Error creating popup: {str(e)}")
+            else:
+                messages.error(request, "All fields are required to create a popup logic.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'delete_popup_logic':
+            popup_id = request.POST.get('popup_id')
+            try:
+                popup = PopupLogic.objects.get(id=popup_id)
+                title = popup.title
+                popup.delete()
+                messages.success(request, f"Popup Logic '{title}' deleted successfully!")
+            except Exception as e:
+                messages.error(request, "Error deleting popup logic.")
+            return redirect('/admin-dashboard/?tab=settings')
+
 
 
     # Fetch properties based on active tab
@@ -507,6 +543,8 @@ def admin_dashboard(request):
     service_divisions = ServiceDivision.objects.all().select_related('district').order_by('name')
     service_villages = ServiceVillage.objects.all().select_related('division', 'division__district').order_by('name')
 
+    popups = PopupLogic.objects.all().order_by('-created_at')
+
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
         'stats': stats,
@@ -522,6 +560,7 @@ def admin_dashboard(request):
         'service_districts': service_districts,
         'service_divisions': service_divisions,
         'service_villages': service_villages,
+        'popups': popups,
         'current_tab': tab
     })
 
@@ -913,6 +952,8 @@ def search_view(request):
     properties = properties.distinct().order_by('-created_at')
     total_count = properties.count()
     
+    active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+
     return render(request, 'tenant/search.html', {
         'properties': properties,
         'total_count': total_count,
@@ -920,7 +961,8 @@ def search_view(request):
         'type': p_type,
         'min_price': min_price,
         'max_price': max_price,
-        'selected_amenities': selected_amenities
+        'selected_amenities': selected_amenities,
+        'active_popup': active_popup
     })
 
 def property_detail_view(request, property_id):
@@ -1144,6 +1186,15 @@ def tenant_dashboard(request):
     # List of all available properties for new bookings list
     available_properties = Property.objects.filter(status='available', parent=None)
     
+    # Dynamic logistics payment success popup trigger
+    active_popup = None
+    if request.GET.get('payment_success') == '1':
+        active_popup = PopupLogic.objects.filter(
+            is_active=True, 
+            display_page__in=['tenant_dashboard', 'all'], 
+            trigger_event='payment_success'
+        ).first()
+
     context = {
         'profile': profile,
         'current_tab': current_tab,
@@ -1160,6 +1211,7 @@ def tenant_dashboard(request):
         'legal_documents': legal_documents,
         'inspection_reports': inspection_reports,
         'available_properties': available_properties,
+        'active_popup': active_popup,
     }
     return render(request, 'tenant/dashboard.html', context)
 
@@ -1319,9 +1371,9 @@ def tenant_process_payment(request, property_id):
         total_escrow = price * 1.11 # Rent + 10% security deposit + 1% escrow fee
         
         messages.success(request, f"Escrow Enforced Payment of UGX {total_escrow:,.0f} processed successfully via {payment_method.replace('_', ' ').title()}! Funds are locked in the TRUST Escrow Vault.")
-        return redirect('/tenant/dashboard/?tab=my_property')
+        return redirect('/tenant/dashboard/?tab=my_property&payment_success=1')
         
-    return redirect('/tenant/dashboard/?tab=payments')
+    return redirect('/tenant/dashboard/?tab=payments&payment_success=1')
 
 def tenant_request_viewing(request, property_id):
     if not request.user.is_authenticated:

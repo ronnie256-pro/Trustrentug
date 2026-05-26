@@ -345,5 +345,36 @@ class ServiceVillage(models.Model):
         return f"{self.name} ({self.division.name})"
 
 
+class PopupLogic(models.Model):
+    PAGE_CHOICES = [
+        ('search', 'Find a Property (Search Page)'),
+        ('tenant_dashboard', 'Tenant Dashboard'),
+        ('all', 'All Pages'),
+    ]
+    
+    TRIGGER_CHOICES = [
+        ('load', 'On Page Load'),
+        ('payment_success', 'After Payment Completed (Redirect Trigger)'),
+    ]
+    
+    POPUP_TYPE_CHOICES = [
+        ('marketing', 'Marketing & Promotion'),
+        ('logistics', 'Logistics / Booking Flow'),
+    ]
+
+    title = models.CharField(max_length=200)
+    popup_type = models.CharField(max_length=20, choices=POPUP_TYPE_CHOICES, default='marketing')
+    display_page = models.CharField(max_length=50, choices=PAGE_CHOICES, default='search')
+    trigger_event = models.CharField(max_length=50, choices=TRIGGER_CHOICES, default='load')
+    content = models.TextField(help_text="HTML/Text description of the offer or logistical guidelines")
+    image = models.FileField(upload_to='popups/', null=True, blank=True, help_text="Popup hero graphic or icon")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.get_popup_type_display()} - {self.title}"
+
+
+
 
 

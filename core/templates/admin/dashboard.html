@@ -1405,6 +1405,139 @@
     </div>
 </div>
 
+<!-- Popup Marketing & Logistics Manager -->
+<div class="row animate__animated animate__fadeIn" style="margin-top: 3rem;">
+    <div class="col-12" style="margin-bottom: 1.5rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem;">
+            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-rectangle-ad" style="color: var(--color-gold);"></i> TRUST Popup Marketing & Logistics Manager
+            </h3>
+            <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Create dynamic overlays for marketing campaigns or checkout guides, specifying target pages and trigger conditions.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animate__animated animate__fadeIn" style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; padding: 0 15px; margin-bottom: 3rem;">
+    <!-- Setup Form -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); height: fit-content;">
+        <h4 style="margin: 0 0 1.5rem 0; font-size: 1.05rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+            <i class="fa-solid fa-square-plus" style="color: var(--color-gold);"></i> Add Popup Logic
+        </h4>
+        <form method="POST" enctype="multipart/form-data" style="margin: 0; display: flex; flex-direction: column; gap: 1.25rem;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_popup_logic">
+            
+            <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Popup Title</label>
+                <input type="text" name="title" required placeholder="e.g. Hot Selling Nakawa Flat Apartments!" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Popup Category</label>
+                    <select name="popup_type" required style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: white;">
+                        <option value="marketing">Marketing & Promotion</option>
+                        <option value="logistics">Logistics / Booking Flow</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Display Page</label>
+                    <select name="display_page" required style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: white;">
+                        <option value="search">Find a Property (Search Page)</option>
+                        <option value="tenant_dashboard">Tenant Dashboard</option>
+                        <option value="all">All Pages</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Trigger Execution / Event</label>
+                    <select name="trigger_event" required style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: white;">
+                        <option value="load">Instantly On Page Load</option>
+                        <option value="payment_success">After Payment Completed (Redirect)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Hero Graphic / Image (Optional)</label>
+                <input type="file" name="image" accept="image/*" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Modal Body Description (HTML/Text)</label>
+                <textarea name="content" required placeholder="Write HTML tags or standard text detailing your promotion or logistical checklist..." rows="5" style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; outline: none; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="padding: 0.75rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;">
+                <i class="fa-solid fa-plus"></i> Save Popup Logic
+            </button>
+        </form>
+    </div>
+
+    <!-- Active Popups Registry -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; display: flex; flex-direction: column;">
+        <div style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-folder-tree" style="color: var(--color-gold);"></i> Active Popup Registry
+            </h4>
+            <span style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600; color: var(--color-gold); font-size: 0.8rem; white-space: nowrap;">
+                {{ popups|length }} Rule{{ popups|length|pluralize }} Active
+            </span>
+        </div>
+
+        <div style="padding: 1.5rem 2rem; flex: 1; overflow-y: auto;">
+            {% for popup in popups %}
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; gap: 1rem;">
+                    <div>
+                        <span class="badge" style="background: {% if popup.popup_type == 'marketing' %}rgba(16, 185, 129, 0.1){% else %}rgba(59, 130, 246, 0.1){% endif %}; color: {% if popup.popup_type == 'marketing' %}#059669{% else %}#2563eb{% endif %}; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-block; margin-bottom: 0.35rem; border: 1px solid {% if popup.popup_type == 'marketing' %}rgba(16, 185, 129, 0.2){% else %}rgba(59, 130, 246, 0.2){% endif %};">
+                            {{ popup.get_popup_type_display }}
+                        </span>
+                        <h5 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--color-emerald-darkest);">{{ popup.title }}</h5>
+                    </div>
+                    <form action="{% url 'admin_dashboard' %}" method="POST" onsubmit="return confirm('Are you sure you want to permanently remove this popup logic?');" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_popup_logic">
+                        <input type="hidden" name="popup_id" value="{{ popup.id }}">
+                        <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.3rem; font-size: 0.95rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.75rem; background: #e2e8f0; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        <i class="fa-solid fa-file-lines"></i> Page: <strong>{{ popup.get_display_page_display }}</strong>
+                    </span>
+                    <span style="font-size: 0.75rem; background: #e2e8f0; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
+                        <i class="fa-solid fa-bolt-lightning"></i> Trigger: <strong>{{ popup.get_trigger_event_display }}</strong>
+                    </span>
+                    {% if popup.image %}
+                    <span style="font-size: 0.75rem; background: rgba(203, 163, 88, 0.1); color: var(--color-gold); padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem; border: 1px solid rgba(203, 163, 88, 0.2)">
+                        <i class="fa-solid fa-image"></i> Graphic Included
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div style="background: white; border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 6px; font-size: 0.8rem; color: #64748b; font-family: monospace; max-height: 100px; overflow-y: auto;">
+                    {{ popup.content|linebreaks }}
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; color: #94a3b8; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                <i class="fa-solid fa-rectangle-ad" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                <div>
+                    <h5 style="margin: 0 0 0.25rem 0; font-size: 0.9rem; color: #64748b;">No Popups Active</h5>
+                    <p style="margin: 0; font-size: 0.8rem; color: #94a3b8;">Use the manager form on the left to deploy your first popup logic.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 <script>
     function switchCoverageTab(tabId) {
         // Toggle tab contents
