@@ -122,33 +122,50 @@
         </div>
         
         <div class="team-directory">
-            <div class="directory-member reveal">
-                <img src="/static/img/ceo.png" alt="Brian Okello" class="member-photo">
-                <h4 class="member-name">Brian Okello</h4>
-                <div class="member-role">CEO & Founder</div>
-                <div class="member-location">Kampala, Uganda</div>
-            </div>
-            
-            <div class="directory-member reveal delay-1">
-                <img src="/static/img/ceo.png" alt="Sarah Namubiru" class="member-photo">
-                <h4 class="member-name">Sarah Namubiru</h4>
-                <div class="member-role">Chief Operating Officer</div>
-                <div class="member-location">Kampala, Uganda</div>
-            </div>
-            
-            <div class="directory-member reveal delay-2">
-                <img src="/static/img/ceo.png" alt="David Kato" class="member-photo">
-                <h4 class="member-name">David Kato</h4>
-                <div class="member-role">Head of Verification</div>
-                <div class="member-location">Entebbe, Uganda</div>
-            </div>
-            
-            <div class="directory-member reveal delay-3">
-                <img src="/static/img/ceo.png" alt="Aisha Nakato" class="member-photo">
-                <h4 class="member-name">Aisha Nakato</h4>
-                <div class="member-role">Chief Technology Officer</div>
-                <div class="member-location">Kampala, Uganda</div>
-            </div>
+            {% if executives %}
+                {% for exec in executives %}
+                <div class="directory-member reveal {% if forloop.counter0 > 0 %}delay-{{ forloop.counter0 }}{% endif %}">
+                    {% if exec.image %}
+                    <img src="{{ exec.image.url }}" alt="{{ exec.name }}" class="member-photo">
+                    {% else %}
+                    <div class="member-photo" style="display: flex; align-items: center; justify-content: center; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); font-weight: 700; font-size: 1.85rem; border: 2px solid rgba(16, 61, 40, 0.1); filter: none; text-align: center;">
+                        {{ exec.name|slice:":2"|upper }}
+                    </div>
+                    {% endif %}
+                    <h4 class="member-name">{{ exec.name }}</h4>
+                    <div class="member-role">{{ exec.role }}</div>
+                    <div class="member-location">Kampala, Uganda</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="directory-member reveal">
+                    <img src="/static/img/ceo.png" alt="Brian Okello" class="member-photo">
+                    <h4 class="member-name">Brian Okello</h4>
+                    <div class="member-role">CEO & Founder</div>
+                    <div class="member-location">Kampala, Uganda</div>
+                </div>
+                
+                <div class="directory-member reveal delay-1">
+                    <img src="/static/img/ceo.png" alt="Sarah Namubiru" class="member-photo">
+                    <h4 class="member-name">Sarah Namubiru</h4>
+                    <div class="member-role">Chief Operating Officer</div>
+                    <div class="member-location">Kampala, Uganda</div>
+                </div>
+                
+                <div class="directory-member reveal delay-2">
+                    <img src="/static/img/ceo.png" alt="David Kato" class="member-photo">
+                    <h4 class="member-name">David Kato</h4>
+                    <div class="member-role">Head of Verification</div>
+                    <div class="member-location">Entebbe, Uganda</div>
+                </div>
+                
+                <div class="directory-member reveal delay-3">
+                    <img src="/static/img/ceo.png" alt="Aisha Nakato" class="member-photo">
+                    <h4 class="member-name">Aisha Nakato</h4>
+                    <div class="member-role">Chief Technology Officer</div>
+                    <div class="member-location">Kampala, Uganda</div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </section>

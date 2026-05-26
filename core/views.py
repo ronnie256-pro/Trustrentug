@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -365,6 +365,36 @@ def admin_dashboard(request):
                 messages.error(request, "Error deleting proximity item.")
             return redirect('/admin-dashboard/?tab=settings')
 
+        elif action == 'add_committee_executive':
+            exec_name = request.POST.get('name', '').strip()
+            exec_role = request.POST.get('role', '').strip()
+            exec_image = request.FILES.get('image')
+            
+            if exec_name and exec_role:
+                try:
+                    CommitteeExecutive.objects.create(
+                        name=exec_name,
+                        role=exec_role,
+                        image=exec_image
+                    )
+                    messages.success(request, f"Committee Executive '{exec_name}' has been added successfully!")
+                except Exception as e:
+                    messages.error(request, "Error adding Committee Executive.")
+            else:
+                messages.error(request, "Name and Role are required.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'delete_committee_executive':
+            exec_id = request.POST.get('executive_id')
+            try:
+                executive = CommitteeExecutive.objects.get(id=exec_id)
+                name = executive.name
+                executive.delete()
+                messages.success(request, f"Committee Executive '{name}' deleted successfully!")
+            except Exception as e:
+                messages.error(request, "Error deleting Committee Executive.")
+            return redirect('/admin-dashboard/?tab=settings')
+
     # Fetch properties based on active tab
     if tab == 'properties':
         properties = Property.objects.all().select_related('owner', 'parent').order_by('-created_at')
@@ -406,6 +436,8 @@ def admin_dashboard(request):
         'rented': Property.objects.filter(status='rented').count(),
     }
     
+    committee_executives = CommitteeExecutive.objects.all().order_by('created_at')
+    
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
         'stats': stats,
@@ -417,8 +449,10 @@ def admin_dashboard(request):
         'amenities': amenities,
         'proximity_categories': proximity_categories,
         'amenity_categories': amenity_categories,
+        'committee_executives': committee_executives,
         'current_tab': tab
     })
+
 
 def delete_agent(request, agent_id):
     if not request.user.is_authenticated or not request.user.is_superuser:
@@ -748,6 +782,11 @@ def home_view(request):
     # Fetch parent (standalone or building) properties that are approved/available, newest first
     properties = Property.objects.filter(parent=None, status='available').prefetch_related('units').order_by('-created_at')
     return render(request, 'index.html', {'properties': properties})
+
+def about_us_view(request):
+    executives = CommitteeExecutive.objects.all().order_by('created_at')
+    return render(request, 'about.html', {'executives': executives})
+
 
 def search_view(request):
     # Only show available properties that are parent listings or individual standalone properties

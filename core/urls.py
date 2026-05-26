@@ -34,7 +34,7 @@ urlpatterns = [
     path('search/', views.search_view, name='search'),
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
     path('checkout/<int:property_id>/', views.checkout_view, name='checkout'),
-    path('about-us/', TemplateView.as_view(template_name="about.html"), name='about_us'),
+    path('about-us/', views.about_us_view, name='about_us'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-dashboard/landlord/approve/<int:user_id>/', views.approve_landlord, name='approve_landlord'),
     path('admin-dashboard/property/approve/<int:property_id>/', views.approve_property, name='approve_property'),

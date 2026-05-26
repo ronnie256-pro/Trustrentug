@@ -304,3 +304,14 @@ class FavoriteProperty(models.Model):
     def __str__(self):
         return f"{self.user.username} favorited {self.property.title}"
 
+
+class CommitteeExecutive(models.Model):
+    name = models.CharField(max_length=150)
+    role = models.CharField(max_length=150)
+    image = models.FileField(upload_to='committee/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.role}"
+
+
