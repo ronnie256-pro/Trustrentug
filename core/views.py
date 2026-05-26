@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -395,6 +395,71 @@ def admin_dashboard(request):
                 messages.error(request, "Error deleting Committee Executive.")
             return redirect('/admin-dashboard/?tab=settings')
 
+        elif action == 'add_service_district':
+            name = request.POST.get('name', '').strip()
+            if name:
+                try:
+                    ServiceDistrict.objects.create(name=name)
+                    messages.success(request, f"District '{name}' added successfully to active coverage!")
+                except Exception as e:
+                    messages.error(request, "Error adding district. It might already exist.")
+            else:
+                messages.error(request, "District name is required.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'add_service_division':
+            district_id = request.POST.get('district_id')
+            name = request.POST.get('name', '').strip()
+            if name and district_id:
+                try:
+                    district = ServiceDistrict.objects.get(id=district_id)
+                    ServiceDivision.objects.create(district=district, name=name)
+                    messages.success(request, f"Division/Sub-County '{name}' added successfully under '{district.name}'!")
+                except Exception as e:
+                    messages.error(request, "Error adding division. It might already exist in this district.")
+            else:
+                messages.error(request, "Division name and District are required.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'add_service_village':
+            division_id = request.POST.get('division_id')
+            name = request.POST.get('name', '').strip()
+            if name and division_id:
+                try:
+                    division = ServiceDivision.objects.get(id=division_id)
+                    ServiceVillage.objects.create(division=division, name=name)
+                    messages.success(request, f"Village/Zone '{name}' added successfully under '{division.name}'!")
+                except Exception as e:
+                    messages.error(request, "Error adding village. It might already exist in this division.")
+            else:
+                messages.error(request, "Village name and Division are required.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'delete_service_area':
+            area_type = request.POST.get('area_type')
+            area_id = request.POST.get('area_id')
+            try:
+                if area_type == 'district':
+                    obj = ServiceDistrict.objects.get(id=area_id)
+                elif area_type == 'division':
+                    obj = ServiceDivision.objects.get(id=area_id)
+                elif area_type == 'village':
+                    obj = ServiceVillage.objects.get(id=area_id)
+                else:
+                    obj = None
+                
+                if obj:
+                    name = obj.name
+                    obj.delete()
+                    messages.success(request, f"{area_type.capitalize()} '{name}' deleted successfully!")
+                else:
+                    messages.error(request, "Invalid area type.")
+            except Exception as e:
+                messages.error(request, f"Error deleting {area_type}.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+
+
     # Fetch properties based on active tab
     if tab == 'properties':
         properties = Property.objects.all().select_related('owner', 'parent').order_by('-created_at')
@@ -438,6 +503,10 @@ def admin_dashboard(request):
     
     committee_executives = CommitteeExecutive.objects.all().order_by('created_at')
     
+    service_districts = ServiceDistrict.objects.all().order_by('name')
+    service_divisions = ServiceDivision.objects.all().select_related('district').order_by('name')
+    service_villages = ServiceVillage.objects.all().select_related('division', 'division__district').order_by('name')
+
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
         'stats': stats,
@@ -450,8 +519,13 @@ def admin_dashboard(request):
         'proximity_categories': proximity_categories,
         'amenity_categories': amenity_categories,
         'committee_executives': committee_executives,
+        'service_districts': service_districts,
+        'service_divisions': service_divisions,
+        'service_villages': service_villages,
         'current_tab': tab
     })
+
+
 
 
 def delete_agent(request, agent_id):

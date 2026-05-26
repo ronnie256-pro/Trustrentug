@@ -315,3 +315,35 @@ class CommitteeExecutive(models.Model):
         return f"{self.name} - {self.role}"
 
 
+class ServiceDistrict(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class ServiceDivision(models.Model):
+    district = models.ForeignKey(ServiceDistrict, on_delete=models.CASCADE, related_name='divisions')
+    name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('district', 'name')
+
+    def __str__(self):
+        return f"{self.name} ({self.district.name})"
+
+class ServiceVillage(models.Model):
+    division = models.ForeignKey(ServiceDivision, on_delete=models.CASCADE, related_name='villages')
+    name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('division', 'name')
+
+    def __str__(self):
+        return f"{self.name} ({self.division.name})"
+
+
+
+

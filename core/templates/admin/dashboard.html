@@ -1229,5 +1229,203 @@
         </div>
     </div>
 </div>
+
+<!-- Service Area Expansion Manager -->
+<div class="row animate__animated animate__fadeIn" style="margin-top: 2rem;">
+    <div class="col-12" style="margin-bottom: 1.5rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem;">
+            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-map-location-dot" style="color: var(--color-gold);"></i> TRUST Service Area Expansion Manager
+            </h3>
+            <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Manage the multi-layered geographic coverage (District &rarr; Division &rarr; Village) where trust services are active.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row animate__animated animate__fadeIn" style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; padding: 0 15px;">
+    <!-- FORM 1: DISTRICT -->
+    <div style="background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
+        <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="background: var(--color-gold-muted); color: var(--color-gold); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">1</span> Add District
+        </h4>
+        <form method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_service_district">
+            <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">District Name</label>
+                <input type="text" name="name" required placeholder="e.g. Kampala" style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
+            </div>
+            <button type="submit" class="btn btn-gold" style="padding: 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; color: white; width: 100%;">
+                <i class="fa-solid fa-plus"></i> Install District
+            </button>
+        </form>
+    </div>
+
+    <!-- FORM 2: DIVISION -->
+    <div style="background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
+        <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="background: var(--color-gold-muted); color: var(--color-gold); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">2</span> Add Division
+        </h4>
+        <form method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_service_division">
+            <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Parent District</label>
+                <select name="district_id" required style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem; background: white;">
+                    <option value="" disabled selected>Select District...</option>
+                    {% for d in service_districts %}
+                    <option value="{{ d.id }}">{{ d.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Division / Sub-County Name</label>
+                <input type="text" name="name" required placeholder="e.g. Nakawa" style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
+            </div>
+            <button type="submit" class="btn btn-gold" style="padding: 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; color: white; width: 100%;">
+                <i class="fa-solid fa-plus"></i> Install Division
+            </button>
+        </form>
+    </div>
+
+    <!-- FORM 3: VILLAGE -->
+    <div style="background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
+        <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="background: var(--color-gold-muted); color: var(--color-gold); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">3</span> Add Village
+        </h4>
+        <form method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_service_village">
+            <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Parent Division</label>
+                <select name="division_id" required style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem; background: white;">
+                    <option value="" disabled selected>Select Division...</option>
+                    {% for v in service_divisions %}
+                    <option value="{{ v.id }}">{{ v.name }} ({{ v.district.name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Village / Zone Name</label>
+                <input type="text" name="name" required placeholder="e.g. Bugolobi" style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
+            </div>
+            <button type="submit" class="btn btn-gold" style="padding: 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; color: white; width: 100%;">
+                <i class="fa-solid fa-plus"></i> Install Village
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Coverage Directory -->
+<div class="row animate__animated animate__fadeIn" style="margin-top: 2rem; margin-bottom: 3rem;">
+    <div class="col-12">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-map" style="color: var(--color-gold);"></i> Active Coverage Directory
+                </h3>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="coverage-tabs">
+                    <button class="coverage-tab-btn active" onclick="switchCoverageTab('districts')" style="background: var(--color-gold); color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Districts ({{ service_districts|length }})</button>
+                    <button class="coverage-tab-btn" onclick="switchCoverageTab('divisions')" style="background: #e2e8f0; color: #475569; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Divisions ({{ service_divisions|length }})</button>
+                    <button class="coverage-tab-btn" onclick="switchCoverageTab('villages')" style="background: #e2e8f0; color: #475569; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Villages ({{ service_villages|length }})</button>
+                </div>
+            </div>
+
+            <!-- Tab Contents -->
+            <div style="padding: 1.5rem 2rem;">
+                
+                <!-- Tab: Districts -->
+                <div id="coverage-districts" class="coverage-tab-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
+                        {% for d in service_districts %}
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.9rem;"><i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.85rem; margin-right: 0.35rem;"></i> {{ d.name }}</span>
+                            <form action="{% url 'admin_dashboard' %}" method="POST" onsubmit="return confirm('WARNING: Deleting this district will permanently delete all its divisions and villages! Proceed?');" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_service_area">
+                                <input type="hidden" name="area_type" value="district">
+                                <input type="hidden" name="area_id" value="{{ d.id }}">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.2rem; font-size: 0.85rem;"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                        </div>
+                        {% empty %}
+                        <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 2rem 0;">No active Districts registered. Use the setup form above to extend services.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Tab: Divisions -->
+                <div id="coverage-divisions" class="coverage-tab-content" style="display: none;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+                        {% for div in service_divisions %}
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.9rem;">{{ div.name }}</span>
+                                <small style="display: block; color: #64748b; font-size: 0.75rem;"><i class="fa-solid fa-location-dot"></i> District: {{ div.district.name }}</small>
+                            </div>
+                            <form action="{% url 'admin_dashboard' %}" method="POST" onsubmit="return confirm('WARNING: Deleting this division will permanently delete all its associated villages! Proceed?');" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_service_area">
+                                <input type="hidden" name="area_type" value="division">
+                                <input type="hidden" name="area_id" value="{{ div.id }}">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.2rem; font-size: 0.85rem;"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                        </div>
+                        {% empty %}
+                        <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 2rem 0;">No active Divisions/Sub-Counties registered.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Tab: Villages -->
+                <div id="coverage-villages" class="coverage-tab-content" style="display: none;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+                        {% for v in service_villages %}
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.9rem;"><i class="fa-solid fa-house-chimney" style="color: var(--color-gold); font-size: 0.75rem; margin-right: 0.25rem;"></i> {{ v.name }}</span>
+                                <small style="display: block; color: #64748b; font-size: 0.75rem;"><i class="fa-solid fa-circle-dot"></i> Div: {{ v.division.name }} | Dist: {{ v.division.district.name }}</small>
+                            </div>
+                            <form action="{% url 'admin_dashboard' %}" method="POST" onsubmit="return confirm('Are you sure you want to permanently remove village {{ v.name }} from active service areas?');" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_service_area">
+                                <input type="hidden" name="area_type" value="village">
+                                <input type="hidden" name="area_id" value="{{ v.id }}">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.2rem; font-size: 0.85rem;"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                        </div>
+                        {% empty %}
+                        <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 2rem 0;">No active Villages/Zones registered.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchCoverageTab(tabId) {
+        // Toggle tab contents
+        document.querySelectorAll('.coverage-tab-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById('coverage-' + tabId).style.display = 'block';
+
+        // Toggle button active states
+        const btns = document.querySelectorAll('#coverage-tabs button');
+        btns.forEach(btn => {
+            btn.style.background = '#e2e8f0';
+            btn.style.color = '#475569';
+            btn.classList.remove('active');
+        });
+        
+        // Find clicked button and activate
+        event.currentTarget.style.background = 'var(--color-gold)';
+        event.currentTarget.style.color = 'white';
+        event.currentTarget.classList.add('active');
+    }
+</script>
 {% endif %}
 {% endblock %}
