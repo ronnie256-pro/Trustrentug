@@ -45,6 +45,7 @@ urlpatterns = [
     path('admin-dashboard/agent-role/delete/<int:role_id>/', views.delete_agent_role, name='delete_agent_role'),
     path('admin-dashboard/viewing/<int:viewing_id>/', views.admin_viewing_detail, name='admin_viewing_detail'),
     path('admin-dashboard/viewing/status/<int:viewing_id>/', views.admin_viewing_status_update, name='admin_viewing_status_update'),
+    path('admin-dashboard/tenant/<int:tenant_id>/', views.admin_tenant_detail, name='admin_tenant_detail'),
     path('agent/report/', views.agent_report_auth, name='agent_report_auth'),
     path('agent/submit-report/', views.agent_submit_report, name='agent_submit_report'),
     

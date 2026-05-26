@@ -1,0 +1,418 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="animate__animated animate__fadeIn" style="max-width: 1200px; margin: 0 auto;">
+    
+    <!-- Breadcrumbs & Navigation -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="/admin-dashboard/?tab=tenants" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Tenants Directory
+            </a>
+            <span style="color: #94a3b8;">/</span>
+            <span style="color: #64748b; font-size: 0.9rem;">Tenant Record Inspection (#{{ tenant.id }})</span>
+        </div>
+        
+        <div>
+            {% if tenant.is_approved %}
+            <span style="font-size: 0.85rem; background: #ecfdf5; color: #059669; border: 1px solid rgba(5, 150, 105, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <i class="fa-solid fa-circle-check"></i> PROFILE OFFICIALLY VERIFIED
+            </span>
+            {% else %}
+            <span style="font-size: 0.85rem; background: #fffbeb; color: #d97706; border: 1px solid rgba(217, 119, 6, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <i class="fa-solid fa-triangle-exclamation"></i> PENDING VERIFICATION
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- System Banner Card -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.01); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            {% if tenant.profile.image %}
+            <img src="{{ tenant.profile.image.url }}" alt="{{ tenant.username }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-gold); box-shadow: var(--shadow-sm);">
+            {% else %}
+            <div style="width: 80px; height: 80px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 2rem; border: 2px solid rgba(16, 61, 40, 0.1);">
+                {{ tenant.username|slice:":2"|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: var(--color-gold); display: block; margin-bottom: 0.35rem;">Registered Tenant Account</span>
+                <h2 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.75rem; line-height: 1.2; font-weight: 600;">
+                    {{ tenant.first_name }} {{ tenant.last_name }}
+                </h2>
+                <div style="display: flex; gap: 1.25rem; margin-top: 0.5rem; font-size: 0.85rem; color: #64748b;">
+                    <span>@{{ tenant.username }}</span>
+                    <span>&bull;</span>
+                    <span>Joined: {{ tenant.date_joined|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approval Action Buttons -->
+        <div>
+            {% if not tenant.is_approved %}
+            <form action="{% url 'admin_tenant_detail' tenant.id %}" method="POST" style="margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="approve_tenant">
+                <button type="submit" class="btn btn-gold" style="background: var(--color-gold); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; transition: all 0.2s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+                    <i class="fa-solid fa-square-check"></i> Verify & Approve Profile
+                </button>
+            </form>
+            {% else %}
+            <div style="background: rgba(16, 61, 40, 0.04); border: 1px solid rgba(16, 61, 40, 0.15); border-radius: 8px; padding: 0.75rem 1.25rem; font-size: 0.9rem; color: var(--color-emerald-darkest); font-weight: 700; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="fa-solid fa-circle-check" style="color: #059669; font-size: 1.1rem;"></i> Account Verified
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Workspace Split-Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; margin-bottom: 3rem;">
+        
+        <!-- LEFT COLUMN: RENTAL PROGRESS & DOCUMENT VERIFICATION -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Checklist Card -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; align-items: center; justify-content: space-between;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-route"></i> Rental Progress Roadmap
+                    </h3>
+                    <span style="background: var(--color-gold); color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                        {{ tenant.calculated_progress }}% Completed
+                    </span>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    <!-- Step-by-step checklist road -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Checklist Step 1 -->
+                        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: {% if tenant.calculated_progress >= 20 %}#1e293b{% else %}#94a3b8{% endif %};">
+                            <i class="fa-solid {% if tenant.calculated_progress >= 20 %}fa-square-check{% else %}fa-square{% endif %}" style="color: {% if tenant.calculated_progress >= 20 %}#059669{% else %}#cbd5e1{% endif %}; font-size: 1.25rem;"></i>
+                            <span style="{% if tenant.calculated_progress >= 20 %}font-weight: 600;{% endif %}">Profile & Emergency Record Verification</span>
+                        </div>
+                        
+                        <!-- Checklist Step 2 -->
+                        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: {% if tenant.calculated_progress >= 40 %}#1e293b{% else %}#94a3b8{% endif %};">
+                            <i class="fa-solid {% if tenant.calculated_progress >= 40 %}fa-square-check{% else %}fa-square{% endif %}" style="color: {% if tenant.calculated_progress >= 40 %}#059669{% else %}#cbd5e1{% endif %}; font-size: 1.25rem;"></i>
+                            <span style="{% if tenant.calculated_progress >= 40 %}font-weight: 600;{% endif %}">Property Reserved & Escrow Setup</span>
+                        </div>
+
+                        <!-- Checklist Step 3 -->
+                        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: {% if tenant.calculated_progress >= 60 %}#1e293b{% else %}#94a3b8{% endif %};">
+                            <i class="fa-solid {% if tenant.calculated_progress >= 60 %}fa-square-check{% else %}fa-square{% endif %}" style="color: {% if tenant.calculated_progress >= 60 %}#059669{% else %}#cbd5e1{% endif %}; font-size: 1.25rem;"></i>
+                            <span style="{% if tenant.calculated_progress >= 60 %}font-weight: 600;{% endif %}">Rent & Security Bond Escrow Payments Cleared</span>
+                        </div>
+
+                        <!-- Checklist Step 4 -->
+                        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: {% if tenant.calculated_progress >= 80 %}#1e293b{% else %}#94a3b8{% endif %};">
+                            <i class="fa-solid {% if tenant.calculated_progress >= 80 %}fa-square-check{% else %}fa-square{% endif %}" style="color: {% if tenant.calculated_progress >= 80 %}#059669{% else %}#cbd5e1{% endif %}; font-size: 1.25rem;"></i>
+                            <span style="{% if tenant.calculated_progress >= 80 %}font-weight: 600;{% endif %}">Tenancy Lease Agreement Registered & Signed</span>
+                        </div>
+
+                        <!-- Checklist Step 5 -->
+                        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: {% if tenant.calculated_progress == 100 %}#1e293b{% else %}#94a3b8{% endif %};">
+                            <i class="fa-solid {% if tenant.calculated_progress == 100 %}fa-square-check{% else %}fa-square{% endif %}" style="color: {% if tenant.calculated_progress == 100 %}#059669{% else %}#cbd5e1{% endif %}; font-size: 1.25rem;"></i>
+                            <span style="{% if tenant.calculated_progress == 100 %}font-weight: 600;{% endif %}">Checked In & Fully Moved In</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar display -->
+                    <div style="margin-top: 2rem; background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden;">
+                        <div style="background: var(--color-emerald-dark); width: {{ tenant.calculated_progress }}%; height: 100%; border-radius: 5px; transition: width 0.5s ease-in-out;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Card -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-file-contract"></i> Legal Vetting Documents
+                    </h3>
+                </div>
+                
+                <div style="padding: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <div>
+                        <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.5rem;">National ID / passport document</span>
+                        {% if tenant.profile.national_id_or_passport %}
+                        <a href="{{ tenant.profile.national_id_or_passport.url }}" target="_blank" class="btn" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; background: rgba(203, 163, 88, 0.08); color: var(--color-gold); border: 1px solid rgba(203, 163, 88, 0.2); padding: 0.75rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+                            <i class="fa-solid fa-file-pdf"></i> Examine Uploaded NIN Document
+                        </a>
+                        {% else %}
+                        <div style="text-align: center; font-size: 0.85rem; color: #94a3b8; padding: 1rem; border: 1px dashed #cbd5e1; border-radius: 8px;">
+                            <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; margin-right: 0.25rem;"></i> No Identity Document Uploaded
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: DETAILED RECORD TABS (CRM SYSTEM) -->
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01); display: flex; flex-direction: column;">
+            
+            <!-- Secondary tabs for the CRM records -->
+            <div style="display: flex; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; padding: 0.5rem 1rem; gap: 0.35rem;" class="tenant-subtabs">
+                <button type="button" onclick="switchTenantSubTab('general')" class="subtab-btn active" style="background: white; border: none; color: var(--color-emerald-darkest); padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s; flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-address-card"></i> Profile
+                </button>
+                <button type="button" onclick="switchTenantSubTab('bookings')" class="subtab-btn" style="background: transparent; color: #64748b; border: none; padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-wallet"></i> Bookings ({{ tenant.bookings.all|length }})
+                </button>
+                <button type="button" onclick="switchTenantSubTab('tours')" class="subtab-btn" style="background: transparent; color: #64748b; border: none; padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-calendar-day"></i> Tours ({{ tenant.viewing_requests.all|length }})
+                </button>
+                <button type="button" onclick="switchTenantSubTab('maintenance')" class="subtab-btn" style="background: transparent; color: #64748b; border: none; padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Claims ({{ tenant.maintenance_requests.all|length }})
+                </button>
+            </div>
+
+            <!-- Sub-tab contents block -->
+            <div style="padding: 2rem;">
+                
+                <!-- PROFILE TAB -->
+                <div id="tenant-subcontent-general" class="tenant-subcontent" style="display: block;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div>
+                            <h4 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.35rem;">Personal Details</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                                <div>
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Phone Number</span>
+                                    <span style="font-weight: 600; color: #1e293b;">{{ tenant.profile.phone|default:"Not Provided" }}</span>
+                                </div>
+                                <div>
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Backup Phone</span>
+                                    <span style="font-weight: 600; color: #1e293b;">{{ tenant.profile.phone_2|default:"Not Provided" }}</span>
+                                </div>
+                                <div>
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Email Address</span>
+                                    <span style="font-weight: 600; color: #1e293b; font-family: monospace;">{{ tenant.email }}</span>
+                                </div>
+                                <div>
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Marital Status</span>
+                                    <span style="font-weight: 600; color: #1e293b;">{{ tenant.profile.marriage_status|default:"Not Provided" }} ({{ tenant.profile.number_of_children|default:0 }} Children)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.35rem;">Professional Profile</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                                <div>
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Occupation</span>
+                                    <span style="font-weight: 600; color: #1e293b;">{{ tenant.profile.profession|default:"Not Provided" }}</span>
+                                </div>
+                                <div>
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Workplace Location</span>
+                                    <span style="font-weight: 600; color: #1e293b;">{{ tenant.profile.place_of_work|default:"Not Provided" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; text-transform: uppercase; color: #ef4444; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.35rem;"><i class="fa-solid fa-suitcase-medical"></i> Emergency Medical Records</h4>
+                            <div style="background: rgba(239, 68, 68, 0.03); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: 8px; padding: 1rem; font-size: 0.9rem;">
+                                <div style="margin-bottom: 0.75rem;">
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Known Emergency Conditions</span>
+                                    <span style="font-weight: 600; color: #1e293b;">{{ tenant.profile.emergency_conditions|default:"No critical emergency medical conditions reported." }}</span>
+                                </div>
+                                <div>
+                                    <span style="color: #64748b; display: block; font-size: 0.75rem;">Emergency Family Doctor Contact</span>
+                                    <span style="font-weight: 600; color: #ef4444; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                        <i class="fa-solid fa-phone"></i> {{ tenant.profile.doctor_contact|default:"Not Provided" }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOOKINGS & RENTALS TAB -->
+                <div id="tenant-subcontent-bookings" class="tenant-subcontent" style="display: none;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <h4 style="margin: 0; font-size: 0.85rem; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+                            Financial Escrow Bookings
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            {% for booking in tenant.bookings.all %}
+                            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; font-size: 0.85rem; background: #fafafb;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">
+                                        {{ booking.property.title }}
+                                    </div>
+                                    <span style="background: {% if booking.status == 'paid_rent' %}rgba(16, 61, 40, 0.08){% else %}rgba(203, 163, 88, 0.08){% endif %}; color: {% if booking.status == 'paid_rent' %}var(--color-emerald-darkest){% else %}var(--color-gold){% endif %}; border: 1px solid {% if booking.status == 'paid_rent' %}rgba(16, 61, 40, 0.15){% else %}rgba(203, 163, 88, 0.15){% endif %}; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">
+                                        {{ booking.status }}
+                                    </span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.85rem; color: #64748b;">
+                                    <div><i class="fa-solid fa-calendar"></i> Booked: {{ booking.created_at|date:"M d, Y" }}</div>
+                                    <div><i class="fa-solid fa-credit-card"></i> Pay: {{ booking.payment_method|default:"Not selected" }}</div>
+                                    <div><i class="fa-solid fa-tag"></i> Fee: UGX {{ booking.booking_fee }}</div>
+                                    <div><i class="fa-solid fa-shield"></i> Security Bond: Handled</div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div style="text-align: center; color: #94a3b8; padding: 2rem 1rem; border: 1px dashed #e2e8f0; border-radius: 8px;">
+                                <i class="fa-solid fa-receipt" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+                                No active property bookings.
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <h4 style="margin: 1rem 0 0 0; font-size: 0.85rem; text-transform: uppercase; color: var(--color-emerald-dark); font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+                            Active Registered Tenancy Contracts
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            {% for rental in tenant.rentals.all %}
+                            <div style="border: 1px solid rgba(16, 61, 40, 0.15); border-radius: 8px; padding: 1rem; font-size: 0.85rem; background: rgba(16, 61, 40, 0.02);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: 700; color: var(--color-emerald-darkest); font-size: 0.95rem;">
+                                        {{ rental.property.title }}
+                                    </div>
+                                    <span style="background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; border: 1px solid rgba(16, 61, 40, 0.15);">
+                                        {{ rental.status }}
+                                    </span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem;">
+                                    <div><i class="fa-solid fa-arrow-right-to-bracket"></i> Move-in: {{ rental.move_in_date|date:"M d, Y"|default:"Not scheduled" }}</div>
+                                    <div><i class="fa-solid fa-hourglass-start"></i> Started: {{ rental.start_date|date:"M d, Y" }}</div>
+                                </div>
+                                {% if rental.signed_agreement %}
+                                <a href="{{ rental.signed_agreement.url }}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; color: var(--color-gold); font-weight: 600; text-decoration: none;">
+                                    <i class="fa-solid fa-file-pdf"></i> Signed Lease Agreement Registered
+                                </a>
+                                {% else %}
+                                <span style="font-size: 0.8rem; color: #ef4444; font-style: italic; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Agreement Signature Pending
+                                </span>
+                                {% endif %}
+                            </div>
+                            {% empty %}
+                            <div style="text-align: center; color: #94a3b8; padding: 2rem 1rem; border: 1px dashed #e2e8f0; border-radius: 8px;">
+                                <i class="fa-solid fa-file-excel" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+                                No active lease registry documents.
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOURS / VIEWING REQUESTS TAB -->
+                <div id="tenant-subcontent-tours" class="tenant-subcontent" style="display: none;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <h4 style="margin: 0; font-size: 0.85rem; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+                            Property Walk-through & Scheduled Tours
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            {% for tour in tenant.viewing_requests.all %}
+                            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; font-size: 0.85rem; background: #fafafb;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                    <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">
+                                        {{ tour.property.title }}
+                                    </div>
+                                    <span style="background: {% if tour.status == 'approved' %}rgba(16, 61, 40, 0.08){% elif tour.status == 'declined' %}rgba(239, 68, 68, 0.08){% else %}rgba(203, 163, 88, 0.08){% endif %}; color: {% if tour.status == 'approved' %}var(--color-emerald-darkest){% elif tour.status == 'declined' %}#ef4444{% else %}var(--color-gold){% endif %}; border: 1px solid {% if tour.status == 'approved' %}rgba(16, 61, 40, 0.15){% elif tour.status == 'declined' %}rgba(239, 68, 68, 0.15){% else %}rgba(203, 163, 88, 0.15){% endif %}; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">
+                                        {{ tour.status }}
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #64748b; display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <div><i class="fa-solid fa-clock"></i> Preferred Time: {{ tour.preferred_date|date:"M d, Y \a\t H:i" }}</div>
+                                    {% if tour.notes %}
+                                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0.5rem; font-size: 0.8rem; color: #475569; margin-top: 0.35rem; font-style: italic;">
+                                        "{{ tour.notes }}"
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div style="text-align: center; color: #94a3b8; padding: 2rem 1rem; border: 1px dashed #e2e8f0; border-radius: 8px;">
+                                <i class="fa-solid fa-map-location-dot" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+                                No scheduled property tours requested.
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAINTENANCE CLAIMS TAB -->
+                <div id="tenant-subcontent-maintenance" class="tenant-subcontent" style="display: none;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <h4 style="margin: 0; font-size: 0.85rem; text-transform: uppercase; color: #ef4444; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+                            Reported Maintenance Claims & Tickets
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            {% for claim in tenant.maintenance_requests.all %}
+                            <div style="border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 8px; padding: 1rem; font-size: 0.85rem; background: rgba(239, 68, 68, 0.01);">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <span style="background: rgba(239, 68, 68, 0.08); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.15); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-right: 0.25rem;">
+                                            {{ claim.category }}
+                                        </span>
+                                        <span style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">{{ claim.property.title }}</span>
+                                    </div>
+                                    <span style="background: {% if claim.status == 'resolved' %}rgba(16, 61, 40, 0.08){% elif claim.status == 'in_progress' %}rgba(203, 163, 88, 0.08){% else %}rgba(239, 68, 68, 0.08){% endif %}; color: {% if claim.status == 'resolved' %}var(--color-emerald-darkest){% elif claim.status == 'in_progress' %}var(--color-gold){% else %}#ef4444{% endif %}; border: 1px solid {% if claim.status == 'resolved' %}rgba(16, 61, 40, 0.15){% elif claim.status == 'in_progress' %}rgba(203, 163, 88, 0.15){% else %}rgba(239, 68, 68, 0.15){% endif %}; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">
+                                        {{ claim.status }}
+                                    </span>
+                                </div>
+                                <p style="margin: 0.5rem 0; font-size: 0.85rem; color: #475569; background: white; border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 6px; line-height: 1.5; font-style: italic;">
+                                    "{{ claim.issue_description }}"
+                                </p>
+                                <div style="font-size: 0.8rem; color: #64748b; display: flex; justify-content: space-between;">
+                                    <span><i class="fa-solid fa-bullhorn"></i> Reported to: {{ claim.reported_to|upper }}</span>
+                                    <span><i class="fa-solid fa-clock"></i> {{ claim.created_at|date:"M d, Y" }}</span>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div style="text-align: center; color: #94a3b8; padding: 2rem 1rem; border: 1px dashed #e2e8f0; border-radius: 8px;">
+                                <i class="fa-solid fa-hand-holding-hand" style="font-size: 2rem; color: #cbd5e1; margin-bottom: 0.5rem; display: block;"></i>
+                                No maintenance claims filed.
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTenantSubTab(subTabId) {
+        // Hide all sub-content panels
+        document.querySelectorAll('.tenant-subcontent').forEach(content => {
+            content.style.display = 'none';
+        });
+        
+        // Show active sub-content panel
+        const targetContent = document.getElementById('tenant-subcontent-' + subTabId);
+        if (targetContent) {
+            targetContent.style.display = 'block';
+        }
+        
+        // Reset styles on all sub-tab buttons
+        const btns = document.querySelectorAll('.subtab-btn');
+        btns.forEach(btn => {
+            btn.style.background = 'transparent';
+            btn.style.color = '#64748b';
+            btn.style.fontWeight = '600';
+            btn.classList.remove('active');
+        });
+        
+        // Activate the clicked button
+        let activeBtn = null;
+        if (window.event && window.event.currentTarget && window.event.currentTarget.classList.contains('subtab-btn')) {
+            activeBtn = window.event.currentTarget;
+        } else {
+            activeBtn = Array.from(btns).find(b => b.getAttribute('onclick').includes("'" + subTabId + "'"));
+        }
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            activeBtn.style.background = 'white';
+            activeBtn.style.color = 'var(--color-emerald-darkest)';
+            activeBtn.style.fontWeight = '700';
+        }
+    }
+</script>
+{% endblock %}

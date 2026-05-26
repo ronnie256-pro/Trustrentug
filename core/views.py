@@ -483,18 +483,16 @@ def admin_dashboard(request):
                 messages.error(request, "All fields are required to create a popup logic.")
             return redirect('/admin-dashboard/?tab=settings')
 
-        elif action == 'delete_popup_logic':
-            popup_id = request.POST.get('popup_id')
+        elif action == 'approve_tenant':
+            tenant_id = request.POST.get('tenant_id')
             try:
-                popup = PopupLogic.objects.get(id=popup_id)
-                title = popup.title
-                popup.delete()
-                messages.success(request, f"Popup Logic '{title}' deleted successfully!")
-            except Exception as e:
-                messages.error(request, "Error deleting popup logic.")
-            return redirect('/admin-dashboard/?tab=settings')
-
-
+                profile = UserProfile.objects.get(user_id=tenant_id, role='tenant')
+                profile.is_approved = True
+                profile.save()
+                messages.success(request, f"Tenant profile for '{profile.user.username}' has been successfully approved!")
+            except UserProfile.DoesNotExist:
+                messages.error(request, "Tenant profile not found.")
+            return redirect('/admin-dashboard/?tab=tenants')
 
     # Fetch properties based on active tab
     if tab == 'properties':
@@ -504,6 +502,67 @@ def admin_dashboard(request):
     
     # Fetch all registered landlords with their profile details
     landlords = User.objects.filter(profile__role='landlord').select_related('profile')
+
+    # Fetch all registered tenants with their profile details and calculate renting progress dynamically
+    tenants_raw = User.objects.filter(profile__role='tenant').select_related('profile').prefetch_related(
+        'bookings', 'bookings__property',
+        'rentals', 'rentals__property',
+        'viewing_requests', 'viewing_requests__property',
+        'maintenance_requests', 'maintenance_requests__property'
+    ).order_by('-date_joined')
+    tenants = []
+    for t in tenants_raw:
+        progress = 0
+        status_text = "Registered & Unverified"
+        active_property = None
+        has_profile = False
+        is_approved = False
+        
+        try:
+            if t.profile:
+                has_profile = True
+                is_approved = t.profile.is_approved
+                if is_approved:
+                    progress = 20
+                    status_text = "Verified Profile"
+                else:
+                    progress = 10
+                    status_text = "Unverified Profile"
+        except UserProfile.DoesNotExist:
+            pass
+            
+        active_booking = t.bookings.filter(status__in=['reserved', 'active']).first()
+        paid_booking = t.bookings.filter(status='paid_rent').first()
+        
+        if active_booking:
+            progress = 40
+            status_text = "Property Reserved"
+            active_property = active_booking.property
+        elif paid_booking:
+            progress = 60
+            status_text = "Booking Confirmed"
+            active_property = paid_booking.property
+            
+        active_rental = t.rentals.filter(status='active').first()
+        if active_rental:
+            active_property = active_rental.property
+            if active_rental.signed_agreement and active_rental.move_in_date:
+                progress = 100
+                status_text = "Fully Moved In"
+            elif active_rental.signed_agreement:
+                progress = 80
+                status_text = "Agreement Signed"
+            else:
+                progress = 70
+                status_text = "Rent Paid"
+                
+        # Attach calculated properties directly to the user instance
+        t.calculated_progress = progress
+        t.calculated_status = status_text
+        t.active_property = active_property
+        t.has_profile = has_profile
+        t.is_approved = is_approved
+        tenants.append(t)
     
     # Fetch agents and roles
     agents = InspectionAgent.objects.all().select_related('role').order_by('-joined_at')
@@ -549,6 +608,7 @@ def admin_dashboard(request):
         'properties': properties,
         'stats': stats,
         'landlords': landlords,
+        'tenants': tenants,
         'agents': agents,
         'agent_roles': agent_roles,
         'inspections': inspections,
@@ -1503,3 +1563,88 @@ def admin_viewing_status_update(request, viewing_id):
             messages.error(request, "Invalid status action.")
             
     return redirect('/admin-dashboard/?tab=inspections')
+
+def admin_tenant_detail(request, tenant_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+        
+    tenant = get_object_or_404(
+        User.objects.select_related('profile').prefetch_related(
+            'bookings', 'bookings__property',
+            'rentals', 'rentals__property',
+            'viewing_requests', 'viewing_requests__property',
+            'maintenance_requests', 'maintenance_requests__property'
+        ),
+        id=tenant_id
+    )
+
+    # Handle profile verification POST request
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'approve_tenant':
+            profile = tenant.profile
+            profile.is_approved = True
+            profile.save()
+            messages.success(request, f"Tenant profile for {tenant.first_name} {tenant.last_name} has been verified & approved successfully!")
+            return redirect('admin_tenant_detail', tenant_id=tenant.id)
+
+    # Calculate dynamic progress
+    progress = 0
+    status_text = "Registered & Unverified"
+    active_property = None
+    has_profile = False
+    is_approved = False
+    
+    try:
+        profile = tenant.profile
+        has_profile = True
+        is_approved = profile.is_approved
+    except Exception:
+        pass
+
+    if has_profile:
+        progress = 10
+        status_text = "Profile Created"
+        if is_approved:
+            progress = 20
+            status_text = "Profile Verified"
+
+    active_booking = tenant.bookings.filter(status__in=['reserved', 'paid_rent']).first()
+    if active_booking:
+        active_property = active_booking.property
+        if progress < 40:
+            progress = 40
+            status_text = "Property Reserved"
+        
+        if active_booking.status == 'paid_rent':
+            progress = 60
+            status_text = "Payments Finalized"
+
+    active_rental = tenant.rentals.filter(status='active').first()
+    if active_rental:
+        active_property = active_rental.property
+        if progress < 70:
+            progress = 70
+            status_text = "Tenancy Established"
+        
+        if active_rental.signed_agreement:
+            progress = 80
+            status_text = "Agreement Registered"
+            
+            from django.utils import timezone
+            if active_rental.move_in_date and timezone.now().date() >= active_rental.move_in_date:
+                progress = 100
+                status_text = "Fully Checked In"
+
+    # Inject calculated fields to user object
+    tenant.calculated_progress = progress
+    tenant.calculated_status = status_text
+    tenant.active_property = active_property
+    tenant.is_approved = is_approved
+
+    return render(request, 'admin/ten_details.html', {
+        'tenant': tenant,
+        'current_tab': 'tenants',
+    })
+

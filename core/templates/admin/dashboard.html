@@ -226,6 +226,15 @@
         background: #fffbeb;
         color: #d97706;
     }
+
+    .tenant-row {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-left: 0px solid transparent;
+    }
+    .tenant-row:hover {
+        background-color: #f8fafc !important;
+    }
 </style>
 {% endblock %}
 
@@ -865,8 +874,129 @@
         </div>
     </div>
 </div>
-{% elif current_tab == 'settings' %}
+
+{% elif current_tab == 'tenants' %}
 <div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem;">
+    <!-- Tenants Directory Table (Full Width) -->
+    <div class="col-lg-12" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-users" style="color: var(--color-gold);"></i> TRUST Active Tenants Directory
+                    </h3>
+                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Click on any tenant row below to view full personal, medical, billing, and tenancy records.</p>
+                </div>
+                <div style="background: rgba(16, 61, 40, 0.08); border: 1px solid rgba(16, 61, 40, 0.15); padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.8rem;">
+                    {{ tenants|length }} Tenant{{ tenants|length|pluralize }} Registered
+                </div>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Tenant Details</th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Rented Property</th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Renting Progress</th>
+                            <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tenant in tenants %}
+                        <tr id="tenant-row-{{ tenant.id }}" onclick="window.location.href='/admin-dashboard/tenant/{{ tenant.id }}/'" class="tenant-row" style="transition: background-color 0.2s; cursor: pointer;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    {% if tenant.profile.image %}
+                                    <img src="{{ tenant.profile.image.url }}" alt="{{ tenant.username }}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(203, 163, 88, 0.25);">
+                                    {% else %}
+                                    <div style="width: 42px; height: 42px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; border: 2px solid rgba(16, 61, 40, 0.1);">
+                                        {{ tenant.username|slice:":2"|upper }}
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <div style="font-weight: 600; color: #1e293b; font-size: 0.9rem;">{{ tenant.first_name }} {{ tenant.last_name }}</div>
+                                        <div style="font-size: 0.75rem; color: #64748b;">@{{ tenant.username }} &bull; {{ tenant.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                                {% if tenant.active_property %}
+                                <div style="font-weight: 550; color: var(--color-emerald-darkest); font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem;">
+                                    <i class="fa-solid fa-house" style="color: var(--color-gold); font-size: 0.75rem;"></i>
+                                    {{ tenant.active_property.title }}
+                                </div>
+                                <span style="font-size: 0.75rem; color: #64748b;">{{ tenant.active_property.location }}</span>
+                                {% else %}
+                                <span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">No active property locks</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; max-width: 180px;">
+                                    <div style="flex: 1; background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+                                        <div style="background: {% if tenant.calculated_progress == 100 %}#059669{% else %}var(--color-gold){% endif %}; width: {{ tenant.calculated_progress }}%; height: 100%;"></div>
+                                    </div>
+                                    <span style="font-size: 0.75rem; font-weight: 700; color: #475569;">{{ tenant.calculated_progress }}%</span>
+                                </div>
+                                <span style="font-size: 0.7rem; color: #64748b; font-weight: 500; display: block; margin-top: 0.15rem;">{{ tenant.calculated_status }}</span>
+                            </td>
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                                <a href="/admin-dashboard/tenant/{{ tenant.id }}/" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 6px; background: rgba(16, 61, 40, 0.06); color: var(--color-emerald-dark); font-weight: 600; text-decoration: none; border: 1px solid rgba(16, 61, 40, 0.1); transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(16,61,40,0.1)'" onmouseout="this.style.backgroundColor='rgba(16,61,40,0.06)'">
+                                    <i class="fa-solid fa-folder-open"></i> View Records
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 4rem 2rem; color: #64748b;">
+                                <i class="fa-solid fa-users-slash" style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;"></i>
+                                <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No tenants registered on the system yet.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% elif current_tab == 'settings' %}
+
+<!-- Premium Settings Sub-Navigation Menu -->
+<div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+    <div class="col-12">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="background: rgba(203, 163, 88, 0.08); color: var(--color-gold); width: 42px; height: 42px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 1px solid rgba(203, 163, 88, 0.2);">
+                    <i class="fa-solid fa-gears"></i>
+                </span>
+                <div>
+                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; font-weight: 600;">System Settings Control Center</h3>
+                    <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">Configure global parameters, executive teams, active service areas, and marketing logic.</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; background: #e2e8f0; border-radius: 8px; padding: 0.25rem; gap: 0.25rem; flex-wrap: wrap;" id="settings-nav-tabs">
+                <button onclick="switchSettingsSection('amenities', this)" class="settings-nav-btn active" style="background: white; color: var(--color-emerald-darkest); border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <i class="fa-solid fa-hotel" style="color: var(--color-gold);"></i> Amenities & Services
+                </button>
+                <button onclick="switchSettingsSection('committee', this)" class="settings-nav-btn" style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-users-rectangle"></i> Committee Board
+                </button>
+                <button onclick="switchSettingsSection('coverage', this)" class="settings-nav-btn" style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-map-location-dot"></i> Geographic Coverage
+                </button>
+                <button onclick="switchSettingsSection('popups', this)" class="settings-nav-btn" style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-rectangle-ad"></i> Popup Campaigns
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="settings-section-amenities" class="settings-section-content" style="display: block;">
+<div class="row animate__animated animate__fadeIn" style="margin-top: 1rem;">
     <!-- LEFT PANEL: Property Amenities & Layers Manager -->
     <div class="col-lg-7" style="margin-bottom: 2rem;">
         <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
@@ -1115,8 +1245,10 @@
         </div>
     </div>
 </div>
+</div><!-- End Amenities section -->
 
 <!-- Committee Section -->
+<div id="settings-section-committee" class="settings-section-content" style="display: none;">
 <div class="row animate__animated animate__fadeIn" style="margin-top: 2rem;">
     <!-- LEFT PANEL: Committee Executives Directory -->
     <div class="col-lg-8" style="margin-bottom: 2rem;">
@@ -1229,8 +1361,10 @@
         </div>
     </div>
 </div>
+</div><!-- End Committee section -->
 
 <!-- Service Area Expansion Manager -->
+<div id="settings-section-coverage" class="settings-section-content" style="display: none;">
 <div class="row animate__animated animate__fadeIn" style="margin-top: 2rem;">
     <div class="col-12" style="margin-bottom: 1.5rem;">
         <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem;">
@@ -1404,8 +1538,10 @@
         </div>
     </div>
 </div>
+</div><!-- End Geographic Coverage section -->
 
 <!-- Popup Marketing & Logistics Manager -->
+<div id="settings-section-popups" class="settings-section-content" style="display: none;">
 <div class="row animate__animated animate__fadeIn" style="margin-top: 3rem;">
     <div class="col-12" style="margin-bottom: 1.5rem;">
         <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem;">
@@ -1537,8 +1673,60 @@
         </div>
     </div>
 </div>
+</div><!-- End Popups section -->
 
 <script>
+    function switchSettingsSection(sectionId, element) {
+        // 1. Toggle content visibility
+        document.querySelectorAll('.settings-section-content').forEach(section => {
+            section.style.display = 'none';
+        });
+        const targetSection = document.getElementById('settings-section-' + sectionId);
+        if (targetSection) {
+            targetSection.style.display = 'block';
+        }
+
+        // 2. Toggle active tab styling
+        const btns = document.querySelectorAll('#settings-nav-tabs button');
+        btns.forEach(btn => {
+            btn.style.background = 'transparent';
+            btn.style.color = '#475569';
+            btn.style.boxShadow = 'none';
+            btn.classList.remove('active');
+            
+            const icon = btn.querySelector('i');
+            if (icon) {
+                icon.style.color = '#475569';
+            }
+        });
+
+        // Activate button
+        const activeBtn = element || Array.from(btns).find(b => b.getAttribute('onclick').includes(sectionId));
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            activeBtn.style.background = 'white';
+            activeBtn.style.color = 'var(--color-emerald-darkest)';
+            activeBtn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
+            const activeIcon = activeBtn.querySelector('i');
+            if (activeIcon) {
+                activeIcon.style.color = 'var(--color-gold)';
+            }
+        }
+
+        // Store state in localStorage
+        localStorage.setItem('active_settings_section', sectionId);
+    }
+
+    // Auto-restore active settings tab on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedSection = localStorage.getItem('active_settings_section');
+        if (savedSection && ['amenities', 'committee', 'coverage', 'popups'].includes(savedSection)) {
+            switchSettingsSection(savedSection);
+        } else {
+            switchSettingsSection('amenities');
+        }
+    });
+
     function switchCoverageTab(tabId) {
         // Toggle tab contents
         document.querySelectorAll('.coverage-tab-content').forEach(content => {
@@ -1559,6 +1747,8 @@
         event.currentTarget.style.color = 'white';
         event.currentTarget.classList.add('active');
     }
+
+    // Tenants Directory routing handles view details redirections to dedicated ten_details.html
 </script>
 {% endif %}
 {% endblock %}

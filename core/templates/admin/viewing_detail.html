@@ -35,7 +35,7 @@
         <div>
             <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: var(--color-gold); display: block; margin-bottom: 0.35rem;">Scheduled Physical Inspection Request</span>
             <h2 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.75rem; line-height: 1.2;">
-                Vetting Coordinations for {{ viewing.property.title }}
+                Tenant request to inspect {{ viewing.property.title }}
             </h2>
             <div style="display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap;">
                 <span style="font-size: 0.85rem; color: #475569; display: inline-flex; align-items: center; gap: 0.35rem;">
@@ -135,33 +135,6 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 1.5rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem;">
-                        <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Emergency Conditions / Health Notes</span>
-                        <p style="margin: 0; font-size: 0.95rem; color: #dc2626; font-weight: 600; background: #fff5f5; border: 1px solid rgba(220, 38, 38, 0.1); padding: 0.75rem 1rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.5rem; width: 100%;">
-                            <i class="fa-solid fa-heart-pulse"></i> {{ viewing.tenant.profile.emergency_conditions|default:"No critical emergency medical conditions reported." }}
-                        </p>
-                    </div>
-
-                    <div style="margin-top: 1.5rem;">
-                        <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Personal Doctor's Contact Info</span>
-                        <p style="margin: 0; font-size: 0.95rem; color: #475569; font-weight: 500; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 6px;">
-                            <i class="fa-solid fa-user-doctor" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ viewing.tenant.profile.personal_doctor_contact|default:"No primary care coordinates registered." }}
-                        </p>
-                    </div>
-
-                    <!-- Uploaded National ID Vetting -->
-                    <div style="margin-top: 2rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem;">
-                        <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Verified Legal Identification Vetting</span>
-                        {% if viewing.tenant.profile.national_id_or_passport %}
-                        <a href="{{ viewing.tenant.profile.national_id_or_passport.url }}" target="_blank" class="btn btn-gold" style="padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-size: 0.9rem;">
-                            <i class="fa-solid fa-file-arrow-down"></i> Download Passport / National ID File
-                        </a>
-                        {% else %}
-                        <span style="color: #ef4444; font-weight: 600; font-size: 0.85rem; background: #fef2f2; border: 1px solid rgba(239, 68, 68, 0.1); padding: 0.75rem 1rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.5rem; width: 100%;">
-                            <i class="fa-solid fa-circle-exclamation"></i> Tenant has not uploaded legal Passport or National ID document yet.
-                        </span>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
 
