@@ -183,6 +183,11 @@ def register_view(request):
             messages.error(request, 'A user with this email address already exists.')
             return render(request, 'auth/register.html')
 
+        if role == 'landlord':
+            if not request.FILES.get('image'):
+                messages.error(request, 'Profile picture is compulsory for property owners.')
+                return render(request, 'auth/register.html')
+
         # Create user
         user = User.objects.create_user(
             username=username,
@@ -197,7 +202,8 @@ def register_view(request):
             user=user,
             role=role,
             phone=phone,
-            nin=nin if role == 'landlord' else ''
+            nin=nin if role == 'landlord' else '',
+            image=request.FILES.get('image') if role == 'landlord' else None
         )
 
         messages.success(request, 'Registration successful! You can now sign in.')

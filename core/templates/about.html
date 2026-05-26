@@ -230,35 +230,167 @@
             <h2 class="premium-heading">The Five Pillars of TRUST</h2>
         </div>
         
+        <style>
+            .premium-pillars {
+                padding: 8rem 0;
+                background: linear-gradient(180deg, #faf9f6 0%, #f4f2eb 100%);
+            }
+            .pillars-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1.5rem;
+                margin-top: 5rem;
+            }
+            .pillar-item {
+                position: relative;
+                padding: 3.5rem 2rem 2.5rem;
+                background: rgba(255, 255, 255, 0.75);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                border-radius: 12px;
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                min-height: 285px;
+                overflow: hidden;
+            }
+            .pillar-item:hover {
+                transform: translateY(-10px);
+                background: rgba(255, 255, 255, 0.95);
+                border-color: var(--color-gold);
+                box-shadow: 0 20px 40px rgba(10, 61, 40, 0.05), 0 1px 3px rgba(203, 163, 88, 0.1);
+            }
+            .pillar-letter {
+                font-size: 8rem;
+                font-family: var(--font-heading);
+                font-weight: 900;
+                color: rgba(10, 61, 40, 0.085);
+                position: absolute;
+                top: -0.25rem;
+                right: 0.5rem;
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                user-select: none;
+                line-height: 1;
+            }
+            .pillar-item:hover .pillar-letter {
+                color: rgba(203, 163, 88, 0.35);
+                transform: scale(1.15) rotate(-5deg);
+            }
+            .pillar-content {
+                position: relative;
+                z-index: 2;
+            }
+            .pillar-content h3 {
+                font-family: var(--font-heading);
+                font-size: 1.2rem;
+                color: var(--color-emerald-darkest);
+                margin: 1.5rem 0 0.75rem;
+                font-weight: 700;
+                line-height: 1.25;
+            }
+            .pillar-content p {
+                font-size: 0.88rem;
+                line-height: 1.55;
+                color: var(--color-text-muted);
+                margin: 0;
+            }
+            .pillar-icon-container {
+                width: 50px;
+                height: 50px;
+                border-radius: 10px;
+                background: rgba(10, 61, 40, 0.06);
+                color: var(--color-emerald);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem;
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .pillar-item:hover .pillar-icon-container {
+                background: var(--color-gold);
+                color: white;
+                transform: scale(1.05);
+            }
+            
+            @media (max-width: 1200px) {
+                .pillars-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+            @media (max-width: 768px) {
+                .pillars-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 480px) {
+                .pillars-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+        
         <div class="pillars-grid">
+            <!-- T -->
             <div class="pillar-item reveal">
-                <i class="fa-solid fa-file-shield pillar-icon"></i>
-                <h3>Title Verification</h3>
-                <p>Ownership documents strictly verified against central land registries.</p>
+                <div class="pillar-letter">T</div>
+                <div class="pillar-content">
+                    <div class="pillar-icon-container">
+                        <i class="fa-solid fa-file-shield"></i>
+                    </div>
+                    <h3>Title Verification</h3>
+                    <p>Ownership documents strictly verified against central land registries.</p>
+                </div>
             </div>
             
+            <!-- R -->
             <div class="pillar-item reveal delay-1">
-                <i class="fa-solid fa-id-card pillar-icon"></i>
-                <h3>Registered Landlord</h3>
-                <p>Identity-linked dynamic accountability systems protecting tenants.</p>
+                <div class="pillar-letter">R</div>
+                <div class="pillar-content">
+                    <div class="pillar-icon-container">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <h3>Registered Landlord</h3>
+                    <p>Identity-linked dynamic accountability systems protecting tenants.</p>
+                </div>
             </div>
             
+            <!-- U -->
             <div class="pillar-item reveal delay-2">
-                <i class="fa-solid fa-magnifying-glass-location pillar-icon"></i>
-                <h3>Urban Inspection</h3>
-                <p>On-site physical validation of actual property conditions.</p>
+                <div class="pillar-letter">U</div>
+                <div class="pillar-content">
+                    <div class="pillar-icon-container">
+                        <i class="fa-solid fa-magnifying-glass-location"></i>
+                    </div>
+                    <h3>Urban Inspection</h3>
+                    <p>On-site physical validation of actual property conditions.</p>
+                </div>
             </div>
             
+            <!-- S -->
             <div class="pillar-item reveal delay-3">
-                <i class="fa-solid fa-vault pillar-icon"></i>
-                <h3>Secure Escrow</h3>
-                <p>Rigorous financial protection framework ensuring safe transactions.</p>
+                <div class="pillar-letter">S</div>
+                <div class="pillar-content">
+                    <div class="pillar-icon-container">
+                        <i class="fa-solid fa-vault"></i>
+                    </div>
+                    <h3>Secure Escrow</h3>
+                    <p>Rigorous financial protection framework ensuring safe transactions.</p>
+                </div>
             </div>
             
+            <!-- T -->
             <div class="pillar-item reveal delay-4">
-                <i class="fa-solid fa-file-contract pillar-icon"></i>
-                <h3>Transparent Contract</h3>
-                <p>Legally-binding, fully encrypted digital agreements.</p>
+                <div class="pillar-letter">T</div>
+                <div class="pillar-content">
+                    <div class="pillar-icon-container">
+                        <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <h3>Transparent Contract</h3>
+                    <p>Legally-binding, fully encrypted digital agreements.</p>
+                </div>
             </div>
         </div>
     </div>

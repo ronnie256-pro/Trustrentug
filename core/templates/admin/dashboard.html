@@ -415,9 +415,13 @@
                 <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'"
                     onmouseout="this.style.backgroundColor='transparent'">
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 0.75rem;">
+                        {% if landlord.profile.image %}
+                        <img src="{{ landlord.profile.image.url }}" alt="{{ landlord.username }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-gold);">
+                        {% else %}
                         <div style="width: 32px; height: 32px; background: rgba(16, 61, 40, 0.1); color: var(--color-emerald); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">
                             {{ landlord.first_name|slice:":1" }}{{ landlord.last_name|slice:":1" }}
                         </div>
+                        {% endif %}
                         <div>
                             <div style="font-size: 0.95rem; color: #1e293b;">{{ landlord.first_name }} {{ landlord.last_name }}</div>
                             <small style="color: #94a3b8; font-weight: normal; font-size: 0.75rem;">ID: #{{ landlord.id }}</small>
@@ -826,9 +830,20 @@
 
                             <!-- Owner Details -->
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
-                                <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.property.owner.first_name }} {{ req.property.owner.last_name }}</div>
-                                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.15rem;"><i class="fa-solid fa-envelope"></i> {{ req.property.owner.email }}</div>
-                                <div style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-phone"></i> {{ req.property.owner.profile.phone|default:"N/A" }}</div>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    {% if req.property.owner.profile.image %}
+                                    <img src="{{ req.property.owner.profile.image.url }}" alt="{{ req.property.owner.username }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-gold);">
+                                    {% else %}
+                                    <div style="width: 40px; height: 40px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem;">
+                                        {{ req.property.owner.username|first|upper }}
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.property.owner.first_name }} {{ req.property.owner.last_name }}</div>
+                                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.15rem;"><i class="fa-solid fa-envelope"></i> {{ req.property.owner.email }}</div>
+                                        <div style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-phone"></i> {{ req.property.owner.profile.phone|default:"N/A" }}</div>
+                                    </div>
+                                </div>
                             </td>
 
                             <!-- Schedule / Status -->
