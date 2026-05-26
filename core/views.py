@@ -785,7 +785,12 @@ def home_view(request):
 
 def about_us_view(request):
     executives = CommitteeExecutive.objects.all().order_by('created_at')
-    return render(request, 'about.html', {'executives': executives})
+    agents = InspectionAgent.objects.all().select_related('role').order_by('joined_at')
+    return render(request, 'about.html', {
+        'executives': executives,
+        'agents': agents,
+    })
+
 
 
 def search_view(request):

@@ -71,6 +71,157 @@
     </div>
 </section>
 
+<!-- 3.5 Dynamic Field Agents Section -->
+<section class="premium-agents" style="padding: 8rem 0; background-color: var(--color-surface); border-bottom: 1px solid var(--color-border);">
+    <div class="container">
+        <div class="text-center reveal">
+            <span class="premium-kicker">Field Intelligence</span>
+            <h2 class="premium-heading" style="font-size: 2.85rem; margin-bottom: 1rem;">Urban Vetting Specialists</h2>
+            <p class="premium-lead" style="max-width: 700px; margin: 0 auto;">
+                Our boots-on-the-ground authorized field agents physically inspect, geotag, and secure the structural and legal authenticity of every listed property.
+            </p>
+        </div>
+        
+        <style>
+            .agents-grid {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 2.5rem 1.5rem;
+                margin-top: 4.5rem;
+            }
+            .agent-card {
+                text-align: center;
+                transition: transform 0.4s ease;
+            }
+            .agent-avatar-container {
+                position: relative;
+                width: 130px;
+                height: 130px;
+                margin: 0 auto 1.25rem auto;
+            }
+            .agent-photo-circle {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid rgba(203, 163, 88, 0.2);
+                box-shadow: var(--shadow-sm);
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(16, 61, 40, 0.05);
+                color: var(--color-emerald-dark);
+                font-weight: 700;
+                font-size: 1.5rem;
+            }
+            .agent-card:hover .agent-photo-circle {
+                transform: scale(1.08);
+                border-color: var(--color-gold);
+                box-shadow: var(--shadow-gold);
+            }
+            .agent-card-name {
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--color-emerald-darkest);
+                margin-bottom: 0.25rem;
+                font-family: var(--font-body);
+            }
+            .agent-card-role {
+                font-size: 0.7rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                color: var(--color-gold);
+                letter-spacing: 0.5px;
+            }
+            @media (max-width: 1024px) {
+                .agents-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+            @media (max-width: 768px) {
+                .agents-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 480px) {
+                .agents-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+        
+        <div class="agents-grid">
+            {% if agents %}
+                {% for agent in agents %}
+                <div class="agent-card reveal {% if forloop.counter0 > 0 %}delay-{{ forloop.counter0 }}{% endif %}">
+                    <div class="agent-avatar-container">
+                        {% if agent.image %}
+                        <img src="{{ agent.image.url }}" alt="{{ agent.name }}" class="agent-photo-circle">
+                        {% else %}
+                        <div class="agent-photo-circle">
+                            {{ agent.name|slice:":2"|upper }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <h4 class="agent-card-name">{{ agent.name }}</h4>
+                    <div class="agent-card-role">{{ agent.role.name|default:"Trust Agent" }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Fallback Mock Agents (Perfect full row of 6) -->
+                <div class="agent-card reveal">
+                    <div class="agent-avatar-container">
+                        <div class="agent-photo-circle">SS</div>
+                    </div>
+                    <h4 class="agent-card-name">Eng. S. Ssewankambo</h4>
+                    <div class="agent-card-role">Structural Inspector</div>
+                </div>
+                
+                <div class="agent-card reveal delay-1">
+                    <div class="agent-avatar-container">
+                        <div class="agent-photo-circle">MN</div>
+                    </div>
+                    <h4 class="agent-card-name">Coun. M. Namubiru</h4>
+                    <div class="agent-card-role">Legal Title Counsel</div>
+                </div>
+                
+                <div class="agent-card reveal delay-2">
+                    <div class="agent-avatar-container">
+                        <div class="agent-photo-circle">RO</div>
+                    </div>
+                    <h4 class="agent-card-name">Chief R. Okello</h4>
+                    <div class="agent-card-role">Fire & Safety Officer</div>
+                </div>
+                
+                <div class="agent-card reveal delay-3">
+                    <div class="agent-avatar-container">
+                        <div class="agent-photo-circle">JN</div>
+                    </div>
+                    <h4 class="agent-card-name">Jane Nsubuga</h4>
+                    <div class="agent-card-role">Land Registrar</div>
+                </div>
+                
+                <div class="agent-card reveal delay-4">
+                    <div class="agent-avatar-container">
+                        <div class="agent-photo-circle">AM</div>
+                    </div>
+                    <h4 class="agent-card-name">Arthur Musoke</h4>
+                    <div class="agent-card-role">Security Auditor</div>
+                </div>
+                
+                <div class="agent-card reveal delay-5">
+                    <div class="agent-avatar-container">
+                        <div class="agent-photo-circle">GN</div>
+                    </div>
+                    <h4 class="agent-card-name">Grace Nakimera</h4>
+                    <div class="agent-card-role">Geographical Surveyor</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 <!-- 4. The Pillars -->
 <section class="premium-pillars">
     <div class="container">
