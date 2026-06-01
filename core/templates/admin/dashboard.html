@@ -1005,6 +1005,9 @@
                 <button onclick="switchSettingsSection('popups', this)" class="settings-nav-btn" style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
                     <i class="fa-solid fa-rectangle-ad"></i> Popup Campaigns
                 </button>
+                <button onclick="switchSettingsSection('branding', this)" class="settings-nav-btn" style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-palette"></i> Site Branding
+                </button>
             </div>
         </div>
     </div>
@@ -1690,6 +1693,264 @@
 </div>
 </div><!-- End Popups section -->
 
+<!-- Site Branding Section -->
+<div id="settings-section-branding" class="settings-section-content" style="display: none;">
+<div class="row animate__animated animate__fadeIn" style="margin-top: 1rem;">
+    <!-- LEFT PANEL: Branding Config Form -->
+    <div class="col-lg-6" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-palette" style="color: var(--color-gold);"></i> Site Identity & Assets Manager
+                </h3>
+                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Modify the public-facing brand, icon, and logo representation across all platforms</p>
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; margin: 0;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_site_branding">
+                
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Site Name</label>
+                    <input type="text" name="site_name" value="{{ site_settings.site_name|default:'TRUST' }}" required placeholder="e.g. TRUST" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; font-size: 0.9rem; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--color-emerald)'" onblur="this.style.borderColor='#cbd5e1'">
+                    <small style="color: #64748b; display: block; margin-top: 0.35rem;">Used as page title suffixes and fallback brand text when no logo image is available.</small>
+                </div>
+
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Site Icon (Favicon / Tab Icon)</label>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 60px; height: 60px; border-radius: 8px; border: 1px dashed #cbd5e1; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;" id="site-icon-preview-box">
+                            {% if site_settings.site_icon %}
+                                <img src="{{ site_settings.site_icon.url }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" id="site-icon-preview-img">
+                            {% else %}
+                                <i class="fa-solid fa-shield-halved" style="font-size: 1.5rem; color: #94a3b8;" id="site-icon-preview-placeholder"></i>
+                            {% endif %}
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="file" name="site_icon" accept="image/*" id="site-icon-file-input" style="display: none;" onchange="previewImage(this, 'site-icon-preview-box', 'site-icon-preview-placeholder', 'site-icon-preview-img', 'tab-icon-mockup-img', 'tab-icon-mockup-placeholder')">
+                            <button type="button" class="btn" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; border-radius: 6px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.15); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;" onclick="document.getElementById('site-icon-file-input').click();">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Icon
+                            </button>
+                            <small style="color: #64748b; display: block; margin-top: 0.4rem;">Square PNG, JPG, or ICO format. Recommended size: 32x32px or 64x64px.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Site Logo (Navigation Bar Brand)</label>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 120px; height: 60px; border-radius: 8px; border: 1px dashed #cbd5e1; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;" id="site-logo-preview-box">
+                            {% if site_settings.site_logo %}
+                                <img src="{{ site_settings.site_logo.url }}" style="max-width: 90%; max-height: 90%; object-fit: contain;" id="site-logo-preview-img">
+                            {% else %}
+                                <div style="display: flex; align-items: center; gap: 0.25rem; color: #94a3b8; font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem;" id="site-logo-preview-placeholder">
+                                    <i class="fa-solid fa-shield-halved" style="font-size: 1.1rem;"></i> TRUST
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="file" name="site_logo" accept="image/*" id="site-logo-file-input" style="display: none;" onchange="previewImage(this, 'site-logo-preview-box', 'site-logo-preview-placeholder', 'site-logo-preview-img', 'logo-mockup-img', 'logo-mockup-placeholder')">
+                            <button type="button" class="btn" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; border-radius: 6px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.15); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;" onclick="document.getElementById('site-logo-file-input').click();">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Logo
+                            </button>
+                            <small style="color: #64748b; display: block; margin-top: 0.4rem;">High quality PNG, SVG, or JPG format. Recommended max height: 50px.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.85rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.25);">
+                    <i class="fa-solid fa-circle-check"></i> Save Branding Assets
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Live Previews Mockup -->
+    <div class="col-lg-6" style="margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; height: 100%; display: flex; flex-direction: column;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-laptop" style="color: var(--color-gold);"></i> Real-Time Branding Previews
+                </h3>
+                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">See how your uploaded branding renders inside browser layouts dynamically</p>
+            </div>
+            
+            <div style="padding: 2rem; flex: 1; display: flex; flex-direction: column; gap: 2rem; background: #f8fafc;">
+                
+                <!-- Mockup 1: Browser Tab Mockup -->
+                <div>
+                    <h5 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">1. Browser Tab Representation</h5>
+                    <div style="background: #e2e8f0; border-radius: 8px 8px 0 0; padding: 0.5rem 0.75rem 0 0.75rem; border: 1px solid #cbd5e1; border-bottom: none; display: flex; align-items: flex-end; gap: 0.5rem; height: 42px;">
+                        <!-- Browser actions -->
+                        <div style="display: flex; gap: 0.35rem; margin-bottom: 0.5rem; margin-right: 0.5rem;">
+                            <div style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444;"></div>
+                            <div style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;"></div>
+                            <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                        </div>
+                        
+                        <!-- Real Browser Tab Mock -->
+                        <div style="background: white; border-radius: 6px 6px 0 0; padding: 0.4rem 0.85rem; border: 1px solid #cbd5e1; border-bottom: none; display: flex; align-items: center; gap: 0.5rem; min-width: 180px; height: 32px; font-size: 0.75rem; font-weight: 500; color: #334155;">
+                            <!-- Dynamic Tab Icon -->
+                            <div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;" id="tab-icon-mockup-box">
+                                {% if site_settings.site_icon %}
+                                    <img src="{{ site_settings.site_icon.url }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" id="tab-icon-mockup-img">
+                                {% else %}
+                                    <i class="fa-solid fa-shield-halved" style="font-size: 0.8rem; color: var(--color-emerald);" id="tab-icon-mockup-placeholder"></i>
+                                {% endif %}
+                            </div>
+                            <!-- Dynamic Tab Text -->
+                            <span id="tab-title-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">
+                                Home | {{ site_settings.site_name|default:'TRUST' }}
+                            </span>
+                            <span style="margin-left: auto; color: #94a3b8; font-size: 0.65rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></span>
+                        </div>
+                    </div>
+                    <div style="background: white; border: 1px solid #cbd5e1; border-top: none; height: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);"></div>
+                </div>
+
+                <!-- Mockup 2: Header Brand Representation -->
+                <div>
+                    <h5 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">2. Navigation Header Branding</h5>
+                    <div style="background: var(--color-emerald-darkest); border-radius: 8px; border: 1px solid rgba(16, 61, 40, 0.2); padding: 0.85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 8px 24px rgba(10, 61, 40, 0.15);">
+                        <!-- Branding Header Mockup -->
+                        <div style="height: 38px; display: flex; align-items: center;" id="logo-mockup-box">
+                            {% if site_settings.site_logo %}
+                                <img src="{{ site_settings.site_logo.url }}" style="max-height: 34px; width: auto; object-fit: contain;" id="logo-mockup-img">
+                            {% else %}
+                                <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--color-gold); font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem;" id="logo-mockup-placeholder">
+                                    <i class="fa-solid fa-shield-halved" style="font-size: 1.2rem;"></i> <span id="logo-text-preview">{{ site_settings.site_name|default:'TRUST' }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Header nav links mockup -->
+                        <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.8rem; color: rgba(255,255,255,0.7); font-weight: 500;">
+                            <span>Home</span>
+                            <span>Find a Home</span>
+                            <span style="background: var(--color-gold); color: white; padding: 0.4rem 0.85rem; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Dashboard</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mockup 3: Admin Sidebar Mockup -->
+                <div>
+                    <h5 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">3. Portal Sidebar Branding</h5>
+                    <div style="display: flex; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.02); height: 120px;">
+                        <div style="width: 140px; background: var(--color-emerald-darkest); padding: 1rem; display: flex; flex-direction: column; gap: 0.85rem; border-right: 1px solid rgba(255,255,255,0.05);">
+                            <!-- Sidebar Brand logo -->
+                            <div style="height: 28px; display: flex; align-items: center;" id="sidebar-logo-mockup-box">
+                                {% if site_settings.site_logo %}
+                                    <img src="{{ site_settings.site_logo.url }}" style="max-height: 24px; width: auto; object-fit: contain;" id="sidebar-logo-mockup-img">
+                                {% else %}
+                                    <div style="display: flex; align-items: center; gap: 0.35rem; color: var(--color-gold); font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem;" id="sidebar-logo-mockup-placeholder">
+                                        <i class="fa-solid fa-shield-halved" style="font-size: 0.9rem;"></i> <span id="sidebar-logo-text-preview">{{ site_settings.site_name|default:'TRUST' }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Dummy sidebar items -->
+                            <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.65rem; color: rgba(255,255,255,0.5);">
+                                <span style="background: rgba(255,255,255,0.06); color: white; padding: 0.25rem 0.5rem; border-radius: 4px;"><i class="fa-solid fa-gauge" style="margin-right: 0.25rem;"></i> Dashboard</span>
+                                <span style="padding: 0.25rem 0.5rem;"><i class="fa-solid fa-house" style="margin-right: 0.25rem;"></i> Properties</span>
+                            </div>
+                        </div>
+                        <div style="flex: 1; padding: 1rem; background: #fafafa; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="width: 40%; height: 8px; background: #cbd5e1; border-radius: 4px;"></div>
+                            <div style="width: 80%; height: 6px; background: #e2e8f0; border-radius: 3px;"></div>
+                            <div style="width: 60%; height: 6px; background: #e2e8f0; border-radius: 3px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div><!-- End Branding Section -->
+
+<script>
+function previewImage(input, previewBoxId, placeholderId, imgId, mockupImgId, mockupPlaceholderId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Update primary preview box image
+            let img = document.getElementById(imgId);
+            if (!img) {
+                img = document.createElement('img');
+                img.id = imgId;
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '100%';
+                img.style.objectFit = 'contain';
+                const previewBox = document.getElementById(previewBoxId);
+                previewBox.innerHTML = '';
+                previewBox.appendChild(img);
+            }
+            img.src = e.target.result;
+            
+            // Update browser mockup images (tab mockup & header mockup)
+            let mockupImg = document.getElementById(mockupImgId);
+            if (!mockupImg) {
+                mockupImg = document.createElement('img');
+                mockupImg.id = mockupImgId;
+                mockupImg.style.maxHeight = mockupImgId.includes('tab') ? '100%' : '34px';
+                mockupImg.style.width = 'auto';
+                mockupImg.style.objectFit = 'contain';
+                
+                // If it is logo mockup
+                if (mockupImgId === 'logo-mockup-img') {
+                    // Update header mockup
+                    const headerBox = document.getElementById('logo-mockup-box');
+                    headerBox.innerHTML = '';
+                    headerBox.appendChild(mockupImg);
+                    
+                    // Also update sidebar mockup
+                    const sidebarImg = document.createElement('img');
+                    sidebarImg.id = 'sidebar-logo-mockup-img';
+                    sidebarImg.style.maxHeight = '24px';
+                    sidebarImg.style.width = 'auto';
+                    sidebarImg.style.objectFit = 'contain';
+                    sidebarImg.src = e.target.result;
+                    const sidebarBox = document.getElementById('sidebar-logo-mockup-box');
+                    sidebarBox.innerHTML = '';
+                    sidebarBox.appendChild(sidebarImg);
+                } else {
+                    const tabBox = document.getElementById('tab-icon-mockup-box');
+                    tabBox.innerHTML = '';
+                    tabBox.appendChild(mockupImg);
+                }
+            } else {
+                mockupImg.src = e.target.result;
+                if (mockupImgId === 'logo-mockup-img') {
+                    const sidebarImg = document.getElementById('sidebar-logo-mockup-img');
+                    if (sidebarImg) sidebarImg.src = e.target.result;
+                }
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Add real-time text input listeners for site name
+document.addEventListener('DOMContentLoaded', function() {
+    const siteNameInput = document.querySelector('input[name="site_name"]');
+    if (siteNameInput) {
+        siteNameInput.addEventListener('input', function() {
+            const val = this.value.trim() || 'TRUST';
+            // Update browser tab mockup title text
+            const tabTitle = document.getElementById('tab-title-text');
+            if (tabTitle) tabTitle.textContent = 'Home | ' + val;
+            
+            // Update fallback text brand previews if no image is uploaded
+            const logoText = document.getElementById('logo-text-preview');
+            if (logoText) logoText.textContent = val;
+            
+            const sidebarText = document.getElementById('sidebar-logo-text-preview');
+            if (sidebarText) sidebarText.textContent = val;
+        });
+    }
+});
+</script>
+
 <script>
     function switchSettingsSection(sectionId, element) {
         // 1. Toggle content visibility
@@ -1735,7 +1996,7 @@
     // Auto-restore active settings tab on page load
     document.addEventListener("DOMContentLoaded", function() {
         const savedSection = localStorage.getItem('active_settings_section');
-        if (savedSection && ['amenities', 'committee', 'coverage', 'popups'].includes(savedSection)) {
+        if (savedSection && ['amenities', 'committee', 'coverage', 'popups', 'branding'].includes(savedSection)) {
             switchSettingsSection(savedSection);
         } else {
             switchSettingsSection('amenities');

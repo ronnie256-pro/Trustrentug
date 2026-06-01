@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -487,6 +487,29 @@ def admin_dashboard(request):
                     messages.error(request, f"Error creating popup: {str(e)}")
             else:
                 messages.error(request, "All fields are required to create a popup logic.")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'update_site_branding':
+            site_name = request.POST.get('site_name', 'TRUST').strip()
+            site_icon = request.FILES.get('site_icon')
+            site_logo = request.FILES.get('site_logo')
+            
+            try:
+                settings_obj = SiteSetting.objects.first()
+                if not settings_obj:
+                    settings_obj = SiteSetting()
+                
+                if site_name:
+                    settings_obj.site_name = site_name
+                if site_icon:
+                    settings_obj.site_icon = site_icon
+                if site_logo:
+                    settings_obj.site_logo = site_logo
+                
+                settings_obj.save()
+                messages.success(request, "Site branding updated successfully!")
+            except Exception as e:
+                messages.error(request, f"Error updating site branding: {str(e)}")
             return redirect('/admin-dashboard/?tab=settings')
 
         elif action == 'approve_tenant':

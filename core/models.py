@@ -375,6 +375,20 @@ class PopupLogic(models.Model):
         return f"{self.get_popup_type_display()} - {self.title}"
 
 
+class SiteSetting(models.Model):
+    site_name = models.CharField(max_length=100, default='TRUST')
+    site_icon = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Favicon / Tab icon")
+    site_logo = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Top header logo replacement for 'Shield and TRUST'")
+
+    def __str__(self):
+        return "Site Settings"
+
+    class Meta:
+        verbose_name = "Site Setting"
+        verbose_name_plural = "Site Settings"
+
+
+
 
 
 

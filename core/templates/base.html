@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRUST | {% block title %}Premium Rental Management{% endblock %}</title>
+    <title>{{ site_settings.site_name|default:"TRUST" }} | {% block title %}Premium Rental Management{% endblock %}</title>
+
+    {% if site_settings.site_icon %}
+    <link rel="icon" type="image/png" href="{{ site_settings.site_icon.url }}">
+    <link rel="shortcut icon" type="image/png" href="{{ site_settings.site_icon.url }}">
+    {% endif %}
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,7 +132,13 @@
     <!-- Navigation -->
     <nav class="navbar" id="main-navbar">
         <div class="container">
-            <a href="/" class="navbar-brand"><i class="fa-solid fa-shield-halved"></i> TRUST</a>
+            <a href="/" class="navbar-brand">
+                {% if site_settings.site_logo %}
+                    <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 40px; width: auto; object-fit: contain; vertical-align: middle;">
+                {% else %}
+                    <i class="fa-solid fa-shield-halved"></i> {{ site_settings.site_name|default:"TRUST" }}
+                {% endif %}
+            </a>
 
             <button class="hamburger" id="navbar-toggle" aria-label="Toggle navigation">
                 <i class="fa-solid fa-bars"></i>
@@ -278,8 +289,13 @@
         <div class="container">
             <div class="footer-grid">
                 <div>
-                    <h4 style="font-family: var(--font-heading); font-size: 1.5rem;"><i
-                            class="fa-solid fa-shield-halved"></i> TRUST</h4>
+                    <h4 style="font-family: var(--font-heading); font-size: 1.5rem;">
+                        {% if site_settings.site_logo %}
+                            <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 36px; width: auto; object-fit: contain; vertical-align: middle;">
+                        {% else %}
+                            <i class="fa-solid fa-shield-halved"></i> {{ site_settings.site_name|default:"TRUST" }}
+                        {% endif %}
+                    </h4>
                     <p style="margin-top: 1rem; margin-bottom: 1.25rem;">Experience secure, verified, and premium rental transactions controlled
                         through an automated pipeline.</p>
                     <div style="display: flex; gap: 0.75rem; align-items: center;">

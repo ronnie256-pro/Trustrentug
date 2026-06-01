@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tenant Portal | TRUST</title>
+    <title>Tenant Portal | {{ site_settings.site_name|default:"TRUST" }}</title>
+    {% if site_settings.site_icon %}
+    <link rel="icon" type="image/png" href="{{ site_settings.site_icon.url }}">
+    <link rel="shortcut icon" type="image/png" href="{{ site_settings.site_icon.url }}">
+    {% endif %}
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -199,7 +203,11 @@
     <!-- Responsive left sidebar navigation system -->
     <aside class="tenant-sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <i class="fa-solid fa-shield-halved"></i> TRUST
+            {% if site_settings.site_logo %}
+                <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 40px; width: auto; object-fit: contain;">
+            {% else %}
+                <i class="fa-solid fa-shield-halved"></i> {{ site_settings.site_name|default:"TRUST" }}
+            {% endif %}
         </div>
         <nav class="sidebar-nav">
             <a href="?tab=profile" class="nav-item {% if current_tab == 'profile' %}active{% endif %}">
