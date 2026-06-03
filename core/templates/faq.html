@@ -1,0 +1,683 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ | TRUST Protocol{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* FAQ Page Specific Styles */
+    .faq-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 4rem;
+        margin: 6rem auto;
+    }
+    
+    /* Category Sidebar Navigation */
+    .faq-sidebar {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+    .faq-nav {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .faq-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.9rem 1.25rem;
+        color: var(--color-text-dark);
+        font-weight: 500;
+        font-size: 0.95rem;
+        border-radius: var(--radius-sm);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid transparent;
+        background: transparent;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+    }
+    .faq-nav-link:hover {
+        background: rgba(10, 61, 40, 0.04);
+        color: var(--color-emerald-darkest);
+    }
+    .faq-nav-link.active {
+        background: rgba(203, 163, 88, 0.1);
+        border-color: var(--color-gold-hover);
+        color: var(--color-gold-hover);
+        font-weight: 600;
+    }
+    .faq-nav-link i {
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Search Bar */
+    .faq-search-container {
+        margin-bottom: 3.5rem;
+        position: relative;
+    }
+    .faq-search-input {
+        width: 100%;
+        padding: 1.2rem 1.5rem 1.2rem 3.5rem;
+        font-size: 1.05rem;
+        border-radius: 12px;
+        border: 1px solid var(--color-border);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+    }
+    .faq-search-input:focus {
+        outline: none;
+        border-color: var(--color-gold);
+        box-shadow: 0 10px 25px rgba(203, 163, 88, 0.12);
+        background: white;
+    }
+    .faq-search-icon {
+        position: absolute;
+        left: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-gold);
+        font-size: 1.25rem;
+        pointer-events: none;
+    }
+
+    /* Accordions */
+    .faq-category-section {
+        margin-bottom: 5rem;
+        scroll-margin-top: 120px; /* Offset for sticky nav */
+    }
+    .faq-category-title {
+        font-size: 1.85rem;
+        color: var(--color-emerald-darkest);
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 0.75rem;
+        font-family: var(--font-heading);
+    }
+    .faq-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    .faq-item {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .faq-item:hover {
+        border-color: var(--color-gold-hover);
+        box-shadow: var(--shadow-sm);
+    }
+    .faq-item.active {
+        border-color: var(--color-gold);
+        box-shadow: 0 8px 24px rgba(10, 61, 40, 0.04);
+    }
+    .faq-header {
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        background: transparent;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+    .faq-question {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--color-emerald-darkest);
+        margin: 0;
+        padding-right: 1.5rem;
+        line-height: 1.4;
+    }
+    .faq-toggle-icon {
+        font-size: 1rem;
+        color: var(--color-gold);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        flex-shrink: 0;
+    }
+    .faq-item.active .faq-toggle-icon {
+        transform: rotate(180deg);
+    }
+    
+    .faq-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .faq-content {
+        padding: 0 2rem 1.75rem 2rem;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--color-text-muted);
+    }
+
+    /* Quick action cards inside sidebar */
+    .faq-support-card {
+        background: linear-gradient(135deg, var(--color-emerald-darkest) 0%, var(--color-emerald) 100%);
+        border: 1px solid var(--color-emerald-light);
+        border-radius: 12px;
+        padding: 2rem 1.5rem;
+        color: white;
+        margin-top: 3rem;
+        text-align: center;
+    }
+    .faq-support-card h4 {
+        color: white;
+        font-size: 1.15rem;
+        margin-bottom: 0.75rem;
+        font-family: var(--font-body);
+    }
+    .faq-support-card p {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.75);
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .faq-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        .faq-sidebar {
+            position: relative;
+            top: 0;
+        }
+        .faq-nav {
+            flex-direction: row;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .faq-nav-link {
+            white-space: nowrap;
+            width: auto;
+        }
+        .faq-support-card {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- 1. Premium Hero -->
+<section class="premium-hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-text reveal">
+                <span class="premium-kicker">Knowledge Base</span>
+                <h1 class="hero-title">Frequently Asked <span>Questions</span></h1>
+                <p class="hero-subtitle">
+                    Find immediate answers regarding identity checks, physical property vetting, secure escrow pipelines, and digital agreements.
+                </p>
+            </div>
+            <div></div>
+        </div>
+    </div>
+</section>
+
+<!-- 2. FAQ Layout -->
+<section style="padding: 6rem 0; background-color: var(--color-bg-base);">
+    <div class="container">
+        <div class="faq-layout">
+            <!-- Sidebar -->
+            <div class="faq-sidebar reveal">
+                <ul class="faq-nav">
+                    <li><button onclick="scrollToCategory('general')" class="faq-nav-link active" data-target="general"><i class="fa-solid fa-circle-info"></i> General</button></li>
+                    <li><button onclick="scrollToCategory('verification')" class="faq-nav-link" data-target="verification"><i class="fa-solid fa-id-card"></i> Verification</button></li>
+                    <li><button onclick="scrollToCategory('vetting')" class="faq-nav-link" data-target="vetting"><i class="fa-solid fa-house-circle-check"></i> Property Vetting</button></li>
+                    <li><button onclick="scrollToCategory('escrow')" class="faq-nav-link" data-target="escrow"><i class="fa-solid fa-vault"></i> Escrow & Payments</button></li>
+                    <li><button onclick="scrollToCategory('tenants')" class="faq-nav-link" data-target="tenants"><i class="fa-solid fa-user-tag"></i> For Tenants</button></li>
+                    <li><button onclick="scrollToCategory('landlords')" class="faq-nav-link" data-target="landlords"><i class="fa-solid fa-user-tie"></i> For Landlords</button></li>
+                    <li><button onclick="scrollToCategory('legal')" class="faq-nav-link" data-target="legal"><i class="fa-solid fa-file-contract"></i> Contracts & Legal</button></li>
+                    <li><button onclick="scrollToCategory('support')" class="faq-nav-link" data-target="support"><i class="fa-solid fa-headset"></i> Support</button></li>
+                </ul>
+
+                <div class="faq-support-card">
+                    <h4>Need Personal Help?</h4>
+                    <p>Our verification board and support counselors are available 24/7 to assist you.</p>
+                    <a href="/contact/" class="btn btn-gold btn-sm" style="display:block; font-size:0.85rem; padding:0.6rem;">Contact Support</a>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="faq-content-area reveal delay-1">
+                <!-- Search bar -->
+                <div class="faq-search-container">
+                    <i class="fa-solid fa-magnifying-glass faq-search-icon"></i>
+                    <input type="text" id="faqSearchInput" class="faq-search-input" placeholder="Search questions, keywords, or topics..." onkeyup="filterFAQ()">
+                </div>
+
+                <!-- Categories -->
+                
+                <!-- General -->
+                <div class="faq-category-section" id="general">
+                    <h3 class="faq-category-title">General Questions</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">What is TRUST Protocol?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    TRUST Protocol is a verification‑driven rental platform that protects tenants and landlords through identity checks, property vetting, and secure escrow payments.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Why should I use TRUST Protocol?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    It eliminates fake landlords, scam listings, cash‑loss risks, and undocumented agreements by ensuring every step is verified and transparent.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification -->
+                <div class="faq-category-section" id="verification">
+                    <h3 class="faq-category-title">Verification</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">How does landlord verification work?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Landlords are verified using National ID + face match + ownership confirmation. This prevents impersonation and protects property owners from fraud.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">How does tenant verification work?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Tenants complete National ID + selfie verification to ensure bookings come from real, traceable individuals.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Why is verification mandatory?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Mandatory verification protects both sides from fraud, fake identities, and disputes.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property Vetting -->
+                <div class="faq-category-section" id="vetting">
+                    <h3 class="faq-category-title">Property Vetting</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">What is physical property vetting?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    A TRUST‑certified inspector visits the property to confirm ownership, condition, accuracy of photos, and listing truthfulness.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Why must my property be vetted before listing?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Vetting prevents fake listings and ensures tenants only see verified, real homes.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">How long does vetting take?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Typically 24–72 hours depending on location and agent availability.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Escrow & Payments -->
+                <div class="faq-category-section" id="escrow">
+                    <h3 class="faq-category-title">Escrow & Payments</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">How does escrow work?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Tenants pay the required rent period (1, 3, 6, or 12 months) plus deposit into escrow. Funds are released to the landlord only after verification and confirmed move‑in.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Why is escrow mandatory?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Escrow protects tenants from fake landlords and protects landlords from tenants who disappear after booking.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">When does the landlord receive payment?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    After the tenant confirms successful move‑in on the platform.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Where is the security deposit held?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Deposits remain in escrow until the end of the tenancy to prevent disputes.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- For Tenants -->
+                <div class="faq-category-section" id="tenants">
+                    <h3 class="faq-category-title">For Tenants</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">How do I book a verified property?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Complete verification → choose a vetted property → pay into escrow → move in → confirm.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">What if the property is not as advertised?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Escrow will not release funds. TRUST Protocol intervenes and resolves the issue.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Can I get a refund?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Yes — if verification fails or the property does not match the listing.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- For Landlords -->
+                <div class="faq-category-section" id="landlords">
+                    <h3 class="faq-category-title">For Landlords</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">How do I list my property?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Complete identity verification → request property vetting → upload listing details → go live.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Why must I verify my identity?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    To protect your property from being claimed or listed by fake landlords.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Do I have to accept escrow?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Yes — escrow guarantees secure, fraud‑proof payments.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contracts & Legal -->
+                <div class="faq-category-section" id="legal">
+                    <h3 class="faq-category-title">Contracts & Legal</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Is the tenancy agreement legally binding?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Yes. Both parties sign a digital, tamper‑proof contract stored securely on the platform.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">Can I download my contract?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Yes — contracts are available in your dashboard at any time.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support -->
+                <div class="faq-category-section" id="support">
+                    <h3 class="faq-category-title">Support</h3>
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">How do I contact TRUST Protocol support?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    Support is available through in‑app chat, WhatsApp, and email for both tenants and landlords.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-header" onclick="toggleFAQ(this)">
+                                <h4 class="faq-question">What if I have a dispute?</h4>
+                                <i class="fa-solid fa-chevron-down faq-toggle-icon"></i>
+                            </button>
+                            <div class="faq-body">
+                                <div class="faq-content">
+                                    TRUST Protocol mediates using verified records, inspection reports, and escrow data to resolve disputes fairly.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Smooth reveal animations
+    document.addEventListener('DOMContentLoaded', function () {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Setup scroll spy for sidebar nav
+        window.addEventListener('scroll', scrollSpy);
+    });
+
+    // Accordion Toggle
+    function toggleFAQ(button) {
+        const item = button.closest('.faq-item');
+        const body = item.querySelector('.faq-body');
+        const isActive = item.classList.contains('active');
+        
+        // Collapse all in this accordion section first (optional, let's keep it simple)
+        const allItems = item.closest('.faq-accordion').querySelectorAll('.faq-item');
+        allItems.forEach(i => {
+            i.classList.remove('active');
+            i.querySelector('.faq-body').style.maxHeight = null;
+        });
+
+        if (!isActive) {
+            item.classList.add('active');
+            body.style.maxHeight = body.scrollHeight + "px";
+        }
+    }
+
+    // Scroll to category
+    function scrollToCategory(id) {
+        const section = document.getElementById(id);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Scroll Spy
+    function scrollSpy() {
+        const sections = document.querySelectorAll('.faq-category-section');
+        const navLinks = document.querySelectorAll('.faq-nav-link');
+        let currentSectionId = '';
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 150; // offset
+            if (pageYOffset >= sectionTop) {
+                currentSectionId = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-target') === currentSectionId) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Search and Filter FAQ items
+    function filterFAQ() {
+        const query = document.getElementById('faqSearchInput').value.toLowerCase().trim();
+        const sections = document.querySelectorAll('.faq-category-section');
+
+        sections.forEach(section => {
+            let sectionHasMatches = false;
+            const items = section.querySelectorAll('.faq-item');
+
+            items.forEach(item => {
+                const questionText = item.querySelector('.faq-question').textContent.toLowerCase();
+                const contentText = item.querySelector('.faq-content').textContent.toLowerCase();
+
+                if (questionText.includes(query) || contentText.includes(query)) {
+                    item.style.display = '';
+                    sectionHasMatches = true;
+                    
+                    // If searching specifically, expand matching items
+                    if (query.length > 1) {
+                        item.classList.add('active');
+                        const body = item.querySelector('.faq-body');
+                        body.style.maxHeight = body.scrollHeight + "px";
+                    }
+                } else {
+                    item.style.display = 'none';
+                    item.classList.remove('active');
+                    item.querySelector('.faq-body').style.maxHeight = null;
+                }
+            });
+
+            // Show or hide entire section based on matches
+            if (sectionHasMatches) {
+                section.style.display = '';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

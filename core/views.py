@@ -993,6 +993,22 @@ def about_us_view(request):
         'agents': agents,
     })
 
+def how_escrow_works_view(request):
+    return render(request, 'how_it_works.html')
+
+def verification_process_view(request):
+    return render(request, 'verification.html')
+
+def faq_view(request):
+    return render(request, 'faq.html')
+
+def legal_standards_view(request):
+    return render(request, 'legal.html')
+
+def disputes_view(request):
+    return render(request, 'disputes.html')
+
+
 
 
 def search_view(request):
