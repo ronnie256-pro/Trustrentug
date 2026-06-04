@@ -843,30 +843,17 @@
   }
 
   /* Vetted Properties Grid Layout */
+  .vetted-container-padding {
+    max-width: 100%;
+    margin: 0;
+    padding: 0 3.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
   .vetted-grid-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 1.5rem;
-  }
-  @media (max-width: 1600px) {
-    .vetted-grid-container {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-  @media (max-width: 1200px) {
-    .vetted-grid-container {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  @media (max-width: 768px) {
-    .vetted-grid-container {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 480px) {
-    .vetted-grid-container {
-      grid-template-columns: 1fr;
-    }
   }
 
   .vetted-card-grid-wrapper {
@@ -890,6 +877,111 @@
     box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
     background: rgba(255, 255, 255, 0.3) !important;
     transform: translateY(-6px) !important; /* Gentle premium card lift */
+  }
+
+  /* Responsive breakpoints for Vetted Properties Grid */
+  @media (max-width: 1600px) {
+    .vetted-grid-container {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media (max-width: 1200px) {
+    .vetted-grid-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    .vetted-container-padding {
+      padding: 0 1.5rem;
+    }
+    .vetted-grid-container {
+      display: grid !important;
+      grid-template-columns: none !important;
+      grid-template-rows: repeat(2, auto) !important;
+      grid-auto-flow: column !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory !important;
+      -webkit-overflow-scrolling: touch !important;
+      gap: 1rem !important;
+      padding-bottom: 1rem !important;
+      scrollbar-width: none;
+    }
+    .vetted-grid-container::-webkit-scrollbar {
+      display: none;
+    }
+    .vetted-card-grid-wrapper {
+      width: 260px !important;
+      flex-shrink: 0 !important;
+      scroll-snap-align: start !important;
+    }
+    .vetted-card-grid-wrapper .glass-img-wrapper {
+      height: 140px !important;
+    }
+    .vetted-card-grid-wrapper .glass-tag {
+      top: 0.5rem !important;
+      left: 0.5rem !important;
+      font-size: 0.65rem !important;
+      padding: 0.2rem 0.5rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-body {
+      padding: 0.85rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-price {
+      font-size: 1rem !important;
+      margin-bottom: 0.25rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-title {
+      font-size: 0.82rem !important;
+      margin-bottom: 0.25rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-location {
+      font-size: 0.72rem !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .vetted-container-padding {
+      padding: 0 0.75rem;
+    }
+    .vetted-grid-container {
+      display: grid !important;
+      grid-template-columns: none !important;
+      grid-template-rows: repeat(2, auto) !important;
+      grid-auto-flow: column !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory !important;
+      -webkit-overflow-scrolling: touch !important;
+      gap: 0.75rem !important;
+      padding-bottom: 0.75rem !important;
+      scrollbar-width: none;
+    }
+    .vetted-grid-container::-webkit-scrollbar {
+      display: none;
+    }
+    .vetted-card-grid-wrapper {
+      width: 220px !important;
+      flex-shrink: 0 !important;
+      scroll-snap-align: start !important;
+      border-width: 2px !important;
+    }
+    .vetted-card-grid-wrapper .glass-img-wrapper {
+      height: 115px !important;
+    }
+    .vetted-card-grid-wrapper .glass-tag {
+      font-size: 0.55rem !important;
+      padding: 0.15rem 0.4rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-body {
+      padding: 0.75rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-price {
+      font-size: 0.88rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-title {
+      font-size: 0.78rem !important;
+    }
+    .vetted-card-grid-wrapper .glass-location {
+      font-size: 0.7rem !important;
+    }
   }
 
   /* Full-Width Seamless Marquee CSS */
@@ -1234,7 +1326,7 @@
 
 <!-- RECENTLY ADDED LANDINGS SECTION (CLEAN CARDS) -->
 <section class="glass-section" style="padding: 4rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #f4efdf 100%); border-top: 1px solid rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.03); width: 100%;">
-  <div style="max-width: 100%; margin: 0; padding: 0 3.5rem; width: 100%; box-sizing: border-box;">
+  <div class="vetted-container-padding">
     
     <!-- Premium Vetted Grid Layout -->
     <div class="vetted-grid-container">
