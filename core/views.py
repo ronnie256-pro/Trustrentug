@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -1130,6 +1132,7 @@ def agent_report_auth(request):
         agent_id = request.POST.get('agent_id', '').strip()
         phone = request.POST.get('phone', '').strip()
         email = request.POST.get('email', '').strip()
+        agent_type = request.POST.get('agent_type', 'inspection_agent').strip()
         
         agent = InspectionAgent.objects.filter(agent_id__iexact=agent_id).select_related('role').first()
         
@@ -1153,9 +1156,14 @@ def agent_report_auth(request):
                         phone_matches = input_phone_clean[-9:] == db_phone_clean[-9:]
             
             if email_matches and phone_matches:
-                request.session['verified_agent_id'] = agent.id
-                messages.success(request, f"Welcome back, Inspector {agent.name}! Credentials successfully verified.")
-                return redirect('agent_submit_report')
+                if agent_type == 'chat_agent':
+                    request.session['verified_chat_agent_id'] = agent.id
+                    messages.success(request, f"Welcome back, Chatroom Agent {agent.name}! Live chat workspace active.")
+                    return redirect('chat_agent_dashboard')
+                else:
+                    request.session['verified_agent_id'] = agent.id
+                    messages.success(request, f"Welcome back, Inspector {agent.name}! Credentials successfully verified.")
+                    return redirect('agent_submit_report')
             else:
                 messages.error(request, "Access Denied: Invalid Agent credentials. Please verify your ID, Phone, and Email address.")
         else:
@@ -1692,4 +1700,257 @@ def admin_tenant_detail(request, tenant_id):
         'tenant': tenant,
         'current_tab': 'tenants',
     })
+
+
+# --- CHATROOM VIEWS & APIS ---
+
+def chat_agent_dashboard(request):
+    agent_id = request.session.get('verified_chat_agent_id')
+    agent = None
+    if agent_id:
+        try:
+            agent = InspectionAgent.objects.get(id=agent_id)
+        except InspectionAgent.DoesNotExist:
+            pass
+
+    if not agent:
+        if request.user.is_superuser or (hasattr(request.user, 'profile') and request.user.profile.role == 'admin'):
+            pass
+        else:
+            messages.error(request, "Please authenticate as a Chatroom Agent on the portal to access the workspace.")
+            return redirect('agent_report_auth')
+
+    open_threads = ChatThread.objects.filter(status='open').order_by('-updated_at')
+    if agent:
+        my_chats = ChatThread.objects.filter(assigned_agent=agent, status='active').order_by('-updated_at')
+    else:
+        my_chats = ChatThread.objects.filter(status='active').order_by('-updated_at')
+        
+    closed_chats = ChatThread.objects.filter(status='closed').order_by('-updated_at')[:20]
+
+    context = {
+        'agent': agent,
+        'open_threads': open_threads,
+        'my_chats': my_chats,
+        'closed_chats': closed_chats,
+    }
+    return render(request, 'chat/agent_dashboard.html', context)
+
+
+def chat_api_init(request):
+    if not request.session.session_key:
+        request.session.save()
+    session_key = request.session.session_key
+
+    thread = None
+    if request.user.is_authenticated:
+        guest_thread = ChatThread.objects.filter(session_key=session_key, status__in=['open', 'active']).first()
+        if guest_thread:
+            guest_thread.user = request.user
+            guest_thread.save()
+
+        thread = ChatThread.objects.filter(user=request.user, status__in=['open', 'active']).first()
+    else:
+        thread = ChatThread.objects.filter(session_key=session_key, status__in=['open', 'active']).first()
+
+    if not thread:
+        if request.user.is_authenticated:
+            thread = ChatThread.objects.create(user=request.user, status='open')
+        else:
+            thread = ChatThread.objects.create(session_key=session_key, status='open')
+
+    messages_qs = thread.messages.all().select_related('sender_user', 'sender_agent').order_by('timestamp')
+
+    messages_data = []
+    for msg in messages_qs:
+        sender_name = "You"
+        if msg.sender_type == 'agent':
+            sender_name = msg.sender_agent.name if msg.sender_agent else "Trust Support Agent"
+        elif msg.sender_type == 'system':
+            sender_name = "System"
+        elif msg.sender_type == 'client':
+            if msg.sender_user:
+                sender_name = msg.sender_user.username
+
+        messages_data.append({
+            'id': msg.id,
+            'sender_type': msg.sender_type,
+            'sender_name': sender_name,
+            'message': msg.message,
+            'timestamp': msg.timestamp.strftime('%H:%M'),
+        })
+
+    agent_data = None
+    if thread.assigned_agent:
+        agent_data = {
+            'name': thread.assigned_agent.name,
+            'image': thread.assigned_agent.image.url if thread.assigned_agent.image else None,
+        }
+
+    return JsonResponse({
+        'status': 'success',
+        'thread_id': thread.id,
+        'thread_status': thread.status,
+        'assigned_agent': agent_data,
+        'messages': messages_data,
+    })
+
+
+@csrf_exempt
+def chat_api_send(request):
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'POST method required'}, status=400)
+
+    import json
+    data = {}
+    if request.content_type == 'application/json':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+        except Exception:
+            pass
+    else:
+        data = request.POST
+
+    thread_id = data.get('thread_id')
+    message_text = data.get('message', '').strip()
+    sender_type = data.get('sender_type', 'client')
+
+    if not thread_id or not message_text:
+        return JsonResponse({'status': 'error', 'message': 'Missing thread_id or message'}, status=400)
+
+    thread = get_object_or_404(ChatThread, id=thread_id)
+
+    sender_user = None
+    sender_agent = None
+
+    if sender_type == 'agent':
+        agent_id = request.session.get('verified_chat_agent_id')
+        if agent_id:
+            try:
+                sender_agent = InspectionAgent.objects.get(id=agent_id)
+            except InspectionAgent.DoesNotExist:
+                pass
+        if not sender_agent and (request.user.is_superuser or (hasattr(request.user, 'profile') and request.user.profile.role == 'admin')):
+            sender_agent = thread.assigned_agent
+
+        if sender_agent:
+            if thread.status == 'open' or not thread.assigned_agent:
+                thread.assigned_agent = sender_agent
+                thread.status = 'active'
+                thread.save()
+    else:
+        sender_type = 'client'
+        if request.user.is_authenticated:
+            sender_user = request.user
+
+    msg = ChatMessage.objects.create(
+        thread=thread,
+        sender_type=sender_type,
+        sender_user=sender_user,
+        sender_agent=sender_agent,
+        message=message_text
+    )
+
+    thread.updated_at = msg.timestamp
+    thread.save()
+
+    sender_name = "You"
+    if sender_type == 'agent':
+        sender_name = sender_agent.name if sender_agent else "Trust Support Agent"
+    elif sender_user:
+        sender_name = sender_user.username
+
+    return JsonResponse({
+        'status': 'success',
+        'message_id': msg.id,
+        'timestamp': msg.timestamp.strftime('%H:%M'),
+        'sender_name': sender_name
+    })
+
+
+def chat_api_poll(request):
+    thread_id = request.GET.get('thread_id')
+    last_id = request.GET.get('last_id', 0)
+
+    try:
+        last_id = int(last_id)
+    except ValueError:
+        last_id = 0
+
+    if not thread_id:
+        return JsonResponse({'status': 'error', 'message': 'Missing thread_id'}, status=400)
+
+    thread = get_object_or_404(ChatThread, id=thread_id)
+    new_msgs = thread.messages.filter(id__gt=last_id).select_related('sender_user', 'sender_agent').order_by('timestamp')
+
+    messages_data = []
+    for msg in new_msgs:
+        sender_name = "You"
+        if msg.sender_type == 'agent':
+            sender_name = msg.sender_agent.name if msg.sender_agent else "Trust Support Agent"
+        elif msg.sender_type == 'system':
+            sender_name = "System"
+        elif msg.sender_type == 'client' and msg.sender_user:
+            sender_name = msg.sender_user.username
+
+        messages_data.append({
+            'id': msg.id,
+            'sender_type': msg.sender_type,
+            'sender_name': sender_name,
+            'message': msg.message,
+            'timestamp': msg.timestamp.strftime('%H:%M'),
+        })
+
+    agent_data = None
+    if thread.assigned_agent:
+        agent_data = {
+            'name': thread.assigned_agent.name,
+            'image': thread.assigned_agent.image.url if thread.assigned_agent.image else None,
+        }
+
+    return JsonResponse({
+        'status': 'success',
+        'thread_id': thread.id,
+        'thread_status': thread.status,
+        'assigned_agent': agent_data,
+        'messages': messages_data
+    })
+
+
+@csrf_exempt
+def chat_api_claim(request, thread_id):
+    agent_id = request.session.get('verified_chat_agent_id')
+    agent = None
+    if agent_id:
+        agent = InspectionAgent.objects.filter(id=agent_id).first()
+
+    thread = get_object_or_404(ChatThread, id=thread_id)
+    if agent:
+        thread.assigned_agent = agent
+        thread.status = 'active'
+        thread.save()
+
+        ChatMessage.objects.create(
+            thread=thread,
+            sender_type='system',
+            message=f"Agent {agent.name} has joined the chat."
+        )
+
+    return JsonResponse({'status': 'success', 'thread_id': thread.id, 'status_display': thread.get_status_display()})
+
+
+@csrf_exempt
+def chat_api_close(request, thread_id):
+    thread = get_object_or_404(ChatThread, id=thread_id)
+    thread.status = 'closed'
+    thread.save()
+
+    ChatMessage.objects.create(
+        thread=thread,
+        sender_type='system',
+        message="This chat session has been marked as closed."
+    )
+
+    return JsonResponse({'status': 'success', 'thread_id': thread.id})
+
 

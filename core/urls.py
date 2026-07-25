@@ -67,6 +67,14 @@ urlpatterns = [
     path('tenant/booking/cancel/<int:booking_id>/', views.tenant_cancel_booking, name='tenant_cancel_booking'),
     path('tenant/favorite/add/<int:property_id>/', views.tenant_add_favorite, name='tenant_add_favorite'),
     path('tenant/favorite/remove/<int:favorite_id>/', views.tenant_remove_favorite, name='tenant_remove_favorite'),
+
+    # Chatroom Routes
+    path('chat-dashboard/', views.chat_agent_dashboard, name='chat_agent_dashboard'),
+    path('chat/api/init/', views.chat_api_init, name='chat_api_init'),
+    path('chat/api/send/', views.chat_api_send, name='chat_api_send'),
+    path('chat/api/poll/', views.chat_api_poll, name='chat_api_poll'),
+    path('chat/api/claim/<int:thread_id>/', views.chat_api_claim, name='chat_api_claim'),
+    path('chat/api/close/<int:thread_id>/', views.chat_api_close, name='chat_api_close'),
 ]
 
 if settings.DEBUG:

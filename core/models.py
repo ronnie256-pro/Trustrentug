@@ -388,7 +388,44 @@ class SiteSetting(models.Model):
         verbose_name_plural = "Site Settings"
 
 
+class ChatThread(models.Model):
+    STATUS_CHOICES = [
+        ('open', 'Open / Unassigned'),
+        ('active', 'Active'),
+        ('closed', 'Closed'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='chat_threads')
+    session_key = models.CharField(max_length=255, null=True, blank=True)
+    assigned_agent = models.ForeignKey(InspectionAgent, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_chats')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        client_identifier = self.user.username if self.user else f"Guest ({self.session_key[:8] if self.session_key else 'Anonymous'})"
+        return f"Chat #{self.id} - {client_identifier} [{self.get_status_display()}]"
 
 
+class ChatMessage(models.Model):
+    SENDER_CHOICES = [
+        ('client', 'Client'),
+        ('agent', 'Agent'),
+        ('system', 'System'),
+    ]
+    thread = models.ForeignKey(ChatThread, on_delete=models.CASCADE, related_name='messages')
+    sender_type = models.CharField(max_length=20, choices=SENDER_CHOICES, default='client')
+    sender_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    sender_agent = models.ForeignKey(InspectionAgent, on_delete=models.SET_NULL, null=True, blank=True)
+    message = models.TextField()
+    is_read_by_client = models.BooleanField(default=False)
+    is_read_by_agent = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['timestamp']
 
+    def __str__(self):
+        return f"[{self.sender_type}] Thread #{self.thread.id}: {self.message[:30]}"

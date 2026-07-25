@@ -123,6 +123,14 @@
         <form method="POST" action="{% url 'agent_report_auth' %}">
             {% csrf_token %}
             <div class="form-group">
+                <label for="agent_type">Agent Portal Role</label>
+                <select id="agent_type" name="agent_type" class="form-control" style="background: rgba(20, 25, 35, 0.95); color: white; cursor: pointer;">
+                    <option value="inspection_agent">Inspection Agent (Physical Safety & Occupancy Reports)</option>
+                    <option value="chat_agent">Chatroom Agent (Live Client Support Workspace)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="agent_id">Unique Agent ID</label>
                 <input type="text" id="agent_id" name="agent_id" required placeholder="e.g. AGNT-A2F8D4" class="form-control" style="font-family: monospace;">
             </div>

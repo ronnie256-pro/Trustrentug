@@ -1,0 +1,754 @@
+{% extends "base.html" %}
+
+{% block title %}Chatroom Agent Workspace | TRUST{% endblock %}
+
+{% block extra_css %}
+<style>
+    body, main {
+        background-color: var(--color-emerald-darkest, #041a11) !important;
+    }
+    
+    .chat-workspace-wrapper {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        background-color: var(--color-emerald-darkest, #041a11);
+    }
+
+    .wa-web-container {
+        display: flex;
+        height: calc(100vh - 70px);
+        width: 100%;
+        max-width: 100%;
+        background-color: var(--color-emerald-darkest, #041a11);
+        color: var(--color-text-dark, #1f1f1f);
+        font-family: var(--font-body, 'Inter', sans-serif);
+        border-radius: 0;
+        box-shadow: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid var(--color-gold, #cba358);
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    /* LEFT SIDEBAR - EMERALD GREEN */
+    .wa-sidebar {
+        width: 380px;
+        flex-shrink: 0;
+        background-color: var(--color-emerald-dark, #072a1c);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        color: #ffffff;
+    }
+
+    .wa-sidebar-header {
+        height: 65px;
+        background-color: var(--color-emerald-darkest, #041a11);
+        color: #ffffff;
+        padding: 0 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .wa-agent-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .wa-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--color-gold, #cba358), #b48e47);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    /* Search Box */
+    .wa-search-bar {
+        padding: 10px 14px;
+        background-color: var(--color-emerald-dark, #072a1c);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .wa-search-inner {
+        background-color: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 6px 12px;
+        gap: 10px;
+    }
+
+    .wa-search-inner input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #ffffff;
+        width: 100%;
+        font-size: 0.88rem;
+    }
+
+    .wa-search-inner input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Filter Tabs */
+    .wa-filter-tabs {
+        display: flex;
+        gap: 6px;
+        padding: 8px 12px;
+        background-color: var(--color-emerald-dark, #072a1c);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .wa-filter-btn {
+        background-color: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 4px 10px;
+        border-radius: 14px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .wa-filter-btn.active, .wa-filter-btn:hover {
+        background-color: var(--color-gold, #cba358);
+        color: #041a11;
+        border-color: var(--color-gold, #cba358);
+        font-weight: 700;
+    }
+
+    /* Conversation List */
+    .wa-chat-list {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .wa-chat-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        gap: 14px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        transition: background-color 0.2s;
+    }
+
+    .wa-chat-item:hover, .wa-chat-item.active {
+        background-color: rgba(203, 163, 88, 0.2);
+        border-left: 4px solid var(--color-gold, #cba358);
+    }
+
+    .wa-item-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .wa-item-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+
+    .wa-item-name {
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: #ffffff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .wa-item-time {
+        font-size: 0.74rem;
+        color: var(--color-gold-light, #e4c585);
+    }
+
+    .wa-item-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .wa-item-snippet {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.7);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .wa-badge {
+        font-size: 0.68rem;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .wa-badge-open { background-color: rgba(234, 179, 8, 0.25); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); }
+    .wa-badge-active { background-color: rgba(74, 222, 128, 0.25); color: #86efac; border: 1px solid rgba(74, 222, 128, 0.4); }
+    .wa-badge-closed { background-color: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2); }
+
+
+    /* RIGHT MAIN CHAT AREA */
+    .wa-main-chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: #f7f4ed; /* EXECUTIVE PAPER TONE */
+        position: relative;
+    }
+
+    /* Chat Header */
+    .wa-chat-header {
+        height: 65px;
+        background-color: var(--color-emerald-darkest, #041a11);
+        color: #ffffff;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 10;
+    }
+
+    .wa-contact-details {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .wa-contact-name {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #ffffff;
+    }
+
+    .wa-contact-status {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    /* EXECUTIVE PAPER TEXT/CHAT AREA WALLPAPER */
+    .wa-chat-wallpaper {
+        flex: 1;
+        padding: 24px 6%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background-color: #f7f4ed;
+        background-image: 
+            linear-gradient(rgba(226, 221, 211, 0.35) 1px, transparent 0),
+            linear-gradient(90deg, rgba(226, 221, 211, 0.35) 1px, transparent 0);
+        background-size: 24px 24px;
+        box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Executive Message Bubbles */
+    .wa-bubble-container {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 4px;
+    }
+
+    .wa-bubble {
+        max-width: 65%;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 0.92rem;
+        line-height: 1.45;
+        position: relative;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        word-wrap: break-word;
+    }
+
+    .wa-bubble-client {
+        align-self: flex-start;
+        background-color: #ffffff;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
+        border-top-left-radius: 0;
+    }
+
+    .wa-bubble-agent {
+        align-self: flex-end;
+        background: linear-gradient(135deg, var(--color-emerald, #0a3d28), #0e5237);
+        color: #ffffff;
+        border-top-right-radius: 0;
+    }
+
+    .wa-bubble-system {
+        align-self: center;
+        background-color: #ffffff;
+        color: #64748b;
+        font-size: 0.78rem;
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 1px solid var(--color-gold, #cba358);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        margin: 12px 0;
+        font-family: var(--font-heading, serif);
+        font-style: italic;
+    }
+
+    .wa-bubble-meta {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        font-size: 0.68rem;
+        opacity: 0.8;
+        margin-top: 4px;
+    }
+
+    /* Footer & Input Bar */
+    .wa-chat-footer {
+        background-color: #eee9e0;
+        padding: 12px 18px;
+        border-top: 1px solid #e2ddd3;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .wa-canned-bar {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .wa-canned-chip {
+        background-color: #ffffff;
+        color: var(--color-emerald, #0a3d28);
+        border: 1px solid var(--color-gold, #cba358);
+        padding: 4px 12px;
+        border-radius: 14px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+
+    .wa-canned-chip:hover {
+        background-color: var(--color-gold, #cba358);
+        color: #ffffff;
+    }
+
+    .wa-input-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .wa-input-box {
+        flex: 1;
+        background-color: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+    }
+
+    .wa-input-box textarea {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #1e293b;
+        resize: none;
+        height: 24px;
+        font-size: 0.92rem;
+        font-family: inherit;
+    }
+
+    .wa-send-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--color-gold, #cba358), #b48e47);
+        color: #ffffff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+    }
+
+    .wa-send-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(203, 163, 88, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-workspace-wrapper">
+    <div class="wa-web-container">
+        <!-- LEFT SIDEBAR - EMERALD GREEN -->
+        <div class="wa-sidebar">
+            <!-- Sidebar Header -->
+            <div class="wa-sidebar-header">
+                <div class="wa-agent-info">
+                    <div class="wa-avatar">
+                        {% if agent %}{{ agent.name|slice:":1" }}{% else %}A{% endif %}
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: #ffffff;">
+                            {% if agent %}{{ agent.name }}{% else %}{{ request.user.username }}{% endif %}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--color-gold, #cba358);">
+                            <i class="fa-solid fa-circle" style="font-size: 0.5rem; vertical-align: middle; color: #4ade80;"></i> Chatroom Agent Desk
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="wa-search-bar">
+                <div class="wa-search-inner">
+                    <i class="fa-solid fa-magnifying-glass" style="color: rgba(255,255,255,0.6); font-size: 0.88rem;"></i>
+                    <input type="text" id="chatSearchInput" placeholder="Search client inquiries..." onkeyup="filterChats()">
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="wa-filter-tabs">
+                <button class="wa-filter-btn active" onclick="filterTab('all', this)">All</button>
+                <button class="wa-filter-btn" onclick="filterTab('my', this)">My Chats ({{ my_chats.count }})</button>
+                <button class="wa-filter-btn" onclick="filterTab('open', this)">Queue ({{ open_threads.count }})</button>
+                <button class="wa-filter-btn" onclick="filterTab('closed', this)">Closed</button>
+            </div>
+
+            <!-- Chat List -->
+            <div class="wa-chat-list" id="waChatList">
+                <!-- My Active Chats -->
+                {% for thread in my_chats %}
+                <div class="wa-chat-item cat-my" onclick="selectThread({{ thread.id }}, '{{ thread.user.username|default:"Guest Visitor" }}', '{{ thread.get_status_display }}')" id="thread-item-{{ thread.id }}">
+                    <div class="wa-avatar">
+                        {% if thread.user %}{{ thread.user.username|slice:":1"|upper }}{% else %}G{% endif %}
+                    </div>
+                    <div class="wa-item-body">
+                        <div class="wa-item-top">
+                            <span class="wa-item-name">{% if thread.user %}{{ thread.user.username }}{% else %}Guest Visitor #{{ thread.id }}{% endif %}</span>
+                            <span class="wa-item-time">{{ thread.updated_at|date:"H:i" }}</span>
+                        </div>
+                        <div class="wa-item-bottom">
+                            <span class="wa-item-snippet">
+                                {% with last_msg=thread.messages.last %}
+                                {% if last_msg %}{{ last_msg.message }}{% else %}No messages yet{% endif %}
+                                {% endwith %}
+                            </span>
+                            <span class="wa-badge wa-badge-active">Active</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Unassigned Queue -->
+                {% for thread in open_threads %}
+                <div class="wa-chat-item cat-open" onclick="selectThread({{ thread.id }}, '{{ thread.user.username|default:"Guest Visitor" }}', '{{ thread.get_status_display }}')" id="thread-item-{{ thread.id }}">
+                    <div class="wa-avatar" style="background: linear-gradient(135deg, #eab308, #ca8a04);">
+                        {% if thread.user %}{{ thread.user.username|slice:":1"|upper }}{% else %}G{% endif %}
+                    </div>
+                    <div class="wa-item-body">
+                        <div class="wa-item-top">
+                            <span class="wa-item-name">{% if thread.user %}{{ thread.user.username }}{% else %}Guest Visitor #{{ thread.id }}{% endif %}</span>
+                            <span class="wa-item-time">{{ thread.updated_at|date:"H:i" }}</span>
+                        </div>
+                        <div class="wa-item-bottom">
+                            <span class="wa-item-snippet">
+                                {% with last_msg=thread.messages.last %}
+                                {% if last_msg %}{{ last_msg.message }}{% else %}Awaiting agent response{% endif %}
+                                {% endwith %}
+                            </span>
+                            <span class="wa-badge wa-badge-open">Open</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Closed History -->
+                {% for thread in closed_chats %}
+                <div class="wa-chat-item cat-closed" onclick="selectThread({{ thread.id }}, '{{ thread.user.username|default:"Guest Visitor" }}', 'Closed')" id="thread-item-{{ thread.id }}">
+                    <div class="wa-avatar" style="background: rgba(255,255,255,0.2);">
+                        {% if thread.user %}{{ thread.user.username|slice:":1"|upper }}{% else %}G{% endif %}
+                    </div>
+                    <div class="wa-item-body">
+                        <div class="wa-item-top">
+                            <span class="wa-item-name">{% if thread.user %}{{ thread.user.username }}{% else %}Guest #{{ thread.id }}{% endif %}</span>
+                            <span class="wa-item-time">{{ thread.updated_at|date:"d/m" }}</span>
+                        </div>
+                        <div class="wa-item-bottom">
+                            <span class="wa-item-snippet">Conversation resolved</span>
+                            <span class="wa-badge wa-badge-closed">Closed</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- RIGHT MAIN CHAT AREA -->
+        <div class="wa-main-chat">
+            <!-- Chat Header -->
+            <div class="wa-chat-header" id="chatHeader">
+                <div class="wa-contact-details">
+                    <div class="wa-avatar" id="activeAvatar" style="display: none; width: 38px; height: 38px; font-size: 1rem;">C</div>
+                    <div>
+                        <div class="wa-contact-name" id="activeClientTitle">Chatroom Agent Support Desk</div>
+                        <div class="wa-contact-status" id="activeClientSub">Select a client query from the sidebar to respond</div>
+                    </div>
+                </div>
+                <div id="threadActions" style="display: none; gap: 10px; align-items: center;">
+                    <button onclick="claimCurrentThread()" style="background: var(--color-gold, #cba358); color: #ffffff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;" id="claimBtn">
+                        <i class="fa-solid fa-hand-holding-hand"></i> Claim Chat
+                    </button>
+                    <button onclick="closeCurrentThread()" style="background-color: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 6px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
+                        <i class="fa-solid fa-circle-xmark"></i> Close Chat
+                    </button>
+                </div>
+            </div>
+
+            <!-- Executive Paper Wallpaper & Stream -->
+            <div class="wa-chat-wallpaper" id="chatStream">
+                <div style="text-align: center; margin: auto; color: #64748b; max-width: 440px;">
+                    <i class="fa-solid fa-comments" style="font-size: 4rem; color: var(--color-gold, #cba358); margin-bottom: 1.2rem;"></i>
+                    <h3 style="color: var(--color-emerald-darkest, #041a11); font-family: var(--font-heading, serif); font-weight: 700; margin-bottom: 0.5rem;">TRUST Agent Workspace</h3>
+                    <p style="font-size: 0.9rem; line-height: 1.5; color: #64748b;">
+                        Select an open ticket or active client inquiry from the sidebar to view their messages and reply in real time.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Input Footer -->
+            <div class="wa-chat-footer" id="chatFooter" style="display: none;">
+                <div class="wa-canned-bar">
+                    <span class="wa-canned-chip" onclick="insertCanned('Hello! How can I assist you with TrustRent properties today?')">👋 Greeting</span>
+                    <span class="wa-canned-chip" onclick="insertCanned('Let me check the physical inspection & availability status for you.')">🏠 Check Property</span>
+                    <span class="wa-canned-chip" onclick="insertCanned('You can easily schedule a physical viewing directly on the property detail page.')">📅 Request Viewing</span>
+                    <span class="wa-canned-chip" onclick="insertCanned('Thank you for contacting TrustRent live support!')">🙏 Thank You</span>
+                </div>
+
+                <div class="wa-input-row">
+                    <div class="wa-input-box">
+                        <textarea id="agentInput" placeholder="Type your message..." onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); sendAgentMessage(); }"></textarea>
+                    </div>
+                    <button class="wa-send-btn" onclick="sendAgentMessage()" title="Send">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentThreadId = null;
+let lastMessageId = 0;
+let pollTimer = null;
+
+function selectThread(threadId, clientName, statusStr) {
+    currentThreadId = threadId;
+    lastMessageId = 0;
+    
+    document.querySelectorAll('.wa-chat-item').forEach(el => el.classList.remove('active'));
+    const activeItem = document.getElementById(`thread-item-${threadId}`);
+    if(activeItem) activeItem.classList.add('active');
+
+    document.getElementById('activeAvatar').style.display = 'flex';
+    document.getElementById('activeAvatar').innerText = clientName.charAt(0).toUpperCase();
+    document.getElementById('activeClientTitle').innerText = clientName;
+    document.getElementById('activeClientSub').innerText = `Thread #${threadId} • Status: ${statusStr}`;
+    
+    document.getElementById('threadActions').style.display = 'flex';
+    document.getElementById('chatFooter').style.display = 'flex';
+
+    fetchMessages();
+
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(pollMessages, 3000);
+}
+
+function fetchMessages() {
+    if (!currentThreadId) return;
+
+    fetch(`/chat/api/poll/?thread_id=${currentThreadId}&last_id=0`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const stream = document.getElementById('chatStream');
+                stream.innerHTML = `
+                    <div class="wa-bubble-system">
+                        🔒 Verified Support Session — Encrypted and stored in TRUST database.
+                    </div>
+                `;
+                
+                data.messages.forEach(msg => {
+                    appendMessageToStream(msg);
+                    if (msg.id > lastMessageId) lastMessageId = msg.id;
+                });
+                
+                scrollToBottom();
+            }
+        });
+}
+
+function pollMessages() {
+    if (!currentThreadId) return;
+
+    fetch(`/chat/api/poll/?thread_id=${currentThreadId}&last_id=${lastMessageId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success' && data.messages.length > 0) {
+                data.messages.forEach(msg => {
+                    appendMessageToStream(msg);
+                    if (msg.id > lastMessageId) lastMessageId = msg.id;
+                });
+                scrollToBottom();
+            }
+        });
+}
+
+function appendMessageToStream(msg) {
+    const stream = document.getElementById('chatStream');
+    const div = document.createElement('div');
+    
+    if (msg.sender_type === 'system') {
+        div.className = 'wa-bubble-system';
+        div.innerText = msg.message;
+    } else if (msg.sender_type === 'agent') {
+        div.className = 'wa-bubble wa-bubble-agent';
+        div.innerHTML = `
+            <div>${escapeHtml(msg.message)}</div>
+            <div class="wa-bubble-meta">
+                <span>${msg.timestamp}</span>
+                <i class="fa-solid fa-check-double" style="color: #cba358;"></i>
+            </div>
+        `;
+    } else {
+        div.className = 'wa-bubble wa-bubble-client';
+        div.innerHTML = `
+            <div>${escapeHtml(msg.message)}</div>
+            <div class="wa-bubble-meta">
+                <span>${msg.timestamp}</span>
+            </div>
+        `;
+    }
+    
+    stream.appendChild(div);
+}
+
+function sendAgentMessage() {
+    const input = document.getElementById('agentInput');
+    const msgText = input.value.trim();
+    if (!msgText || !currentThreadId) return;
+
+    fetch('/chat/api/send/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            thread_id: currentThreadId,
+            message: msgText,
+            sender_type: 'agent'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            input.value = '';
+            pollMessages();
+        }
+    });
+}
+
+function insertCanned(text) {
+    const input = document.getElementById('agentInput');
+    input.value = text;
+    input.focus();
+}
+
+function claimCurrentThread() {
+    if (!currentThreadId) return;
+    fetch(`/chat/api/claim/${currentThreadId}/`, { method: 'POST' })
+        .then(res => res.json())
+        .then(() => location.reload());
+}
+
+function closeCurrentThread() {
+    if (!currentThreadId) return;
+    fetch(`/chat/api/close/${currentThreadId}/`, { method: 'POST' })
+        .then(res => res.json())
+        .then(() => location.reload());
+}
+
+function filterTab(type, btn) {
+    document.querySelectorAll('.wa-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const items = document.querySelectorAll('.wa-chat-item');
+    items.forEach(item => {
+        if (type === 'all') {
+            item.style.display = 'flex';
+        } else if (type === 'my' && item.classList.contains('cat-my')) {
+            item.style.display = 'flex';
+        } else if (type === 'open' && item.classList.contains('cat-open')) {
+            item.style.display = 'flex';
+        } else if (type === 'closed' && item.classList.contains('cat-closed')) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function filterChats() {
+    const query = document.getElementById('chatSearchInput').value.toLowerCase();
+    const items = document.querySelectorAll('.wa-chat-item');
+    items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        if (text.includes(query)) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function scrollToBottom() {
+    const stream = document.getElementById('chatStream');
+    stream.scrollTop = stream.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
+}
+</script>
+{% endblock %}
