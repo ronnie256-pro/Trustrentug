@@ -557,55 +557,7 @@
                     </div>
                 </div>
 
-                <!-- Interactive Accordion for Inspection Reports -->
-                <div class="report-accordion">
-                    <button class="accordion-trigger main-trigger" id="main-report-btn">
-                        <span>
-                            <i class="fa-solid fa-clipboard-check text-emerald" style="margin-right: 0.5rem;"></i>
-                            Property Inspection Report
-                        </span>
-                        <i class="fa-solid fa-chevron-down arrow-icon"></i>
-                    </button>
 
-                    <div class="accordion-content" id="main-report-content">
-                        {% for report in reports %}
-                        <div class="category-accordion">
-                            <button class="accordion-trigger category-trigger">
-                                <span>
-                                    <i class="fa-solid fa-circle-check text-success"
-                                        style="margin-right: 0.5rem; font-size: 0.95rem;"></i>
-                                    {{ report.agent.role.name }} Report
-                                </span>
-                                <i class="fa-solid fa-chevron-down arrow-icon"></i>
-                            </button>
-                            <div class="accordion-content category-content">
-                                <div class="report-details-inner">
-                                    <p
-                                        style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">
-                                        <strong>Inspector:</strong> {{ report.agent.name }} (Agent ID: #TR-{{
-                                        report.agent.agent_id }})
-                                    </p>
-                                    <p
-                                        style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.75rem;">
-                                        <strong>Status:</strong>
-                                        <span class="badge"
-                                            style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;">
-                                            {{ report.get_status_display }}
-                                        </span>
-                                    </p>
-                                    <blockquote class="findings-quote">
-                                        "{{ report.findings }}"
-                                    </blockquote>
-                                </div>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p style="color: var(--color-text-muted); font-size: 0.95rem; padding: 1.5rem; margin: 0;">
-                            This property is pending physical vetting and report generation by active safety inspectors.
-                        </p>
-                        {% endfor %}
-                    </div>
-                </div>
             </div>
 
             <!-- Booking Sidebar -->

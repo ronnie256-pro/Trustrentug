@@ -1026,11 +1026,13 @@ def search_view(request):
     p_type = request.GET.get('type', '').strip().lower()
     if p_type and p_type != 'all types':
         if p_type == 'apartment':
-            properties = properties.filter(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block', 'flat'])
-        elif p_type == 'villa':
-            properties = properties.filter(category__in=['bungalow', 'standalone'])
+            properties = properties.filter(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block'])
+        elif p_type == 'flat':
+            properties = properties.filter(category__in=['flat', 'single_room', 'self_contained'])
         elif p_type == 'condo':
             properties = properties.filter(category__in=['condo_block'])
+        elif p_type in ['bungalow', 'standalone', 'villa']:
+            properties = properties.filter(category__in=['bungalow', 'standalone'])
             
     # 3. Price filters (min_price, max_price)
     min_price = request.GET.get('min_price', '').strip()

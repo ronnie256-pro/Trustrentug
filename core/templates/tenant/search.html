@@ -33,17 +33,20 @@
 
 .layout {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 330px 1fr;
     gap: 2rem;
-    padding: 3rem 0;
+    padding: 2.5rem 1rem;
+    max-width: 1650px;
+    margin: 0 auto;
 }
 
 .filters {
     background: #fff;
-    padding: 1.5rem;
+    padding: 1.8rem;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);
     height: fit-content;
+    box-shadow: var(--shadow-sm);
 }
 .filter-group {
     margin-bottom: 1.5rem;
@@ -52,9 +55,9 @@
     margin-bottom: 0;
 }
 .filter-title {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
     color: var(--color-emerald-dark);
 }
 .checkbox-list label {
@@ -62,14 +65,14 @@
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     cursor: pointer;
 }
 
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
 }
 
 .property-card {
@@ -88,7 +91,7 @@
     border-color: var(--color-gold);
 }
 .card-img {
-    height: 200px;
+    height: 180px;
     width: 100%;
     object-fit: cover;
     position: relative;
@@ -107,33 +110,34 @@
 }
 
 .card-body {
-    padding: 1.5rem;
+    padding: 1.2rem;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 .card-price {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: var(--color-emerald-darkest);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 .card-title {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
 }
 .card-location {
     color: var(--color-text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
 }
 .card-amenities {
     display: flex;
-    gap: 1rem;
-    font-size: 0.85rem;
+    gap: 0.8rem;
+    font-size: 0.82rem;
     color: var(--color-text-muted);
     border-top: 1px solid var(--color-border);
-    padding-top: 1rem;
+    padding-top: 0.8rem;
     margin-top: auto;
 }
 .card-amenities span {
@@ -143,65 +147,57 @@
 }
 
     /* Responsive Search */
-    @media (max-width: 992px) {
+    @media (max-width: 1400px) {
+        .results-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 1080px) {
         .layout { grid-template-columns: 1fr; }
         .filters { order: -1; margin-bottom: 2rem; }
+        .results-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    @media (max-width: 768px) {
-        .search-bar-inline { flex-direction: column; padding: 1rem; }
-        .search-bar-inline input { border-right: none; border-bottom: 1px solid var(--color-border); }
+    @media (max-width: 640px) {
         .results-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="search-header">
-    <div class="container">
-        <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem; color: var(--color-gold);">Find TRUST-Verified Properties</h2>
-        
-        <form method="GET" action="{% url 'search' %}" class="search-bar-inline">
-            <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Location, Neighborhood...">
-            <select name="type">
-                <option value="" {% if not type %}selected{% endif %}>All Types</option>
-                <option value="apartment" {% if type == 'apartment' %}selected{% endif %}>Apartment</option>
-                <option value="villa" {% if type == 'villa' %}selected{% endif %}>Villa</option>
-                <option value="condo" {% if type == 'condo' %}selected{% endif %}>Condo</option>
-            </select>
-            {% if min_price %}<input type="hidden" name="min_price" value="{{ min_price }}">{% endif %}
-            {% if max_price %}<input type="hidden" name="max_price" value="{{ max_price }}">{% endif %}
-            {% if 'pool' in selected_amenities %}<input type="hidden" name="pool" value="on">{% endif %}
-            {% if 'power' in selected_amenities %}<input type="hidden" name="power" value="on">{% endif %}
-            {% if 'gym' in selected_amenities %}<input type="hidden" name="gym" value="on">{% endif %}
-            {% if 'security' in selected_amenities %}<input type="hidden" name="security" value="on">{% endif %}
-            <button type="submit" class="btn btn-primary" style="flex: 0 0 150px; font-size: 1rem;">Search</button>
-        </form>
-    </div>
-</div>
-
-<div class="container layout">
+<div class="layout" style="margin: 0 auto;">
     <!-- Filters Sidebar -->
     <form method="GET" action="{% url 'search' %}" class="filters">
-        <input type="hidden" name="q" value="{{ q|default:'' }}">
-        <input type="hidden" name="type" value="{{ type|default:'' }}">
+        <h3 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.3rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--color-gold); padding-bottom: 0.5rem; font-weight: 700;">
+            Filter Properties
+        </h3>
 
+        <!-- Location Filter -->
         <div class="filter-group">
-            <h4 class="filter-title">Price Range (Annually)</h4>
+            <h4 class="filter-title">Location / Area</h4>
+            <input type="text" name="q" value="{{ q|default:'' }}" class="form-control" style="padding: 0.75rem; width: 100%;">
+        </div>
+
+        <!-- Property Type Filter -->
+        <div class="filter-group">
+            <h4 class="filter-title">Property Type</h4>
+            <select name="type" class="form-control" style="padding: 0.75rem; width: 100%; cursor: pointer;">
+                <option value="" {% if not type %}selected{% endif %}>All Property Types</option>
+                <option value="apartment" {% if type == 'apartment' %}selected{% endif %}>Apartment</option>
+                <option value="flat" {% if type == 'flat' %}selected{% endif %}>Flat</option>
+                <option value="condo" {% if type == 'condo' %}selected{% endif %}>Condo</option>
+                <option value="bungalow" {% if type == 'bungalow' or type == 'villa' %}selected{% endif %}>Bungalow / Standalone</option>
+            </select>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="filter-group">
+            <h4 class="filter-title">Price Range (UGX / Month)</h4>
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <input type="number" name="min_price" value="{{ min_price|default:'' }}" class="form-control" placeholder="Min" style="padding: 0.5rem;">
-                <span>to</span>
-                <input type="number" name="max_price" value="{{ max_price|default:'' }}" class="form-control" placeholder="Max" style="padding: 0.5rem;">
+                <input type="number" name="min_price" value="{{ min_price|default:'' }}" class="form-control" style="padding: 0.75rem; width: 100%;">
+                <span style="color: var(--color-text-muted);">to</span>
+                <input type="number" name="max_price" value="{{ max_price|default:'' }}" class="form-control" style="padding: 0.75rem; width: 100%;">
             </div>
         </div>
 
-        <div class="filter-group">
-            <h4 class="filter-title">TRUST Status</h4>
-            <div class="checkbox-list">
-                <label><input type="checkbox" checked disabled> <i class="fa-solid fa-shield-check text-success"></i> 100% Verified Only</label>
-                <small style="color: var(--color-text-muted); display: block; margin-top: 0.2rem; font-size: 0.8rem; line-height: 1.3;">Per TRUST philosophy, unverified properties are hidden from search.</small>
-            </div>
-        </div>
-
+        <!-- Amenities Filter -->
         <div class="filter-group">
             <h4 class="filter-title">Amenities</h4>
             <div class="checkbox-list">
@@ -212,7 +208,12 @@
             </div>
         </div>
         
-        <button type="submit" class="btn btn-outline" style="width: 100%;">Apply Filters</button>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-size: 1rem;">Apply Filters</button>
+            {% if q or type or min_price or max_price or selected_amenities %}
+            <a href="{% url 'search' %}" class="btn btn-outline" style="width: 100%; text-align: center; padding: 0.75rem;">Clear Filters</a>
+            {% endif %}
+        </div>
     </form>
 
     <!-- Results Grid -->
