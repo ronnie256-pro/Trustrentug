@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Nearby Properties Map | TRUST Rent Ug{% endblock %}
 
@@ -291,6 +292,14 @@
     let currentLat = 0.3341; // Default Kampala Kololo
     let currentLng = 32.5938;
 
+    // Custom Green House Pin Pointer Icon loaded from static folder
+    const housePinIcon = L.icon({
+        iconUrl: "{% static 'images/house_pin.svg' %}",
+        iconSize: [46, 54],
+        iconAnchor: [23, 54],
+        popupAnchor: [0, -50]
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         initLeafletMap();
         fetchNearbyProperties();
@@ -401,15 +410,8 @@
         }
 
         data.properties.forEach((prop, index) => {
-            // Price Tag Marker
-            const priceIcon = L.divIcon({
-                className: 'custom-price-marker',
-                html: `<div class="price-marker-pin">${prop.price}</div>`,
-                iconSize: [80, 30],
-                iconAnchor: [40, 15]
-            });
-
-            const marker = L.marker([prop.lat, prop.lng], { icon: priceIcon }).addTo(map);
+            // House Pin Marker
+            const marker = L.marker([prop.lat, prop.lng], { icon: housePinIcon }).addTo(map);
 
             const popupContent = `
                 <div style="width: 220px; font-family: var(--font-body), sans-serif;">
