@@ -1095,12 +1095,93 @@ def property_detail_view(request, property_id):
     if inspection:
         reports = inspection.reports.all().select_related('agent', 'agent__role')
         
+    # Fetch 360/180 Panoramas
+    panoramas = list(property_obj.panoramas.all())
+    has_tour = len(panoramas) > 0
+
     return render(request, 'tenant/property_detail.html', {
         'property': property_obj,
         'property_amenities': property_amenities,
         'property_proximities': property_proximities,
         'inspection': inspection,
         'reports': reports,
+        'panoramas': panoramas,
+        'has_tour': has_tour,
+    })
+
+
+def property_tour_view(request, property_id):
+    property_obj = get_object_or_404(Property, id=property_id)
+    panoramas_qs = property_obj.panoramas.all()
+    
+    rooms_list = []
+    outside_list = []
+    
+    for p in panoramas_qs:
+        item = {
+            'id': p.id,
+            'title': p.title,
+            'panorama_type': p.panorama_type,
+            'type_display': p.get_panorama_type_display(),
+            'image_url': p.image.url if p.image else '',
+            'haov': 360 if p.panorama_type == '360' else 180,
+            'vaov': 180 if p.panorama_type == '360' else 90,
+            'minYaw': -180 if p.panorama_type == '360' else -90,
+            'maxYaw': 180 if p.panorama_type == '360' else 90,
+        }
+        if p.panorama_type == '180' or 'balcony' in p.title.lower() or 'outside' in p.title.lower() or 'front' in p.title.lower() or 'back' in p.title.lower():
+            outside_list.append(item)
+        else:
+            rooms_list.append(item)
+            
+    # Fallback demo items if empty so user can explore Rooms and Outside views on any property
+    if not rooms_list:
+        rooms_list = [
+            {
+                'id': 'demo_living',
+                'title': 'Living Room & Lounge',
+                'panorama_type': '360',
+                'type_display': '360° Full Room',
+                'image_url': 'https://pannellum.org/images/alma.jpg',
+                'haov': 360, 'vaov': 180, 'minYaw': -180, 'maxYaw': 180
+            },
+            {
+                'id': 'demo_master',
+                'title': 'Master Bedroom Suite',
+                'panorama_type': '360',
+                'type_display': '360° Full Room',
+                'image_url': 'https://images.unsplash.com/photo-1558442074-3c19857bc1dc?auto=format&fit=crop&w=1600&q=80',
+                'haov': 360, 'vaov': 180, 'minYaw': -180, 'maxYaw': 180
+            }
+        ]
+        
+    if not outside_list:
+        outside_list = [
+            {
+                'id': 'demo_balcony',
+                'title': 'Balcony View (180°)',
+                'panorama_type': '180',
+                'type_display': '180° Outdoor View',
+                'image_url': 'https://images.unsplash.com/photo-1558442074-3c19857bc1dc?auto=format&fit=crop&w=1600&q=80',
+                'haov': 180, 'vaov': 90, 'minYaw': -90, 'maxYaw': 90
+            },
+            {
+                'id': 'demo_front',
+                'title': 'Front Yard & Entrance (180°)',
+                'panorama_type': '180',
+                'type_display': '180° Outdoor View',
+                'image_url': 'https://pannellum.org/images/alma.jpg',
+                'haov': 180, 'vaov': 90, 'minYaw': -90, 'maxYaw': 90
+            }
+        ]
+        
+    import json
+    return render(request, 'tenant/property_tour.html', {
+        'property': property_obj,
+        'rooms_list': rooms_list,
+        'outside_list': outside_list,
+        'rooms_json': json.dumps(rooms_list),
+        'outside_json': json.dumps(outside_list),
     })
 
 def checkout_view(request, property_id):
@@ -1212,6 +1293,18 @@ def agent_submit_report(request):
                 findings=findings,
                 status=status
             )
+            
+            # Check for 360/180 panorama uploads
+            panorama_image = request.FILES.get('panorama_image')
+            if panorama_image and property_obj:
+                pano_title = request.POST.get('panorama_title', '').strip() or 'Main Room'
+                pano_type = request.POST.get('panorama_type', '360')
+                PropertyPanorama.objects.create(
+                    property=property_obj,
+                    title=pano_title,
+                    panorama_type=pano_type,
+                    image=panorama_image
+                )
             
             messages.success(request, f"Thank you, {agent.name}! Your {agent.role.name if agent.role else 'Inspector'} report for Property '{property_obj.title}' (ID: {property_obj.property_id}) has been recorded successfully.")
             # Clear authentication session after successful logging

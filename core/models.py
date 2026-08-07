@@ -429,3 +429,23 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"[{self.sender_type}] Thread #{self.thread.id}: {self.message[:30]}"
+
+
+class PropertyPanorama(models.Model):
+    PANORAMA_TYPE_CHOICES = [
+        ('360', '360° Full Room Panorama'),
+        ('180', '180° Balcony / Partial View'),
+    ]
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='panoramas')
+    title = models.CharField(max_length=150, help_text="e.g. Living Room, Master Bedroom, Balcony View")
+    panorama_type = models.CharField(max_length=10, choices=PANORAMA_TYPE_CHOICES, default='360')
+    image = models.FileField(upload_to='properties/panoramas/')
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.get_panorama_type_display()}) - {self.property.title}"
+

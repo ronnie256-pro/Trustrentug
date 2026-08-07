@@ -237,6 +237,11 @@
                     <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
                     {% endif %}
                     <div class="verified-tag"><i class="fa-solid fa-shield-halved"></i> TRUST Verified</div>
+                    {% if property.panoramas.all %}
+                    <div style="position: absolute; top: 10px; right: 10px; background: #075e54; color: #fff; padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid var(--color-gold);">
+                        <i class="fa-solid fa-vr-cardboard" style="color: var(--color-gold);"></i> 360° Tour
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <h3 class="card-price">

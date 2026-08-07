@@ -33,6 +33,7 @@ urlpatterns = [
     path('landlord/property/add/', views.add_property, name='add_property'),
     path('search/', views.search_view, name='search'),
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
+    path('property/<int:property_id>/tour/', views.property_tour_view, name='property_tour'),
     path('checkout/<int:property_id>/', views.checkout_view, name='checkout'),
     path('about-us/', views.about_us_view, name='about_us'),
     path('how-it-works/', views.how_escrow_works_view, name='how_escrow_works'),

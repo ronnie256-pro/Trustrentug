@@ -110,7 +110,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{% url 'agent_submit_report' %}" style="padding: 2.5rem; margin: 0;">
+        <form method="POST" action="{% url 'agent_submit_report' %}" enctype="multipart/form-data" style="padding: 2.5rem; margin: 0;">
             {% csrf_token %}
             
             {% if messages %}
@@ -143,10 +143,36 @@
 
             <div class="form-group">
                 <label for="findings">Safety Findings & Professional Remarks</label>
-                <textarea id="findings" name="findings" required rows="6" placeholder="Describe the physical status, structural elements, title legitimacy, or safety hazards identified during inspection..." class="form-control" style="resize: vertical; font-family: inherit; font-size: 0.9rem; line-height: 1.5;"></textarea>
+                <textarea id="findings" name="findings" required rows="5" placeholder="Describe the physical status, structural elements, title legitimacy, or safety hazards identified during inspection..." class="form-control" style="resize: vertical; font-family: inherit; font-size: 0.9rem; line-height: 1.5;"></textarea>
                 <small style="color: #64748b; margin-top: 0.35rem; display: block;">
                     This remark will be presented inside the administrative command dashboard under your discipline: <strong>{{ agent.role.name|default:"Inspection Officer" }}</strong>.
                 </small>
+            </div>
+
+            <!-- Optional 360/180 Virtual Tour Panorama Upload -->
+            <div style="background: rgba(16, 61, 40, 0.04); border: 1px dashed var(--color-emerald); padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h4 style="margin: 0 0 0.75rem 0; font-family: var(--font-heading); font-size: 1rem; color: var(--color-emerald-darkest); display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-vr-cardboard" style="color: var(--color-gold);"></i> Upload 360° / 180° Virtual Tour Panorama (Optional)
+                </h4>
+                
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label for="panorama_title" style="font-size: 0.75rem;">Room Title / View Name</label>
+                    <input type="text" id="panorama_title" name="panorama_title" placeholder="e.g. Living Room, Master Bedroom, Balcony View" class="form-control">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div>
+                        <label for="panorama_type" style="font-size: 0.75rem;">Panorama Field of View</label>
+                        <select id="panorama_type" name="panorama_type" class="form-control">
+                            <option value="360">360° Full Room Interior</option>
+                            <option value="180">180° Balcony / Outdoor View</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="panorama_image" style="font-size: 0.75rem;">Equirectangular Photo File</label>
+                        <input type="file" id="panorama_image" name="panorama_image" accept="image/*" class="form-control" style="padding: 0.45rem;">
+                    </div>
+                </div>
             </div>
 
             <button type="submit" class="btn-submit">

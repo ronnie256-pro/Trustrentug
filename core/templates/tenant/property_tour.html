@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}360° Virtual Tour - {{ property.title }} | TRUST{% endblock %}
+
+{% block extra_css %}
+<!-- Pannellum WebGL 360 Viewer CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+<style>
+    body {
+        background-color: #0b1411;
+        overflow-x: hidden;
+    }
+
+    .tour-viewport-wrapper {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 75px);
+        background: #040c09;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #panorama-container {
+        width: 100%;
+        height: 100%;
+        background: #000;
+    }
+
+    /* Top Overlay Back Button Only */
+    .tour-top-bar {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 99;
+        pointer-events: none;
+    }
+
+    .tour-top-bar * {
+        pointer-events: auto;
+    }
+
+    .btn-back-property {
+        background: rgba(4, 26, 17, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(203, 163, 88, 0.4);
+        color: white;
+        padding: 0.65rem 1.35rem;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.25s ease;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-back-property:hover {
+        background: var(--color-gold);
+        color: var(--color-emerald-darkest);
+        border-color: var(--color-gold);
+        transform: translateY(-2px);
+    }
+
+    /* Bottom Category Action Bar */
+    .tour-bottom-bar {
+        position: absolute;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99;
+        display: flex;
+        gap: 0.8rem;
+        background: rgba(4, 26, 17, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        padding: 0.65rem 1rem;
+        border-radius: 40px;
+        border: 1px solid rgba(203, 163, 88, 0.4);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .tour-cat-btn {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.65rem 1.4rem;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        transition: all 0.25s ease;
+    }
+
+    .tour-cat-btn:hover {
+        background: rgba(203, 163, 88, 0.25);
+        border-color: var(--color-gold);
+        color: var(--color-gold);
+    }
+
+    .tour-cat-btn.active {
+        background: var(--color-gold);
+        color: var(--color-emerald-darkest);
+        border-color: var(--color-gold);
+        box-shadow: 0 4px 18px rgba(203, 163, 88, 0.45);
+    }
+
+    /* Popup Selection Drawer Menu */
+    .tour-popup-menu {
+        display: none;
+        position: absolute;
+        bottom: 85px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99;
+        width: 320px;
+        max-width: 90vw;
+        background: rgba(4, 26, 17, 0.95);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(203, 163, 88, 0.4);
+        border-radius: 18px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+        padding: 0.75rem;
+        animation: popupSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .popup-menu-header {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-gold);
+        padding: 0.4rem 0.6rem 0.6rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 0.4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .popup-menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.7rem 0.85rem;
+        color: rgba(255, 255, 255, 0.9);
+        background: transparent;
+        border: none;
+        border-radius: 10px;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .popup-menu-item:hover {
+        background: rgba(203, 163, 88, 0.18);
+        color: var(--color-gold);
+    }
+
+    .popup-menu-item.active {
+        background: rgba(203, 163, 88, 0.25);
+        color: var(--color-gold);
+        border-left: 3px solid var(--color-gold);
+    }
+
+    @keyframes popupSlideUp {
+        from { opacity: 0; transform: translate(-50%, 15px); }
+        to { opacity: 1; transform: translate(-50%, 0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tour-viewport-wrapper">
+    <!-- Top Floating Back Button Only -->
+    <div class="tour-top-bar">
+        <a href="{% url 'property_detail' property.id %}" class="btn-back-property">
+            <i class="fa-solid fa-arrow-left"></i> Back to Property
+        </a>
+    </div>
+
+    <!-- Pannellum WebGL Canvas Container -->
+    <div id="panorama-container"></div>
+
+    <!-- Popup Menu for Rooms -->
+    <div class="tour-popup-menu" id="popup-rooms">
+        <div class="popup-menu-header">
+            <span><i class="fa-solid fa-door-open"></i> Interior 360° Rooms</span>
+            <button onclick="closeAllPopups()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="rooms-items-list">
+            {% for r in rooms_list %}
+            <button class="popup-menu-item {% if forloop.first %}active{% endif %}" onclick="selectRoomPano({{ forloop.counter0 }})">
+                <span><i class="fa-solid fa-camera-rotate" style="color: var(--color-gold); margin-right: 0.5rem;"></i> {{ r.title }}</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; opacity: 0.6;"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Popup Menu for Outside -->
+    <div class="tour-popup-menu" id="popup-outside">
+        <div class="popup-menu-header">
+            <span><i class="fa-solid fa-cloud-sun"></i> Outdoor 180° Views</span>
+            <button onclick="closeAllPopups()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="outside-items-list">
+            {% for o in outside_list %}
+            <button class="popup-menu-item" onclick="selectOutsidePano({{ forloop.counter0 }})">
+                <span><i class="fa-solid fa-mountain-sun" style="color: #60a5fa; margin-right: 0.5rem;"></i> {{ o.title }}</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; opacity: 0.6;"></i>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bottom Category Action Bar -->
+    <div class="tour-bottom-bar">
+        <button class="tour-cat-btn active" id="btn-cat-rooms" onclick="toggleNavModal('rooms')">
+            <i class="fa-solid fa-door-open" style="color: var(--color-gold);"></i> Rooms
+        </button>
+        <button class="tour-cat-btn" id="btn-cat-outside" onclick="toggleNavModal('outside')">
+            <i class="fa-solid fa-cloud-sun" style="color: #60a5fa;"></i> Outside
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Pannellum WebGL 360 Viewer JS -->
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+<script>
+    const roomsData = {{ rooms_json|safe }};
+    const outsideData = {{ outside_json|safe }};
+    let viewer = null;
+    let currentCategory = 'rooms';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (roomsData && roomsData.length > 0) {
+            selectRoomPano(0);
+        } else if (outsideData && outsideData.length > 0) {
+            selectOutsidePano(0);
+        }
+    });
+
+    function toggleNavModal(cat) {
+        const popupRooms = document.getElementById('popup-rooms');
+        const popupOutside = document.getElementById('popup-outside');
+        
+        if (cat === 'rooms') {
+            if (popupRooms.style.display === 'block') {
+                popupRooms.style.display = 'none';
+            } else {
+                popupRooms.style.display = 'block';
+                popupOutside.style.display = 'none';
+            }
+        } else if (cat === 'outside') {
+            if (popupOutside.style.display === 'block') {
+                popupOutside.style.display = 'none';
+            } else {
+                popupOutside.style.display = 'block';
+                popupRooms.style.display = 'none';
+            }
+        }
+    }
+
+    function closeAllPopups() {
+        document.getElementById('popup-rooms').style.display = 'none';
+        document.getElementById('popup-outside').style.display = 'none';
+    }
+
+    function selectRoomPano(index) {
+        if (index < 0 || index >= roomsData.length) return;
+        currentCategory = 'rooms';
+        
+        document.getElementById('btn-cat-rooms').classList.add('active');
+        document.getElementById('btn-cat-outside').classList.remove('active');
+        
+        // Highlight active room menu item
+        const items = document.querySelectorAll('#rooms-items-list .popup-menu-item');
+        items.forEach((item, i) => {
+            if (i === index) item.classList.add('active');
+            else item.classList.remove('active');
+        });
+
+        loadPanorama(roomsData[index]);
+        closeAllPopups();
+    }
+
+    function selectOutsidePano(index) {
+        if (index < 0 || index >= outsideData.length) return;
+        currentCategory = 'outside';
+        
+        document.getElementById('btn-cat-outside').classList.add('active');
+        document.getElementById('btn-cat-rooms').classList.remove('active');
+
+        // Highlight active outside menu item
+        const items = document.querySelectorAll('#outside-items-list .popup-menu-item');
+        items.forEach((item, i) => {
+            if (i === index) item.classList.add('active');
+            else item.classList.remove('active');
+        });
+
+        loadPanorama(outsideData[index]);
+        closeAllPopups();
+    }
+
+    function loadPanorama(pano) {
+        if (!pano || !pano.image_url) return;
+
+        if (viewer) {
+            try { viewer.destroy(); } catch(e) {}
+        }
+
+        const is180 = pano.panorama_type === '180';
+        
+        const config = {
+            "type": "equirectangular",
+            "panorama": pano.image_url,
+            "autoLoad": true,
+            "autoRotate": -1.5,
+            "compass": true,
+            "showZoomCtrl": true,
+            "showFullscreenCtrl": true,
+            "title": pano.title,
+            "haov": is180 ? 180 : 360,
+            "vaov": is180 ? 90 : 180,
+            "minYaw": is180 ? -90 : -180,
+            "maxYaw": is180 ? 90 : 180,
+            "minPitch": is180 ? -45 : -85,
+            "maxPitch": is180 ? 45 : 85,
+            "hfov": 100,
+            "minHfov": 50,
+            "maxHfov": 120
+        };
+
+        viewer = pannellum.viewer('panorama-container', config);
+    }
+</script>
+{% endblock %}
