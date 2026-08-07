@@ -32,6 +32,8 @@ urlpatterns = [
     path('landlord/dashboard/', views.landlord_dashboard),
     path('landlord/property/add/', views.add_property, name='add_property'),
     path('search/', views.search_view, name='search'),
+    path('nearby/', views.nearby_properties_view, name='nearby_properties'),
+    path('api/properties/nearby/', views.api_nearby_properties, name='api_nearby_properties'),
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
     path('property/<int:property_id>/tour/', views.property_tour_view, name='property_tour'),
     path('checkout/<int:property_id>/', views.checkout_view, name='checkout'),

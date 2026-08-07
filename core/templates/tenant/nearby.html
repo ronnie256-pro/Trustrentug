@@ -1,0 +1,471 @@
+{% extends "base.html" %}
+
+{% block title %}Nearby Properties Map | TRUST Rent Ug{% endblock %}
+
+{% block extra_css %}
+<!-- Leaflet.js CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+    body {
+        background-color: #f8fafc;
+        overflow-x: hidden;
+    }
+
+    .nearby-viewport-wrapper {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 75px);
+        display: flex;
+        flex-direction: column;
+        background: #0f172a;
+    }
+
+    /* Filter Bar Across Top */
+    .nearby-filter-bar {
+        background: var(--color-emerald-darkest);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        z-index: 1000;
+        border-bottom: 2px solid var(--color-gold);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .nearby-filter-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        padding: 0.4rem 0.9rem;
+    }
+
+    .nearby-filter-item input, 
+    .nearby-filter-item select {
+        background: transparent;
+        border: none;
+        color: white;
+        outline: none;
+        font-size: 0.9rem;
+        font-family: inherit;
+    }
+
+    .nearby-filter-item select option {
+        background: #072a1c;
+        color: white;
+    }
+
+    .btn-near-me {
+        background: var(--color-gold);
+        color: var(--color-emerald-darkest);
+        border: none;
+        padding: 0.45rem 1.25rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);
+    }
+
+    .btn-near-me:hover {
+        transform: scale(1.03);
+        background: #e5b95c;
+    }
+
+    /* Main Split Layout: Map + Left Drawer */
+    .nearby-content-grid {
+        flex: 1;
+        display: flex;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nearby-sidebar {
+        width: 380px;
+        max-width: 100%;
+        background: white;
+        border-right: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        z-index: 999;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        padding: 1rem 1.25rem;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sidebar-cards-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nearby-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.25s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nearby-card:hover {
+        border-color: var(--color-gold);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .nearby-card.active {
+        border: 2px solid var(--color-emerald);
+        background: rgba(16, 61, 40, 0.02);
+    }
+
+    .card-thumb-container {
+        height: 140px;
+        width: 100%;
+        position: relative;
+    }
+
+    .card-thumb-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-dist-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(7, 42, 28, 0.88);
+        backdrop-filter: blur(8px);
+        color: var(--color-gold);
+        padding: 0.25rem 0.65rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid var(--color-gold);
+    }
+
+    .nearby-card-body {
+        padding: 1rem;
+    }
+
+    /* Map Element */
+    #nearby-map {
+        flex: 1;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+
+    /* Leaflet Price Tag Marker Styling */
+    .price-marker-pin {
+        background: var(--color-emerald-darkest);
+        color: var(--color-gold);
+        border: 2px solid var(--color-gold);
+        border-radius: 20px;
+        padding: 0.3rem 0.7rem;
+        font-weight: 800;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .price-marker-pin:hover {
+        transform: scale(1.1);
+        background: #000;
+    }
+
+    /* Pulse User Beacon */
+    .user-beacon {
+        width: 18px;
+        height: 18px;
+        background: #3b82f6;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 0 15px #3b82f6;
+        animation: pulseBeacon 2s infinite;
+    }
+
+    @keyframes pulseBeacon {
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="nearby-viewport-wrapper">
+    <!-- Top Interactive Filter Header Bar (Iconless) -->
+    <div class="nearby-filter-bar">
+        <button type="button" onclick="useMyLocationGPS()" class="btn-near-me">
+            Near Me (GPS)
+        </button>
+
+        <div class="nearby-filter-item">
+            <input type="text" id="filter-search-input" placeholder="Search area (e.g. Kololo, Naalya, Ntinda)..." style="width: 250px;" onkeydown="if(event.key==='Enter') fetchNearbyProperties();">
+        </div>
+
+        <div class="nearby-filter-item">
+            <span style="font-size: 0.85rem; opacity: 0.85;">Radius:</span>
+            <input type="number" id="filter-radius" value="10" min="1" max="500" style="width: 65px; font-weight: bold; text-align: center;" onchange="fetchNearbyProperties()" onkeydown="if(event.key==='Enter') fetchNearbyProperties();">
+            <span style="font-size: 0.85rem; opacity: 0.85;">KM</span>
+        </div>
+
+        <div class="nearby-filter-item">
+            <select id="filter-type" onchange="fetchNearbyProperties()">
+                <option value="">All Property Types</option>
+                <option value="apartment">Apartment</option>
+                <option value="flat">Flat</option>
+                <option value="condo">Condo</option>
+                <option value="bungalow">Bungalow / Standalone</option>
+            </select>
+        </div>
+
+        <button type="button" onclick="fetchNearbyProperties()" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.45rem 1.25rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+            Filter
+        </button>
+
+        <span style="margin-left: auto; font-size: 0.88rem; opacity: 0.9;" id="matching-count-badge">
+            Showing nearby verified properties
+        </span>
+    </div>
+
+    <!-- Main Content Area: Left Cards Panel & Map -->
+    <div class="nearby-content-grid">
+        <!-- Sidebar Drawer -->
+        <div class="nearby-sidebar" id="nearby-sidebar">
+            <div class="sidebar-header">
+                <h4 style="margin: 0; font-family: var(--font-heading); font-size: 1.1rem; color: var(--color-emerald-darkest);">
+                    Nearby Listings
+                </h4>
+                <span id="results-count" style="font-size: 0.8rem; background: #e2e8f0; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 700;">0 Properties</span>
+            </div>
+
+            <div class="sidebar-cards-list" id="sidebar-cards-container">
+                <div style="text-align: center; color: #64748b; padding: 3rem 1rem;">
+                    <p>Detecting location and fetching nearby verified properties...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Viewport Map Canvas -->
+        <div id="nearby-map"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet.js JavaScript -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    let map = null;
+    let userMarker = null;
+    let radiusCircle = null;
+    let propertyMarkers = [];
+    let currentLat = 0.3341; // Default Kampala Kololo
+    let currentLng = 32.5938;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initLeafletMap();
+        fetchNearbyProperties();
+    });
+
+    function initLeafletMap() {
+        map = L.map('nearby-map', {
+            zoomControl: false
+        }).setView([currentLat, currentLng], 13);
+
+        // Standard OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors | TRUST Rent Ug'
+        }).addTo(map);
+
+        // Move Zoom controls (+/-) to TOP RIGHT corner
+        L.control.zoom({ position: 'topright' }).addTo(map);
+    }
+
+    function useMyLocationGPS() {
+        if (navigator.geolocation) {
+            const btn = document.querySelector('.btn-near-me');
+            btn.innerText = 'Locating...';
+
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                currentLat = pos.coords.latitude;
+                currentLng = pos.coords.longitude;
+                btn.innerText = 'Near Me (GPS)';
+                fetchNearbyProperties();
+            }, function(err) {
+                btn.innerText = 'Near Me (GPS)';
+                alert("GPS Geolocation could not detect your exact position. Using search coordinates.");
+            });
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    }
+
+    function fetchNearbyProperties() {
+        let radius = document.getElementById('filter-radius').value;
+        if (!radius || radius <= 0) radius = 10;
+        
+        const query = document.getElementById('filter-search-input').value.trim();
+        const propType = document.getElementById('filter-type').value;
+
+        const url = `/api/properties/nearby/?lat=${currentLat}&lng=${currentLng}&radius=${radius}&q=${encodeURIComponent(query)}&type=${encodeURIComponent(propType)}`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    renderPropertiesData(data);
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching nearby properties:", err);
+            });
+    }
+
+    function renderPropertiesData(data) {
+        // Clear old markers
+        propertyMarkers.forEach(m => map.removeLayer(m));
+        propertyMarkers = [];
+
+        if (userMarker) map.removeLayer(userMarker);
+        if (radiusCircle) map.removeLayer(radiusCircle);
+
+        const lat = data.user_lat;
+        const lng = data.user_lng;
+        const radiusMeters = data.radius_km * 1000;
+
+        // User Beacon
+        const beaconIcon = L.divIcon({
+            className: 'user-beacon',
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+        });
+
+        userMarker = L.marker([lat, lng], { icon: beaconIcon }).addTo(map)
+            .bindPopup("<b>Your Search Location</b><br>Searching within " + data.radius_km + " km");
+
+        // Radius circle
+        radiusCircle = L.circle([lat, lng], {
+            color: '#cb9b58',
+            fillColor: '#cb9b58',
+            fillOpacity: 0.08,
+            radius: radiusMeters
+        }).addTo(map);
+
+        map.flyTo([lat, lng], getZoomForRadius(data.radius_km), { duration: 1.2 });
+
+        // Update counts
+        document.getElementById('results-count').innerText = `${data.count} Properties`;
+        document.getElementById('matching-count-badge').innerHTML = `Found <strong>${data.count}</strong> properties within ${data.radius_km} km`;
+
+        const cardsContainer = document.getElementById('sidebar-cards-container');
+        cardsContainer.innerHTML = '';
+
+        if (data.properties.length === 0) {
+            cardsContainer.innerHTML = `
+                <div style="text-align: center; color: #64748b; padding: 3rem 1rem;">
+                    <p style="font-weight: 600;">No properties found within ${data.radius_km} km.</p>
+                    <small>Try increasing the radius or searching another location.</small>
+                </div>
+            `;
+            return;
+        }
+
+        data.properties.forEach((prop, index) => {
+            // Price Tag Marker
+            const priceIcon = L.divIcon({
+                className: 'custom-price-marker',
+                html: `<div class="price-marker-pin">${prop.price}</div>`,
+                iconSize: [80, 30],
+                iconAnchor: [40, 15]
+            });
+
+            const marker = L.marker([prop.lat, prop.lng], { icon: priceIcon }).addTo(map);
+
+            const popupContent = `
+                <div style="width: 220px; font-family: var(--font-body), sans-serif;">
+                    <img src="${prop.hero_image}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem;">
+                    <span style="background: var(--color-emerald); color: var(--color-gold); font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px;">${prop.distance_km} KM AWAY</span>
+                    <h4 style="margin: 0.4rem 0 0.2rem; font-size: 0.95rem; color: #0f172a;">${prop.title}</h4>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--color-emerald-darkest); margin-bottom: 0.5rem;">${prop.price} / mo</div>
+                    <div style="display: flex; gap: 0.4rem;">
+                        <a href="/property/${prop.id}/" style="flex: 1; text-align: center; background: var(--color-emerald); color: white; padding: 0.45rem; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">View Details</a>
+                        ${prop.has_tour ? `<a href="/property/${prop.id}/tour/" style="background: var(--color-gold); color: #000; padding: 0.45rem 0.65rem; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 700;">Tour</a>` : ''}
+                    </div>
+                </div>
+            `;
+
+            marker.bindPopup(popupContent);
+            propertyMarkers.push(marker);
+
+            // Create Sidebar Card
+            const card = document.createElement('div');
+            card.className = `nearby-card ${index === 0 ? 'active' : ''}`;
+            card.innerHTML = `
+                <div class="card-thumb-container">
+                    <img src="${prop.hero_image}" alt="${prop.title}" class="card-thumb-img">
+                    <span class="card-dist-tag">${prop.distance_km} KM AWAY</span>
+                </div>
+                <div class="nearby-card-body">
+                    <div style="font-size: 1.15rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); margin-bottom: 0.2rem;">${prop.price} <span style="font-size: 0.75rem; color: #64748b; font-weight: normal;">/ month</span></div>
+                    <h4 style="margin: 0 0 0.35rem 0; font-size: 0.95rem; color: #1e293b;">${prop.title}</h4>
+                    <p style="margin: 0 0 0.75rem 0; font-size: 0.8rem; color: #64748b;">${prop.location}</p>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="/property/${prop.id}/" class="btn btn-primary" style="flex: 1; padding: 0.45rem; font-size: 0.8rem; text-align: center; text-decoration: none;">View Details</a>
+                        ${prop.has_tour ? `<a href="/property/${prop.id}/tour/" class="btn btn-gold" style="padding: 0.45rem 0.75rem; font-size: 0.8rem; text-decoration: none;">Tour</a>` : ''}
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('click', function(e) {
+                // If user clicked directly on View Details or Tour links inside card, follow link normally
+                if (e.target.tagName === 'A') return;
+                
+                document.querySelectorAll('.nearby-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                map.flyTo([prop.lat, prop.lng], 15, { duration: 1.0 });
+                marker.openPopup();
+            });
+
+            cardsContainer.appendChild(card);
+        });
+    }
+
+    function getZoomForRadius(km) {
+        if (km <= 1) return 15;
+        if (km <= 3) return 14;
+        if (km <= 5) return 13;
+        if (km <= 10) return 12;
+        return 10;
+    }
+</script>
+{% endblock %}

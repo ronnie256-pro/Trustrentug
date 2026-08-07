@@ -149,6 +149,32 @@
                 </small>
             </div>
 
+            <!-- On-Site GPS Coordinates Capture -->
+            <div style="background: rgba(203, 163, 88, 0.08); border: 1px solid rgba(203, 163, 88, 0.3); padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <h4 style="margin: 0; font-family: var(--font-heading); font-size: 1rem; color: var(--color-emerald-darkest); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-location-crosshairs" style="color: var(--color-gold);"></i> On-Site Property GPS Location
+                    </h4>
+                    <button type="button" onclick="detectAgentGPS()" style="background: var(--color-gold); color: var(--color-emerald-darkest); border: none; padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
+                        <i class="fa-solid fa-location-dot"></i> Detect My On-Site GPS
+                    </button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div>
+                        <label for="latitude" style="font-size: 0.75rem;">Latitude</label>
+                        <input type="text" id="latitude" name="latitude" placeholder="e.g. 0.3341" class="form-control" style="font-family: monospace; font-size: 0.88rem;">
+                    </div>
+                    <div>
+                        <label for="longitude" style="font-size: 0.75rem;">Longitude</label>
+                        <input type="text" id="longitude" name="longitude" placeholder="e.g. 32.5938" class="form-control" style="font-family: monospace; font-size: 0.88rem;">
+                    </div>
+                </div>
+                <small style="color: #64748b; font-size: 0.78rem; margin-top: 0.4rem; display: block;">
+                    GPS coordinates enable tenants to discover this property on the interactive Proximity Search Map (/nearby/).
+                </small>
+            </div>
+
             <!-- Optional 360/180 Virtual Tour Panorama Upload -->
             <div style="background: rgba(16, 61, 40, 0.04); border: 1px dashed var(--color-emerald); padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;">
                 <h4 style="margin: 0 0 0.75rem 0; font-family: var(--font-heading); font-size: 1rem; color: var(--color-emerald-darkest); display: flex; align-items: center; gap: 0.5rem;">
@@ -181,4 +207,20 @@
         </form>
     </div>
 </div>
+
+<script>
+    function detectAgentGPS() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+                document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+                alert("On-site GPS coordinates captured successfully!");
+            }, function(err) {
+                alert("Could not detect GPS location: " + err.message);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+</script>
 {% endblock %}

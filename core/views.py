@@ -1294,6 +1294,17 @@ def agent_submit_report(request):
                 status=status
             )
             
+            # Check for GPS Coordinate inputs from agent during on-site inspection
+            lat_val = request.POST.get('latitude', '').strip()
+            lng_val = request.POST.get('longitude', '').strip()
+            if lat_val and lng_val:
+                try:
+                    property_obj.latitude = float(lat_val)
+                    property_obj.longitude = float(lng_val)
+                    property_obj.save()
+                except ValueError:
+                    pass
+
             # Check for 360/180 panorama uploads
             panorama_image = request.FILES.get('panorama_image')
             if panorama_image and property_obj:
@@ -1312,6 +1323,90 @@ def agent_submit_report(request):
             return redirect('agent_report_auth')
             
     return render(request, 'agent/submit_report.html', {'agent': agent})
+
+
+# --- NEARBY MAP VIEWS ---
+import math
+from django.http import JsonResponse
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    R = 6371.0  # Radius of earth in kilometers
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = (math.sin(dlat / 2.0) ** 2) + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * (math.sin(dlon / 2.0) ** 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
+    return R * c
+
+def nearby_properties_view(request):
+    return render(request, 'tenant/nearby.html')
+
+def api_nearby_properties(request):
+    try:
+        user_lat = float(request.GET.get('lat', 0.3162))
+        user_lng = float(request.GET.get('lng', 32.5822))
+    except (ValueError, TypeError):
+        user_lat, user_lng = 0.3162, 32.5822
+        
+    try:
+        radius_km = float(request.GET.get('radius', 10.0))
+    except (ValueError, TypeError):
+        radius_km = 10.0
+        
+    q = request.GET.get('q', '').strip().lower()
+    p_type = request.GET.get('type', '').strip().lower()
+    
+    properties = Property.objects.filter(status='available', parent=None).exclude(latitude=None).exclude(longitude=None)
+    
+    if q:
+        properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
+        
+    if p_type and p_type != 'all types':
+        if p_type == 'apartment':
+            properties = properties.filter(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block'])
+        elif p_type == 'flat':
+            properties = properties.filter(category__in=['flat', 'single_room', 'self_contained'])
+        elif p_type == 'condo':
+            properties = properties.filter(category__in=['condo_block'])
+        elif p_type in ['bungalow', 'standalone', 'villa']:
+            properties = properties.filter(category__in=['bungalow', 'standalone'])
+            
+    results = []
+    for prop in properties:
+        dist = haversine_distance(user_lat, user_lng, prop.latitude, prop.longitude)
+        if dist <= radius_km or q:
+            price_val = float(prop.price) if prop.price else 0
+            if price_val >= 1000000:
+                price_str = f"UGX {price_val/1000000:.1f}M".replace('.0M', 'M')
+            elif price_val >= 1000:
+                price_str = f"UGX {price_val/1000:.0f}K"
+            else:
+                price_str = f"UGX {price_val:.0f}"
+                
+            has_panoramas = prop.panoramas.exists()
+            
+            results.append({
+                'id': prop.id,
+                'title': prop.title,
+                'location': prop.location,
+                'price': price_str,
+                'bedrooms': prop.bedrooms or 1,
+                'lat': prop.latitude,
+                'lng': prop.longitude,
+                'distance_km': round(dist, 2),
+                'hero_image': prop.hero_image.url if prop.hero_image else 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80',
+                'has_tour': has_panoramas,
+            })
+            
+    results.sort(key=lambda x: x['distance_km'])
+    
+    return JsonResponse({
+        'status': 'success',
+        'user_lat': user_lat,
+        'user_lng': user_lng,
+        'radius_km': radius_km,
+        'count': len(results),
+        'properties': results
+    })
 
 # --- TENANT DASHBOARD VIEWS ---
 

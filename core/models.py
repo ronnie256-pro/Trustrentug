@@ -36,6 +36,8 @@ class Property(models.Model):
     price_per_month = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     price_per_year = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     location = models.CharField(max_length=255)
+    latitude = models.FloatField(null=True, blank=True, help_text="Latitude coordinate (e.g. 0.3476)")
+    longitude = models.FloatField(null=True, blank=True, help_text="Longitude coordinate (e.g. 32.5825)")
     
     # Parent-Child relationship
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='units')
