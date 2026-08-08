@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -507,11 +507,54 @@ def admin_dashboard(request):
                     settings_obj.site_icon = site_icon
                 if site_logo:
                     settings_obj.site_logo = site_logo
+
+                if request.POST.get('stat_properties'):
+                    settings_obj.stat_properties = int(request.POST.get('stat_properties'))
+                if request.POST.get('stat_tenants'):
+                    settings_obj.stat_tenants = int(request.POST.get('stat_tenants'))
+                if request.POST.get('stat_moved_in'):
+                    settings_obj.stat_moved_in = int(request.POST.get('stat_moved_in'))
+                if request.POST.get('stat_landlords'):
+                    settings_obj.stat_landlords = int(request.POST.get('stat_landlords'))
+                if request.POST.get('stat_districts'):
+                    settings_obj.stat_districts = int(request.POST.get('stat_districts'))
+                if request.POST.get('stat_agents'):
+                    settings_obj.stat_agents = int(request.POST.get('stat_agents'))
                 
+                if request.POST.get('top_selling_title'):
+                    settings_obj.top_selling_title = request.POST.get('top_selling_title').strip()
+                if request.POST.get('top_selling_price'):
+                    settings_obj.top_selling_price = request.POST.get('top_selling_price').strip()
+                if request.POST.get('top_selling_location'):
+                    settings_obj.top_selling_location = request.POST.get('top_selling_location').strip()
+                if request.POST.get('top_selling_link'):
+                    settings_obj.top_selling_link = request.POST.get('top_selling_link').strip()
+                if request.FILES.get('top_selling_image'):
+                    settings_obj.top_selling_image = request.FILES.get('top_selling_image')
+
+                if request.FILES.get('pipeline_left_image'):
+                    settings_obj.pipeline_left_image = request.FILES.get('pipeline_left_image')
+                if request.FILES.get('pipeline_right_image'):
+                    settings_obj.pipeline_right_image = request.FILES.get('pipeline_right_image')
+
                 settings_obj.save()
                 messages.success(request, "Site branding updated successfully!")
             except Exception as e:
                 messages.error(request, f"Error updating site branding: {str(e)}")
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'upload_hero_video':
+            video_title = request.POST.get('video_title', '').strip() or 'Estate Hero Video'
+            hero_video_file = request.FILES.get('hero_video_file')
+            if hero_video_file:
+                HeroVideo.objects.create(
+                    title=video_title,
+                    video=hero_video_file,
+                    is_active=True
+                )
+                messages.success(request, f"Hero video '{video_title}' uploaded successfully!")
+            else:
+                messages.error(request, "Please select a valid video file (MP4/WebM).")
             return redirect('/admin-dashboard/?tab=settings')
 
         elif action == 'approve_tenant':
@@ -985,7 +1028,11 @@ def submit_property_inspection(request, property_id):
 def home_view(request):
     # Fetch parent (standalone or building) properties that are approved/available, newest first
     properties = Property.objects.filter(parent=None, status='available').prefetch_related('units').order_by('-created_at')
-    return render(request, 'index.html', {'properties': properties})
+    hero_videos = HeroVideo.objects.filter(is_active=True).order_by('order', '-created_at')
+    return render(request, 'index.html', {
+        'properties': properties,
+        'hero_videos': hero_videos,
+    })
 
 def about_us_view(request):
     executives = CommitteeExecutive.objects.all().order_by('created_at')

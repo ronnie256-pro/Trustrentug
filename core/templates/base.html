@@ -45,6 +45,29 @@
             z-index: 1001;
         }
 
+        .nav-icon-link {
+            color: var(--color-gold);
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(203, 163, 88, 0.12);
+            border: 1px solid rgba(203, 163, 88, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+
+        .nav-icon-link:hover {
+            color: var(--color-emerald-darkest);
+            background: var(--color-gold);
+            border-color: var(--color-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(203, 163, 88, 0.4);
+        }
+
         @media (max-width: 992px) {
             .hamburger {
                 display: block;
@@ -57,28 +80,37 @@
                 top: 100%;
                 left: 0;
                 right: 0;
-                background-color: var(--color-emerald-dark);
-                padding: 1.5rem;
-                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                background-color: var(--color-emerald-darkest);
+                padding: 1.5rem 2rem;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+                border-top: 1px solid rgba(203, 163, 88, 0.3);
                 gap: 1rem;
-                z-index: 1000;
+                z-index: 10000;
             }
 
             .nav-links.active {
                 display: flex;
             }
 
+            .nav-links li a {
+                color: white;
+                font-size: 1.05rem;
+                font-weight: 600;
+                text-decoration: none;
+                display: block;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
             .nav-auth {
                 display: none;
                 width: 100%;
                 flex-direction: column;
-                gap: 1rem;
-                margin-top: 1rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(255,255,255,0.1);
+                gap: 0.75rem;
+                margin-top: 0.75rem;
+                padding-top: 0.75rem;
             }
 
-            .nav-links.active + .nav-auth,
             .nav-auth.mobile-active {
                 display: flex;
             }
@@ -151,7 +183,7 @@
                 <li><a href="/about-us/">About Us</a></li>
             </ul>
 
-            <div class="nav-auth" id="nav-auth">
+            <div class="nav-auth" id="nav-auth" style="display: flex; align-items: center; gap: 0.85rem;">
                 {% if user.is_authenticated %}
                 <a href="{% if user.is_superuser or user.username == 'admin' or user.username == 'trustadmin' %}/admin-dashboard/{% elif user.profile.role == 'landlord' or user.username == 'owner' %}/landlord/{% else %}/tenant/dashboard/{% endif %}"
                     class="btn btn-primary">Dashboard</a>
@@ -160,8 +192,12 @@
                     <button type="submit" class="btn btn-outline-gold" style="padding: 0.65rem 1.25rem;">Logout</button>
                 </form>
                 {% else %}
-                <a href="/login/" class="btn btn-outline-gold">Sign In</a>
-                <a href="/register/" class="btn btn-gold">Register</a>
+                <a href="/login/" class="nav-icon-link" title="Sign In" aria-label="Sign In">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </a>
+                <a href="/register/" class="nav-icon-link" title="Register / Sign Up" aria-label="Register">
+                    <i class="fa-solid fa-user-plus"></i>
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -215,6 +251,27 @@
                 setTimeout(() => el.remove(), 400);
             }
             document.addEventListener('DOMContentLoaded', function () {
+                // Mobile Hamburger Navbar Toggle
+                const toggleBtn = document.getElementById('navbar-toggle');
+                const navLinks = document.getElementById('nav-links');
+                const navAuth = document.getElementById('nav-auth');
+
+                if (toggleBtn && navLinks) {
+                    toggleBtn.addEventListener('click', function () {
+                        navLinks.classList.toggle('active');
+                        if (navAuth) navAuth.classList.toggle('mobile-active');
+                        
+                        const icon = toggleBtn.querySelector('i');
+                        if (icon) {
+                            if (navLinks.classList.contains('active')) {
+                                icon.className = 'fa-solid fa-xmark';
+                            } else {
+                                icon.className = 'fa-solid fa-bars';
+                            }
+                        }
+                    });
+                }
+
                 document.querySelectorAll('.toast-msg').forEach(function (toast) {
                     // Auto-dismiss success & info after 3 s; keep errors until manually closed
                     if (toast.dataset.type !== 'error') {
@@ -343,6 +400,31 @@
     </footer>
 
     {% include "chat/widget.html" %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('navbar-toggle');
+            const navLinks = document.getElementById('nav-links');
+            const navAuth = document.getElementById('nav-auth');
+
+            if (toggleBtn && navLinks) {
+                toggleBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navLinks.classList.toggle('active');
+                    if (navAuth) navAuth.classList.toggle('mobile-active');
+                    
+                    const icon = toggleBtn.querySelector('i');
+                    if (icon) {
+                        if (navLinks.classList.contains('active')) {
+                            icon.className = 'fa-solid fa-xmark';
+                        } else {
+                            icon.className = 'fa-solid fa-bars';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 

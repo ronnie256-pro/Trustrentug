@@ -137,32 +137,15 @@
   }
 
   .slide-img.active {
-    opacity: 0.55;
-    /* Higher opacity to make the gorgeous luxury homes clearly visible */
+    opacity: 1;
   }
 
   .hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* Soft premium dark-emerald gradient overlay with balanced density for image details */
-    background: linear-gradient(135deg, rgba(3, 20, 13, 0.75) 0%, rgba(3, 20, 13, 0.55) 50%, rgba(3, 20, 13, 0.78) 100%);
-    z-index: 2;
-    pointer-events: none;
+    display: none !important;
   }
 
   .hero-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 80% 20%, rgba(203, 163, 88, 0.08) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 2;
+    display: none !important;
   }
 
   .hero-grid {
@@ -219,6 +202,106 @@
   .hero-cta-buttons .btn {
     padding: 1.2rem 2.5rem;
     font-size: 1rem;
+  }
+
+  /* Architectural Blueprint Background Pattern */
+  .blueprint-bg-section {
+    position: relative;
+    padding: 2rem 0;
+    background-color: #fcfaf5;
+    background-image: 
+      linear-gradient(rgba(16, 61, 40, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(16, 61, 40, 0.05) 1px, transparent 1px),
+      linear-gradient(rgba(203, 163, 88, 0.04) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(203, 163, 88, 0.04) 2px, transparent 2px);
+    background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    width: 100%;
+  }
+
+  .stat-counter-box {
+    transition: transform 0.25s ease;
+  }
+  .stat-counter-box:hover {
+    transform: translateY(-3px);
+  }
+
+  /* Winding Snake Roadmap (Steps 1-7) */
+  .snake-roadmap-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding: 0.5rem 0;
+  }
+  .snake-step-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+  .snake-step-row.step-left {
+    justify-content: flex-start;
+  }
+  .snake-step-row.step-right {
+    justify-content: flex-end;
+    text-align: right;
+  }
+  .snake-circle-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--color-gold);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #072a1c;
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+  .snake-step-row:hover .snake-circle-badge {
+    transform: scale(1.1);
+    background: var(--color-gold);
+  }
+  .snake-circle-badge small {
+    font-size: 0.52rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    text-transform: uppercase;
+    color: #072a1c;
+  }
+  .snake-circle-badge span {
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #072a1c;
+  }
+  .snake-step-content {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(203, 163, 88, 0.35);
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    backdrop-filter: blur(8px);
+    max-width: 250px;
+    transition: all 0.25s ease;
+  }
+  .snake-step-row:hover .snake-step-content {
+    border-color: var(--color-gold);
+    background: rgba(203, 163, 88, 0.15);
+    transform: translateY(-2px);
+  }
+  .snake-step-content h4 {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: white;
   }
 
   /* 2. Why TRUST Exists */
@@ -799,7 +882,7 @@
   }
 
   .glass-title {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--color-emerald-dark);
     margin-bottom: 0.5rem;
@@ -808,7 +891,7 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 3rem;
+    height: auto;
   }
 
   .glass-location {
@@ -1270,62 +1353,73 @@
 {% block content %}
 
 <!-- 1. HERO SECTION -->
-<section class="hero-container">
-  <!-- Background Image Slider -->
-  <div class="hero-slider">
-    <div class="slide-img active"
-      style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');">
-    </div>
-    <div class="slide-img"
-      style="background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80');">
-    </div>
-    <div class="slide-img"
-      style="background-image: url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=80');">
-    </div>
-  </div>
-  <div class="hero-overlay"></div>
-
-  <div class="container hero-grid">
-    <div>
-      <span class="section-label">THE TRUST PROTOCOL</span>
-      <h1 class="hero-headline">Find a <span>Verified</span> Home. Live With Confidence.</h1>
-      <p class="section-lead" style="margin-bottom: 2rem;">Every property on TRUST is inspected, verified, and approved
-        — so you never deal with fake agents, fake listings, or rental fraud.</p>
-
-      <div class="hero-bullets">
-        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Verified Landlords</div>
-        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Verified Properties</div>
-        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Verified Tenants</div>
-        <div class="hero-bullet-item"><i class="fa-solid fa-circle-check"></i> Secure Payments & Transparent Contracts
-        </div>
-      </div>
-
-      <div class="hero-cta-buttons">
-        <a href="#verified-rentals" class="btn btn-gold">Browse Verified Rentals <i class="fa-solid fa-chevron-down"
-            style="margin-left: 0.5rem; font-size: 0.85rem;"></i></a>
-        <a href="/register/" class="btn btn-outline-gold">List Your Property</a>
-      </div>
-    </div>
-    <div style="display: flex; justify-content: center; position: relative;">
-      <div
-        style="width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); padding: 2.5rem; backdrop-filter: blur(10px); box-shadow: var(--shadow-lg);">
-        <i class="fa-solid fa-shield-halved"
-          style="font-size: 3rem; color: var(--color-gold); margin-bottom: 1.5rem; display: block;"></i>
-        <h3 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: normal; margin-bottom: 1rem;">The
-          Escrow Pipeline</h3>
-        <p style="font-size: 0.95rem; line-height: 1.6; color: rgba(255, 255, 255, 0.7); margin-bottom: 1.5rem;">Your
-          rent and security deposit remain in secure holding until you complete move-in inspection. Zero risk.</p>
-        <span
-          style="font-size: 0.8rem; font-weight: 600; color: var(--color-gold); text-transform: uppercase; letter-spacing: 1px;"><i
-            class="fa-solid fa-circle" style="color: #10b981; font-size: 0.5rem; margin-right: 0.35rem;"></i> Active
-          Protection Protocol</span>
-      </div>
-    </div>
+<section class="hero-container" style="position: relative; overflow: hidden; width: 100%; min-height: 680px; background: #000; padding: 0;">
+  <!-- Background Video Slider -->
+  <div class="hero-slider" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1;">
+    {% if hero_videos %}
+      {% for v in hero_videos %}
+      <video class="hero-video-slide {% if forloop.first %}active{% endif %}" autoplay muted loop playsinline style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: 100%; height: 100%; transform: translate(-50%, -50%); object-fit: cover; opacity: {% if forloop.first %}1{% else %}0{% endif %}; transition: opacity 1.5s ease-in-out;">
+        <source src="{{ v.video.url }}" type="video/mp4">
+      </video>
+      {% endfor %}
+    {% else %}
+      <!-- Fallback High Definition Background Overlay -->
+      <div class="slide-img active" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80'); opacity: 1;"></div>
+    {% endif %}
   </div>
 </section>
 
-<!-- RECENTLY ADDED LANDINGS SECTION (CLEAN CARDS) -->
-<section class="glass-section" style="padding: 4rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #f4efdf 100%); border-top: 1px solid rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.03); width: 100%;">
+<!-- 2. STATS COUNTER BAR (Properties, Tenants, Landlords, Districts, Agents) -->
+<section style="background: var(--color-emerald-darkest); color: white; padding: 2rem 0; border-bottom: 3px solid var(--color-gold); box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; z-index: 10;">
+  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 2rem; text-align: center;">
+    
+    <div class="stat-counter-box">
+      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_properties|default:120 }}">0</div>
+      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
+        Properties
+      </div>
+    </div>
+
+    <div class="stat-counter-box">
+      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_tenants|default:450 }}">0</div>
+      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
+        Tenants
+      </div>
+    </div>
+
+    <div class="stat-counter-box">
+      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_moved_in|default:380 }}">0</div>
+      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
+        Moved In
+      </div>
+    </div>
+
+    <div class="stat-counter-box">
+      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_landlords|default:85 }}">0</div>
+      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
+        Landlords
+      </div>
+    </div>
+
+    <div class="stat-counter-box">
+      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_districts|default:14 }}">0</div>
+      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
+        Districts
+      </div>
+    </div>
+
+    <div class="stat-counter-box">
+      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_agents|default:32 }}">0</div>
+      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
+        Agents
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RECENTLY ADDED LANDINGS SECTION (ARCHITECTURAL BLUEPRINT BACKGROUND) -->
+<section class="blueprint-bg-section">
   <div class="vetted-container-padding">
     
     <!-- Premium Vetted Grid Layout -->
@@ -1359,19 +1453,11 @@
           <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
             alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% endif %}
-          <div class="glass-tag" style="position: absolute; top: 1rem; left: 1rem; background: var(--color-emerald); color: var(--color-gold); font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 4px; z-index: 20; letter-spacing: 0.05em; text-transform: uppercase;">NEWLY VETTED</div>
         </div>
 
-        <div class="glass-body" style="padding: 1.5rem;">
-          <h3 class="glass-price" style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.2rem; font-weight: 700;">
-            {% if property.price %}
-            UGX {{ property.price|floatformat:0 }} <span style="font-size: 0.75rem; color: #64748b; font-weight: 500;">/ mo</span>
-            {% else %}
-            Custom Pricing
-            {% endif %}
-          </h3>
-          <h4 class="glass-title" style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 0.95rem; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">{{ property.title }}</h4>
-          <p class="glass-location" style="margin: 0; color: #64748b; font-size: 0.8rem; display: flex; align-items: center; gap: 0.35rem;"><i class="fa-solid fa-location-dot" style="color: var(--color-emerald-light);"></i> {{ property.location }}</p>
+        <div class="glass-body" style="padding: 1.1rem 1.25rem;">
+          <h4 class="glass-title" style="margin: 0 0 0.35rem 0; color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; height: auto;">{{ property.title }}</h4>
+          <p class="glass-location" style="margin: 0; color: #475569; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.9rem;"></i> {{ property.location }}</p>
         </div>
       </a>
       {% empty %}
@@ -1385,58 +1471,17 @@
   </div>
 </section>
 
-<!-- 4. HOW TRUST WORKS -->
-<section class="bg-darkest">
-  <!-- Background Video (Simplest Resolution 480p, Happy Family Loop) -->
-  <video autoplay="autoplay" loop="loop" muted="muted" playsinline="playsinline" webkit-playsinline class="video-bg" poster="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1200&q=80">
-    <source src="https://assets.mixkit.co/videos/preview/mixkit-happy-family-playing-in-the-backyard-39878-large.mp4" type="video/mp4">
-  </video>
-  <div class="container">
-    <div style="text-align: center; max-width: 800px; margin: 0 auto 4rem;">
-      <span class="section-label" style="color: var(--color-gold-light);">THE PIPELINE FLOW</span>
-      <h2 class="section-title">We Verify First. Then We Publish.</h2>
-      <p class="section-lead" style="margin-bottom: 0; margin-left: auto; margin-right: auto;">A systematic, secure
-        step-by-step verification pipeline that listings must clear.</p>
-    </div>
-
-    <div class="workflow-grid">
-      <div class="workflow-step">
-        <span class="workflow-number">01</span>
-        <p>Landlord Verification</p>
-      </div>
-      <div class="workflow-step">
-        <span class="workflow-number">02</span>
-        <p>Property Inspection</p>
-      </div>
-      <div class="workflow-step">
-        <span class="workflow-number">03</span>
-        <p>Document Verification</p>
-      </div>
-      <div class="workflow-step">
-        <span class="workflow-number">04</span>
-        <p>Admin Approval</p>
-      </div>
-      <div class="workflow-step">
-        <span class="workflow-number">05</span>
-        <p>Tenant Screening</p>
-      </div>
-      <div class="workflow-step">
-        <span class="workflow-number">06</span>
-        <p>Secure Escrow Payment</p>
-      </div>
-      <div class="workflow-step">
-        <span class="workflow-number">07</span>
-        <p>Transparent Digital Contract</p>
-      </div>
-    </div>
-
-    <div style="text-align: center; margin-top: 4rem;">
-      <span
-        style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.75rem 2rem; border-radius: var(--radius-full); font-weight: 600; color: var(--color-gold); font-size: 1rem;">
-        If it’s not verified, it’s not on TRUST.
-      </span>
-    </div>
+<!-- 4. DIAGONAL 2-TONE SPLIT SHOWCASE SECTION -->
+<section style="position: relative; overflow: hidden; width: 100%; min-height: 650px; height: 650px; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04);">
+  
+  <!-- Left Diagonal Container Block (Clean / Admin Image Display) -->
+  <div style="position: absolute; top: 0; left: 0; bottom: 0; width: 58%; background: {% if site_settings.pipeline_left_image %}url('{{ site_settings.pipeline_left_image.url }}') center/cover no-repeat{% else %}#103d28{% endif %}; clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%); z-index: 1;">
   </div>
+
+  <!-- Right Container Block (Clean / Admin Image Display) -->
+  <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 50%; background: {% if site_settings.pipeline_right_image %}url('{{ site_settings.pipeline_right_image.url }}') center/cover no-repeat{% else %}#ffffff{% endif %}; z-index: 0;">
+  </div>
+
 </section>
 
 <!-- TENANT TESTIMONIAL MARQUEE SECTION -->
@@ -1697,6 +1742,26 @@
         }
       });
     })();
+
+    // Animated Stats Counter
+    const counters = document.querySelectorAll('.counter-num');
+    counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        if (!target) return;
+        let count = 0;
+        const step = Math.max(1, Math.ceil(target / 45));
+        
+        const updateCount = () => {
+            count += step;
+            if (count < target) {
+                counter.innerText = count.toLocaleString() + '+';
+                setTimeout(updateCount, 30);
+            } else {
+                counter.innerText = target.toLocaleString() + '+';
+            }
+        };
+        updateCount();
+    });
 
   });
 </script>

@@ -382,6 +382,25 @@ class SiteSetting(models.Model):
     site_icon = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Favicon / Tab icon")
     site_logo = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Top header logo replacement for 'Shield and TRUST'")
 
+    # Counter Stats configured by Admin
+    stat_properties = models.IntegerField(default=120, help_text="Properties Counter Display")
+    stat_tenants = models.IntegerField(default=450, help_text="Tenants Counter Display")
+    stat_moved_in = models.IntegerField(default=380, help_text="Moved In Counter Display")
+    stat_landlords = models.IntegerField(default=85, help_text="Landlords Counter Display")
+    stat_districts = models.IntegerField(default=14, help_text="Districts Counter Display")
+    stat_agents = models.IntegerField(default=32, help_text="Agents Counter Display")
+
+    # Top Selling Apartment configured by Admin
+    top_selling_title = models.CharField(max_length=200, default="Penthouse Apartment in Kololo", help_text="Top Selling Apartment Title")
+    top_selling_price = models.CharField(max_length=100, default="UGX 2,500,000 / mo", help_text="Top Selling Apartment Price")
+    top_selling_location = models.CharField(max_length=150, default="Kololo, Kampala", help_text="Top Selling Apartment Location")
+    top_selling_image = models.FileField(upload_to='featured/', null=True, blank=True, help_text="Top Selling Apartment Image uploaded by Admin")
+    top_selling_link = models.CharField(max_length=255, default="/search/", help_text="Top Selling Apartment Link URL")
+
+    # Custom Split Section Images configured by Admin
+    pipeline_left_image = models.FileField(upload_to='pipeline/', null=True, blank=True, help_text="Left Section Image uploaded by Admin")
+    pipeline_right_image = models.FileField(upload_to='pipeline/', null=True, blank=True, help_text="Right Section Image uploaded by Admin")
+
     def __str__(self):
         return "Site Settings"
 
@@ -450,4 +469,18 @@ class PropertyPanorama(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.get_panorama_type_display()}) - {self.property.title}"
+
+
+class HeroVideo(models.Model):
+    title = models.CharField(max_length=255, default="Estate Hero Video")
+    video = models.FileField(upload_to='hero_videos/', help_text="Upload MP4/WebM video file for landing page hero background slider")
+    is_active = models.BooleanField(default=True)
+    order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({'Active' if self.is_active else 'Inactive'})"
 
