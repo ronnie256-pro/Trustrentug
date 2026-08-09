@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}TRUST | The Rental Verification Protocol{% endblock %}
 
@@ -33,7 +34,8 @@
     z-index: 1;
     transform: translate(-50%, -50%);
     object-fit: cover;
-    opacity: 0.18; /* Perfect elegant visual balance */
+    opacity: 0.18;
+    /* Perfect elegant visual balance */
     pointer-events: none;
   }
 
@@ -209,22 +211,40 @@
     position: relative;
     padding: 2rem 0;
     background-color: #fcfaf5;
-    background-image: 
+    background-image:
       linear-gradient(rgba(16, 61, 40, 0.05) 1px, transparent 1px),
       linear-gradient(90deg, rgba(16, 61, 40, 0.05) 1px, transparent 1px),
       linear-gradient(rgba(203, 163, 88, 0.04) 2px, transparent 2px),
       linear-gradient(90deg, rgba(203, 163, 88, 0.04) 2px, transparent 2px);
     background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     width: 100%;
   }
 
   .stat-counter-box {
     transition: transform 0.25s ease;
   }
+
   .stat-counter-box:hover {
     transform: translateY(-3px);
+  }
+
+  /* Typewriter Cursor Animation */
+  @keyframes blinkCursor {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .typewriter-cursor {
+    animation: blinkCursor 0.75s infinite;
   }
 
   /* Winding Snake Roadmap (Steps 1-7) */
@@ -235,6 +255,7 @@
     gap: 1.1rem;
     padding: 0.5rem 0;
   }
+
   .snake-step-row {
     position: relative;
     z-index: 2;
@@ -243,20 +264,23 @@
     gap: 1rem;
     width: 100%;
   }
+
   .snake-step-row.step-left {
     justify-content: flex-start;
   }
+
   .snake-step-row.step-right {
     justify-content: flex-end;
     text-align: right;
   }
+
   .snake-circle-badge {
     width: 52px;
     height: 52px;
     border-radius: 50%;
     background: #ffffff;
     border: 3px solid var(--color-gold);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -265,10 +289,12 @@
     color: #072a1c;
     transition: transform 0.25s ease, background 0.25s ease;
   }
+
   .snake-step-row:hover .snake-circle-badge {
     transform: scale(1.1);
     background: var(--color-gold);
   }
+
   .snake-circle-badge small {
     font-size: 0.52rem;
     font-weight: 800;
@@ -277,12 +303,14 @@
     text-transform: uppercase;
     color: #072a1c;
   }
+
   .snake-circle-badge span {
     font-size: 1.15rem;
     font-weight: 900;
     line-height: 1;
     color: #072a1c;
   }
+
   .snake-step-content {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(203, 163, 88, 0.35);
@@ -292,11 +320,13 @@
     max-width: 250px;
     transition: all 0.25s ease;
   }
+
   .snake-step-row:hover .snake-step-content {
     border-color: var(--color-gold);
     background: rgba(203, 163, 88, 0.15);
     transform: translateY(-2px);
   }
+
   .snake-step-content h4 {
     margin: 0;
     font-size: 0.86rem;
@@ -420,16 +450,17 @@
   .guarantees-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    font-size: 1rem;
-    font-weight: 600;
+    gap: 0.85rem;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: var(--color-emerald-darkest);
+    padding: 0.5rem 0;
   }
 
   .guarantees-item i {
     color: #e11d48;
     /* Crimson marker */
-    font-size: 1rem;
+    font-size: 1.25rem;
   }
 
   .metadata-display-card {
@@ -925,30 +956,34 @@
     font-size: 0.85rem;
   }
 
-  /* Vetted Properties Grid Layout */
+  /* Vetted Properties Grid Layout (Center Width) */
   .vetted-container-padding {
-    max-width: 100%;
-    margin: 0;
-    padding: 0 3.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
     width: 100%;
     box-sizing: border-box;
   }
+
   .vetted-grid-container {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.75rem;
   }
 
   .vetted-card-grid-wrapper {
     display: block;
     width: 100%;
     height: 100%;
-    border: 3px solid rgba(4, 120, 87, 0.45) !important; /* Thick Deep Emerald Border */
+    border: 3px solid rgba(4, 120, 87, 0.45) !important;
+    /* Thick Deep Emerald Border */
     box-shadow: 0 10px 30px rgba(10, 61, 40, 0.07) !important;
-    background: rgba(255, 255, 255, 0.18) !important; /* Sheer frosted glass */
+    background: rgba(255, 255, 255, 0.18) !important;
+    /* Sheer frosted glass */
     backdrop-filter: blur(16px) saturate(120%);
     -webkit-backdrop-filter: blur(16px) saturate(120%);
-    position: relative; /* absolute stars/fireworks placement */
+    position: relative;
+    /* absolute stars/fireworks placement */
     overflow: hidden;
     border-radius: 12px;
     text-decoration: none;
@@ -959,7 +994,8 @@
     border-color: rgba(4, 120, 87, 0.95) !important;
     box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
     background: rgba(255, 255, 255, 0.3) !important;
-    transform: translateY(-6px) !important; /* Gentle premium card lift */
+    transform: translateY(-6px) !important;
+    /* Gentle premium card lift */
   }
 
   /* Responsive breakpoints for Vetted Properties Grid */
@@ -968,15 +1004,18 @@
       grid-template-columns: repeat(4, 1fr);
     }
   }
+
   @media (max-width: 1200px) {
     .vetted-grid-container {
       grid-template-columns: repeat(3, 1fr);
     }
   }
+
   @media (max-width: 768px) {
     .vetted-container-padding {
       padding: 0 1.5rem;
     }
+
     .vetted-grid-container {
       display: grid !important;
       grid-template-columns: none !important;
@@ -989,42 +1028,52 @@
       padding-bottom: 1rem !important;
       scrollbar-width: none;
     }
+
     .vetted-grid-container::-webkit-scrollbar {
       display: none;
     }
+
     .vetted-card-grid-wrapper {
       width: 260px !important;
       flex-shrink: 0 !important;
       scroll-snap-align: start !important;
     }
+
     .vetted-card-grid-wrapper .glass-img-wrapper {
       height: 140px !important;
     }
+
     .vetted-card-grid-wrapper .glass-tag {
       top: 0.5rem !important;
       left: 0.5rem !important;
       font-size: 0.65rem !important;
       padding: 0.2rem 0.5rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-body {
       padding: 0.85rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-price {
       font-size: 1rem !important;
       margin-bottom: 0.25rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-title {
       font-size: 0.82rem !important;
       margin-bottom: 0.25rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-location {
       font-size: 0.72rem !important;
     }
   }
+
   @media (max-width: 480px) {
     .vetted-container-padding {
       padding: 0 0.75rem;
     }
+
     .vetted-grid-container {
       display: grid !important;
       grid-template-columns: none !important;
@@ -1037,31 +1086,39 @@
       padding-bottom: 0.75rem !important;
       scrollbar-width: none;
     }
+
     .vetted-grid-container::-webkit-scrollbar {
       display: none;
     }
+
     .vetted-card-grid-wrapper {
       width: 220px !important;
       flex-shrink: 0 !important;
       scroll-snap-align: start !important;
       border-width: 2px !important;
     }
+
     .vetted-card-grid-wrapper .glass-img-wrapper {
       height: 115px !important;
     }
+
     .vetted-card-grid-wrapper .glass-tag {
       font-size: 0.55rem !important;
       padding: 0.15rem 0.4rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-body {
       padding: 0.75rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-price {
       font-size: 0.88rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-title {
       font-size: 0.78rem !important;
     }
+
     .vetted-card-grid-wrapper .glass-location {
       font-size: 0.7rem !important;
     }
@@ -1105,12 +1162,15 @@
     flex: 0 0 320px;
     width: 320px;
     height: 100%;
-    border: 3px solid rgba(4, 120, 87, 0.45) !important; /* Thick Deep Emerald Border */
+    border: 3px solid rgba(4, 120, 87, 0.45) !important;
+    /* Thick Deep Emerald Border */
     box-shadow: 0 10px 30px rgba(10, 61, 40, 0.07) !important;
-    background: rgba(255, 255, 255, 0.18) !important; /* Elegant sheer frosted glass */
+    background: rgba(255, 255, 255, 0.18) !important;
+    /* Elegant sheer frosted glass */
     backdrop-filter: blur(16px) saturate(120%);
     -webkit-backdrop-filter: blur(16px) saturate(120%);
-    position: relative; /* for absolute stars/fireworks placement */
+    position: relative;
+    /* for absolute stars/fireworks placement */
     overflow: hidden;
     transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
   }
@@ -1119,7 +1179,8 @@
     border-color: rgba(4, 120, 87, 0.95) !important;
     box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
     background: rgba(255, 255, 255, 0.3) !important;
-    transform: translateY(-6px) !important; /* Gentle premium card lift */
+    transform: translateY(-6px) !important;
+    /* Gentle premium card lift */
   }
 
   /* Fireworks & Shooting Star Container */
@@ -1154,17 +1215,21 @@
       opacity: 0;
       transform: scale(0.5);
     }
+
     5% {
       opacity: 1;
       transform: scale(1.5);
     }
+
     22% {
       bottom: 92%;
       left: 92%;
       opacity: 1;
       transform: scale(1);
     }
-    23%, 100% {
+
+    23%,
+    100% {
       bottom: 92%;
       left: 92%;
       opacity: 0;
@@ -1183,29 +1248,64 @@
     animation: explode-sparks 6s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
   }
 
-  .firework-container .spark-1 { --dx: 38px; --dy: -38px; --color: #ff2a5f; }
-  .firework-container .spark-2 { --dx: -38px; --dy: -38px; --color: #00f3ff; }
-  .firework-container .spark-3 { --dx: 45px; --dy: 10px; --color: #ffd700; }
-  .firework-container .spark-4 { --dx: -45px; --dy: 15px; --color: #ff9f00; }
-  .firework-container .spark-5 { --dx: 0px; --dy: -55px; --color: #ff00ff; }
-  .firework-container .spark-6 { --dx: 28px; --dy: 42px; --color: #00ff66; }
+  .firework-container .spark-1 {
+    --dx: 38px;
+    --dy: -38px;
+    --color: #ff2a5f;
+  }
+
+  .firework-container .spark-2 {
+    --dx: -38px;
+    --dy: -38px;
+    --color: #00f3ff;
+  }
+
+  .firework-container .spark-3 {
+    --dx: 45px;
+    --dy: 10px;
+    --color: #ffd700;
+  }
+
+  .firework-container .spark-4 {
+    --dx: -45px;
+    --dy: 15px;
+    --color: #ff9f00;
+  }
+
+  .firework-container .spark-5 {
+    --dx: 0px;
+    --dy: -55px;
+    --color: #ff00ff;
+  }
+
+  .firework-container .spark-6 {
+    --dx: 28px;
+    --dy: 42px;
+    --color: #00ff66;
+  }
 
   @keyframes explode-sparks {
-    0%, 21% {
+
+    0%,
+    21% {
       transform: translate(0, 0) scale(0);
       opacity: 0;
     }
+
     22% {
       transform: translate(0, 0) scale(1.2);
       opacity: 1;
       background: var(--color);
       box-shadow: 0 0 12px var(--color), 0 0 24px var(--color);
     }
+
     40% {
       transform: translate(var(--dx), var(--dy)) scale(0.9);
       opacity: 0.9;
     }
-    55%, 100% {
+
+    55%,
+    100% {
       transform: translate(calc(var(--dx) * 1.3), calc(var(--dy) * 1.3)) scale(0);
       opacity: 0;
     }
@@ -1259,15 +1359,18 @@
     display: flex;
     padding: 1.5rem 0;
   }
+
   .testimonial-marquee-track {
     display: flex;
     width: max-content;
     animation: marquee-testimonial-left 35s linear infinite;
     will-change: transform;
   }
+
   .testimonial-marquee-track:hover {
     animation-play-state: paused;
   }
+
   .testimonial-marquee-group {
     display: flex;
     gap: 2.5rem;
@@ -1275,6 +1378,7 @@
     flex-shrink: 0;
     padding-right: 2.5rem;
   }
+
   .testimonial-card {
     flex: 0 0 380px;
     width: 380px;
@@ -1290,12 +1394,14 @@
     justify-content: space-between;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
+
   .testimonial-card:hover {
     transform: translateY(-8px);
     border-color: var(--color-gold);
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 20px 40px rgba(10, 61, 40, 0.08);
   }
+
   .testimonial-rating {
     color: var(--color-gold);
     font-size: 0.85rem;
@@ -1303,6 +1409,7 @@
     display: flex;
     gap: 0.2rem;
   }
+
   .testimonial-quote {
     font-size: 0.95rem;
     line-height: 1.6;
@@ -1312,6 +1419,7 @@
     margin: 0 0 1.75rem 0;
     flex-grow: 1;
   }
+
   .testimonial-user {
     display: flex;
     align-items: center;
@@ -1319,6 +1427,7 @@
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     padding-top: 1.25rem;
   }
+
   .testimonial-avatar {
     width: 48px;
     height: 48px;
@@ -1326,6 +1435,7 @@
     object-fit: cover;
     border: 2px solid var(--color-gold);
   }
+
   .testimonial-name {
     margin: 0;
     font-size: 1rem;
@@ -1333,6 +1443,7 @@
     color: var(--color-emerald-darkest);
     font-family: var(--font-body);
   }
+
   .testimonial-role {
     font-size: 0.75rem;
     color: var(--color-text-muted);
@@ -1343,6 +1454,7 @@
     0% {
       transform: translateX(0);
     }
+
     100% {
       transform: translateX(-50%);
     }
@@ -1353,116 +1465,152 @@
 {% block content %}
 
 <!-- 1. HERO SECTION -->
-<section class="hero-container" style="position: relative; overflow: hidden; width: 100%; min-height: 680px; background: #000; padding: 0;">
+<section class="hero-container"
+  style="position: relative; overflow: hidden; width: 100%; min-height: 680px; background: #000; padding: 0;">
   <!-- Background Video Slider -->
-  <div class="hero-slider" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1;">
+  <div class="hero-slider"
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1;">
     {% if hero_videos %}
-      {% for v in hero_videos %}
-      <video class="hero-video-slide {% if forloop.first %}active{% endif %}" autoplay muted loop playsinline style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: 100%; height: 100%; transform: translate(-50%, -50%); object-fit: cover; opacity: {% if forloop.first %}1{% else %}0{% endif %}; transition: opacity 1.5s ease-in-out;">
-        <source src="{{ v.video.url }}" type="video/mp4">
-      </video>
-      {% endfor %}
+    {% for v in hero_videos %}
+    <video class="hero-video-slide {% if forloop.first %}active{% endif %}" autoplay muted loop playsinline
+      style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: 100%; height: 100%; transform: translate(-50%, -50%); object-fit: cover; opacity: {% if forloop.first %}1{% else %}0{% endif %}; transition: opacity 1.5s ease-in-out;">
+      <source src="{{ v.video.url }}" type="video/mp4">
+    </video>
+    {% endfor %}
     {% else %}
-      <!-- Fallback High Definition Background Overlay -->
-      <div class="slide-img active" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80'); opacity: 1;"></div>
+    <!-- Fallback High Definition Background Overlay -->
+    <div class="slide-img active"
+      style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80'); opacity: 1;">
+    </div>
     {% endif %}
   </div>
 </section>
 
-<!-- 2. STATS COUNTER BAR (Properties, Tenants, Landlords, Districts, Agents) -->
-<section style="background: var(--color-emerald-darkest); color: white; padding: 2rem 0; border-bottom: 3px solid var(--color-gold); box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; z-index: 10;">
-  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 2rem; text-align: center;">
-    
-    <div class="stat-counter-box">
-      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_properties|default:120 }}">0</div>
-      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
-        Properties
-      </div>
-    </div>
+<!-- HERO SEARCH FILTER BAR (GLASSMORPHIC LIGHT EMERALD GREEN) -->
+<div style="position: relative; z-index: 30; margin-top: -3.5rem; margin-bottom: 2rem;">
+  <div class="container" style="max-width: 1050px;">
+    <form method="GET" action="/search/"
+      style="background: rgba(16, 61, 40, 0.82); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1.5px solid rgba(203, 163, 88, 0.45); border-radius: 22px; padding: 1.1rem 1.5rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: center;">
 
-    <div class="stat-counter-box">
-      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_tenants|default:450 }}">0</div>
-      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
-        Tenants
+      <!-- 1. Location -->
+      <div style="position: relative; width: 100%;">
+        <select name="q"
+          style="width: 100%; padding: 0.85rem 2.5rem 0.85rem 1.25rem; border-radius: 14px; border: none; background: #faf7f2; color: #1e293b; font-size: 0.95rem; font-weight: 700; appearance: none; -webkit-appearance: none; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); font-family: var(--font-body);">
+          <option value="">Location</option>
+          <option value="Kampala">Kampala</option>
+          <option value="Kololo">Kololo</option>
+          <option value="Nakasero">Nakasero</option>
+          <option value="Bugolobi">Bugolobi</option>
+          <option value="Naguru">Naguru</option>
+          <option value="Entebbe">Entebbe</option>
+          <option value="Kira">Kira</option>
+          <option value="Ntinda">Ntinda</option>
+          <option value="Muyenga">Muyenga</option>
+        </select>
+        <i class="fa-solid fa-location-dot"
+          style="position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.95rem; pointer-events: none;"></i>
       </div>
-    </div>
 
-    <div class="stat-counter-box">
-      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_moved_in|default:380 }}">0</div>
-      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
-        Moved In
+      <!-- 2. Type of House -->
+      <div style="position: relative; width: 100%;">
+        <select name="type"
+          style="width: 100%; padding: 0.85rem 2.5rem 0.85rem 1.25rem; border-radius: 14px; border: none; background: #faf7f2; color: #1e293b; font-size: 0.95rem; font-weight: 700; appearance: none; -webkit-appearance: none; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); font-family: var(--font-body);">
+          <option value="">Type</option>
+          <option value="apartment">Apartment</option>
+          <option value="flat">Flat</option>
+          <option value="condo">Condo</option>
+          <option value="bungalow">Bungalow / Villa</option>
+        </select>
+        <i class="fa-solid fa-house"
+          style="position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.9rem; pointer-events: none;"></i>
       </div>
-    </div>
 
-    <div class="stat-counter-box">
-      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_landlords|default:85 }}">0</div>
-      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
-        Landlords
+      <!-- 3. Price Range -->
+      <div style="position: relative; width: 100%;">
+        <select id="priceRangeSelect"
+          style="width: 100%; padding: 0.85rem 2.5rem 0.85rem 1.25rem; border-radius: 14px; border: none; background: #faf7f2; color: #1e293b; font-size: 0.95rem; font-weight: 700; appearance: none; -webkit-appearance: none; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); font-family: var(--font-body);">
+          <option value="">Price Range</option>
+          <option value="0-500000">Under UGX 500k</option>
+          <option value="500000-1500000">UGX 500k - 1.5M</option>
+          <option value="1500000-3000000">UGX 1.5M - 3M</option>
+          <option value="3000000-99999999">UGX 3M+</option>
+        </select>
+        <input type="hidden" name="min_price" id="minPriceInput" value="">
+        <input type="hidden" name="max_price" id="maxPriceInput" value="">
+        <i class="fa-solid fa-coins"
+          style="position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.9rem; pointer-events: none;"></i>
       </div>
-    </div>
 
-    <div class="stat-counter-box">
-      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_districts|default:14 }}">0</div>
-      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
-        Districts
-      </div>
-    </div>
+      <!-- 4. Search Button -->
+      <button type="submit"
+        style="background: #14100c; color: #ffffff; padding: 0.85rem 2.25rem; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+        Search
+      </button>
 
-    <div class="stat-counter-box">
-      <div style="font-size: 2.3rem; font-weight: 800; color: var(--color-gold); font-family: var(--font-heading);" class="counter-num" data-target="{{ site_settings.stat_agents|default:32 }}">0</div>
-      <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.85); margin-top: 0.25rem;">
-        Agents
-      </div>
-    </div>
-
+    </form>
   </div>
-</section>
+</div>
 
-<!-- RECENTLY ADDED LANDINGS SECTION (ARCHITECTURAL BLUEPRINT BACKGROUND) -->
-<section class="blueprint-bg-section">
+<!-- 2. RECENTLY ADDED LANDINGS SECTION (CLEAN BACKGROUND, GLASSMORPHIC LIGHT EMERALD CARDS) -->
+<section
+  style="padding: 2.25rem 0 3rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
   <div class="vetted-container-padding">
-    
+
+    <!-- Centered Looped Typewriter Header (Brand Colors & Gold Underline) -->
+    <div
+      style="text-align: center; margin-bottom: 1.5rem; min-height: 2.2rem; display: flex; align-items: center; justify-content: center;">
+      <h3
+        style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 700; margin: 0; letter-spacing: 0.3px; border-bottom: 2px solid var(--color-gold); padding-bottom: 0.35rem; display: inline-block;">
+        <span id="typewriterText"></span><span class="typewriter-cursor"
+          style="color: var(--color-gold); font-weight: 400; margin-left: 2px;">|</span>
+      </h3>
+    </div>
+
     <!-- Premium Vetted Grid Layout -->
     <div class="vetted-grid-container">
       {% for property in properties|slice:":12" %}
-      <a href="/property/{{ property.id }}/" class="vetted-card-grid-wrapper animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter }}00ms;">
-        <!-- Shooting Star and Fireworks Explosion -->
-        <div class="firework-container">
-          <div class="shooting-star" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          <div class="spark spark-1" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          <div class="spark spark-2" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          <div class="spark spark-3" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          <div class="spark spark-4" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          <div class="spark spark-5" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-          <div class="spark spark-6" style="animation-delay: {{ forloop.counter|add:forloop.counter }}s;"></div>
-        </div>
+      <a href="/property/{{ property.id }}/" class="vetted-card-grid-wrapper animate__animated animate__fadeIn"
+        style="animation-delay: {{ forloop.counter }}00ms; border-radius: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 10px 25px rgba(0,0,0,0.06); text-decoration: none; transition: transform 0.35s ease, box-shadow 0.35s ease;">
 
-        <div class="glass-img-wrapper" style="position: relative; height: 200px; overflow: hidden; border-top-left-radius: 9px; border-top-right-radius: 9px;">
+        <div class="glass-img-wrapper" style="position: relative; height: 210px; overflow: hidden;">
           {% if property.hero_image %}
-          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% elif property.category == 'studio' %}
           <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+            alt="{{ property.title }}" class="glass-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% elif property.category == '2_bed' or property.category == '1_bed' %}
           <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+            alt="{{ property.title }}" class="glass-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% elif property.is_multi_unit %}
           <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+            alt="{{ property.title }}" class="glass-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% else %}
           <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+            alt="{{ property.title }}" class="glass-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% endif %}
         </div>
 
-        <div class="glass-body" style="padding: 1.1rem 1.25rem;">
-          <h4 class="glass-title" style="margin: 0 0 0.35rem 0; color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; height: auto;">{{ property.title }}</h4>
-          <p class="glass-location" style="margin: 0; color: #475569; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;"><i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.9rem;"></i> {{ property.location }}</p>
+        <!-- Light Emerald Glassmorphic Card Footer Body -->
+        <div class="glass-body"
+          style="padding: 1.1rem 1.25rem; background: rgba(16, 61, 40, 0.93); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(203, 163, 88, 0.35);">
+          <h4 class="glass-title"
+            style="margin: 0 0 0.35rem 0; color: #ffffff; font-size: 1.15rem; font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; height: auto;">
+            {{ property.title }}</h4>
+          <p class="glass-location"
+            style="margin: 0; color: var(--color-gold-light); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
+            <i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.85rem;"></i> {{ property.location|default:"Kampala, Uganda" }}
+          </p>
         </div>
       </a>
       {% empty %}
       <div style="text-align: center; padding: 5rem 0; color: #94a3b8; grid-column: 1 / -1;">
-        <i class="fa-solid fa-house-circle-xmark" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+        <i class="fa-solid fa-house-circle-xmark"
+          style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
         <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No recently added vetted properties found.</p>
       </div>
       {% endfor %}
@@ -1471,182 +1619,324 @@
   </div>
 </section>
 
-<!-- 4. DIAGONAL 2-TONE SPLIT SHOWCASE SECTION -->
-<section style="position: relative; overflow: hidden; width: 100%; min-height: 650px; height: 650px; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04);">
-  
-  <!-- Left Diagonal Container Block (Clean / Admin Image Display) -->
-  <div style="position: absolute; top: 0; left: 0; bottom: 0; width: 58%; background: {% if site_settings.pipeline_left_image %}url('{{ site_settings.pipeline_left_image.url }}') center/cover no-repeat{% else %}#103d28{% endif %}; clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%); z-index: 1;">
-  </div>
+<!-- 3. DREAM HOME & STATS SHOWCASE SECTION (CENTERED HEADER & BLENDED STATS) -->
+<section
+  style="padding: 4.5rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
+  <div class="vetted-container-padding">
 
-  <!-- Right Container Block (Clean / Admin Image Display) -->
-  <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 50%; background: {% if site_settings.pipeline_right_image %}url('{{ site_settings.pipeline_right_image.url }}') center/cover no-repeat{% else %}#ffffff{% endif %}; z-index: 0;">
-  </div>
+    <!-- CENTERED TEXT HEADER BLOCK -->
+    <div style="text-align: center; max-width: 760px; margin: 0 auto 3.5rem auto;">
+      <h2
+        style="font-family: var(--font-heading); font-size: 2.85rem; font-weight: 800; color: #1e1b18; line-height: 1.15; margin-bottom: 1.15rem; letter-spacing: -0.5px;">
+        We Help You To Find <span style="color: var(--color-emerald-darkest);">Your Dream Home</span>
+      </h2>
+      <p style="font-size: 1.2rem; line-height: 1.75; color: #57534e; font-weight: 500; margin: 0;">
+        From cozy cottages to luxurious estates, our dedicated team guides you through every step of the journey,
+        ensuring your dream home becomes a verified reality.
+      </p>
+    </div>
 
+    <!-- SPLIT CONTENT: SAMPLE IMAGE ON LEFT, COUNTDOWN CARDS ON RIGHT -->
+    <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 3.5rem; align-items: center;">
+
+      <!-- LEFT SIDE: SAMPLE IMAGE CARD WITH ROUNDED CORNERS -->
+      <div
+        style="position: relative; border-radius: 22px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.06);">
+        {% if site_settings.pipeline_left_image %}
+        <img src="{{ site_settings.pipeline_left_image.url }}" alt="Dream Home Showcase"
+          style="width: 100%; height: 440px; object-fit: cover; display: block;">
+        {% else %}
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80"
+          alt="Dream Home Showcase" style="width: 100%; height: 440px; object-fit: cover; display: block;">
+        {% endif %}
+      </div>
+
+      <!-- RIGHT SIDE: ANIMATED COUNTDOWN STATS GRID -->
+      <div
+        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem 1rem; background: #faf7f2; padding: 2.25rem 1.75rem; border-radius: 22px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
+            class="counter-num" data-target="{{ site_settings.stat_properties|default:120 }}">0</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Properties</div>
+        </div>
+
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
+            class="counter-num" data-target="{{ site_settings.stat_tenants|default:450 }}">0</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Tenants</div>
+        </div>
+
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
+            class="counter-num" data-target="{{ site_settings.stat_moved_in|default:380 }}">0</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Moved In</div>
+        </div>
+
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
+            class="counter-num" data-target="{{ site_settings.stat_landlords|default:85 }}">0</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Landlords</div>
+        </div>
+
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
+            class="counter-num" data-target="{{ site_settings.stat_districts|default:14 }}">0</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Districts</div>
+        </div>
+
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
+            class="counter-num" data-target="{{ site_settings.stat_agents|default:32 }}">0</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Agents</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </section>
 
-<!-- TENANT TESTIMONIAL MARQUEE SECTION -->
-<section class="testimonials-section" style="padding: 1rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #f4efdf 100%); overflow: hidden; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; border-bottom: 1px solid rgba(0,0,0,0.03);">
-    <div style="text-align: center; margin-bottom: 1.5rem; margin-top: 1rem;">
-        <h3 style="font-family: var(--font-heading); font-size: 2rem; color: var(--color-emerald-darkest); font-weight: 700; position: relative; display: inline-block; padding-bottom: 0.5rem; margin: 0;">
-            Testimonies
-            <span style="position: absolute; bottom: 0; left: 30%; right: 30%; height: 3px; background: var(--color-gold); border-radius: 2px;"></span>
-        </h3>
-    </div>
+<!-- TESTIMONIES HEADER (OUTSIDE THE WATERMARK BLOCK) -->
+<div style="text-align: center; padding: 2.5rem 0 1.25rem 0; background: #ffffff;">
+  <h3
+    style="font-family: var(--font-heading); font-size: 3rem; color: var(--color-emerald-darkest); font-weight: 800; position: relative; display: inline-block; padding-bottom: 0.5rem; margin: 0 0 0.5rem 0; letter-spacing: -0.5px;">
+    Testimonies
+    <span
+      style="position: absolute; bottom: 0; left: 30%; right: 30%; height: 3.5px; background: var(--color-gold); border-radius: 2px;"></span>
+  </h3>
+  <p style="font-size: 1.2rem; color: #57534e; font-weight: 500; margin: 0; font-family: var(--font-body);">
+    Kind Words From Awesome Clients, this is how we have built <span
+      style="color: var(--color-gold); font-weight: 800; font-family: var(--font-heading); letter-spacing: 1px;">"TRUST"</span>
+  </p>
+</div>
 
+<!-- TENANT TESTIMONIAL MARQUEE SECTION (REDUCED WATERMARK BLOCK FOR CARDS ONLY) -->
+<section class="testimonials-section"
+  style="padding: 0.5rem 0 1.25rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #eef5f1 100%); overflow: hidden; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; border-bottom: 1px solid rgba(0,0,0,0.03);">
+
+  <!-- Premium City Skyline Image Watermark -->
+  <div
+    style="position: absolute; bottom: 0; left: 0; right: 0; top: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; opacity: 0.35; mix-blend-mode: multiply;">
+    <img src="{% static 'images/city_skyline_watermark.jpg' %}" alt="City Skyline Watermark"
+      style="width: 100%; height: 100%; object-fit: cover; object-position: bottom center;">
+  </div>
+
+  <div style="position: relative; z-index: 5;">
     <!-- Testimonials Marquee Outer -->
-    <div class="testimonial-marquee-container">
-        <div class="testimonial-marquee-track">
-            <!-- Group 1 -->
-            <div class="testimonial-marquee-group">
-                <!-- Testimonial 1 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Joan N." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">Joan Nakimera</h4>
-                            <span class="testimonial-role">Verified Tenant • Entebbe</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Testimonial 2 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Arthur M." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">Arthur Musoke</h4>
-                            <span class="testimonial-role">Verified Tenant • Kira</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Testimonial 3 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" alt="Grace N." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">Grace Namubiru</h4>
-                            <span class="testimonial-role">Verified Tenant • Kampala</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Testimonial 4 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was legally certified. The inventory checklist made move-in flawless."</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" alt="David O." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">David Okello</h4>
-                            <span class="testimonial-role">Verified Tenant • Bugolobi</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="testimonial-marquee-container" style="padding: 0.75rem 0;">
+      <div class="testimonial-marquee-track">
+        <!-- Group 1 -->
+        <div class="testimonial-marquee-group">
+          <!-- Testimonial 1 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my
+              landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                alt="Joan N." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">Joan Nakimera</h4>
+                <span class="testimonial-role">Verified Tenant • Entebbe</span>
+              </div>
             </div>
-
-            <!-- Group 2 (Duplicate for Seamless Loop) -->
-            <div class="testimonial-marquee-group">
-                <!-- Testimonial 1 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Joan N." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">Joan Nakimera</h4>
-                            <span class="testimonial-role">Verified Tenant • Entebbe</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Testimonial 2 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Arthur M." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">Arthur Musoke</h4>
-                            <span class="testimonial-role">Verified Tenant • Kira</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Testimonial 3 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" alt="Grace N." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">Grace Namubiru</h4>
-                            <span class="testimonial-role">Verified Tenant • Kampala</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Testimonial 4 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was legally certified. The inventory checklist made move-in flawless."</p>
-                    <div class="testimonial-user">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" alt="David O." class="testimonial-avatar">
-                        <div>
-                            <h4 class="testimonial-name">David Okello</h4>
-                            <span class="testimonial-role">Verified Tenant • Bugolobi</span>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <!-- Testimonial 2 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit
+              was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+                alt="Arthur M." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">Arthur Musoke</h4>
+                <span class="testimonial-role">Verified Tenant • Kira</span>
+              </div>
             </div>
+          </div>
+          <!-- Testimonial 3 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On
+              TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
+                alt="Grace N." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">Grace Namubiru</h4>
+                <span class="testimonial-role">Verified Tenant • Kampala</span>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 4 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was
+              legally certified. The inventory checklist made move-in flawless."</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+                alt="David O." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">David Okello</h4>
+                <span class="testimonial-role">Verified Tenant • Bugolobi</span>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Group 2 (Duplicate for Seamless Loop) -->
+        <div class="testimonial-marquee-group">
+          <!-- Testimonial 1 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my
+              landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                alt="Joan N." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">Joan Nakimera</h4>
+                <span class="testimonial-role">Verified Tenant • Entebbe</span>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 2 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit
+              was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+                alt="Arthur M." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">Arthur Musoke</h4>
+                <span class="testimonial-role">Verified Tenant • Kira</span>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 3 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On
+              TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
+                alt="Grace N." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">Grace Namubiru</h4>
+                <span class="testimonial-role">Verified Tenant • Kampala</span>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 4 -->
+          <div class="testimonial-card">
+            <div class="testimonial-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was
+              legally certified. The inventory checklist made move-in flawless."</p>
+            <div class="testimonial-user">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+                alt="David O." class="testimonial-avatar">
+              <div>
+                <h4 class="testimonial-name">David Okello</h4>
+                <span class="testimonial-role">Verified Tenant • Bugolobi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
 <!-- 5. SAFETY GUARANTEES -->
-<section class="bg-surface">
-  <div class="container guarantees-split">
-    <div>
-      <span class="section-label">OUR GUARANTEES</span>
-      <h2 class="section-title">Our Safety Guarantees</h2>
-      <p class="section-lead">The TRUST Protocol guarantees absolute security for tenants, making classical rental
-        vulnerabilities a thing of the past.</p>
+<section class="bg-surface" style="padding: 4.5rem 0;">
+  <div class="container">
 
-      <div class="guarantees-list">
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake landlords</div>
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake agents</div>
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake properties</div>
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No double‑renting</div>
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No middlemen</div>
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No hidden charges</div>
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No “inspection fees”</div>
-        <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No “booking fees”</div>
-      </div>
+    <!-- CENTERED HEADER -->
+    <div style="text-align: center; max-width: 720px; margin: 0 auto 3rem auto;">
+      <h2 class="section-title" style="margin-bottom: 1.15rem;">Our Safety Guarantees</h2>
+      <p class="section-lead" style="margin: 0 auto; max-width: 660px;">The TRUST Protocol guarantees absolute security
+        for tenants, making classical rental vulnerabilities a thing of the past.</p>
     </div>
 
-    <div>
-      <div class="metadata-display-card">
-        <h3>Every listing displays:</h3>
-        <div class="metadata-list-item">
-          <span>Verification Badge</span>
-          <span style="color: #0a5c36; font-weight: 700;"><i class="fa-solid fa-shield-halved"></i> TRUST
-            VERIFIED</span>
+    <!-- SPLIT CONTENT: GUARANTEES LIST ON LEFT, METADATA DISPLAY ON RIGHT -->
+    <div class="guarantees-split">
+      <div>
+        <div class="guarantees-list">
+          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake landlords</div>
+          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake agents</div>
+          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake properties</div>
+          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No double‑renting</div>
+          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No middlemen</div>
+          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No hidden charges</div>
         </div>
-        <div class="metadata-list-item">
-          <span>Inspection Date</span>
-          <span>May 15, 2026</span>
-        </div>
-        <div class="metadata-list-item">
-          <span>TRUST Agent ID</span>
-          <span>#TR-8942</span>
-        </div>
-        <div class="metadata-list-item">
-          <span>Verified Landlord Status</span>
-          <span style="color: #0a5c36; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> ACTIVE &
-            REGISTERED</span>
+      </div>
+
+      <div>
+        <div class="metadata-display-card"
+          style="padding: 1rem; border-radius: 22px; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 15px 35px rgba(0,0,0,0.08); background: #ffffff;">
+          <!-- Verified Property Sample Preview Image -->
+          <div style="position: relative; border-radius: 16px; overflow: hidden; height: 340px;">
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+              alt="Verified Listing Preview" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            <div
+              style="position: absolute; top: 1rem; right: 1rem; background: rgba(10, 92, 54, 0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #ffffff; padding: 0.45rem 1rem; border-radius: 9999px; font-size: 0.82rem; font-weight: 800; display: flex; align-items: center; gap: 0.4rem; border: 1px solid var(--color-gold); box-shadow: 0 6px 16px rgba(0,0,0,0.25);">
+              <i class="fa-solid fa-shield-halved" style="color: var(--color-gold);"></i> TRUST VERIFIED
+            </div>
+          </div>
         </div>
       </div>
     </div>
+</section>
+
+<!-- LANDLORD CALL TO ACTION (STANDALONE COMPACT CONTAINER SECTION) -->
+<section
+  style="padding: 2rem 0 0.5rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.05); margin-bottom: 0;">
+  <div class="container" style="text-align: center; max-width: 1150px; margin: 0 auto;">
+    <h2
+      style="font-family: var(--font-heading); font-size: 2.1rem; font-weight: 500; color: #1e1b18; line-height: 1.3; margin: 0 0 1rem 0; letter-spacing: -0.4px;">
+      Are you a landlord, or You have new structures in place,<br>let us help you get <span
+        style="color: var(--color-emerald-darkest);">premium tenants</span>.
+    </h2>
+    <a href="{% url 'register' %}"
+      style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 2.25rem; background: var(--color-emerald-darkest); color: #ffffff; font-weight: 800; font-size: 0.98rem; font-family: var(--font-body); border-radius: 50px; text-decoration: none; border: 2px solid var(--color-gold); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 8px 25px rgba(9, 36, 24, 0.25);"
+      onmouseover="this.style.background='var(--color-gold)'; this.style.color='#040d08'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 30px rgba(203, 163, 88, 0.45)';"
+      onmouseout="this.style.background='var(--color-emerald-darkest)'; this.style.color='#ffffff'; this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(9, 36, 24, 0.25)';">
+      Click Here <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
+    </a>
   </div>
 </section>
 
@@ -1669,7 +1959,7 @@
     if (bgVid) {
       bgVid.muted = true;
       bgVid.load(); // Force browser stream buffer to clear on refresh
-      bgVid.play().catch(function(err) {
+      bgVid.play().catch(function (err) {
         console.log("Retrying autoplay with mute filter...");
         bgVid.muted = true;
         bgVid.play();
@@ -1733,35 +2023,113 @@
         if (pending <= 0) start();
       }
 
-      imgs.forEach(function(img) {
+      imgs.forEach(function (img) {
         if (img.complete && img.naturalWidth > 0) {
           onImageSettled();
         } else {
-          img.addEventListener('load',  onImageSettled, { once: true });
+          img.addEventListener('load', onImageSettled, { once: true });
           img.addEventListener('error', onImageSettled, { once: true });
         }
       });
     })();
 
-    // Animated Stats Counter
-    const counters = document.querySelectorAll('.counter-num');
-    counters.forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        if (!target) return;
-        let count = 0;
-        const step = Math.max(1, Math.ceil(target / 45));
-        
-        const updateCount = () => {
-            count += step;
-            if (count < target) {
-                counter.innerText = count.toLocaleString() + '+';
-                setTimeout(updateCount, 30);
-            } else {
-                counter.innerText = target.toLocaleString() + '+';
-            }
-        };
-        updateCount();
+    // Price Range Select Listener
+    document.getElementById('priceRangeSelect')?.addEventListener('change', function () {
+      const val = this.value;
+      if (val) {
+        const parts = val.split('-');
+        document.getElementById('minPriceInput').value = parts[0];
+        document.getElementById('maxPriceInput').value = parts[1];
+      } else {
+        document.getElementById('minPriceInput').value = '';
+        document.getElementById('maxPriceInput').value = '';
+      }
     });
+
+    // Looped Typewriter Effect (Brand Colors & Faster Animation)
+    const fullSentence = "Newly inspected, fresh and clean. Move in now.";
+    const twElement = document.getElementById("typewriterText");
+    let twIndex = 0;
+    let twIsDeleting = false;
+
+    function renderColoredText(count) {
+      const current = fullSentence.substring(0, count);
+      const seg1End = "Newly inspected, ".length;
+      const seg2End = "Newly inspected, fresh and clean. ".length;
+
+      let html = "";
+      if (count <= seg1End) {
+        html = `<span style="color: var(--color-emerald-darkest);">${current}</span>`;
+      } else if (count <= seg2End) {
+        const p1 = current.substring(0, seg1End);
+        const p2 = current.substring(seg1End);
+        html = `<span style="color: var(--color-emerald-darkest);">${p1}</span><span style="color: #0d5c3a;">${p2}</span>`;
+      } else {
+        const p1 = current.substring(0, seg1End);
+        const p2 = current.substring(seg1End, seg2End);
+        const p3 = current.substring(seg2End);
+        html = `<span style="color: var(--color-emerald-darkest);">${p1}</span><span style="color: #0d5c3a;">${p2}</span><span style="color: var(--color-gold); font-weight: 800;">${p3}</span>`;
+      }
+      return html;
+    }
+
+    function runTypewriter() {
+      if (!twElement) return;
+      twElement.innerHTML = renderColoredText(twIndex);
+
+      let speed = twIsDeleting ? 22 : 48;
+
+      if (!twIsDeleting && twIndex === fullSentence.length) {
+        speed = 2200; // Pause at end
+        twIsDeleting = true;
+      } else if (twIsDeleting && twIndex === 0) {
+        twIsDeleting = false;
+        speed = 450; // Pause before typing again
+      }
+
+      twIndex += twIsDeleting ? -1 : 1;
+      setTimeout(runTypewriter, speed);
+    }
+    runTypewriter();
+
+    // Animated Stats Counter (IntersectionObserver Triggered Count-Up)
+    const counterElements = document.querySelectorAll('.counter-num');
+    const animateCounter = (counter) => {
+      const target = +counter.getAttribute('data-target');
+      if (!target || counter.classList.contains('counted')) return;
+      counter.classList.add('counted');
+
+      const duration = 1800; // ms
+      const startTime = performance.now();
+
+      const updateNumber = (now) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(easeProgress * target);
+        counter.innerText = current.toLocaleString() + '+';
+
+        if (progress < 1) {
+          requestAnimationFrame(updateNumber);
+        } else {
+          counter.innerText = target.toLocaleString() + '+';
+        }
+      };
+      requestAnimationFrame(updateNumber);
+    };
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      counterElements.forEach(el => observer.observe(el));
+    } else {
+      counterElements.forEach(el => animateCounter(el));
+    }
 
   });
 </script>
