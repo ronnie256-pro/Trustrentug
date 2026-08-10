@@ -12,7 +12,7 @@
     /* Ultra-Premium Detail Page Wrapper */
     .detail-page-wrapper {
         background-color: #fbfbf9 !important;
-        padding: 2rem 0 5rem;
+        padding: 1.5rem 0 0;
         min-height: 80vh;
     }
 
@@ -680,8 +680,7 @@
                     <div class="price-block"
                         style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border);">
                         <span
-                            style="color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 0.4rem;">Rent
-                            / Price</span>
+                            style="color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 0.4rem;">Monthly Rent</span>
                         <div class="price-main">
                             {% if property.price %}
                             <div
@@ -701,7 +700,7 @@
                             method="POST">
                             {% csrf_token %}
                             <button type="button" id="book-property-btn" class="btn"
-                                style="width: 100%; font-size: 1.05rem; font-weight: 700; padding: 0.95rem; display: flex; align-items: center; justify-content: center; border: 1px solid #d4c4a4; cursor: pointer; border-radius: 10px; background: #e5dccb; color: #0a3d28; transition: all 0.2s ease;">
+                                style="width: 100%; font-size: 1.05rem; font-weight: 700; padding: 0.95rem; display: flex; align-items: center; justify-content: center; border: 1px solid #f97316; cursor: pointer; border-radius: 10px; background: #ff9f43; color: #ffffff; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(255, 159, 67, 0.35);">
                                 Book Property
                             </button>
                         </form>
@@ -709,7 +708,7 @@
                         <form action="{% url 'tenant_add_favorite' property.id %}" method="POST">
                             {% csrf_token %}
                             <button type="submit" class="btn"
-                                style="width: 100%; font-size: 1rem; font-weight: 700; padding: 0.85rem; display: flex; align-items: center; justify-content: center; border: 1px solid #d4c4a4; color: #0a3d28; background: #f3ebd8; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">
+                                style="width: 100%; font-size: 1rem; font-weight: 700; padding: 0.85rem; display: flex; align-items: center; justify-content: center; border: 1.5px solid #fdba74; color: #9a3412; background: #ffedd5; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">
                                 Add to Favorite
                             </button>
                         </form>
@@ -742,49 +741,35 @@
 
         <!-- Properties in the Same Area / Price Range (Full Width Screen Left to Right) -->
         {% if similar_properties %}
-        <div
-            style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; padding: 3rem 2rem 1.5rem 2rem; border-top: 2px dashed rgba(203, 163, 88, 0.35); box-sizing: border-box; background: #ffffff;">
-            <div style="width: min(94vw, 1400px); margin: 0 auto 1.5rem auto;">
-                <h3
-                    style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--color-emerald-darkest); margin: 0; font-weight: 700;">
+        <div style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; padding: 1.25rem 2rem 0 2rem; border-top: 2px dashed rgba(203, 163, 88, 0.35); box-sizing: border-box; background: #ffffff;">
+            <div style="width: min(94vw, 1400px); margin: 0 auto 1rem auto;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--color-emerald-darkest); margin: 0; font-weight: 700;">
                     Properties in the Same Area
                 </h3>
             </div>
-            <div class="similar-scroll-row" style="padding: 0 1rem 1rem 1rem;">
+            <div class="similar-scroll-row" style="padding: 0 1rem 0 1rem;">
                 {% for sim in similar_properties %}
-                <a href="/property/{{ sim.id }}/" class="property-card"
-                    style="flex: 0 0 280px; width: 280px; min-width: 280px; max-width: 280px; scroll-snap-align: start; color: inherit; text-decoration: none; border-radius: 14px; overflow: hidden; background: #ffffff; border: 1px solid rgba(203, 163, 88, 0.25); box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: all 0.3s ease;">
+                <a href="/property/{{ sim.id }}/" class="property-card" style="flex: 0 0 280px; width: 280px; min-width: 280px; max-width: 280px; scroll-snap-align: start; color: inherit; text-decoration: none; border-radius: 14px; overflow: hidden; background: #ffffff; border: 1px solid rgba(203, 163, 88, 0.25); box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: all 0.3s ease;">
                     <div style="position: relative; height: 140px; overflow: hidden;">
                         {% if sim.hero_image %}
-                        <img src="{{ sim.hero_image.url }}" alt="{{ sim.title }}"
-                            style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ sim.hero_image.url }}" alt="{{ sim.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                         {% else %}
-                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-                            alt="{{ sim.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ sim.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                         {% endif %}
-                        <div class="verified-tag"
-                            style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.15rem 0.5rem;">
-                            Verified</div>
+                        <div class="verified-tag" style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.15rem 0.5rem;">Verified</div>
                     </div>
                     <div style="padding: 0.65rem 0.85rem; background: #ffffff; border-bottom: 1px solid #f1f5f9;">
-                        <h4
-                            style="font-size: 0.92rem; font-weight: 700; margin: 0; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            {{ sim.title }}</h4>
+                        <h4 style="font-size: 0.92rem; font-weight: 700; margin: 0; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ sim.title }}</h4>
                     </div>
-                    <div
-                        style="padding: 0.65rem 0.85rem; background: var(--color-emerald-darkest); color: #ffffff; margin-top: auto; display: flex; flex-direction: column; gap: 0.25rem;">
+                    <div style="padding: 0.65rem 0.85rem; background: var(--color-emerald-darkest); color: #ffffff; margin-top: auto; display: flex; flex-direction: column; gap: 0.25rem;">
                         <div style="display: flex; align-items: center; gap: 0.3rem;">
-                            <span
-                                style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.85);">UGX</span>
-                            <span
-                                style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.05rem; font-weight: 800; color: #ffffff;">
+                            <span style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.85);">UGX</span>
+                            <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.05rem; font-weight: 800; color: #ffffff;">
                                 {% if sim.price %}{{ sim.price|floatformat:0|intcomma }}{% else %}Custom Pricing{% endif %}
                             </span>
                         </div>
-                        <div
-                            style="font-size: 0.78rem; color: var(--color-gold); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; border-top: 1px solid rgba(203, 163, 88, 0.3); padding-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <i class="fa-solid fa-location-dot" style="font-size: 0.75rem;"></i> {{
-                            sim.location|default:"Kampala, Uganda" }}
+                        <div style="font-size: 0.78rem; color: var(--color-gold); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; border-top: 1px solid rgba(203, 163, 88, 0.3); padding-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <i class="fa-solid fa-location-dot" style="font-size: 0.75rem;"></i> {{ sim.location|default:'Kampala, Uganda' }}
                         </div>
                     </div>
                 </a>
