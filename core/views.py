@@ -793,6 +793,10 @@ def add_property(request):
         price_per_year = request.POST.get('price_per_year')
         bedrooms_count = request.POST.get('bedrooms_count')
         
+        description_text = request.POST.get('description', '').strip()
+        if not description_text:
+            description_text = "Luxury property submitted through the TRUST security protocol."
+
         property_obj = Property(
             owner=request.user,
             title=title,
@@ -802,7 +806,7 @@ def add_property(request):
             is_multi_unit=is_multi_unit,
             bedrooms=int(bedrooms_count) if (bedrooms_count and bedrooms_count.isdigit()) else None,
             status='pending_verification',  # Marked as pending until admin manually verifies files and approves
-            description="Luxury property submitted through the TRUST security protocol.",
+            description=description_text,
             price_per_month=price_per_month if price_per_month else None,
             price_per_year=price_per_year if price_per_year else None,
             price=price_per_month if price_per_month else None
@@ -1146,6 +1150,15 @@ def property_detail_view(request, property_id):
     panoramas = list(property_obj.panoramas.all())
     has_tour = len(panoramas) > 0
 
+    # Fetch Similar Properties (Same area or price range)
+    similar_properties = Property.objects.exclude(id=property_obj.id)
+    if property_obj.location:
+        loc_part = property_obj.location.split(',')[0].strip()
+        loc_qs = similar_properties.filter(location__icontains=loc_part)
+        if loc_qs.exists():
+            similar_properties = loc_qs
+    similar_properties = similar_properties[:3]
+
     return render(request, 'tenant/property_detail.html', {
         'property': property_obj,
         'property_amenities': property_amenities,
@@ -1154,6 +1167,7 @@ def property_detail_view(request, property_id):
         'reports': reports,
         'panoramas': panoramas,
         'has_tour': has_tour,
+        'similar_properties': similar_properties,
     })
 
 

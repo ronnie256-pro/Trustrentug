@@ -1,35 +1,50 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block title %}Property Details | TRUST{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Premium Detail Page Wrapper to reduce white background */
+    body {
+        background-color: #ffffff !important;
+    }
+
+    /* Ultra-Premium Detail Page Wrapper */
     .detail-page-wrapper {
-        background: linear-gradient(180deg, #f7f6f2 0%, #efede7 100%);
-        padding: 3rem 0 5rem;
+        background-color: #fbfbf9 !important;
+        padding: 2rem 0 5rem;
         min-height: 80vh;
     }
 
-    /* Elevating Booking Card to glassmorphism */
+    /* Elevating Booking Card */
     .booking-card {
-        background: rgba(255, 255, 255, 0.85) !important;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.45) !important;
-        border-top: 4px solid var(--color-emerald) !important;
-        box-shadow: var(--shadow-md) !important;
+        background: #ffffff !important;
+        border: 1.5px solid rgba(203, 163, 88, 0.25) !important;
+        border-top: 5px solid var(--color-emerald-darkest) !important;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07) !important;
+        border-radius: 20px !important;
     }
 
     /* Elevating proximity cards */
     .proximity-card {
-        background: rgba(255, 255, 255, 0.65) !important;
-        border: 1px solid rgba(203, 163, 88, 0.15) !important;
+        background: #ffffff !important;
+        border: 1px solid #f1f5f9 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+        border-radius: 12px !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .proximity-card:hover {
+        border-color: var(--color-gold) !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 8px 20px rgba(203, 163, 88, 0.2) !important;
     }
 
     /* Elevating amenities */
     .amenity-icon {
         background: rgba(10, 61, 40, 0.08) !important;
+        color: var(--color-emerald-darkest) !important;
+        border-radius: 10px !important;
     }
 
     /* Premium Accordion Styling */
@@ -124,153 +139,184 @@
         box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
-    /* Premium Interactive Image Slider */
-    .slider-container {
+    .property-gallery-split {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 1.35rem;
+        margin: 0.5rem auto 2rem auto;
+        width: min(95vw, 1400px);
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Main Big Image Container (Left Column) */
+    .gallery-main-container {
         position: relative;
         width: 100%;
-        height: 500px;
-        margin-top: 2rem;
-        border-radius: var(--radius-lg);
+        height: 540px;
+        border-radius: 16px;
         overflow: hidden;
-        box-shadow: var(--shadow-lg);
-        background: #0b0c10;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        border: 2px solid rgba(203, 163, 88, 0.4);
+        background: #0f172a;
     }
 
-    .slider-screen {
+    .gallery-main-img {
         width: 100%;
         height: 100%;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .slider-slide {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        transition: opacity 0.4s ease-in-out;
-        z-index: 1;
         object-fit: cover;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .slider-slide.active {
-        opacity: 1;
-        z-index: 2;
-    }
-
-    /* Slider Nav Arrows */
-    .slider-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.12);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 50%;
-        color: white;
+    /* Mosaic Container (Right Column) */
+    .gallery-mosaic-container {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        cursor: pointer;
-        z-index: 10;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .slider-arrow:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: translateY(-50%) scale(1.1);
-        box-shadow: 0 8px 32px rgba(203, 163, 88, 0.4);
-        border-color: var(--color-gold);
-    }
-
-    .slider-arrow-prev {
-        left: 20px;
-    }
-
-    .slider-arrow-next {
-        right: 20px;
-    }
-
-    /* Image Counter Badge */
-    .slider-badge {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        background: rgba(10, 61, 40, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        padding: 0.4rem 1rem;
-        border-radius: var(--radius-full);
-        color: var(--color-gold-light);
-        font-weight: 600;
-        font-size: 0.85rem;
-        z-index: 10;
-        letter-spacing: 1px;
-    }
-
-    /* Thumbnail Gallery with Glassmorphism */
-    .thumbnail-gallery {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
+        flex-direction: column;
+        justify-content: space-between;
         gap: 1rem;
-        margin-top: 1rem;
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-radius: var(--radius-md);
-        box-shadow: var(--shadow-sm);
-        overflow-x: auto;
+        height: 540px;
     }
 
-    .thumbnail-item {
+    /* 7-Tile Mosaic Grid matching user layout */
+    .mosaic-grid-7 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 136px);
+        gap: 0.75rem;
+        height: 460px;
+    }
+
+    .mosaic-tile {
         position: relative;
-        flex: 0 0 100px;
-        height: 70px;
-        border-radius: var(--radius-sm);
+        border-radius: 10px;
         overflow: hidden;
         cursor: pointer;
-        border: 2px solid rgba(255, 255, 255, 0.15);
+        border: 2px solid transparent;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(255, 255, 255, 0.03);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        background: #0f172a;
     }
 
-    .thumbnail-item img {
+    /* Mosaic 7-Tile Layout Spanning Rules */
+    .mosaic-tile:nth-child(1) {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+
+    .mosaic-tile:nth-child(2) {
+        grid-column: 1 / 2;
+        grid-row: 2 / 4;
+    }
+
+    .mosaic-tile:nth-child(3) {
+        grid-column: 2 / 3;
+        grid-row: 1 / 3;
+    }
+
+    .mosaic-tile:nth-child(4) {
+        grid-column: 2 / 3;
+        grid-row: 3 / 4;
+    }
+
+    .mosaic-tile:nth-child(5) {
+        grid-column: 3 / 4;
+        grid-row: 1 / 2;
+    }
+
+    .mosaic-tile:nth-child(6) {
+        grid-column: 3 / 4;
+        grid-row: 2 / 3;
+    }
+
+    .mosaic-tile:nth-child(7) {
+        grid-column: 3 / 4;
+        grid-row: 3 / 4;
+    }
+
+    .mosaic-tile img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.3s ease;
+        transition: transform 0.4s ease, opacity 0.3s ease;
     }
 
-    .thumbnail-item:hover {
-        border-color: rgba(203, 163, 88, 0.6);
-        transform: translateY(-2px);
+    .mosaic-tile:hover {
+        border-color: var(--color-gold);
+        transform: scale(1.02);
+        box-shadow: 0 6px 18px rgba(203, 163, 88, 0.4);
+        z-index: 5;
     }
 
-    .thumbnail-item:hover img {
+    .mosaic-tile:hover img {
         transform: scale(1.08);
     }
 
-    .thumbnail-item.active {
-        border-color: var(--color-gold);
-        box-shadow: 0 0 12px rgba(203, 163, 88, 0.45);
+    /* Top Back Button */
+    .top-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1.25rem;
+        background: #ffffff;
+        color: #0a3d28;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.25s ease;
     }
 
+    .top-back-btn:hover {
+        background: #0a3d28;
+        color: #ffffff;
+        border-color: #0a3d28;
+        transform: translateX(-3px);
+    }
+
+    .mosaic-action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    /* Light Green Action Buttons (No Icons) */
+    .mosaic-action-btn-tour,
+    .mosaic-action-btn-map {
+        flex: 1;
+        padding: 0.9rem 1.2rem;
+        font-size: 0.98rem;
+        font-weight: 700;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        background: #0a5c36 !important;
+        color: #ffffff !important;
+        border: 1px solid #074728 !important;
+        box-shadow: 0 4px 14px rgba(10, 92, 54, 0.25);
+        transition: all 0.25s ease;
+    }
+
+    .mosaic-action-btn-tour:hover,
+    .mosaic-action-btn-map:hover {
+        background: #0d7343 !important;
+        color: #ffffff !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(10, 92, 54, 0.35);
+    }
+
+    /* Separate Lower Content Section - Centered beneath top gallery containers */
     .content-layout {
         display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 3rem;
-        padding: 3rem 0;
+        grid-template-columns: 1.8fr 1fr;
+        gap: 2.5rem;
+        width: 100%;
+        max-width: 1200px;
+        margin: 2.5rem auto 0 auto;
+        padding-bottom: 3rem;
     }
 
     .property-title {
@@ -310,14 +356,24 @@
         font-size: 1.2rem;
     }
 
+    .content-sidebar {
+        position: sticky !important;
+        top: 100px !important;
+        align-self: start;
+        z-index: 10;
+    }
+
     .booking-card {
-        background: #fff;
+        background: #ffffff !important;
         padding: 2rem;
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-lg);
-        border-top: 4px solid var(--color-emerald);
-        position: sticky;
-        top: 100px;
+        border-radius: 18px !important;
+        border: 1.5px solid rgba(10, 92, 54, 0.25) !important;
+        border-top: 4px solid var(--color-emerald-darkest) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+        position: relative !important;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 1.5rem;
     }
 
     .price-block {
@@ -427,11 +483,69 @@
         font-size: 1.1rem;
     }
 
+    @media (max-width: 1650px) {
+        .property-gallery-split {
+            width: 100%;
+            left: 0;
+            transform: none;
+        }
+    }
+
+    @media (max-width: 1080px) {
+        .property-gallery-split {
+            grid-template-columns: 1fr;
+            width: 100%;
+            left: 0;
+            transform: none;
+        }
+
+        .gallery-main-container {
+            height: 380px;
+        }
+
+        .gallery-mosaic-container {
+            height: auto;
+        }
+
+        .mosaic-grid-7 {
+            height: auto;
+            grid-template-rows: repeat(3, 110px);
+        }
+    }
+
     @media (max-width: 768px) {
         .proximity-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
+    }
+
+    /* Single Row Horizontal Scroll for Similar Properties */
+    .similar-scroll-row {
+        display: flex;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 1.25rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 1rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-emerald-darkest) rgba(203, 163, 88, 0.15);
+    }
+
+    .similar-scroll-row::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .similar-scroll-row::-webkit-scrollbar-track {
+        background: rgba(203, 163, 88, 0.15);
+        border-radius: 9999px;
+    }
+
+    .similar-scroll-row::-webkit-scrollbar-thumb {
+        background: var(--color-emerald-darkest);
+        border-radius: 9999px;
     }
 </style>
 {% endblock %}
@@ -439,93 +553,106 @@
 {% block content %}
 <div class="detail-page-wrapper">
     <div class="container">
-        <!-- Premium Dynamic Image Slider -->
-        <div class="slider-container">
-            <div class="slider-screen">
-                {% if property.hero_image %}
-                <img src="{{ property.hero_image.url }}" alt="{{ property.title }} - Main" class="slider-slide active">
-                {% else %}
-                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
-                    alt="Fallback Main" class="slider-slide active">
-                {% endif %}
-
-                {% if property.image_1 %}
-                <img src="{{ property.image_1.url }}" alt="{{ property.title }} - Gallery 1" class="slider-slide">
-                {% endif %}
-
-                {% if property.image_2 %}
-                <img src="{{ property.image_2.url }}" alt="{{ property.title }} - Gallery 2" class="slider-slide">
-                {% endif %}
-
-                {% if property.image_3 %}
-                <img src="{{ property.image_3.url }}" alt="{{ property.title }} - Gallery 3" class="slider-slide">
-                {% endif %}
-
-                <!-- Navigation Controls -->
-                <button class="slider-arrow slider-arrow-prev"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="slider-arrow slider-arrow-next"><i class="fa-solid fa-chevron-right"></i></button>
-
-                <!-- Counter Badge -->
-                <div class="slider-badge">1 / 1</div>
-            </div>
-        </div>
-
-        <!-- Glassmorphism Thumbnails Grid -->
-        <div class="thumbnail-gallery">
-            {% if property.hero_image %}
-            <div class="thumbnail-item active">
-                <img src="{{ property.hero_image.url }}" alt="Thumbnail Main">
-            </div>
-            {% else %}
-            <div class="thumbnail-item active">
-                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=150&q=80"
-                    alt="Thumbnail Fallback">
-            </div>
-            {% endif %}
-
-            {% if property.image_1 %}
-            <div class="thumbnail-item">
-                <img src="{{ property.image_1.url }}" alt="Thumbnail 1">
-            </div>
-            {% endif %}
-
-            {% if property.image_2 %}
-            <div class="thumbnail-item">
-                <img src="{{ property.image_2.url }}" alt="Thumbnail 2">
-            </div>
-            {% endif %}
-
-            {% if property.image_3 %}
-            <div class="thumbnail-item">
-                <img src="{{ property.image_3.url }}" alt="Thumbnail 3">
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Single Tour Property Button Directly Below Images -->
-        <div style="margin-top: 1.5rem; text-align: center;">
-            <a href="{% url 'property_tour' property.id %}" class="btn btn-gold" style="padding: 0.85rem 2.5rem; border-radius: 30px; font-size: 1.1rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(203,163,88,0.4); transition: transform 0.2s ease;">
-                Tour Property
+        <!-- Top Bar: Back Button -->
+        <div style="margin-bottom: 1.25rem;">
+            <a href="javascript:history.back()" class="top-back-btn" style="margin-bottom: 0;">
+                <i class="fa-solid fa-arrow-left"></i> Back
             </a>
         </div>
 
-        <div class="content-layout">
-            <!-- Property overview-->
-            <div>
-                <div style="margin-bottom: 1rem;">
-                    <span class="badge badge-verified">
-                        <i class="fa-solid fa-shield-check"></i> TRUST Appraised
-                    </span>
-                </div>
-                <h1 class="property-title">{{ property.title }}</h1>
-                <p class="location-text"><i class="fa-solid fa-location-dot"></i> {{ property.location }}</p>
-
-                {% if property.description %}
-                <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 2rem;">Description</h3>
-                <p style="font-size: 1rem; line-height: 1.6; color: var(--color-text-dark); margin-bottom: 2rem;">{{ property.description }}</p>
+        <!-- Split Image Section Container -->
+        <div class="property-gallery-split">
+            <!-- Left Container: Display Section (Shows Hero Image on Page Load) -->
+            <div class="gallery-main-container">
+                {% if property.hero_image %}
+                <img id="mainGalleryImg" src="{{ property.hero_image.url }}" alt="{{ property.title }} - Featured View"
+                    class="gallery-main-img">
+                {% else %}
+                <img id="mainGalleryImg"
+                    src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
+                    alt="{{ property.title }} - Featured View" class="gallery-main-img">
                 {% endif %}
 
-                <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 3rem;">Property Amenities
+                <!-- Title & Location Overlay Banner at Very Bottom of Hero Image Viewer -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem 1.5rem; background: linear-gradient(to top, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.45) 70%, transparent 100%); color: #ffffff; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                    <h1 style="margin: 0; font-size: 1.75rem; font-family: 'Playfair Display', Georgia, serif; font-weight: 800; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                        {{ property.title }}
+                    </h1>
+                    <p style="margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--color-gold-light); display: flex; align-items: center; gap: 0.4rem; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                        <i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ property.location }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Container: 7-Tile Mosaic Grid & Action Buttons -->
+            <div class="gallery-mosaic-container">
+                <!-- 7-Tile Mosaic Grid matching user layout -->
+                <div class="mosaic-grid-7">
+                    <!-- Tile 1 -->
+                    <div class="mosaic-tile" title="Click to swap with main display">
+                        <img src="{% if property.image_1 %}{{ property.image_1.url }}{% else %}https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80{% endif %}"
+                            alt="Mosaic View 1">
+                    </div>
+                    <!-- Tile 2 (Spans 2 rows tall) -->
+                    <div class="mosaic-tile" title="Click to swap with main display">
+                        <img src="{% if property.image_2 %}{{ property.image_2.url }}{% else %}https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80{% endif %}"
+                            alt="Mosaic View 2">
+                    </div>
+                    <!-- Tile 3 (Spans 2 rows tall) -->
+                    <div class="mosaic-tile" title="Click to swap with main display">
+                        <img src="{% if property.image_3 %}{{ property.image_3.url }}{% else %}https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80{% endif %}"
+                            alt="Mosaic View 3">
+                    </div>
+                    <!-- Tile 4 -->
+                    <div class="mosaic-tile" title="Click to swap with main display">
+                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80"
+                            alt="Mosaic View 4">
+                    </div>
+                    <!-- Tile 5 -->
+                    <div class="mosaic-tile" title="Click to swap with main display">
+                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80"
+                            alt="Mosaic View 5">
+                    </div>
+                    <!-- Tile 6 -->
+                    <div class="mosaic-tile" title="Click to swap with main display">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80"
+                            alt="Mosaic View 6">
+                    </div>
+                    <!-- Tile 7 -->
+                    <div class="mosaic-tile" title="Click to swap with main display">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80"
+                            alt="Mosaic View 7">
+                    </div>
+                </div>
+
+                <!-- Right Below Mosaic: Tour Property & View on Map Buttons -->
+                <div class="mosaic-action-buttons">
+                    <a href="{% url 'property_tour' property.id %}" class="mosaic-action-btn-tour">
+                        Tour Property
+                    </a>
+                    <a href="{% url 'nearby_properties' %}?lat={{ property.latitude|default:'0.3476' }}&lng={{ property.longitude|default:'32.5825' }}&focus={{ property.id }}"
+                        class="mosaic-action-btn-map">
+                        View on Map
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Separate Lower Content Section centered beneath both top containers -->
+        <div class="content-layout">
+            <!-- Property Details & Overview -->
+            <div>
+                <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 0.5rem;">Description</h3>
+                <div style="font-size: 1rem; line-height: 1.7; color: var(--color-text-dark); margin-bottom: 2rem;">
+                    {% if property.description %}
+                    {{ property.description|linebreaksbr }}
+                    {% else %}
+                    Luxury property verified and appraised through the TRUST security protocol.
+                    {% endif %}
+                </div>
+
+                <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; margin-top: 3rem;">Property
+                    Amenities
                 </h3>
 
                 <div class="amenities-grid">
@@ -545,10 +672,57 @@
                     {% endfor %}
                 </div>
 
-                <div class="proximity-section">
-                    <h3 style="font-family: var(--font-heading); margin-bottom: 1.5rem;">Proximity to Local Services
+            </div>
+
+            <!-- Booking & Proximity Sidebar -->
+            <aside class="content-sidebar">
+                <div class="booking-card">
+                    <div class="price-block"
+                        style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border);">
+                        <span
+                            style="color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 0.4rem;">Rent
+                            / Price</span>
+                        <div class="price-main">
+                            {% if property.price %}
+                            <div
+                                style="font-size: 1.15rem; font-weight: 800; font-family: var(--font-body); color: var(--color-emerald-darkest); margin-bottom: 0.2rem;">
+                                UGX</div>
+                            <div
+                                style="font-family: 'Playfair Display', var(--font-heading), Georgia, serif; font-size: 2.2rem; font-weight: 800; color: var(--color-emerald-darkest); line-height: 1.1;">
+                                {{ property.price|floatformat:0|intcomma }}</div>
+                            {% else %}
+                            Custom Price
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <form id="book-property-form" action="{% url 'tenant_create_booking' property.id %}"
+                            method="POST">
+                            {% csrf_token %}
+                            <button type="button" id="book-property-btn" class="btn"
+                                style="width: 100%; font-size: 1.05rem; font-weight: 700; padding: 0.95rem; display: flex; align-items: center; justify-content: center; border: 1px solid #d4c4a4; cursor: pointer; border-radius: 10px; background: #e5dccb; color: #0a3d28; transition: all 0.2s ease;">
+                                Book Property
+                            </button>
+                        </form>
+
+                        <form action="{% url 'tenant_add_favorite' property.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn"
+                                style="width: 100%; font-size: 1rem; font-weight: 700; padding: 0.85rem; display: flex; align-items: center; justify-content: center; border: 1px solid #d4c4a4; color: #0a3d28; background: #f3ebd8; cursor: pointer; border-radius: 10px; transition: all 0.2s ease;">
+                                Add to Favorite
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Proximity to Local Services directly below Booking Card -->
+                <div class="proximity-section" style="margin-top: 1.5rem; border-top: none; padding-top: 0;">
+                    <h3
+                        style="font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.15rem; color: var(--color-emerald-darkest);">
+                        Proximity to Local Services
                     </h3>
-                    <div class="proximity-grid">
+                    <div class="proximity-grid" style="grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
                         {% for proximity in property_proximities %}
                         <div class="proximity-card">
                             <div class="proximity-icon"><i class="fa-solid {{ proximity.icon_class }}"></i></div>
@@ -557,48 +731,67 @@
                         </div>
                         {% empty %}
                         <div
-                            style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); padding: 1.5rem 0;">
+                            style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); padding: 1rem 0; font-size: 0.85rem;">
                             No local proximity services configured for this property address.
                         </div>
                         {% endfor %}
                     </div>
                 </div>
-
-
-            </div>
-
-            <!-- Booking Sidebar -->
-            <aside>
-                <div class="booking-card">
-                    <div class="price-block" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border);">
-                        <span style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Rent / Price</span>
-                        <div class="price-main">
-                            {% if property.price %}
-                            UGX {{ property.price|floatformat:0 }}
-                            {% else %}
-                            Custom Price
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <form id="book-property-form" action="{% url 'tenant_create_booking' property.id %}" method="POST">
-                            {% csrf_token %}
-                            <button type="button" id="book-property-btn" class="btn btn-gold" style="width: 100%; font-size: 1.1rem; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 8px;">
-                                <i class="fa-solid fa-credit-card"></i> Book Property
-                            </button>
-                        </form>
-                        
-                        <form action="{% url 'tenant_add_favorite' property.id %}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline" style="width: 100%; font-size: 1rem; padding: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 8px; transition: all 0.2s ease;">
-                                <i class="fa-solid fa-heart"></i> Add to Favorite
-                            </button>
-                        </form>
-                    </div>
-                </div>
             </aside>
         </div>
+
+        <!-- Properties in the Same Area / Price Range (Full Width Screen Left to Right) -->
+        {% if similar_properties %}
+        <div
+            style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; padding: 3rem 2rem 1.5rem 2rem; border-top: 2px dashed rgba(203, 163, 88, 0.35); box-sizing: border-box; background: #ffffff;">
+            <div style="width: min(94vw, 1400px); margin: 0 auto 1.5rem auto;">
+                <h3
+                    style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--color-emerald-darkest); margin: 0; font-weight: 700;">
+                    Properties in the Same Area
+                </h3>
+            </div>
+            <div class="similar-scroll-row" style="padding: 0 1rem 1rem 1rem;">
+                {% for sim in similar_properties %}
+                <a href="/property/{{ sim.id }}/" class="property-card"
+                    style="flex: 0 0 280px; width: 280px; min-width: 280px; max-width: 280px; scroll-snap-align: start; color: inherit; text-decoration: none; border-radius: 14px; overflow: hidden; background: #ffffff; border: 1px solid rgba(203, 163, 88, 0.25); box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: all 0.3s ease;">
+                    <div style="position: relative; height: 140px; overflow: hidden;">
+                        {% if sim.hero_image %}
+                        <img src="{{ sim.hero_image.url }}" alt="{{ sim.title }}"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+                            alt="{{ sim.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% endif %}
+                        <div class="verified-tag"
+                            style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.15rem 0.5rem;">
+                            Verified</div>
+                    </div>
+                    <div style="padding: 0.65rem 0.85rem; background: #ffffff; border-bottom: 1px solid #f1f5f9;">
+                        <h4
+                            style="font-size: 0.92rem; font-weight: 700; margin: 0; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ sim.title }}</h4>
+                    </div>
+                    <div
+                        style="padding: 0.65rem 0.85rem; background: var(--color-emerald-darkest); color: #ffffff; margin-top: auto; display: flex; flex-direction: column; gap: 0.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.3rem;">
+                            <span
+                                style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.85);">UGX</span>
+                            <span
+                                style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.05rem; font-weight: 800; color: #ffffff;">
+                                {% if sim.price %}{{ sim.price|floatformat:0|intcomma }}{% else %}Custom Pricing{% endif %}
+                            </span>
+                        </div>
+                        <div
+                            style="font-size: 0.78rem; color: var(--color-gold); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; border-top: 1px solid rgba(203, 163, 88, 0.3); padding-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <i class="fa-solid fa-location-dot" style="font-size: 0.75rem;"></i> {{
+                            sim.location|default:"Kampala, Uganda" }}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -699,7 +892,7 @@
         const panelQuestion = document.getElementById('panel-question');
         const panelScheduler = document.getElementById('panel-scheduler');
 
-        window.openInspectionModal = function() {
+        window.openInspectionModal = function () {
             if (inspectionModal) {
                 panelQuestion.style.display = 'block';
                 panelScheduler.style.display = 'none';
@@ -707,7 +900,7 @@
             }
         };
 
-        window.closeInspectionModal = function() {
+        window.closeInspectionModal = function () {
             if (inspectionModal) {
                 inspectionModal.style.display = 'none';
             }
@@ -715,19 +908,19 @@
 
         const bookPropertyBtn = document.getElementById('book-property-btn');
         if (bookPropertyBtn) {
-            bookPropertyBtn.addEventListener('click', function(e) {
+            bookPropertyBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 {% if not user.is_authenticated %}
-                    window.location.href = "{% url 'register' %}?next={{ request.path }}";
+                window.location.href = "{% url 'register' %}?next={{ request.path }}";
                 {% else %}
-                    openInspectionModal();
+                openInspectionModal();
                 {% endif %}
             });
         }
 
         const btnProceedBooking = document.getElementById('btn-proceed-booking');
         if (btnProceedBooking) {
-            btnProceedBooking.addEventListener('click', function() {
+            btnProceedBooking.addEventListener('click', function () {
                 const form = document.getElementById('book-property-form');
                 if (form) {
                     form.submit();
@@ -737,7 +930,7 @@
 
         const btnShowScheduler = document.getElementById('btn-show-scheduler');
         if (btnShowScheduler) {
-            btnShowScheduler.addEventListener('click', function() {
+            btnShowScheduler.addEventListener('click', function () {
                 panelQuestion.style.display = 'none';
                 panelScheduler.style.display = 'block';
             });
@@ -745,7 +938,7 @@
 
         const btnBackToQuestion = document.getElementById('btn-back-to-question');
         if (btnBackToQuestion) {
-            btnBackToQuestion.addEventListener('click', function() {
+            btnBackToQuestion.addEventListener('click', function () {
                 panelScheduler.style.display = 'none';
                 panelQuestion.style.display = 'block';
             });
@@ -755,48 +948,62 @@
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('book') === 'true' || urlParams.get('book') === '1') {
             {% if not user.is_authenticated %}
-                window.location.href = "{% url 'register' %}?next=" + encodeURIComponent(window.location.pathname + "?book=true");
+            window.location.href = "{% url 'register' %}?next=" + encodeURIComponent(window.location.pathname + "?book=true");
             {% else %}
-                openInspectionModal();
+            openInspectionModal();
             {% endif %}
         }
     });
 </script>
 
 <!-- Physical Inspection Verification Modal -->
-<div id="inspection-verification-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 1.5rem; transition: opacity 0.3s ease;">
-    <div style="background: white; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); max-width: 500px; width: 100%; overflow: hidden; transform: scale(0.95); transition: transform 0.3s ease; animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+<div id="inspection-verification-modal"
+    style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 1.5rem; transition: opacity 0.3s ease;">
+    <div
+        style="background: white; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); max-width: 500px; width: 100%; overflow: hidden; transform: scale(0.95); transition: transform 0.3s ease; animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
         <!-- Header -->
-        <div style="background: linear-gradient(135deg, var(--color-emerald-darkest), var(--color-emerald)); padding: 1.5rem; color: white; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="background: linear-gradient(135deg, var(--color-emerald-darkest), var(--color-emerald)); padding: 1.5rem; color: white; display: flex; align-items: center; gap: 1rem;">
             <i class="fa-solid fa-house-circle-check" style="font-size: 2rem; color: var(--color-gold);"></i>
             <div>
-                <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; color: white;">Physical Inspection Verification</h3>
-                <small style="opacity: 0.85; color: #cbd5e1; display: block; margin-top: 0.15rem;">TRUST Safety and Standard Policy</small>
+                <h3
+                    style="margin: 0; font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; color: white;">
+                    Physical Inspection Verification</h3>
+                <small style="opacity: 0.85; color: #cbd5e1; display: block; margin-top: 0.15rem;">TRUST Safety and
+                    Standard Policy</small>
             </div>
         </div>
-        
+
         <!-- Panel 1: The Question -->
         <div id="panel-question" style="padding: 1.75rem;">
-            <h4 style="margin: 0 0 1rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
+            <h4
+                style="margin: 0 0 1rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
                 Have you visited this property in-person yet?
             </h4>
             <p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
-                This is a significant commitment. To ensure absolute satisfaction with the layout, neighborhood, and physical condition of the unit, we strongly advise scheduling a free escorted walk-through before making a booking lock payment.
+                This is a significant commitment. To ensure absolute satisfaction with the layout, neighborhood, and
+                physical condition of the unit, we strongly advise scheduling a free escorted walk-through before
+                making a booking lock payment.
             </p>
-            <div style="background: #fffdf5; border-left: 4px solid var(--color-gold); padding: 0.85rem 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+            <div
+                style="background: #fffdf5; border-left: 4px solid var(--color-gold); padding: 0.85rem 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
                 <span style="font-size: 0.82rem; color: #854d0e; line-height: 1.5; display: block; font-weight: 500;">
-                    <i class="fa-solid fa-circle-exclamation"></i> <strong>Non-Refundable Policy:</strong> Booking fees and escrow security deposits are strictly non-refundable once committed.
+                    <i class="fa-solid fa-circle-exclamation"></i> <strong>Non-Refundable Policy:</strong> Booking
+                    fees and escrow security deposits are strictly non-refundable once committed.
                 </span>
             </div>
-            
+
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <button type="button" id="btn-proceed-booking" class="btn btn-gold" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 6px;">
+                <button type="button" id="btn-proceed-booking" class="btn btn-gold"
+                    style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 6px;">
                     Yes, I have visited (Proceed with Booking)
                 </button>
-                <button type="button" id="btn-show-scheduler" class="btn btn-outline" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 6px;">
+                <button type="button" id="btn-show-scheduler" class="btn btn-outline"
+                    style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 6px;">
                     No, Schedule Physical Inspection
                 </button>
-                <button type="button" onclick="closeInspectionModal()" class="btn" style="background: transparent; color: var(--color-text-muted); border: none; padding: 0.4rem; font-size: 0.85rem; cursor: pointer; text-decoration: underline; margin-top: 0.25rem;">
+                <button type="button" onclick="closeInspectionModal()" class="btn"
+                    style="background: transparent; color: var(--color-text-muted); border: none; padding: 0.4rem; font-size: 0.85rem; cursor: pointer; text-decoration: underline; margin-top: 0.25rem;">
                     Go Back
                 </button>
             </div>
@@ -804,34 +1011,80 @@
 
         <!-- Panel 2: Viewing Request Scheduler -->
         <div id="panel-scheduler" style="padding: 1.75rem; display: none;">
-            <h4 style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
+            <h4
+                style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
                 Schedule Physical Inspection
             </h4>
             <p style="margin: 0 0 1.25rem 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.4;">
-                Select your preferred date/time below. A TRUST agent will coordinate with the landlord to confirm your walkthrough.
+                Select your preferred date/time below. A TRUST agent will coordinate with the landlord to confirm
+                your walkthrough.
             </p>
-            
+
             <form action="{% url 'tenant_request_viewing' property.id %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group" style="margin-bottom: 1rem;">
-                    <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Preferred Date & Time</label>
-                    <input type="datetime-local" name="preferred_date" class="form-control" style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border);" required>
+                    <label class="form-label"
+                        style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Preferred
+                        Date & Time</label>
+                    <input type="datetime-local" name="preferred_date" class="form-control"
+                        style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border);"
+                        required>
                 </div>
                 <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <label class="form-label" style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Special Notes or Requests (Optional)</label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Describe any preferences, companion details, or custom timing requests..." style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border); resize: none;"></textarea>
+                    <label class="form-label"
+                        style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Special
+                        Notes or Requests (Optional)</label>
+                    <textarea name="notes" class="form-control" rows="3"
+                        placeholder="Describe any preferences, companion details, or custom timing requests..."
+                        style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border); resize: none;"></textarea>
                 </div>
-                
+
                 <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-                    <button type="button" id="btn-back-to-question" class="btn btn-outline" style="border: 1px solid #cbd5e1; color: #475569; padding: 0.6rem 1.2rem; font-size: 0.88rem; cursor: pointer; background: white; border-radius: 6px;">
+                    <button type="button" id="btn-back-to-question" class="btn btn-outline"
+                        style="border: 1px solid #cbd5e1; color: #475569; padding: 0.6rem 1.2rem; font-size: 0.88rem; cursor: pointer; background: white; border-radius: 6px;">
                         Back
                     </button>
-                    <button type="submit" class="btn btn-gold" style="border: none; padding: 0.6rem 1.5rem; font-size: 0.88rem; font-weight: 600; border-radius: 6px; cursor: pointer;">
+                    <button type="submit" class="btn btn-gold"
+                        style="border: none; padding: 0.6rem 1.5rem; font-size: 0.88rem; font-weight: 600; border-radius: 6px; cursor: pointer;">
                         Confirm Request
                     </button>
                 </div>
             </form>
         </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}
+
+    {% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mainImg = document.getElementById('mainGalleryImg');
+            const mosaicTiles = document.querySelectorAll('.mosaic-tile');
+
+            if (mainImg && mosaicTiles.length > 0) {
+                mosaicTiles.forEach(tile => {
+                    tile.addEventListener('click', function () {
+                        const tileImg = this.querySelector('img');
+                        if (!tileImg) return;
+
+                        const currentMainSrc = mainImg.src;
+                        const clickedTileSrc = tileImg.src;
+
+                        if (currentMainSrc === clickedTileSrc) return;
+
+                        // 2-Way Image Swap Animation
+                        mainImg.style.opacity = '0.25';
+                        tileImg.style.opacity = '0.25';
+
+                        setTimeout(() => {
+                            mainImg.src = clickedTileSrc;
+                            tileImg.src = currentMainSrc;
+
+                            mainImg.style.opacity = '1';
+                            tileImg.style.opacity = '1';
+                        }, 140);
+                    });
+                });
+            }
+        });
+    </script>
+    {% endblock %}
