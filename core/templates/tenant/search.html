@@ -204,23 +204,99 @@ body {
     font-size: 0.95rem;
 }
 
-    /* Responsive Search */
+    /* Mobile Filter Button & Responsive Search */
+    .mobile-filter-trigger-wrapper {
+        display: none;
+        margin-bottom: 1.25rem;
+    }
+    .mobile-filter-btn {
+        width: 100%;
+        padding: 0.85rem 1.25rem;
+        background: var(--color-emerald-darkest);
+        color: #ffffff;
+        border: 1.5px solid var(--color-gold);
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        box-shadow: 0 4px 14px rgba(7, 94, 84, 0.2);
+        transition: all 0.25s ease;
+    }
+    .mobile-filter-btn:hover {
+        background: #062419;
+        transform: translateY(-1px);
+    }
+    .mobile-filter-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.25rem;
+        border-bottom: 2px solid var(--color-gold);
+        padding-bottom: 0.5rem;
+    }
+    .close-mobile-filter-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        color: var(--color-emerald-darkest);
+        cursor: pointer;
+        line-height: 1;
+        padding: 0.2rem 0.5rem;
+        font-weight: 800;
+    }
+
     @media (max-width: 1400px) {
         .results-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 1080px) {
-        .layout { grid-template-columns: 1fr; }
-        .filters { order: -1; margin-bottom: 2rem; }
+        .layout { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
+        .mobile-filter-trigger-wrapper { display: block; }
+        .close-mobile-filter-btn { display: block; }
+        .filters {
+            display: none;
+            order: -1;
+            margin-bottom: 1.75rem;
+            animation: slideDownFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .filters.is-open {
+            display: block !important;
+        }
         .results-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 640px) {
         .results-grid { grid-template-columns: 1fr; }
+    }
+
+    @keyframes slideDownFade {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="layout" style="margin: 0 auto;">
+    <!-- Mobile Filter Trigger Button -->
+    <div class="mobile-filter-trigger-wrapper">
+        <button id="mobileFilterToggleBtn" type="button" class="mobile-filter-btn">
+            <i class="fa-solid fa-sliders"></i> Filter Properties
+            {% if q or type or min_price or max_price or selected_amenities %}
+            <span style="background: var(--color-gold); color: #000; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 9999px; font-weight: 800; margin-left: 0.3rem;">Active</span>
+            {% endif %}
+        </button>
+    </div>
+
     <!-- Filters Sidebar -->
     <form method="GET" action="{% url 'search' %}" class="filters">
         <!-- Search via Map Link Button -->
@@ -230,9 +306,12 @@ body {
             </a>
         </div>
 
-        <h3 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.3rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--color-gold); padding-bottom: 0.5rem; font-weight: 700;">
-            Filter Properties
-        </h3>
+        <div class="mobile-filter-header">
+            <h3 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.3rem; margin: 0; font-weight: 700;">
+                Filter Properties
+            </h3>
+            <button type="button" id="closeMobileFilterBtn" class="close-mobile-filter-btn" title="Close Filters">&times;</button>
+        </div>
 
         <!-- Location Filter -->
         <div class="filter-group">
@@ -346,4 +425,31 @@ body {
         </div>
     </main>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('mobileFilterToggleBtn');
+    const closeBtn = document.getElementById('closeMobileFilterBtn');
+    const filterForm = document.querySelector('.filters');
+
+    if (toggleBtn && filterForm) {
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            filterForm.classList.toggle('is-open');
+            if (filterForm.classList.contains('is-open')) {
+                filterForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    if (closeBtn && filterForm) {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            filterForm.classList.remove('is-open');
+        });
+    }
+});
+</script>
 {% endblock %}
