@@ -802,7 +802,57 @@
     }
 
     .guarantees-list {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.85rem 0.75rem !important;
+    }
+
+    .guarantees-item {
+      font-size: 0.92rem !important;
+      padding: 0.35rem 0 !important;
+    }
+
+    .guarantees-item i {
+      font-size: 1.05rem !important;
+    }
+
+    .hero-search-form {
+      grid-template-columns: 1fr !important;
+      gap: 0.85rem !important;
+      padding: 1.25rem 1rem !important;
+      border-radius: 18px !important;
+      margin: 0 auto !important;
+      width: 94% !important;
+    }
+
+    .hero-search-form button[type="submit"] {
+      width: 100% !important;
+      padding: 0.9rem !important;
+      font-size: 1rem !important;
+      border-radius: 12px !important;
+      justify-content: center !important;
+    }
+
+    .showcase-split-grid {
+      grid-template-columns: 1fr !important;
+      gap: 2.25rem !important;
+    }
+
+    .showcase-image-box {
+      display: block !important;
+      width: 100% !important;
+    }
+
+    .showcase-image-box img {
+      height: 280px !important;
+      display: block !important;
+      width: 100% !important;
+      object-fit: cover !important;
+    }
+
+    .showcase-stats-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 1rem 0.5rem !important;
+      padding: 1.25rem 0.85rem !important;
     }
 
     .metadata-display-card {
@@ -1033,45 +1083,68 @@
       display: none;
     }
 
+    .typewriter-header-container {
+      min-height: 3.8rem !important;
+      height: 3.8rem !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .typewriter-header-h3 {
+      font-size: 1.25rem !important;
+      line-height: 1.35 !important;
+    }
+
     .vetted-card-grid-wrapper {
-      width: 260px !important;
+      width: 285px !important;
       flex-shrink: 0 !important;
       scroll-snap-align: start !important;
     }
 
     .vetted-card-grid-wrapper .glass-img-wrapper {
-      height: 140px !important;
+      height: 160px !important;
     }
 
     .vetted-card-grid-wrapper .glass-tag {
       top: 0.5rem !important;
       left: 0.5rem !important;
-      font-size: 0.65rem !important;
-      padding: 0.2rem 0.5rem !important;
+      font-size: 0.7rem !important;
+      padding: 0.25rem 0.6rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-body {
-      padding: 0.85rem !important;
+      padding: 0.95rem 1rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-price {
-      font-size: 1rem !important;
+      font-size: 1.1rem !important;
       margin-bottom: 0.25rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-title {
-      font-size: 0.82rem !important;
+      font-size: 0.95rem !important;
       margin-bottom: 0.25rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-location {
-      font-size: 0.72rem !important;
+      font-size: 0.82rem !important;
     }
   }
 
   @media (max-width: 480px) {
     .vetted-container-padding {
       padding: 0 0.75rem;
+    }
+
+    .typewriter-header-container {
+      min-height: 4.2rem !important;
+      height: 4.2rem !important;
+    }
+
+    .typewriter-header-h3 {
+      font-size: 1.15rem !important;
+      line-height: 1.35 !important;
     }
 
     .vetted-grid-container {
@@ -1082,7 +1155,7 @@
       overflow-x: auto !important;
       scroll-snap-type: x mandatory !important;
       -webkit-overflow-scrolling: touch !important;
-      gap: 0.75rem !important;
+      gap: 0.85rem !important;
       padding-bottom: 0.75rem !important;
       scrollbar-width: none;
     }
@@ -1092,35 +1165,35 @@
     }
 
     .vetted-card-grid-wrapper {
-      width: 220px !important;
+      width: 260px !important;
       flex-shrink: 0 !important;
       scroll-snap-align: start !important;
       border-width: 2px !important;
     }
 
     .vetted-card-grid-wrapper .glass-img-wrapper {
-      height: 115px !important;
+      height: 145px !important;
     }
 
     .vetted-card-grid-wrapper .glass-tag {
-      font-size: 0.55rem !important;
-      padding: 0.15rem 0.4rem !important;
+      font-size: 0.65rem !important;
+      padding: 0.2rem 0.5rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-body {
-      padding: 0.75rem !important;
+      padding: 0.85rem 0.9rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-price {
-      font-size: 0.88rem !important;
+      font-size: 1rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-title {
-      font-size: 0.78rem !important;
+      font-size: 0.88rem !important;
     }
 
     .vetted-card-grid-wrapper .glass-location {
-      font-size: 0.7rem !important;
+      font-size: 0.78rem !important;
     }
   }
 
@@ -1489,7 +1562,7 @@
 <!-- HERO SEARCH FILTER BAR (GLASSMORPHIC LIGHT EMERALD GREEN) -->
 <div style="position: relative; z-index: 30; margin-top: -3.5rem; margin-bottom: 2rem;">
   <div class="container" style="max-width: 1050px;">
-    <form method="GET" action="/search/"
+    <form method="GET" action="/search/" class="hero-search-form"
       style="background: rgba(16, 61, 40, 0.82); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1.5px solid rgba(203, 163, 88, 0.45); border-radius: 22px; padding: 1.1rem 1.5rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: center;">
 
       <!-- 1. Location -->
@@ -1557,9 +1630,9 @@
   <div class="vetted-container-padding">
 
     <!-- Centered Looped Typewriter Header (Brand Colors & Gold Underline) -->
-    <div
+    <div class="typewriter-header-container"
       style="text-align: center; margin-bottom: 1.5rem; min-height: 2.2rem; display: flex; align-items: center; justify-content: center;">
-      <h3
+      <h3 class="typewriter-header-h3"
         style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 700; margin: 0; letter-spacing: 0.3px; border-bottom: 2px solid var(--color-gold); padding-bottom: 0.35rem; display: inline-block;">
         <span id="typewriterText"></span><span class="typewriter-cursor"
           style="color: var(--color-gold); font-weight: 400; margin-left: 2px;">|</span>
@@ -1637,10 +1710,10 @@
     </div>
 
     <!-- SPLIT CONTENT: SAMPLE IMAGE ON LEFT, COUNTDOWN CARDS ON RIGHT -->
-    <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 3.5rem; align-items: center;">
+    <div class="showcase-split-grid" style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 3.5rem; align-items: center;">
 
       <!-- LEFT SIDE: SAMPLE IMAGE CARD WITH ROUNDED CORNERS -->
-      <div
+      <div class="showcase-image-box"
         style="position: relative; border-radius: 22px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.06);">
         {% if site_settings.pipeline_left_image %}
         <img src="{{ site_settings.pipeline_left_image.url }}" alt="Dream Home Showcase"
@@ -1652,7 +1725,7 @@
       </div>
 
       <!-- RIGHT SIDE: ANIMATED COUNTDOWN STATS GRID -->
-      <div
+      <div class="showcase-stats-grid"
         style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem 1rem; background: #faf7f2; padding: 2.25rem 1.75rem; border-radius: 22px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
         <div
           style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
