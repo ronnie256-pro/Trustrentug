@@ -255,6 +255,14 @@ class TenantRental(models.Model):
     )
     signed_agreement = models.FileField(upload_to='agreements/signed/', null=True, blank=True)
     co_occupants_image = models.FileField(upload_to='occupants/', null=True, blank=True)
+    payment_type = models.CharField(
+        max_length=20, 
+        choices=[('rent_2', '2 Months Rent'), ('rent_3', '3 Months Rent')], 
+        default='rent_2'
+    )
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    total_amount = models.DecimalField(max_digits=14, decimal_places=2, default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     
     def __str__(self):
         return f"Rental of {self.property.title} by {self.tenant.username}"

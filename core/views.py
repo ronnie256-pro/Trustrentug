@@ -678,6 +678,174 @@ def admin_dashboard(request):
 
     popups = PopupLogic.objects.all().order_by('-created_at')
 
+    # Fetch received payments for Payments Tab
+    filter_month = request.GET.get('filter_month', '')
+    filter_day = request.GET.get('filter_day', '')
+
+    received_bookings = TenantBooking.objects.filter(booking_fee__gt=0).select_related('tenant', 'property').order_by('-booked_at')
+    received_rentals = TenantRental.objects.select_related('tenant', 'property').order_by('-created_at', '-start_date')
+
+    if filter_month:
+        try:
+            m_val = int(filter_month)
+            received_bookings = received_bookings.filter(booked_at__month=m_val)
+            received_rentals = received_rentals.filter(Q(created_at__month=m_val) | Q(start_date__month=m_val))
+        except ValueError:
+            pass
+
+    if filter_day:
+        try:
+            d_val = int(filter_day)
+            received_bookings = received_bookings.filter(booked_at__day=d_val)
+            received_rentals = received_rentals.filter(Q(created_at__day=d_val) | Q(start_date__day=d_val))
+        except ValueError:
+            pass
+    
+    payments_list = []
+    total_booking_revenue = 0
+    total_rent_2_revenue = 0
+    rent_2_count = 0
+    total_rent_3_revenue = 0
+    rent_3_count = 0
+    
+    # Process Booking Lock Fee payments
+    for b in received_bookings:
+        amount = float(b.booking_fee or 0)
+        total_booking_revenue += amount
+        payments_list.append({
+            'id': f"BKG-{b.id:04d}",
+            'category_code': 'booking',
+            'category_label': '24h Booking Fee (5%)',
+            'tenant': b.tenant,
+            'property': b.property,
+            'amount': amount,
+            'payment_method': b.payment_method or 'Mobile Money',
+            'date': b.booked_at,
+            'status': b.get_status_display()
+        })
+        
+    # Process Rent Payments (2 Months & 3 Months)
+    for r in received_rentals:
+        amount = float(r.total_amount) if r.total_amount and float(r.total_amount) > 0 else (float(r.property.price or 0) * (3 if r.payment_type == 'rent_3' else 2) * 1.11)
+        if r.payment_type == 'rent_3':
+            total_rent_3_revenue += amount
+            rent_3_count += 1
+            cat_label = 'Pay 3 Months Rent'
+        else:
+            total_rent_2_revenue += amount
+            rent_2_count += 1
+            cat_label = 'Pay 2 Months Rent'
+            
+        payments_list.append({
+            'id': f"RNT-{r.id:04d}",
+            'category_code': r.payment_type or 'rent_2',
+            'category_label': cat_label,
+            'tenant': r.tenant,
+            'property': r.property,
+            'amount': amount,
+            'payment_method': r.payment_method or 'Mobile Money',
+            'date': r.created_at or r.start_date,
+            'status': 'Escrow Secured' if r.status == 'active' else 'Completed'
+        })
+        
+    # Prepare timeframe datasets (Annually, Monthly, Daily)
+    today = timezone.now().date()
+    current_year = today.year
+    current_month = today.month
+
+    # 1. Annually (Jan - Dec for current year)
+    annual_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    booking_annual_counts = [0] * 12
+    rent_2_annual_counts = [0] * 12
+    rent_3_annual_counts = [0] * 12
+
+    for b in received_bookings:
+        if b.booked_at and b.booked_at.year == current_year:
+            m_idx = b.booked_at.month - 1
+            booking_annual_counts[m_idx] += 1
+
+    for r in received_rentals:
+        r_date = r.created_at or r.start_date
+        if r_date and r_date.year == current_year:
+            m_idx = r_date.month - 1
+            if r.payment_type == 'rent_3':
+                rent_3_annual_counts[m_idx] += 1
+            else:
+                rent_2_annual_counts[m_idx] += 1
+
+    # 2. Monthly (Days 1 - 31 for current month)
+    import calendar
+    days_in_month = calendar.monthrange(current_year, current_month)[1]
+    monthly_labels = [str(d) for d in range(1, days_in_month + 1)]
+    booking_monthly_counts = [0] * days_in_month
+    rent_2_monthly_counts = [0] * days_in_month
+    rent_3_monthly_counts = [0] * days_in_month
+
+    for b in received_bookings:
+        if b.booked_at and b.booked_at.year == current_year and b.booked_at.month == current_month:
+            d_idx = b.booked_at.day - 1
+            if d_idx < days_in_month:
+                booking_monthly_counts[d_idx] += 1
+
+    for r in received_rentals:
+        r_date = r.created_at or r.start_date
+        if r_date and r_date.year == current_year and r_date.month == current_month:
+            d_idx = r_date.day - 1
+            if d_idx < days_in_month:
+                if r.payment_type == 'rent_3':
+                    rent_3_monthly_counts[d_idx] += 1
+                else:
+                    rent_2_monthly_counts[d_idx] += 1
+
+    # 3. Daily (Hourly breakdown for a 24-hour day: 00:00 to 23:00)
+    daily_labels = [f"{h:02d}:00" for h in range(24)]
+    booking_daily_counts = [0] * 24
+    rent_2_daily_counts = [0] * 24
+    rent_3_daily_counts = [0] * 24
+
+    for b in received_bookings:
+        if b.booked_at and b.booked_at.date() == today:
+            h_idx = b.booked_at.hour
+            if 0 <= h_idx < 24:
+                booking_daily_counts[h_idx] += 1
+
+    for r in received_rentals:
+        r_dt = r.created_at
+        if r_dt and r_dt.date() == today:
+            h_idx = r_dt.hour
+            if 0 <= h_idx < 24:
+                if r.payment_type == 'rent_3':
+                    rent_3_daily_counts[h_idx] += 1
+                else:
+                    rent_2_daily_counts[h_idx] += 1
+
+    payment_stats = {
+        'total_revenue': total_booking_revenue + total_rent_2_revenue + total_rent_3_revenue,
+        'booking_revenue': total_booking_revenue,
+        'booking_count': len(received_bookings),
+        'rent_2_revenue': total_rent_2_revenue,
+        'rent_2_count': rent_2_count,
+        'rent_3_revenue': total_rent_3_revenue,
+        'rent_3_count': rent_3_count,
+        # Datasets for Timeframe Modes
+        'annual_labels': annual_labels,
+        'booking_annual_counts': booking_annual_counts,
+        'rent_2_annual_counts': rent_2_annual_counts,
+        'rent_3_annual_counts': rent_3_annual_counts,
+
+        'monthly_labels': monthly_labels,
+        'booking_monthly_counts': booking_monthly_counts,
+        'rent_2_monthly_counts': rent_2_monthly_counts,
+        'rent_3_monthly_counts': rent_3_monthly_counts,
+
+        'daily_labels': daily_labels,
+        'booking_daily_counts': booking_daily_counts,
+        'rent_2_daily_counts': rent_2_daily_counts,
+        'rent_3_daily_counts': rent_3_daily_counts,
+        'filter_month': filter_month,
+        'filter_day': filter_day,
+    }
+
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
         'stats': stats,
@@ -695,6 +863,8 @@ def admin_dashboard(request):
         'service_divisions': service_divisions,
         'service_villages': service_villages,
         'popups': popups,
+        'payments_list': payments_list,
+        'payment_stats': payment_stats,
         'current_tab': tab
     })
 
@@ -1714,11 +1884,21 @@ def tenant_process_payment(request, property_id):
             messages.error(request, "No active booking reservation found for this property.")
             
     elif payment_type in ['rent', 'rent_2', 'rent_3']:
-        # Create active lease rental
+        price = float(property_obj.price) if property_obj.price else 0.0
+        months = 3 if payment_type == 'rent_3' else 2
+        rent_total = price * months
+        security = price * 0.10
+        fee = price * 0.01
+        total_escrow = rent_total + security + fee
+
+        # Create active lease rental with recorded payment details
         rental = TenantRental.objects.create(
             tenant=request.user,
             property=property_obj,
-            status='active'
+            status='active',
+            payment_type='rent_3' if payment_type == 'rent_3' else 'rent_2',
+            payment_method=payment_method,
+            total_amount=total_escrow
         )
         
         # Finalize any active bookings
@@ -1730,13 +1910,6 @@ def tenant_process_payment(request, property_id):
         # Update property status to rented
         property_obj.status = 'rented'
         property_obj.save()
-        
-        price = float(property_obj.price) if property_obj.price else 0.0
-        months = 3 if payment_type == 'rent_3' else 2
-        rent_total = price * months
-        security = price * 0.10
-        fee = price * 0.01
-        total_escrow = rent_total + security + fee
         
         messages.success(request, f"Escrow Enforced Payment of UGX {total_escrow:,.0f} ({months} Months Rent + Escrow Bond) processed successfully via {payment_method.replace('_', ' ').title()}! Funds are locked in the TRUST Escrow Vault.")
         return redirect('/tenant/dashboard/?tab=my_property&payment_success=1')
@@ -2207,5 +2380,204 @@ def chat_api_close(request, thread_id):
     )
 
     return JsonResponse({'status': 'success', 'thread_id': thread.id})
+
+
+from io import BytesIO
+from django.http import HttpResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+def download_payments_pdf(request):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this feature.')
+        return redirect('login')
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=30,
+        leftMargin=30,
+        topMargin=30,
+        bottomMargin=30
+    )
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontName='Helvetica-Bold',
+        fontSize=18,
+        textColor=colors.HexColor('#0a5c36'),
+        spaceAfter=6
+    )
+    subtitle_style = ParagraphStyle(
+        'SubtitleStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=10,
+        textColor=colors.HexColor('#64748b'),
+        spaceAfter=15
+    )
+    th_style = ParagraphStyle(
+        'THStyle',
+        fontName='Helvetica-Bold',
+        fontSize=8,
+        textColor=colors.white,
+        alignment=1
+    )
+    td_style = ParagraphStyle(
+        'TDStyle',
+        fontName='Helvetica',
+        fontSize=8,
+        textColor=colors.HexColor('#1e293b'),
+        alignment=0
+    )
+
+    elements = []
+
+    # Title & Header
+    elements.append(Paragraph("TRUST Real Estate Portal - Received Payments & Escrow Ledger", title_style))
+    elements.append(Paragraph(f"Official Financial Accountability Report | Generated: {timezone.now().strftime('%B %d, %Y - %H:%M')}", subtitle_style))
+    elements.append(Spacer(1, 10))
+
+    # Fetch received payments data with month/day filter support
+    filter_month = request.GET.get('filter_month', '')
+    filter_day = request.GET.get('filter_day', '')
+
+    received_bookings = TenantBooking.objects.filter(booking_fee__gt=0).select_related('tenant', 'property').order_by('-booked_at')
+    received_rentals = TenantRental.objects.select_related('tenant', 'property').order_by('-created_at', '-start_date')
+
+    if filter_month:
+        try:
+            m_val = int(filter_month)
+            received_bookings = received_bookings.filter(booked_at__month=m_val)
+            received_rentals = received_rentals.filter(Q(created_at__month=m_val) | Q(start_date__month=m_val))
+        except ValueError:
+            pass
+
+    if filter_day:
+        try:
+            d_val = int(filter_day)
+            received_bookings = received_bookings.filter(booked_at__day=d_val)
+            received_rentals = received_rentals.filter(Q(created_at__day=d_val) | Q(start_date__day=d_val))
+        except ValueError:
+            pass
+
+    payments_list = []
+    total_booking_revenue = 0
+    total_rent_2_revenue = 0
+    rent_2_count = 0
+    total_rent_3_revenue = 0
+    rent_3_count = 0
+
+    for b in received_bookings:
+        amount = float(b.booking_fee or 0)
+        total_booking_revenue += amount
+        payments_list.append([
+            f"BKG-{b.id:04d}",
+            f"{b.tenant.first_name} {b.tenant.last_name or b.tenant.username}",
+            b.property.title[:22],
+            "24h Booking Fee (5%)",
+            b.payment_method or "Mobile Money",
+            f"UGX {amount:,.0f}",
+            b.booked_at.strftime('%Y-%m-%d') if b.booked_at else "-",
+            b.get_status_display()
+        ])
+
+    for r in received_rentals:
+        amount = float(r.total_amount) if r.total_amount and float(r.total_amount) > 0 else (float(r.property.price or 0) * (3 if r.payment_type == 'rent_3' else 2) * 1.11)
+        if r.payment_type == 'rent_3':
+            total_rent_3_revenue += amount
+            rent_3_count += 1
+            cat = "Pay 3 Months Rent"
+        else:
+            total_rent_2_revenue += amount
+            rent_2_count += 1
+            cat = "Pay 2 Months Rent"
+
+        r_date = r.created_at or r.start_date
+        payments_list.append([
+            f"RNT-{r.id:04d}",
+            f"{r.tenant.first_name} {r.tenant.last_name or r.tenant.username}",
+            r.property.title[:22],
+            cat,
+            r.payment_method or "Mobile Money",
+            f"UGX {amount:,.0f}",
+            r_date.strftime('%Y-%m-%d') if r_date else "-",
+            "Escrow Secured" if r.status == 'active' else "Completed"
+        ])
+
+    grand_total = total_booking_revenue + total_rent_2_revenue + total_rent_3_revenue
+
+    # Summary Table
+    summary_data = [
+        [Paragraph("Payment Category", th_style), Paragraph("Transactions", th_style), Paragraph("Total Amount (UGX)", th_style)],
+        [Paragraph("24-Hour Booking Lock Fees", td_style), Paragraph(str(len(received_bookings)), td_style), Paragraph(f"UGX {total_booking_revenue:,.0f}", td_style)],
+        [Paragraph("Pay 2 Months Rent Payments", td_style), Paragraph(str(rent_2_count), td_style), Paragraph(f"UGX {total_rent_2_revenue:,.0f}", td_style)],
+        [Paragraph("Pay 3 Months Rent Payments", td_style), Paragraph(str(rent_3_count), td_style), Paragraph(f"UGX {total_rent_3_revenue:,.0f}", td_style)],
+        [Paragraph("GRAND TOTAL ESCROW REVENUE", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(str(len(payments_list)), ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(f"UGX {grand_total:,.0f}", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold', textColor=colors.HexColor('#0a5c36')))]
+    ]
+
+    summary_table = Table(summary_data, colWidths=[220, 100, 200])
+    summary_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#0a5c36')),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+        ('TOPPADDING', (0,0), (-1,-1), 6),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#cbd5e1')),
+        ('BACKGROUND', (0,-1), (-1,-1), colors.HexColor('#f1f5f9')),
+    ]))
+    elements.append(summary_table)
+    elements.append(Spacer(1, 15))
+
+    # Transactions Ledger Table
+    elements.append(Paragraph("Detailed Transactions Ledger", ParagraphStyle('H2', parent=styles['Heading2'], fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor('#0a5c36'))))
+    elements.append(Spacer(1, 6))
+
+    table_data = [[
+        Paragraph("Ref ID", th_style),
+        Paragraph("Tenant", th_style),
+        Paragraph("Property Unit", th_style),
+        Paragraph("Category", th_style),
+        Paragraph("Gateway", th_style),
+        Paragraph("Amount", th_style),
+        Paragraph("Date", th_style),
+        Paragraph("Status", th_style)
+    ]]
+
+    for p in payments_list:
+        table_data.append([
+            Paragraph(p[0], td_style),
+            Paragraph(p[1], td_style),
+            Paragraph(p[2], td_style),
+            Paragraph(p[3], td_style),
+            Paragraph(p[4], td_style),
+            Paragraph(p[5], td_style),
+            Paragraph(p[6], td_style),
+            Paragraph(p[7], td_style)
+        ])
+
+    ledger_table = Table(table_data, colWidths=[55, 80, 100, 85, 65, 75, 55, 60])
+    ledger_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#0a5c36')),
+        ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+        ('TOPPADDING', (0,0), (-1,-1), 5),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#e2e8f0')),
+    ]))
+    elements.append(ledger_table)
+
+    doc.build(elements)
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="TRUST_Received_Payments_Report.pdf"'
+    response.write(pdf)
+    return response
 
 

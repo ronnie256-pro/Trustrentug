@@ -44,6 +44,7 @@ urlpatterns = [
     path('legal/', views.legal_standards_view, name='legal_standards'),
     path('disputes/', views.disputes_view, name='disputes'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard/payments/pdf/', views.download_payments_pdf, name='download_payments_pdf'),
     path('admin-dashboard/landlord/approve/<int:user_id>/', views.approve_landlord, name='approve_landlord'),
     path('admin-dashboard/property/approve/<int:property_id>/', views.approve_property, name='approve_property'),
     path('admin-dashboard/property/view/<int:property_id>/', views.admin_property_detail, name='admin_property_detail'),
