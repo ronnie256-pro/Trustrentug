@@ -113,13 +113,13 @@
         }
 
         .tenant-topbar {
-            height: 75px;
-            background: white;
+            height: 70px;
+            background: #fbfbf9;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 3rem;
+            padding: 0 2rem;
             position: sticky;
             top: 0;
             z-index: 900;
@@ -302,14 +302,8 @@
             <button class="hamburger" onclick="toggleSidebar()">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <div class="user-info">
-                {% if profile.national_id_or_passport %}
-                <span class="badge badge-verified" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-check"></i> Profile Vetted</span>
-                {% else %}
-                <span class="badge badge-verification" style="font-size: 0.75rem;"><i class="fa-solid fa-clock"></i> Identity Pending</span>
-                {% endif %}
-                
-                <span style="font-weight: 600; color: var(--color-emerald-darkest);">{{ user.first_name|default:user.username|title }} (Tenant)</span>
+            <div class="user-info" style="margin-left: auto;">
+                <span class="user-name-text" style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.95rem;">{{ user.first_name|default:user.username|title }}</span>
                 
                 <div class="user-avatar-wrapper">
                     {% if profile.image %}

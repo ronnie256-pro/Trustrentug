@@ -120,6 +120,165 @@
         }
     }
 
+    /* Favorite Cards Responsive Layout */
+    .fav-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .fav-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        gap: 1.25rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .fav-card-img-link {
+        display: block;
+        flex-shrink: 0;
+    }
+
+    .fav-card-img {
+        width: 120px;
+        height: 95px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .fav-card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-width: 0;
+    }
+
+    .fav-card-title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .fav-card-title a {
+        color: var(--color-emerald-darkest);
+        text-decoration: none;
+    }
+
+    .fav-card-loc {
+        color: var(--color-text-muted);
+        font-size: 0.8rem;
+        display: block;
+        margin-top: 0.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .fav-card-price {
+        font-weight: 700;
+        color: var(--color-emerald);
+        font-size: 0.95rem;
+        display: block;
+        margin-top: 0.35rem;
+    }
+
+    .fav-card-actions {
+        margin-top: 0.8rem;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-fav-action {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .btn-fav-delete {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        border-color: #ef4444;
+        color: #ef4444;
+        background: transparent;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+        .fav-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+        }
+
+        .fav-card {
+            flex-direction: row !important;
+            padding: 1rem !important;
+            gap: 0.85rem !important;
+            border-radius: 10px !important;
+        }
+
+        .fav-card-img {
+            width: 95px !important;
+            height: 85px !important;
+        }
+
+        .fav-card-title {
+            font-size: 0.95rem !important;
+            white-space: normal !important;
+        }
+
+        .fav-card-actions {
+            margin-top: 0.6rem !important;
+            gap: 0.35rem !important;
+        }
+
+        .btn-fav-action {
+            padding: 0.35rem 0.6rem !important;
+            font-size: 0.72rem !important;
+        }
+
+        .btn-fav-delete {
+            padding: 0.35rem 0.5rem !important;
+            font-size: 0.72rem !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .fav-card {
+            flex-direction: column !important;
+            align-items: stretch !important;
+        }
+
+        .fav-card-img {
+            width: 100% !important;
+            height: 140px !important;
+        }
+
+        .fav-card-actions {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr auto !important;
+            width: 100% !important;
+            gap: 0.35rem !important;
+        }
+    }
+
     /* Visual Expiration Timer */
     .timer-alert {
         background-color: rgba(239, 68, 68, 0.05);
@@ -401,10 +560,6 @@
          ========================================== -->
     {% if current_tab == 'my_property' %}
     <section>
-        <div class="section-header">
-            <h2>Occupied Property Workspace</h2>
-            <p>Track structural inspections, view verification legal portfolios, and manage rental logistics.</p>
-        </div>
 
         {% if active_rental %}
         <!-- Active Rented Property Card -->
@@ -662,49 +817,55 @@
                     <span class="badge badge-verified" style="background: rgba(255,255,255,0.15); color: white;"><i class="fa-solid fa-heart"></i> {{ favorite_properties.count }} Saved</span>
                 </div>
                 <div class="card-body-lux">
-                    <p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--color-text-muted);">
-                        Below are your saved favorite properties. You can view their full specifications or initiate a booking checkout instantly.
-                    </p>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div class="fav-grid">
                         {% for fav in favorite_properties %}
-                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; display: flex; gap: 1.5rem; transition: transform 0.2s ease;">
-                            <a href="{% url 'property_detail' fav.property.id %}" style="display: block; flex-shrink: 0;">
+                        <div class="fav-card">
+                            <a href="{% url 'property_detail' fav.property.id %}" class="fav-card-img-link">
                                 {% if fav.property.hero_image %}
-                                <img src="{{ fav.property.hero_image.url }}" alt="{{ fav.property.title }}" style="width: 130px; height: 95px; object-fit: cover; border-radius: 6px; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                <img src="{{ fav.property.hero_image.url }}" alt="{{ fav.property.title }}" class="fav-card-img">
                                 {% else %}
-                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" style="width: 130px; height: 95px; object-fit: cover; border-radius: 6px; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" class="fav-card-img">
                                 {% endif %}
                             </a>
-                            <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="fav-card-body">
                                 <div>
-                                    <h4 style="margin: 0; font-size: 1.05rem; font-weight: 600;">
-                                        <a href="{% url 'property_detail' fav.property.id %}" style="color: var(--color-emerald-darkest); text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='var(--color-gold)'" onmouseout="this.style.color='var(--color-emerald-darkest)'">
+                                    <h4 class="fav-card-title">
+                                        <a href="{% url 'property_detail' fav.property.id %}">
                                             {{ fav.property.title }}
                                         </a>
                                     </h4>
-                                    <small style="color: var(--color-text-muted); font-size: 0.78rem; display: block; margin-top: 0.2rem;"><i class="fa-solid fa-location-dot"></i> {{ fav.property.location }}</small>
-                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 0.95rem; display: block; margin-top: 0.4rem;">UGX {{ fav.property.price|floatformat:0 }} / mo</span>
+                                    <small class="fav-card-loc"><i class="fa-solid fa-location-dot"></i> {{ fav.property.location }}</small>
+                                    <span class="fav-card-price">UGX {{ fav.property.price|floatformat:0 }} / mo</span>
                                 </div>
-                                <div style="margin-top: 0.8rem; display: flex; gap: 0.5rem; align-items: center;">
-                                    <a href="{% url 'property_detail' fav.property.id %}?book=true" class="btn btn-gold" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 4px; text-decoration: none;">
+                                <div class="fav-card-actions">
+                                    <a href="{% url 'property_detail' fav.property.id %}?book=true" class="btn btn-gold btn-fav-action">
                                         <i class="fa-solid fa-credit-card"></i> Book Property
                                     </a>
-                                    <a href="{% url 'property_detail' fav.property.id %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border-color: var(--color-emerald); color: var(--color-emerald); background: transparent; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: all 0.2s ease;">
+                                    <a href="{% url 'property_detail' fav.property.id %}" class="btn btn-outline btn-fav-action" style="border-color: var(--color-emerald); color: var(--color-emerald);">
                                         <i class="fa-solid fa-circle-info"></i> Details
                                     </a>
-                                    <a href="{% url 'tenant_remove_favorite' fav.id %}" class="btn btn-outline" style="padding: 0.4rem 0.6rem; font-size: 0.75rem; border-color: #ef4444; color: #ef4444; background: transparent; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Remove from Favorites">
+                                    <a href="{% url 'tenant_remove_favorite' fav.id %}" class="btn btn-outline btn-fav-delete" style="border-color: #ef4444; color: #ef4444;" title="Remove from Favorites">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </a>
                                 </div>
                             </div>
                         </div>
                         {% empty %}
-                        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--color-text-muted);">
-                            <i class="fa-solid fa-heart-broken" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--color-gold);"></i>
-                            <p style="margin: 0; font-size: 0.88rem;">No favorite properties saved under your account yet.</p>
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: var(--color-text-muted);">
+                            <i class="fa-regular fa-heart" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--color-gold);"></i>
+                            <p style="margin: 0; font-size: 0.95rem;">
+                                You have not added any properties to Favorites yet, <a href="{% url 'search' %}" style="color: var(--color-emerald-darkest); font-weight: 700; text-decoration: underline;">Click here to add</a>.
+                            </p>
                         </div>
                         {% endfor %}
                     </div>
+                    {% if favorite_properties %}
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <a href="{% url 'search' %}" class="btn btn-gold" style="padding: 0.75rem 2rem; font-weight: 700; font-size: 0.95rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                            <i class="fa-solid fa-plus"></i> Add more
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             
@@ -742,28 +903,11 @@
 
         {% else %}
         <!-- Empty state dashboard for property tab -->
-        <div style="text-align: center; padding: 6rem 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <i class="fa-solid fa-hotel" style="font-size: 4rem; color: var(--color-gold); margin-bottom: 1.5rem;"></i>
-            <h3 style="font-family: var(--font-heading); font-size: 1.75rem; color: var(--color-emerald-darkest); margin-bottom: 0.5rem;">No Active Occupations Logged</h3>
-            <p style="color: var(--color-text-muted); max-width: 500px; margin: 0 auto 2.5rem auto;">You do not currently have any live active rental leases or reserved property bookings locked under your name.</p>
-            
-            <div style="max-width: 800px; margin: 0 auto; text-align: left; background: #f8fafc; border-radius: 8px; padding: 2rem; border: 1px solid #e2e8f0;">
-                <h4 style="margin: 0 0 1rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest);"><i class="fa-solid fa-bolt-lightning" style="color: var(--color-gold);"></i> Quick Demonstration Seeding</h4>
-                <p style="margin: 0 0 1.5rem 0; font-size: 0.88rem; color: var(--color-text-muted);">Choose a verified luxury property below to create an instant booking reservation and evaluate the secure payment gateways:</p>
-                
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
-                    {% for prop in available_properties %}
-                    <div style="background: white; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 8px; display: flex; flex-direction: column;">
-                        <h5 style="margin: 0 0 0.25rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600;">{{ prop.title }}</h5>
-                        <small style="color: var(--color-text-muted); font-size: 0.75rem; display: block; margin-bottom: 0.75rem;"><i class="fa-solid fa-location-dot"></i> {{ prop.location }}</small>
-                        <span style="font-weight: 700; color: var(--color-emerald); font-size: 0.95rem; display: block; margin-bottom: 1rem;">UGX {{ prop.price|floatformat:0 }} / mo</span>
-                        <a href="{% url 'tenant_create_booking' prop.id %}" class="btn btn-gold" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; text-align: center; margin-top: auto;">Reserve property</a>
-                    </div>
-                    {% empty %}
-                    <div style="grid-column: 1 / -1; text-align: center; font-size: 0.85rem; color: var(--color-text-muted);">All database listings are currently occupied or locked by inspections. Run `seed_properties.py` script.</div>
-                    {% endfor %}
-                </div>
-            </div>
+        <div style="text-align: center; padding: 4rem 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 1rem;">
+            <i class="fa-regular fa-heart" style="font-size: 3rem; color: var(--color-gold); margin-bottom: 1.25rem;"></i>
+            <p style="color: var(--color-text-muted); font-size: 1.05rem; margin: 0; line-height: 1.6;">
+                You have not added any properties to Favorites yet, <a href="{% url 'search' %}" style="color: var(--color-emerald-darkest); font-weight: 700; text-decoration: underline;">Click here to add</a>.
+            </p>
         </div>
         {% endif %}
     </section>
