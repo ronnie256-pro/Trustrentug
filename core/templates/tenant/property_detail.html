@@ -939,96 +939,81 @@
     });
 </script>
 
-<!-- Physical Inspection Verification Modal -->
+<!-- Physical Inspection Modal -->
 <div id="inspection-verification-modal"
-    style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 99999; align-items: center; justify-content: center; padding: 1.5rem; transition: opacity 0.3s ease;">
+    style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 99999; align-items: center; justify-content: center; padding: 1.5rem; transition: opacity 0.3s ease;">
     <div
-        style="background: white; border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); max-width: 500px; width: 100%; overflow: hidden; transform: scale(0.95); transition: transform 0.3s ease; animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+        style="background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 20px; box-shadow: 0 30px 60px -12px rgba(10, 61, 40, 0.22), 0 0 0 1px rgba(10, 92, 54, 0.08); max-width: 520px; width: 100%; overflow: hidden; transform: scale(0.95); transition: transform 0.3s ease; animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
         <!-- Header -->
         <div
-            style="background: linear-gradient(135deg, var(--color-emerald-darkest), var(--color-emerald)); padding: 1.5rem; color: white; display: flex; align-items: center; gap: 1rem;">
-            <i class="fa-solid fa-house-circle-check" style="font-size: 2rem; color: var(--color-gold);"></i>
+            style="background: #0a5c36 !important; background-color: #0a5c36 !important; padding: 1.65rem 2rem; color: white;">
             <div>
                 <h3
-                    style="margin: 0; font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; color: white;">
-                    Physical Inspection Verification</h3>
-                <small style="opacity: 0.85; color: #cbd5e1; display: block; margin-top: 0.15rem;">TRUST Safety and
-                    Standard Policy</small>
+                    style="margin: 0; font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.5px; color: #ffffff !important;">
+                    Physical Inspection</h3>
+                <small style="opacity: 0.92; color: #e2e8f0; display: block; margin-top: 0.3rem; font-size: 0.95rem; font-weight: 500;">TRUST Safety and Standard Policy</small>
             </div>
         </div>
 
         <!-- Panel 1: The Question -->
-        <div id="panel-question" style="padding: 1.75rem;">
+        <div id="panel-question" style="padding: 2rem;">
             <h4
-                style="margin: 0 0 1rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
+                style="margin: 0 0 1.25rem 0; font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-emerald-darkest); font-weight: 700; line-height: 1.35;">
                 Have you visited this property in-person yet?
             </h4>
-            <p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6;">
-                This is a significant commitment. To ensure absolute satisfaction with the layout, neighborhood, and
-                physical condition of the unit, we strongly advise scheduling a free escorted walk-through before
-                making a booking lock payment.
-            </p>
             <div
-                style="background: #fffdf5; border-left: 4px solid var(--color-gold); padding: 0.85rem 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
-                <span style="font-size: 0.82rem; color: #854d0e; line-height: 1.5; display: block; font-weight: 500;">
-                    <i class="fa-solid fa-circle-exclamation"></i> <strong>Non-Refundable Policy:</strong> Booking
+                style="background: #fffdf5; border-left: 4px solid var(--color-gold); padding: 1rem 1.15rem; border-radius: 6px; margin-bottom: 1.75rem;">
+                <span style="font-size: 0.95rem; color: #854d0e; line-height: 1.55; display: block; font-weight: 500;">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 1.05rem;"></i> <strong>Non-Refundable Policy:</strong> Booking
                     fees and escrow security deposits are strictly non-refundable once committed.
                 </span>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
                 <button type="button" id="btn-proceed-booking" class="btn btn-gold"
-                    style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 6px;">
+                    style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 8px;">
                     Yes, I have visited (Proceed with Booking)
                 </button>
                 <button type="button" id="btn-show-scheduler" class="btn btn-outline"
-                    style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 6px;">
+                    style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1.5px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 8px;">
                     No, Schedule Physical Inspection
                 </button>
-                <button type="button" onclick="closeInspectionModal()" class="btn"
-                    style="background: transparent; color: var(--color-text-muted); border: none; padding: 0.4rem; font-size: 0.85rem; cursor: pointer; text-decoration: underline; margin-top: 0.25rem;">
+                <a href="/tenant/dashboard/?tab=my_property" class="btn"
+                    style="background: transparent; color: var(--color-text-muted); border: none; padding: 0.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: underline; margin-top: 0.35rem; display: inline-block; text-align: center;">
                     Go Back
-                </button>
+                </a>
             </div>
         </div>
 
         <!-- Panel 2: Viewing Request Scheduler -->
-        <div id="panel-scheduler" style="padding: 1.75rem; display: none;">
+        <div id="panel-scheduler" style="padding: 2rem; display: none;">
             <h4
-                style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">
+                style="margin: 0 0 0.65rem 0; font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-emerald-darkest); font-weight: 700;">
                 Schedule Physical Inspection
             </h4>
-            <p style="margin: 0 0 1.25rem 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.4;">
+            <p style="margin: 0 0 1.5rem 0; font-size: 0.98rem; color: var(--color-text-muted); line-height: 1.5;">
                 Select your preferred date/time below. A TRUST agent will coordinate with the landlord to confirm
                 your walkthrough.
             </p>
 
             <form action="{% url 'tenant_request_viewing' property.id %}" method="POST">
                 {% csrf_token %}
-                <div class="form-group" style="margin-bottom: 1rem;">
+                <div class="form-group" style="margin-bottom: 1.75rem;">
                     <label class="form-label"
-                        style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Preferred
+                        style="font-weight: 700; font-size: 0.98rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.5rem;">Preferred
                         Date & Time</label>
                     <input type="datetime-local" name="preferred_date" class="form-control"
-                        style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border);"
+                        style="width: 100%; padding: 0.75rem; font-size: 1rem; border-radius: 8px; border: 1.5px solid var(--color-border);"
                         required>
                 </div>
-                <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <label class="form-label"
-                        style="font-weight: 600; font-size: 0.85rem; color: var(--color-emerald-darkest); display: block; margin-bottom: 0.4rem;">Special
-                        Notes or Requests (Optional)</label>
-                    <textarea name="notes" class="form-control" rows="3"
-                        placeholder="Describe any preferences, companion details, or custom timing requests..."
-                        style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border); resize: none;"></textarea>
-                </div>
 
-                <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                <div style="display: flex; gap: 0.85rem; justify-content: flex-end;">
                     <button type="button" id="btn-back-to-question" class="btn btn-outline"
-                        style="border: 1px solid #cbd5e1; color: #475569; padding: 0.6rem 1.2rem; font-size: 0.88rem; cursor: pointer; background: white; border-radius: 6px;">
+                        style="border: 1.5px solid #cbd5e1; color: #475569; padding: 0.75rem 1.4rem; font-size: 1rem; font-weight: 600; cursor: pointer; background: white; border-radius: 8px;">
                         Back
                     </button>
                     <button type="submit" class="btn btn-gold"
-                        style="border: none; padding: 0.6rem 1.5rem; font-size: 0.88rem; font-weight: 600; border-radius: 6px; cursor: pointer;">
+                        style="border: none; padding: 0.75rem 1.75rem; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer;">
                         Confirm Request
                     </button>
                 </div>
