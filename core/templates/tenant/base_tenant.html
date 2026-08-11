@@ -23,7 +23,7 @@
         }
 
         body {
-            background-color: #f4f6f8;
+            background-color: #fbfbf9;
             margin: 0;
             display: flex;
             min-height: 100vh;
@@ -168,14 +168,58 @@
             box-sizing: border-box;
         }
 
+        .mobile-sidebar-close {
+            display: none;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+            color: var(--color-gold);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         /* Mobile Breakpoint */
         @media (max-width: 992px) {
             .tenant-sidebar {
                 transform: translateX(-100%);
+                z-index: 999;
             }
 
             .tenant-sidebar.open {
                 transform: translateX(0);
+            }
+
+            .mobile-sidebar-close {
+                display: flex;
             }
 
             .tenant-main {
@@ -200,38 +244,46 @@
 </head>
 
 <body>
+    <!-- Mobile dark backdrop overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <!-- Responsive left sidebar navigation system -->
     <aside class="tenant-sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            {% if site_settings.site_logo %}
-                <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 40px; width: auto; object-fit: contain;">
-            {% else %}
-                <i class="fa-solid fa-shield-halved"></i> {{ site_settings.site_name|default:"TRUST" }}
-            {% endif %}
+        <div class="sidebar-brand" style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                {% if site_settings.site_logo %}
+                    <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 40px; width: auto; object-fit: contain;">
+                {% else %}
+                    <i class="fa-solid fa-shield-halved"></i> {{ site_settings.site_name|default:"TRUST" }}
+                {% endif %}
+            </div>
+            <button class="mobile-sidebar-close" onclick="toggleSidebar()" aria-label="Close menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         <nav class="sidebar-nav">
             <a href="?tab=profile" class="nav-item {% if current_tab == 'profile' %}active{% endif %}">
-                <i class="fa-solid fa-user-tie"></i> 1. Profile
+                1. Profile
             </a>
             <a href="?tab=my_property" class="nav-item {% if current_tab == 'my_property' %}active{% endif %}">
-                <i class="fa-solid fa-house-chimney-user"></i> 2. My Property
+                2. My Property
             </a>
             <a href="?tab=payments" class="nav-item {% if current_tab == 'payments' %}active{% endif %}">
-                <i class="fa-solid fa-wallet"></i> 3. Payments
+                3. Payments
             </a>
             <a href="?tab=move_in" class="nav-item {% if current_tab == 'move_in' %}active{% endif %}">
-                <i class="fa-solid fa-truck-ramp-box"></i> 4. Move-in
+                4. Move-in
             </a>
             <a href="?tab=maintenance" class="nav-item {% if current_tab == 'maintenance' %}active{% endif %}">
-                <i class="fa-solid fa-screwdriver-wrench"></i> 5. Maintenance
+                5. Maintenance
             </a>
             
             <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 1rem 0; padding-top: 1rem;">
                 <a href="/" class="nav-item" style="color: rgba(255,255,255,0.5);">
-                    <i class="fa-solid fa-arrow-left"></i> Back to Home
+                    Back to Home
                 </a>
                 <a href="/search/" class="nav-item" style="color: rgba(255,255,255,0.5);">
-                    <i class="fa-solid fa-magnifying-glass"></i> Find a Property
+                    Find a Property
                 </a>
             </div>
         </nav>
@@ -239,7 +291,7 @@
             <form action="/logout/" method="post">
                 {% csrf_token %}
                 <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; cursor: pointer; text-align: left; padding: 0.5rem 0; color: rgba(255,255,255,0.65);">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    Logout
                 </button>
             </form>
         </div>
@@ -387,7 +439,10 @@
 
     <script>
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar) sidebar.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('active');
         }
     </script>
     {% include "chat/widget.html" %}
