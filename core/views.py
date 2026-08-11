@@ -1498,7 +1498,7 @@ def tenant_dashboard(request):
             prop = booking.property
             prop.status = 'available'
             prop.save()
-            messages.warning(request, f"Your booking reservation for '{prop.title}' has expired after 48 hours and has been re-listed.")
+            messages.warning(request, f"Your booking reservation for '{prop.title}' has expired after 24 hours and has been re-listed.")
             
     # For checkout context in Payments tab
     booking_id = request.GET.get('booking_id')
@@ -1701,19 +1701,19 @@ def tenant_process_payment(request, property_id):
         if booking:
             booking.payment_method = payment_method
             booking.status = 'active'
-            # Start the 48-hour expiration timer here
-            booking.expires_at = timezone.now() + timezone.timedelta(hours=48)
+            # Start the 24-hour expiration timer here
+            booking.expires_at = timezone.now() + timezone.timedelta(hours=24)
             booking.save()
             
             # Lock property only upon official booking lock
             property_obj.status = 'under_inspection'
             property_obj.save()
             
-            messages.success(request, f"Booking fee of UGX {booking.booking_fee:,.0f} received via {payment_method.replace('_', ' ').title()}. Property locked successfully and your 48-hour exclusive lock timer has started!")
+            messages.success(request, f"Booking fee of UGX {booking.booking_fee:,.0f} received via {payment_method.replace('_', ' ').title()}. Property locked successfully and your 24-hour exclusive lock timer has started!")
         else:
             messages.error(request, "No active booking reservation found for this property.")
             
-    elif payment_type == 'rent':
+    elif payment_type in ['rent', 'rent_2', 'rent_3']:
         # Create active lease rental
         rental = TenantRental.objects.create(
             tenant=request.user,
@@ -1732,9 +1732,13 @@ def tenant_process_payment(request, property_id):
         property_obj.save()
         
         price = float(property_obj.price) if property_obj.price else 0.0
-        total_escrow = price * 1.11 # Rent + 10% security deposit + 1% escrow fee
+        months = 3 if payment_type == 'rent_3' else 2
+        rent_total = price * months
+        security = price * 0.10
+        fee = price * 0.01
+        total_escrow = rent_total + security + fee
         
-        messages.success(request, f"Escrow Enforced Payment of UGX {total_escrow:,.0f} processed successfully via {payment_method.replace('_', ' ').title()}! Funds are locked in the TRUST Escrow Vault.")
+        messages.success(request, f"Escrow Enforced Payment of UGX {total_escrow:,.0f} ({months} Months Rent + Escrow Bond) processed successfully via {payment_method.replace('_', ' ').title()}! Funds are locked in the TRUST Escrow Vault.")
         return redirect('/tenant/dashboard/?tab=my_property&payment_success=1')
         
     return redirect('/tenant/dashboard/?tab=payments&payment_success=1')

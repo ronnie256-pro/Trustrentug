@@ -279,7 +279,52 @@
         }
     }
 
-    /* Visual Expiration Timer */
+    /* Payments Checkout Layout */
+    .payments-checkout-wrapper {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 2.5rem;
+        align-items: flex-start;
+    }
+
+    .desktop-confirm-container {
+        display: block;
+    }
+
+    .mobile-confirm-container {
+        display: none;
+    }
+
+    @media (max-width: 992px) {
+        .payments-checkout-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .payment-form-card {
+            margin-bottom: 0 !important;
+            width: 100% !important;
+        }
+
+        .invoice-summary-card {
+            width: 100% !important;
+            padding: 1.25rem !important;
+            border-radius: 12px !important;
+        }
+
+        .desktop-confirm-container {
+            display: none !important;
+        }
+
+        .mobile-confirm-container {
+            display: block !important;
+            width: 100% !important;
+            margin-top: 0.5rem;
+        }
+    }
+
+    /* Visual Expiration Timer & Active Booking Cards */
     .timer-alert {
         background-color: rgba(239, 68, 68, 0.05);
         border: 1px solid rgba(239, 68, 68, 0.2);
@@ -291,6 +336,19 @@
         display: flex;
         align-items: center;
         gap: 1.5rem;
+        box-sizing: border-box;
+    }
+
+    .timer-alert-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .timer-alert-timer-box {
+        text-align: center;
+        padding-left: 2rem;
+        border-left: 1px solid rgba(239, 68, 68, 0.2);
+        flex-shrink: 0;
     }
 
     .timer-countdown {
@@ -301,6 +359,132 @@
         letter-spacing: 2px;
         line-height: 1;
         white-space: nowrap;
+    }
+
+    .booking-details-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 2.5rem;
+        align-items: flex-start;
+    }
+
+    .booked-card-item, .landlord-info-card {
+        display: flex;
+        gap: 1.25rem;
+        align-items: center;
+        background: #fafafa;
+        padding: 1.25rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-sizing: border-box;
+    }
+
+    .booked-card-img {
+        width: 140px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 992px) {
+        .timer-alert {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 1.25rem !important;
+            gap: 1rem !important;
+        }
+
+        .timer-alert-timer-box {
+            padding-left: 0 !important;
+            border-left: none !important;
+            border-top: 1px solid rgba(239, 68, 68, 0.2) !important;
+            padding-top: 1rem !important;
+            width: 100% !important;
+            text-align: center !important;
+        }
+
+        .booking-details-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.75rem !important;
+            width: 100% !important;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .booked-card-item, .landlord-info-card {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            padding: 1rem !important;
+        }
+
+        .booked-card-img {
+            width: 100% !important;
+            height: 160px !important;
+        }
+    }
+
+    /* Active Rental Occupied Unit Responsive Layout */
+    .active-rental-top {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+        align-items: flex-start;
+    }
+
+    .active-rental-img {
+        width: 280px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        flex-shrink: 0;
+    }
+
+    .active-rental-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .rental-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .landlord-doc-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 2.5rem;
+    }
+
+    @media (max-width: 992px) {
+        .active-rental-top {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 1.25rem !important;
+            margin-bottom: 2rem !important;
+        }
+
+        .active-rental-img {
+            width: 100% !important;
+            height: 200px !important;
+        }
+
+        .rental-stats-grid {
+            grid-template-columns: 1fr !important;
+            gap: 0.85rem !important;
+        }
+
+        .landlord-doc-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.75rem !important;
+        }
+
+        .inspection-reports-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+        }
     }
 
     /* Landlord Avatar */
@@ -570,18 +754,18 @@
             </div>
             
             <div class="card-body-lux">
-                <div style="display: flex; gap: 2rem; margin-bottom: 3rem; flex-wrap: wrap; align-items: flex-start;">
+                <div class="active-rental-top">
                     {% if active_rental.property.hero_image %}
-                    <img src="{{ active_rental.property.hero_image.url }}" alt="{{ active_rental.property.title }}" style="width: 280px; height: 180px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    <img src="{{ active_rental.property.hero_image.url }}" alt="{{ active_rental.property.title }}" class="active-rental-img">
                     {% else %}
-                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" style="width: 280px; height: 180px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-sm);">
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" class="active-rental-img">
                     {% endif %}
                     
-                    <div style="flex: 1;">
+                    <div class="active-rental-info">
                         <h4 style="font-size: 1.5rem; color: var(--color-emerald-darkest); margin: 0 0 0.5rem 0;">{{ active_rental.property.title }}</h4>
                         <p style="color: var(--color-text-muted); font-size: 0.95rem; margin: 0 0 1.25rem 0;"><i class="fa-solid fa-location-dot"></i> {{ active_rental.property.location }}</p>
                         
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div class="rental-stats-grid">
                             <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
                                 <small style="color: var(--color-text-muted); text-transform: uppercase; font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Escrow Rental Rate</small>
                                 <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--color-emerald);">UGX {{ active_rental.property.price|floatformat:0 }} <small style="font-size: 0.8rem; font-family: var(--font-body); font-weight: 400;">/ mo</small></span>
@@ -594,12 +778,12 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem;">
+                <div class="landlord-doc-grid">
                     <!-- Landlord Profile Detail Card -->
                     <div>
                         <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-circle-user"></i> Property Owner Details</h4>
                         
-                        <div style="display: flex; gap: 1.5rem; align-items: center; background: #fafafa; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <div class="landlord-info-card">
                             <div class="landlord-avatar-wrapper">
                                 {% if landlord_profile.image %}
                                 <img src="{{ landlord_profile.image.url }}" alt="{{ landlord_user.username }}" class="landlord-avatar">
@@ -607,7 +791,7 @@
                                 <div style="font-size: 2.25rem; font-weight: bold; color: var(--color-emerald);">{{ landlord_user.username|first|upper }}</div>
                                 {% endif %}
                             </div>
-                            <div>
+                            <div style="flex: 1; min-width: 0;">
                                 <h5 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest);">{{ landlord_user.first_name }} {{ landlord_user.last_name }}</h5>
                                 <span class="badge badge-verified" style="font-size: 0.65rem; padding: 0.1rem 0.5rem; margin-top: 0.25rem; display: inline-block;"><i class="fa-solid fa-shield-check"></i> TRUST Approved Landlord</span>
                                 
@@ -623,10 +807,10 @@
                             <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem; color: var(--color-emerald-darkest); font-weight: 600;">Schedule Physical Move-In</h4>
                             <p style="margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--color-text-muted);">Notify management and lock in the truck access permissions.</p>
                             
-                            <form action="{% url 'tenant_schedule_move_in' active_rental.property.id %}" method="POST" style="display: flex; gap: 1rem;">
+                            <form action="{% url 'tenant_schedule_move_in' active_rental.property.id %}" method="POST" style="display: flex; gap: 1rem; flex-wrap: wrap;">
                                 {% csrf_token %}
-                                <input type="date" name="move_in_date" class="form-control" style="flex: 1;" value="{{ active_rental.move_in_date|date:'Y-m-d' }}" required>
-                                <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Schedule</button>
+                                <input type="date" name="move_in_date" class="form-control" style="flex: 1; min-width: 180px;" value="{{ active_rental.move_in_date|date:'Y-m-d' }}" required>
+                                <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Schedule</button>
                             </form>
                             {% if active_rental.move_in_date %}
                             <div style="color: var(--color-success); font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem;">
@@ -660,7 +844,7 @@
                 <div style="margin-top: 3.5rem;">
                     <h4 style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-emerald-darkest); margin: 0 0 1.5rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-clipboard-check"></i> Verification Inspection Reports</h4>
                     
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1rem;">
+                    <div class="inspection-reports-grid">
                         {% for report in inspection_reports %}
                         <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
@@ -687,7 +871,7 @@
         {% elif active_bookings or reserved_bookings or favorite_properties %}
         
             {% for booking in active_bookings %}
-            <!-- Active Reserved Booking Card (starts 48h timer) -->
+            <!-- Active Reserved Booking Card (starts 24h timer) -->
             <div class="premium-card" style="margin-bottom: 2.5rem;">
                 <div class="card-header-lux" style="background: linear-gradient(to right, #7c2d12, #9a3412);">
                     <h3>Locked Exclusive Booking: {{ booking.property.title }}</h3>
@@ -695,30 +879,29 @@
                 </div>
                 
                 <div class="card-body-lux">
-                    <!-- rigid 48-hour visual countdown timer -->
+                    <!-- rigid 24-hour visual countdown timer -->
                     <div class="timer-alert">
-                        <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; font-size: 2.25rem;"></i>
-                        <div style="flex: 1;">
-                            <strong style="font-size: 1.1rem; color: #7f1d1d; display: block; margin-bottom: 0.25rem;">Strict 48-Hour Booking Expiration Policy</strong>
-                            <span style="font-size: 0.85rem; color: #b91c1c; line-height: 1.4; display: block; max-width: 800px;">This listing has been temporarily locked for you. You must complete rent payments within the 48-hour window, otherwise the booking automatically expires, is re-listed, and deposits made are **non-refundable**.</span>
+                        <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444; font-size: 2rem;"></i>
+                        <div class="timer-alert-info">
+                            <strong style="font-size: 1.1rem; color: #7f1d1d; display: block;">Strict 24-Hour Booking Expiration Policy</strong>
                         </div>
-                        <div style="text-align: center; padding-left: 2rem; border-left: 1px solid rgba(239, 68, 68, 0.2);">
+                        <div class="timer-alert-timer-box">
                             <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #ef4444; margin-bottom: 0.5rem; letter-spacing: 1px;">Reserved Time Remaining</div>
-                            <div class="timer-countdown booking-timer-countdown" id="booking-timer-{{ booking.id }}" data-expires="{{ booking.expires_at|date:'c' }}">48:00:00</div>
+                            <div class="timer-countdown booking-timer-countdown" id="booking-timer-{{ booking.id }}" data-expires="{{ booking.expires_at|date:'c' }}">24:00:00</div>
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: flex-start;">
+                    <div class="booking-details-grid">
                         <div>
                             <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-house-shield"></i> Booked Listing Details</h4>
                             
-                            <div style="display: flex; gap: 1.5rem; align-items: center; background: #fafafa; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <div class="booked-card-item">
                                 {% if booking.property.hero_image %}
-                                <img src="{{ booking.property.hero_image.url }}" alt="{{ booking.property.title }}" style="width: 140px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                <img src="{{ booking.property.hero_image.url }}" alt="{{ booking.property.title }}" class="booked-card-img">
                                 {% else %}
-                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" style="width: 140px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="Property image" class="booked-card-img">
                                 {% endif %}
-                                <div>
+                                <div style="flex: 1; min-width: 0;">
                                     <h5 style="margin: 0; font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">{{ booking.property.title }}</h5>
                                     <p style="margin: 0.2rem 0; font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-solid fa-location-dot"></i> {{ booking.property.location }}</p>
                                     <span style="font-weight: 700; color: var(--color-emerald); font-size: 1.1rem; display: block; margin-top: 0.5rem;">UGX {{ booking.property.price|floatformat:0 }} / mo</span>
@@ -733,7 +916,7 @@
                         <div>
                             <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-circle-user"></i> Property Owner Details</h4>
                             
-                            <div style="display: flex; gap: 1.5rem; align-items: center; background: #fafafa; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+                            <div class="landlord-info-card" style="margin-bottom: 1.5rem;">
                                 <div class="landlord-avatar-wrapper">
                                     {% if booking.property.owner.profile.image %}
                                     <img src="{{ booking.property.owner.profile.image.url }}" alt="{{ booking.property.owner.username }}" class="landlord-avatar">
@@ -741,7 +924,7 @@
                                     <div style="font-size: 2.25rem; font-weight: bold; color: var(--color-emerald);">{{ booking.property.owner.username|first|upper }}</div>
                                     {% endif %}
                                 </div>
-                                <div>
+                                <div style="flex: 1; min-width: 0;">
                                     <h5 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest);">{{ booking.property.owner.first_name }} {{ booking.property.owner.last_name }}</h5>
                                     <span class="badge badge-verified" style="font-size: 0.65rem; padding: 0.1rem 0.5rem; margin-top: 0.25rem; display: inline-block;"><i class="fa-solid fa-shield-check"></i> TRUST Approved Landlord</span>
                                     
@@ -772,7 +955,7 @@
                 </div>
                 <div class="card-body-lux">
                     <p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--color-text-muted);">
-                        You have initiated bookings for the properties below. Please note that these properties are not exclusively locked until you pay the booking fee. Bookings expire after 48 hours.
+                        You have initiated bookings for the properties below. Please note that these properties are not exclusively locked until you pay the booking fee. Bookings expire after 24 hours.
                     </p>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
                         {% for booking in reserved_bookings %}
@@ -919,16 +1102,15 @@
          ========================================== -->
     {% if current_tab == 'payments' %}
     <section>
-        <div class="section-header">
-            <h2>TRUST Escrow Payment Portal</h2>
-            <p>Complete bookings and make security deposits protected by automatic, decentralized escrow-enforcement gates.</p>
+        <div class="section-header" style="text-align: center;">
+            <h2 style="text-align: center;">You are making Payments</h2>
         </div>
 
         {% if active_booking %}
         <!-- Checkout Interface for active booking -->
-        <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: flex-start;">
+        <div class="payments-checkout-wrapper">
             
-            <form action="{% url 'tenant_process_payment' active_booking.property.id %}" method="POST" class="premium-card" id="payment-form">
+            <form action="{% url 'tenant_process_payment' active_booking.property.id %}" method="POST" class="premium-card payment-form-card" id="payment-form">
                 {% csrf_token %}
                 <div class="card-header-lux">
                     <h3>Secure Checkout Gateway</h3>
@@ -937,13 +1119,17 @@
                 
                 <div class="card-body-lux">
                     <!-- Cost breakdown calculations -->
-                    <h4 style="font-size: 1rem; color: var(--color-emerald-darkest); margin: 0 0 1rem 0; font-weight: 600;">Select Transaction Scope</h4>
-                    
-                    <div class="form-group" style="margin-bottom: 2rem;">
-                        <select name="payment_type" class="form-control" id="payment-type-selector" onchange="calculateAmounts()">
-                            <option value="booking">Pay Non-Refundable Booking Fee (Reserve 48h Listing Lock)</option>
-                            <option value="rent">Pay First Month Rent & Escrow Bond (Secure Occupancy Lease)</option>
-                        </select>
+                    <div style="background: rgba(239, 68, 68, 0.04); border: 2px solid #ef4444; border-radius: 10px; padding: 1.25rem; margin-bottom: 2rem;">
+                        <h4 style="font-size: 1.05rem; color: #dc2626; margin: 0 0 0.85rem 0; font-weight: 700;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Select Transaction Scope
+                        </h4>
+                        <div class="form-group" style="margin: 0;">
+                            <select name="payment_type" class="form-control" id="payment-type-selector" onchange="calculateAmounts()" style="border-color: #fca5a5; font-weight: 600; background: white;">
+                                <option value="booking">48 hours booking (Non-refundable)</option>
+                                <option value="rent_2">Pay 2 months rent</option>
+                                <option value="rent_3">Pay 3 months rent</option>
+                            </select>
+                        </div>
                     </div>
 
                     <h4 style="font-size: 1rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; font-weight: 600;">Select Payment Channel</h4>
@@ -981,12 +1167,12 @@
                         <!-- Mobile Money -->
                         <div id="input-mobile_money">
                             <h5 style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">Uganda Mobile Money Gateway</h5>
-                            <div style="display: flex; gap: 1rem;">
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                                 <select class="form-control" style="width: 140px;">
                                     <option>MTN MoMo</option>
                                     <option>Airtel Money</option>
                                 </select>
-                                <input type="text" class="form-control" placeholder="07... Mobile Money number" required>
+                                <input type="text" class="form-control" placeholder="07... Mobile Money number" required style="flex: 1; min-width: 180px;">
                             </div>
                             <small style="color: var(--color-text-muted); display: block; margin-top: 0.5rem;">A prompt code will be sent instantly to authorize checkout on your handset.</small>
                         </div>
@@ -997,9 +1183,9 @@
                             <div class="form-group" style="margin-bottom: 0.75rem;">
                                 <input type="text" class="form-control" placeholder="Card Number (16 Digits)">
                             </div>
-                            <div style="display: flex; gap: 1rem;">
-                                <input type="text" class="form-control" placeholder="MM/YY">
-                                <input type="text" class="form-control" placeholder="CVV">
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <input type="text" class="form-control" placeholder="MM/YY" style="flex: 1;">
+                                <input type="text" class="form-control" placeholder="CVV" style="flex: 1;">
                             </div>
                         </div>
 
@@ -1014,18 +1200,20 @@
                         <!-- Cash at Office -->
                         <div id="input-cash" style="display: none;">
                             <h5 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">TRUST Headquarters Address</h5>
-                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5;">Please visit our secure desk at: **Level 4, Imperial Mall Chambers, Entebbe Road, Kampala**. Provide ID booking reference number **#{{ active_booking.property.property_id }}** to make cash payment.</p>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5;">Please visit our secure desk at: <strong>Level 4, Imperial Mall Chambers, Entebbe Road, Kampala</strong>. Provide ID booking reference number <strong>#{{ active_booking.property.property_id }}</strong> to make cash payment.</p>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-gold" style="width: 100%; padding: 1.15rem; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-lock-open"></i> Confirm Payment Authorized
-                    </button>
+                    <div class="desktop-confirm-container">
+                        <button type="submit" class="btn btn-gold btn-save-mobile" style="width: 100%; padding: 1.1rem; font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; text-align: center;">
+                            Confirm Payment
+                        </button>
+                    </div>
                 </div>
             </form>
 
             <!-- Invoice Cost Calculations panel -->
-            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; box-shadow: var(--shadow-sm);">
+            <div class="invoice-summary-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; box-shadow: var(--shadow-sm);">
                 <h4 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-emerald-darkest); margin: 0 0 1.5rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">Itemized Escrow Invoice</h4>
                 
                 <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem;">
@@ -1047,7 +1235,7 @@
                             <strong>UGX {{ active_booking.booking_fee|floatformat:0 }}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; background: rgba(16, 185, 129, 0.05); padding: 0.5rem; border-radius: 4px; color: var(--color-success); font-size: 0.85rem;">
-                            <span><span><i class="fa-solid fa-shield-check"></i> 48-Hour Listing Exclusivity</span></span>
+                            <span><span><i class="fa-solid fa-shield-check"></i> 24-Hour Listing Exclusivity</span></span>
                             <span>Included</span>
                         </div>
                         <hr style="border: none; border-top: 1px dashed var(--color-border); margin: 1rem 0;">
@@ -1060,8 +1248,8 @@
                     <!-- Rent Fee breakdown -->
                     <div id="rent-invoice-display" style="display: none;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="color: var(--color-text-muted);">Monthly Base Rent Rate</span>
-                            <strong>UGX {{ active_booking.property.price|floatformat:0 }}</strong>
+                            <span style="color: var(--color-text-muted);" id="rent-duration-label">Base Rent (2 Months)</span>
+                            <strong id="invoice-rent-subtotal">UGX ...</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                             <span style="color: var(--color-text-muted);">Security Bond Escrow Deposit (10%)</span>
@@ -1084,6 +1272,13 @@
                 </div>
             </div>
 
+            <!-- Mobile Submit Button Container (appears at very bottom of payment section on mobile view) -->
+            <div class="mobile-confirm-container">
+                <button type="submit" form="payment-form" class="btn btn-gold btn-save-mobile" style="width: 100%; padding: 1.1rem; font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; text-align: center;">
+                    Confirm Payment
+                </button>
+            </div>
+
         </div>
 
         <script>
@@ -1094,6 +1289,8 @@
                 const selector = document.getElementById("payment-type-selector");
                 const bDisplay = document.getElementById("booking-invoice-display");
                 const rDisplay = document.getElementById("rent-invoice-display");
+                const rentLabel = document.getElementById("rent-duration-label");
+                const rentSubtotalEl = document.getElementById("invoice-rent-subtotal");
                 
                 if (selector.value === "booking") {
                     bDisplay.style.display = "block";
@@ -1102,11 +1299,15 @@
                     bDisplay.style.display = "none";
                     rDisplay.style.display = "block";
                     
+                    const months = selector.value === "rent_3" ? 3 : 2;
+                    const rentTotal = basePrice * months;
                     const security = basePrice * 0.1;
                     const fee = basePrice * 0.01;
-                    const total = basePrice + security + fee;
+                    const total = rentTotal + security + fee;
                     
                     const fmt = (val) => "UGX " + Math.round(val).toLocaleString();
+                    if (rentLabel) rentLabel.innerText = `Base Rent (${months} Months)`;
+                    if (rentSubtotalEl) rentSubtotalEl.innerText = fmt(rentTotal);
                     document.getElementById("invoice-security").innerText = fmt(security);
                     document.getElementById("invoice-fee").innerText = fmt(fee);
                     document.getElementById("invoice-total").innerText = fmt(total);
