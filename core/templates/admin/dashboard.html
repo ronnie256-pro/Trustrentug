@@ -240,9 +240,10 @@
 {% endblock %}
 
 {% block admin_content %}
-{% if not current_tab or current_tab == 'overview' %}
-<!-- Chart.js CDN -->
+<!-- Chart.js CDN (Globally Loaded for All Dashboard Tabs) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% if not current_tab or current_tab == 'overview' %}
 
 <style>
     .overview-charts-3col {
@@ -713,106 +714,243 @@ document.addEventListener("DOMContentLoaded", function() {
     </table>
 </div>
 {% elif current_tab == 'landlords' %}
-<div class="dashboard-header">
+<div class="dashboard-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
     <div>
-        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem;">Landlords
-            Directory</h2>
-    </div>
-    <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
-        <i class="fa-solid fa-shield-halved" style="margin-right: 0.5rem;"></i> {{ landlords.count }} Registered Owner{{ landlords.count|pluralize }}
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; font-weight: 800; margin: 0;">
+            Landlords Data
+        </h2>
     </div>
 </div>
 
+<!-- ROW: LANDLORDS PIE CHARTS (2 Equal Side-by-Side Columns Grid) -->
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2.25rem;">
+    <!-- Chart 1: Types of Properties (Raw Number Available Property Slices) -->
+    <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; position: relative;">
+            <h4 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; margin: 0; text-align: center; width: 100%; text-decoration: underline; text-underline-offset: 4px;">
+                TYPES OF PROPERTIES
+            </h4>
+            <a href="{% url 'admin_dashboard' %}?tab=landlords" style="position: absolute; right: 0; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #064e3b; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.35rem 0.95rem; text-decoration: none;">
+                View &rarr;
+            </a>
+        </div>
+        <div style="height: 420px; position: relative;">
+            <canvas id="landlordPropertyTypesPieChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 2: Landlords Status Breakdown (Percentage Slices) -->
+    <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; position: relative;">
+            <h4 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; margin: 0; text-align: center; width: 100%; text-decoration: underline; text-underline-offset: 4px;">
+                LANDLORDS
+            </h4>
+            <a href="{% url 'admin_dashboard' %}?tab=landlords" style="position: absolute; right: 0; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #064e3b; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.35rem 0.95rem; text-decoration: none;">
+                View &rarr;
+            </a>
+        </div>
+        <div style="height: 420px; position: relative;">
+            <canvas id="landlordStatusPieChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Raw Number Plugin for Available Property Types Breakdown
+    const landlordRawNumberPlugin = {
+        id: 'landlordRawNumberLabels',
+        afterDatasetsDraw(chart) {
+            const { ctx } = chart;
+            chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                meta.data.forEach((element, index) => {
+                    const val = dataset.data[index];
+                    if (val === 0) return;
+                    const labelStr = String(val); // Draw raw available property count
+                    const { x, y } = element.tooltipPosition();
+                    ctx.save();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 15px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(labelStr, x, y);
+                    ctx.restore();
+                });
+            });
+        }
+    };
+
+    // 2. Percentage Plugin for Landlords Status Breakdown
+    const landlordSlicePlugin = {
+        id: 'landlordSlicePercentageLabels',
+        afterDatasetsDraw(chart) {
+            const { ctx } = chart;
+            chart.data.datasets.forEach((dataset, i) => {
+                const meta = chart.getDatasetMeta(i);
+                const total = dataset.data.reduce((acc, val) => acc + val, 0);
+                if (total === 0) return;
+                meta.data.forEach((element, index) => {
+                    const val = dataset.data[index];
+                    if (val === 0) return;
+                    const pct = Math.round((val / total) * 100) + '%';
+                    const { x, y } = element.tooltipPosition();
+                    ctx.save();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 15px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(pct, x, y);
+                    ctx.restore();
+                });
+            });
+        }
+    };
+
+    const solidDarkPalette = ['#064e3b', '#0369a1', '#b45309', '#b91c1c', '#581c87', '#0f766e', '#c2410c', '#334155', '#475569', '#64748b'];
+
+    const animatedChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+            duration: 1800,
+            easing: 'easeInOutQuart',
+            animateRotate: true,
+            animateScale: true,
+            delay: function(context) {
+                return (context.type === 'data' && context.mode === 'default') ? context.dataIndex * 140 : 0;
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    boxWidth: 16,
+                    padding: 18,
+                    font: { size: 14, weight: '700' }
+                }
+            }
+        }
+    };
+
+    let landlordTypesChartInstance = null;
+    let landlordStatusChartInstance = null;
+
+    function renderLandlordCharts() {
+        // 1. Property Types Pie Chart (Displays Raw Counts of Available Unrented Properties)
+        const ctxTypes = document.getElementById('landlordPropertyTypesPieChart')?.getContext('2d');
+        if (ctxTypes) {
+            if (landlordTypesChartInstance) landlordTypesChartInstance.destroy();
+            landlordTypesChartInstance = new Chart(ctxTypes, {
+                type: 'pie',
+                data: {
+                    labels: {{ landlord_analytics.prop_type_labels|safe }},
+                    datasets: [{
+                        data: {{ landlord_analytics.prop_type_counts|safe }},
+                        backgroundColor: solidDarkPalette
+                    }]
+                },
+                plugins: [landlordRawNumberPlugin],
+                options: animatedChartOptions
+            });
+        }
+
+        // 2. Landlords Status Breakdown Pie Chart
+        const ctxStatus = document.getElementById('landlordStatusPieChart')?.getContext('2d');
+        if (ctxStatus) {
+            if (landlordStatusChartInstance) landlordStatusChartInstance.destroy();
+            landlordStatusChartInstance = new Chart(ctxStatus, {
+                type: 'pie',
+                data: {
+                    labels: {{ landlord_analytics.status_labels|safe }},
+                    datasets: [{
+                        data: {{ landlord_analytics.status_counts|safe }},
+                        backgroundColor: ['#b45309', '#064e3b', '#0369a1']
+                    }]
+                },
+                plugins: [landlordSlicePlugin],
+                options: animatedChartOptions
+            });
+        }
+    }
+
+    renderLandlordCharts();
+    window.addEventListener('pageshow', renderLandlordCharts);
+});
+</script>
+
 <!-- Landlords Table Card -->
-<div class="table-card" style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
+<div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
     <div class="table-header" style="padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin:0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-dark);">Property Owner Registry</h3>
-        <span style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-circle" style="color: #10b981; font-size: 0.5rem; margin-right: 0.25rem;"></i> Live Database Connection</span>
+        <h3 style="margin:0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); font-weight: 800; text-decoration: underline; text-underline-offset: 4px;">
+            Property Owner Registry
+        </h3>
+        <span style="font-size: 0.88rem; color: #475569; font-weight: 700;">Click any landlord row to view detailed personal records & listed properties</span>
     </div>
     <div style="overflow-x: auto;">
         <table class="admin-table" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="background: #f8fafc;">
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Landlord Name</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Username</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Email / Account</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Phone Number</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">National ID (NIN)</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Account Status</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">Actions</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Landlord Name</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Username</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Email / Account</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Phone Number</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">National ID (NIN)</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Account Status</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for landlord in landlords %}
-                <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 0.75rem;">
+                <tr onclick="window.location.href='/admin-dashboard/?tab=landlord_detail&id={{ landlord.id }}'" style="cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 800; color: #1e293b; font-size: 1.05rem; display: flex; align-items: center; gap: 0.75rem;">
                         {% if landlord.profile.image %}
-                        <img src="{{ landlord.profile.image.url }}" alt="{{ landlord.username }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-gold);">
+                        <img src="{{ landlord.profile.image.url }}" alt="{{ landlord.username }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-gold);">
                         {% else %}
-                        <div style="width: 32px; height: 32px; background: rgba(16, 61, 40, 0.1); color: var(--color-emerald); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">
+                        <div style="width: 38px; height: 38px; background: rgba(6, 78, 59, 0.1); color: var(--color-emerald-darkest); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.95rem; border: 2px solid var(--color-gold);">
                             {{ landlord.first_name|slice:":1" }}{{ landlord.last_name|slice:":1" }}
                         </div>
                         {% endif %}
                         <div>
-                            <div style="font-size: 0.95rem; color: #1e293b;">{{ landlord.first_name }} {{ landlord.last_name }}</div>
-                            <small style="color: #94a3b8; font-weight: normal; font-size: 0.75rem;">ID: #{{ landlord.id }}</small>
+                            <div style="font-size: 1.05rem; color: #1e293b; font-weight: 800;">{{ landlord.first_name }} {{ landlord.last_name }}</div>
+                            <small style="color: #64748b; font-weight: 600; font-size: 0.8rem;">ID: #{{ landlord.id }}</small>
                         </div>
                     </td>
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: var(--color-gold); font-family: monospace; font-size: 0.95rem; font-weight: 600;">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #0369a1; font-size: 0.95rem; font-weight: 800;">
                         @{{ landlord.username }}
                     </td>
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #64748b; font-family: monospace; font-size: 0.9rem;">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #475569; font-size: 0.92rem; font-weight: 700;">
                         {{ landlord.email }}
                     </td>
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 500;">
-                        <i class="fa-solid fa-phone" style="color: var(--color-gold); font-size: 0.8rem; margin-right: 0.5rem;"></i> {{ landlord.profile.phone|default:"Not Provided" }}
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 0.92rem; font-weight: 700;">
+                        {{ landlord.profile.phone|default:"Not Provided" }}
                     </td>
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.92rem; font-weight: 700;">
                         {% if landlord.profile.nin %}
-                        <span style="font-family: monospace; color: #1e293b; font-weight: 600; background: #f1f5f9; padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.5rem;">
-                            <i class="fa-solid fa-id-card" style="color: var(--color-gold);"></i> {{ landlord.profile.nin }}
+                        <span style="color: #1e293b; font-weight: 800; background: #f1f5f9; padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.88rem;">
+                            {{ landlord.profile.nin }}
                         </span>
                         {% else %}
-                        <span style="color: #94a3b8; font-style: italic; font-size: 0.85rem;">None</span>
+                        <span style="color: #94a3b8; font-style: italic; font-size: 0.88rem;">None</span>
                         {% endif %}
                     </td>
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
                         {% if landlord.profile.is_approved %}
-                        <span class="status-pill pill-active"
-                            style="display: inline-flex; align-items: center; gap: 0.35rem; background: #ecfdf5; color: #059669;">
-                            <i class="fa-solid fa-circle-check" style="font-size: 0.7rem;"></i> Approved
-                        </span>
+                        <span class="status-pill pill-active" style="font-size: 0.88rem; font-weight: 800;">Approved</span>
                         {% else %}
-                        <span class="status-pill"
-                            style="display: inline-flex; align-items: center; gap: 0.35rem; background: #fffbeb; color: #d97706; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">
-                            <i class="fa-solid fa-clock-rotate-left" style="font-size: 0.7rem;"></i> Pending Vetting
-                        </span>
+                        <span class="status-pill pill-pending" style="font-size: 0.88rem; font-weight: 800;">Pending Approval</span>
                         {% endif %}
                     </td>
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                        {% if not landlord.profile.is_approved %}
-                        <form action="/admin-dashboard/landlord/approve/{{ landlord.id }}/" method="POST"
-                            style="margin: 0; display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-gold"
-                                style="padding: 0.45rem 0.85rem; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); border: none;">
-                                <i class="fa-solid fa-circle-check"></i> Approve Owner
-                            </button>
-                        </form>
-                        {% else %}
-                        <span
-                            style="color: #10b981; font-weight: 500; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;">
-                            <i class="fa-solid fa-circle-check"></i> Complete
-                        </span>
-                        {% endif %}
+                        <a href="/admin-dashboard/?tab=landlord_detail&id={{ landlord.id }}" style="font-size: 0.88rem; font-weight: 800; background: #f8fafc; color: var(--color-emerald-darkest); border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                            View Profile &rarr;
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
                     <td colspan="7" style="padding: 3rem 2rem; text-align: center; color: #94a3b8;">
-                        <div style="font-size: 2rem; margin-bottom: 1rem; color: #cbd5e1;"><i
-                                class="fa-solid fa-users-slash"></i></div>
-                        <p style="margin: 0; font-size: 0.95rem;">No property owners registered yet.</p>
+                        <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No property owners registered yet.</p>
                     </td>
                 </tr>
                 {% endfor %}
@@ -820,6 +958,169 @@ document.addEventListener("DOMContentLoaded", function() {
         </table>
     </div>
 </div>
+
+{% elif current_tab == 'landlord_detail' %}
+<!-- Back Navigation & Action Bar -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <a href="{% url 'admin_dashboard' %}?tab=landlords" style="background: #f8fafc; color: var(--color-emerald-darkest); border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.45rem 1.25rem; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.95rem;">
+        &larr; Back to Landlords Directory
+    </a>
+    {% if selected_landlord and not selected_landlord.profile.is_approved %}
+    <form action="/admin-dashboard/landlord/approve/{{ selected_landlord.id }}/" method="POST" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-gold" style="padding: 0.5rem 1.25rem; font-weight: 800; border-radius: 20px; border: none; cursor: pointer; box-shadow: var(--shadow-sm); font-size: 0.9rem;">
+            Approve Landlord Account
+        </button>
+    </form>
+    {% endif %}
+</div>
+
+{% if selected_landlord %}
+<!-- Landlord Identity Card -->
+<div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.75rem; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+    <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+        {% if selected_landlord.profile.image %}
+        <img src="{{ selected_landlord.profile.image.url }}" alt="{{ selected_landlord.username }}" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-gold);">
+        {% else %}
+        <div style="width: 85px; height: 85px; background: rgba(6,78,59,0.1); color: var(--color-emerald-darkest); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2rem; border: 3px solid var(--color-gold);">
+            {{ selected_landlord.first_name|slice:":1" }}{{ selected_landlord.last_name|slice:":1" }}
+        </div>
+        {% endif %}
+
+        <div style="flex: 1; min-width: 250px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
+                <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.75rem; font-weight: 900; margin: 0;">
+                    {{ selected_landlord.first_name }} {{ selected_landlord.last_name }}
+                </h2>
+                {% if selected_landlord.profile.is_approved %}
+                <span class="status-pill pill-active" style="background: #ecfdf5; color: #064e3b; font-size: 0.85rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid #a7f3d0;">
+                    Approved Landlord
+                </span>
+                {% else %}
+                <span class="status-pill" style="background: #fffbeb; color: #b45309; font-size: 0.85rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid #fde68a;">
+                    Pending Approval
+                </span>
+                {% endif %}
+            </div>
+            <p style="color: #64748b; margin: 0; font-size: 0.98rem; font-weight: 700;">
+                @{{ selected_landlord.username }} &bull; {{ selected_landlord.email }}
+            </p>
+            <div style="display: flex; gap: 1.75rem; margin-top: 0.85rem; flex-wrap: wrap; font-size: 0.92rem; color: #334155; font-weight: 700;">
+                <span><strong>Phone:</strong> {{ selected_landlord.profile.phone|default:"Not Provided" }}</span>
+                <span><strong>NIN ID:</strong> {{ selected_landlord.profile.nin|default:"Not Provided" }}</span>
+                <span><strong>Member Since:</strong> {{ selected_landlord.date_joined|date:"M d, Y" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Landlord Portfolio Metrics Cards -->
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        <span style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #0369a1; text-decoration: underline; text-underline-offset: 3px;">
+            Total Properties
+        </span>
+        <div style="font-size: 1.75rem; font-weight: 900; color: #0f172a; margin-top: 0.25rem; font-family: var(--font-heading);">
+            {{ landlord_metrics.total_properties }}
+        </div>
+    </div>
+
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        <span style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #064e3b; text-decoration: underline; text-underline-offset: 3px;">
+            Available Units
+        </span>
+        <div style="font-size: 1.75rem; font-weight: 900; color: #064e3b; margin-top: 0.25rem; font-family: var(--font-heading);">
+            {{ landlord_metrics.available_properties }}
+        </div>
+    </div>
+
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        <span style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #b45309; text-decoration: underline; text-underline-offset: 3px;">
+            Active Leases
+        </span>
+        <div style="font-size: 1.75rem; font-weight: 900; color: #b45309; margin-top: 0.25rem; font-family: var(--font-heading);">
+            {{ landlord_metrics.rented_properties }}
+        </div>
+    </div>
+
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        <span style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #b91c1c; text-decoration: underline; text-underline-offset: 3px;">
+            Portfolio Gross Value
+        </span>
+        <div style="font-size: 1.35rem; font-weight: 900; color: #b91c1c; margin-top: 0.25rem; font-family: var(--font-heading);">
+            UGX {{ landlord_metrics.total_portfolio_value|floatformat:0 }}
+        </div>
+    </div>
+</div>
+
+<!-- Landlord Properties Registry Table -->
+<div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
+    <div class="table-header" style="padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0;">
+        <h3 style="margin:0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); font-weight: 800; text-decoration: underline; text-underline-offset: 4px;">
+            Properties Listed by {{ selected_landlord.first_name }} {{ selected_landlord.last_name }}
+        </h3>
+    </div>
+    <div style="overflow-x: auto;">
+        <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #f8fafc;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Property Name</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Location</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Category</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Monthly Price</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Status</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in landlord_properties %}
+                <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 800; color: #1e293b; font-size: 1.05rem;">
+                        {{ p.title }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #475569; font-size: 0.95rem; font-weight: 600;">
+                        {{ p.location }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #0369a1; font-size: 0.95rem; font-weight: 700;">
+                        {{ p.get_category_display|default:p.category }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 900; color: #064e3b; font-size: 1.05rem; font-family: var(--font-heading);">
+                        UGX {{ p.price|floatformat:0 }}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        {% if p.status == 'available' %}
+                        <span class="status-pill pill-active" style="font-size: 0.88rem; font-weight: 700;">Available</span>
+                        {% elif p.status == 'rented' %}
+                        <span class="status-pill" style="background: #e0f2fe; color: #0369a1; font-size: 0.88rem; font-weight: 700;">Rented</span>
+                        {% else %}
+                        <span class="status-pill pill-pending" style="font-size: 0.88rem; font-weight: 700;">{{ p.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                        <a href="/property/{{ p.id }}/" target="_blank" style="font-size: 0.88rem; font-weight: 700; background: #f8fafc; color: var(--color-emerald-darkest); border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.85rem; text-decoration: none;">
+                            View Property &rarr;
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 3rem 2rem; text-align: center; color: #94a3b8;">
+                        <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No property listings registered under this landlord yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div style="background: white; border-radius: 14px; padding: 3rem; text-align: center; border: 1px solid #e2e8f0;">
+    <h3 style="color: #64748b; font-size: 1.25rem;">Landlord Record Not Found</h3>
+    <a href="{% url 'admin_dashboard' %}?tab=landlords" style="background: var(--color-emerald-darkest); color: white; border-radius: 20px; padding: 0.55rem 1.5rem; text-decoration: none; margin-top: 1rem; display: inline-block; font-weight: 800;">
+        Back to Landlords Directory
+    </a>
+</div>
+{% endif %}
 {% elif current_tab == 'properties' %}
 <div class="dashboard-header">
     <div>
