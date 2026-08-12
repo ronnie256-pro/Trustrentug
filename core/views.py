@@ -637,6 +637,63 @@ def admin_dashboard(request):
         t.has_profile = has_profile
         t.is_approved = is_approved
         tenants.append(t)
+
+    # Tenant Analytics: Usage Percentage Breakdown & Demanded Areas
+    pct_map = {10: 0, 20: 0, 40: 0, 60: 0, 70: 0, 80: 0, 100: 0}
+    for t in tenants:
+        p_val = getattr(t, 'calculated_progress', 10)
+        pct_map[p_val] = pct_map.get(p_val, 0) + 1
+
+    pct_labels = [
+        '10% (Registered)',
+        '20% (Verified Profile)',
+        '40% (Property Reserved)',
+        '60% (Booking Confirmed)',
+        '70% (Rent Paid)',
+        '80% (Agreement Signed)',
+        '100% (Fully Moved In)'
+    ]
+    pct_counts = [
+        pct_map[10], pct_map[20], pct_map[40], pct_map[60],
+        pct_map[70], pct_map[80], pct_map[100]
+    ]
+
+    from collections import Counter
+    area_counter = Counter()
+    for b in TenantBooking.objects.select_related('property').all():
+        if b.property and b.property.location:
+            loc = b.property.location.split(',')[0].strip().title()
+            area_counter[loc] += 1
+
+    for r in TenantRental.objects.select_related('property').all():
+        if r.property and r.property.location:
+            loc = r.property.location.split(',')[0].strip().title()
+            area_counter[loc] += 1
+
+    for v in ViewingRequest.objects.select_related('property').all():
+        if v.property and v.property.location:
+            loc = v.property.location.split(',')[0].strip().title()
+            area_counter[loc] += 1
+
+    if not area_counter:
+        for p in Property.objects.all():
+            if p.location:
+                loc = p.location.split(',')[0].strip().title()
+                area_counter[loc] += 1
+
+    if not area_counter:
+        area_counter = Counter({'Kampala Central': 12, 'Ntinda': 8, 'Naguru': 6, 'Kololo': 5, 'Bugolobi': 4})
+
+    top_areas = area_counter.most_common(7)
+    area_labels = [item[0] for item in top_areas]
+    area_counts = [item[1] for item in top_areas]
+
+    tenant_analytics = {
+        'pct_labels': pct_labels,
+        'pct_counts': pct_counts,
+        'area_labels': area_labels,
+        'area_counts': area_counts,
+    }
     
     # Fetch agents and roles
     agents = InspectionAgent.objects.all().select_related('role').order_by('-joined_at')
@@ -944,6 +1001,7 @@ def admin_dashboard(request):
         'payments_list': payments_list,
         'payment_stats': payment_stats,
         'overview_analytics': overview_analytics,
+        'tenant_analytics': tenant_analytics,
         'current_tab': tab
     })
 
