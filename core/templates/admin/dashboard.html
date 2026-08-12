@@ -240,83 +240,360 @@
 
 {% block admin_content %}
 {% if not current_tab or current_tab == 'overview' %}
-<div class="dashboard-header">
-    <h2>Dashboard Overview</h2>
-    <p>Welcome back! Here's what's happening with your properties.</p>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .overview-charts-3col {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2.25rem;
+    }
+</style>
+
+<!-- ROW 1: LINE GRAPHS CATEGORY (3 Equal Columns Side-by-Side) -->
+<div style="margin-bottom: 0.75rem;">
+    <h4 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 700; margin: 0 0 0.25rem 0;">
+        <i class="fa-solid fa-chart-line" style="color: var(--color-gold); margin-right: 0.5rem;"></i> System Performance & Growth Trends (Line Graphs)
+    </h4>
+</div>
+<div class="overview-charts-3col">
+    <!-- Column 1: Escrow Revenue Trend Line Graph -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #0a5c36; text-transform: uppercase;">
+                <i class="fa-solid fa-vault"></i> Escrow Revenue Trend
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=payments" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: var(--color-emerald-darkest); border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
+        </div>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewLineRevenue"></canvas>
+        </div>
+    </div>
+
+    <!-- Column 2: Tenant Registrations Line Graph -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">
+                <i class="fa-solid fa-user-plus"></i> Tenant Registrations
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=tenants" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #0284c7; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
+        </div>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewLineTenants"></canvas>
+        </div>
+    </div>
+
+    <!-- Column 3: Property Listings Growth Line Graph -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #b45309; text-transform: uppercase;">
+                <i class="fa-solid fa-house-medical"></i> Property Growth
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=properties" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #b45309; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
+        </div>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewLineProperties"></canvas>
+        </div>
+    </div>
 </div>
 
-<!-- Stats Row -->
-<div class="stats-row">
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Total Properties</h4>
-            <div class="value">{{ stats.total_properties }}</div>
-            <div class="trend positive">+12.5% <span style="color:#94a3b8">vs last month</span></div>
+<!-- ROW 2: PIE & DONUT CHARTS CATEGORY (3 Equal Columns Side-by-Side) -->
+<div style="margin-bottom: 0.75rem;">
+    <h4 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 700; margin: 0 0 0.25rem 0;">
+        <i class="fa-solid fa-chart-pie" style="color: #0284c7; margin-right: 0.5rem;"></i> System Distributions & Portfolio Share (Pie & Donut Charts)
+    </h4>
+</div>
+<div class="overview-charts-3col">
+    <!-- Column 1: Property Types Pie Chart -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">
+                <i class="fa-solid fa-building"></i> Property Categories Share
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=properties" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #0284c7; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
         </div>
-        <div class="stat-icon icon-blue">
-            <i class="fa-solid fa-house"></i>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Active Tenants</h4>
-            <div class="value">1,248</div>
-            <div class="trend positive">+8.2% <span style="color:#94a3b8">vs last month</span></div>
-        </div>
-        <div class="stat-icon icon-green">
-            <i class="fa-solid fa-users"></i>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Monthly Revenue</h4>
-            <div class="value">UGX 258M</div>
-            <div class="trend positive">+15.3% <span style="color:#94a3b8">vs last month</span></div>
-        </div>
-        <div class="stat-icon icon-purple">
-            <i class="fa-solid fa-wallet"></i>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewPieCategory"></canvas>
         </div>
     </div>
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Occupancy Rate</h4>
-            <div class="value">94.2%</div>
-            <div class="trend negative">-2.1% <span style="color:#94a3b8">vs last month</span></div>
+
+    <!-- Column 2: Occupancy & Listing Status Donut Chart -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #059669; text-transform: uppercase;">
+                <i class="fa-solid fa-circle-dot"></i> Listing Occupancy Status
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=properties" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #059669; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
         </div>
-        <div class="stat-icon icon-orange">
-            <i class="fa-solid fa-chart-line"></i>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewDonutOccupancy"></canvas>
+        </div>
+    </div>
+
+    <!-- Column 3: Landlords Verification Status Pie Chart -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #b45309; text-transform: uppercase;">
+                <i class="fa-solid fa-user-shield"></i> Landlords Approval Status
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=landlords" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #b45309; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
+        </div>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewPieLandlords"></canvas>
         </div>
     </div>
 </div>
 
-<!-- Revenue Chart Card -->
-<div class="chart-container">
-    <div class="chart-header">
-        <h3 style="margin:0; font-size: 1.1rem;">Revenue Overview</h3>
-        <select style="padding: 0.4rem; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.85rem;">
-            <option>Last 12 Months</option>
-        </select>
+<!-- ROW 3: BAR CHARTS CATEGORY (3 Equal Columns Side-by-Side) -->
+<div style="margin-bottom: 0.75rem;">
+    <h4 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 700; margin: 0 0 0.25rem 0;">
+        <i class="fa-solid fa-chart-column" style="color: #ef4444; margin-right: 0.5rem;"></i> System Activity Metrics & Audits (Bar Charts)
+    </h4>
+</div>
+<div class="overview-charts-3col">
+    <!-- Column 1: Payments Revenue Bar Chart -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #ef4444; text-transform: uppercase;">
+                <i class="fa-solid fa-credit-card"></i> Revenue by Category
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=payments" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #ef4444; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
+        </div>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewBarPayments"></canvas>
+        </div>
     </div>
-    <div class="chart-placeholder">
-        <svg class="svg-chart" viewBox="0 0 1000 250" preserveAspectRatio="none">
-            <path d="M0,150 Q100,140 200,160 T400,150 T600,130 T800,120 T1000,110 L1000,250 L0,250 Z"
-                fill="rgba(16, 61, 40, 0.1)" />
-            <path d="M0,150 Q100,140 200,160 T400,150 T600,130 T800,120 T1000,110" fill="none"
-                stroke="var(--color-emerald)" stroke-width="3" />
-            <!-- Data points -->
-            <circle cx="0" cy="150" r="4" fill="var(--color-gold)" />
-            <circle cx="200" cy="160" r="4" fill="var(--color-gold)" />
-            <circle cx="400" cy="150" r="4" fill="var(--color-gold)" />
-            <circle cx="600" cy="130" r="4" fill="var(--color-gold)" />
-            <circle cx="800" cy="120" r="4" fill="var(--color-gold)" />
-            <circle cx="1000" cy="110" r="4" fill="var(--color-gold)" />
-        </svg>
-        <div
-            style="display: flex; justify-content: space-between; padding: 0.5rem 1rem; color: #64748b; font-size: 0.75rem;">
-            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+
+    <!-- Column 2: Field Inspection Audits Bar Chart -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">
+                <i class="fa-solid fa-clipboard-check"></i> Field Inspection Audits
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=inspections" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #0284c7; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
+        </div>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewBarInspections"></canvas>
+        </div>
+    </div>
+
+    <!-- Column 3: Viewing & Service Requests Bar Chart -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: #059669; text-transform: uppercase;">
+                <i class="fa-solid fa-handshake"></i> Service & Viewing Requests
+            </span>
+            <a href="{% url 'admin_dashboard' %}?tab=inspections" style="font-size: 0.72rem; font-weight: 700; background: #f8fafc; color: #059669; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.25rem 0.75rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
+                View <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+            </a>
+        </div>
+        <div style="height: 190px; position: relative;">
+            <canvas id="overviewBarServices"></canvas>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const months = {{ overview_analytics.monthly_labels_12|safe }};
+
+    // --- ROW 1: LINE GRAPHS ---
+    // 1. Line Revenue
+    const ctxL1 = document.getElementById('overviewLineRevenue')?.getContext('2d');
+    if (ctxL1) {
+        const grad = ctxL1.createLinearGradient(0,0,0,190);
+        grad.addColorStop(0, 'rgba(10,92,54,0.25)');
+        grad.addColorStop(1, 'rgba(10,92,54,0.0)');
+        new Chart(ctxL1, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Revenue (UGX)',
+                    data: {{ overview_analytics.monthly_revenue_data|safe }},
+                    borderColor: '#0a5c36',
+                    backgroundColor: grad,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2.5
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 9 } } }, y: { beginAtZero: true, ticks: { font: { size: 9 }, callback: v => (v/1000000).toFixed(0) + 'M' } } } }
+        });
+    }
+
+    // 2. Line Tenants
+    const ctxL2 = document.getElementById('overviewLineTenants')?.getContext('2d');
+    if (ctxL2) {
+        const grad = ctxL2.createLinearGradient(0,0,0,190);
+        grad.addColorStop(0, 'rgba(2,132,199,0.25)');
+        grad.addColorStop(1, 'rgba(2,132,199,0.0)');
+        new Chart(ctxL2, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Tenants Joined',
+                    data: {{ overview_analytics.monthly_tenant_reg|safe }},
+                    borderColor: '#0284c7',
+                    backgroundColor: grad,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2.5
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 9 } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 9 } } } } }
+        });
+    }
+
+    // 3. Line Property Growth
+    const ctxL3 = document.getElementById('overviewLineProperties')?.getContext('2d');
+    if (ctxL3) {
+        const grad = ctxL3.createLinearGradient(0,0,0,190);
+        grad.addColorStop(0, 'rgba(234,179,8,0.25)');
+        grad.addColorStop(1, 'rgba(234,179,8,0.0)');
+        new Chart(ctxL3, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Listings Added',
+                    data: {{ overview_analytics.monthly_prop_growth|safe }},
+                    borderColor: '#eab308',
+                    backgroundColor: grad,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2.5
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 9 } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 9 } } } } }
+        });
+    }
+
+    // --- ROW 2: PIE & DONUT CHARTS ---
+    // 1. Pie Property Categories
+    const ctxP1 = document.getElementById('overviewPieCategory')?.getContext('2d');
+    if (ctxP1) {
+        new Chart(ctxP1, {
+            type: 'pie',
+            data: {
+                labels: {{ overview_analytics.category_labels|safe }},
+                datasets: [{
+                    data: {{ overview_analytics.category_counts|safe }},
+                    backgroundColor: ['#0a5c36', '#0284c7', '#eab308', '#dc2626', '#8b5cf6']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+        });
+    }
+
+    // 2. Donut Occupancy Status
+    const ctxD2 = document.getElementById('overviewDonutOccupancy')?.getContext('2d');
+    if (ctxD2) {
+        new Chart(ctxD2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Available', '24h Locked', 'Active Lease'],
+                datasets: [{
+                    data: [{{ overview_analytics.status_available }}, {{ overview_analytics.status_locked }}, {{ overview_analytics.status_rented }}],
+                    backgroundColor: ['#059669', '#ef4444', '#0284c7']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+        });
+    }
+
+    // 3. Pie Landlords Approval
+    const ctxP3 = document.getElementById('overviewPieLandlords')?.getContext('2d');
+    if (ctxP3) {
+        new Chart(ctxP3, {
+            type: 'pie',
+            data: {
+                labels: ['Verified Landlords', 'Pending Approvals'],
+                datasets: [{
+                    data: [{{ overview_analytics.verified_landlords }}, {{ overview_analytics.pending_landlords }}],
+                    backgroundColor: ['#0a5c36', '#f59e0b']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+        });
+    }
+
+    // --- ROW 3: BAR CHARTS ---
+    // 1. Bar Payments Category
+    const ctxB1 = document.getElementById('overviewBarPayments')?.getContext('2d');
+    if (ctxB1) {
+        new Chart(ctxB1, {
+            type: 'bar',
+            data: {
+                labels: ['3 Months', 'Booking Fee', '2 Months'],
+                datasets: [{
+                    data: [
+                        {{ payment_stats.rent_3_revenue|floatformat:0 }},
+                        {{ payment_stats.booking_revenue|floatformat:0 }},
+                        {{ payment_stats.rent_2_revenue|floatformat:0 }}
+                    ],
+                    backgroundColor: ['#059669', '#ef4444', '#0284c7'],
+                    borderRadius: 6
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { beginAtZero: true, ticks: { font: { size: 9 }, callback: v => (v/1000000).toFixed(1) + 'M' } } } }
+        });
+    }
+
+    // 2. Bar Inspections
+    const ctxB2 = document.getElementById('overviewBarInspections')?.getContext('2d');
+    if (ctxB2) {
+        new Chart(ctxB2, {
+            type: 'bar',
+            data: {
+                labels: ['Completed', 'Scheduled', 'Pending'],
+                datasets: [{
+                    data: [{{ overview_analytics.insp_completed }}, {{ overview_analytics.insp_scheduled }}, {{ overview_analytics.insp_pending }}],
+                    backgroundColor: ['#059669', '#0284c7', '#eab308'],
+                    borderRadius: 6
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 10 } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 9 } } } } }
+        });
+    }
+
+    // 3. Bar Viewing & Service Requests
+    const ctxB3 = document.getElementById('overviewBarServices')?.getContext('2d');
+    if (ctxB3) {
+        new Chart(ctxB3, {
+            type: 'bar',
+            data: {
+                labels: ['Approved Viewings', 'Pending Viewings', 'Maintenance Tasks'],
+                datasets: [{
+                    data: [{{ overview_analytics.viewings_approved }}, {{ overview_analytics.viewings_pending }}, {{ overview_analytics.maintenance_count }}],
+                    backgroundColor: ['#0a5c36', '#3b82f6', '#f59e0b'],
+                    borderRadius: 6
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 9 } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 9 } } } } }
+        });
+    }
+});
+</script>
 
 <!-- Properties Overview Table -->
 <div class="table-card">
