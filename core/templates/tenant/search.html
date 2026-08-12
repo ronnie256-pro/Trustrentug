@@ -52,6 +52,23 @@ body {
     border: 2px solid rgba(10, 92, 54, 0.94);
     height: fit-content;
     box-shadow: 0 10px 30px rgba(10, 92, 54, 0.08);
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(203, 163, 88, 0.6) rgba(10, 92, 54, 0.05);
+}
+.filters::-webkit-scrollbar {
+    width: 5px;
+}
+.filters::-webkit-scrollbar-track {
+    background: rgba(10, 92, 54, 0.05);
+    border-radius: 4px;
+}
+.filters::-webkit-scrollbar-thumb {
+    background: rgba(203, 163, 88, 0.6);
+    border-radius: 4px;
 }
 .filters input[type="text"],
 .filters input[type="number"],
@@ -262,14 +279,63 @@ body {
             order: -1;
             margin-bottom: 1.75rem;
             animation: slideDownFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: static !important;
+            max-height: none !important;
+            overflow-y: visible !important;
         }
         .filters.is-open {
             display: block !important;
         }
-        .results-grid { grid-template-columns: repeat(2, 1fr); }
+        .results-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     }
-    @media (max-width: 640px) {
-        .results-grid { grid-template-columns: 1fr; }
+    @media (max-width: 768px) {
+        .results-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.65rem !important;
+        }
+        .property-card {
+            border-radius: 14px !important;
+        }
+        .card-img-wrapper {
+            height: 135px !important;
+        }
+        .verified-tag {
+            top: 6px !important;
+            right: 6px !important;
+            padding: 0.18rem 0.5rem !important;
+            font-size: 0.62rem !important;
+        }
+        .vr-tour-tag {
+            top: 6px !important;
+            left: 6px !important;
+            padding: 0.18rem 0.5rem !important;
+            font-size: 0.62rem !important;
+        }
+        .card-body-upper {
+            padding: 0.65rem 0.6rem 0.35rem 0.6rem !important;
+        }
+        .card-title {
+            font-size: 0.92rem !important;
+            line-height: 1.2 !important;
+            -webkit-line-clamp: 1 !important;
+        }
+        .card-body-lower-green {
+            padding: 0.55rem 0.6rem 0.65rem 0.6rem !important;
+            gap: 0.3rem !important;
+        }
+        .card-price-ugx {
+            font-size: 0.62rem !important;
+        }
+        .card-price-val {
+            font-size: 0.98rem !important;
+        }
+        .card-location {
+            font-size: 0.8rem !important;
+            padding-top: 0.3rem !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
     }
 
     @keyframes slideDownFade {
@@ -385,7 +451,7 @@ body {
                     <div class="verified-tag">Verified</div>
 
                     {% if property.panoramas.all %}
-                    <div style="position: absolute; top: 12px; left: 12px; background: rgba(7, 94, 84, 0.92); color: #fff; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.25); border: 1px solid var(--color-gold); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+                    <div class="vr-tour-tag" style="position: absolute; top: 12px; left: 12px; background: rgba(7, 94, 84, 0.92); color: #fff; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.25); border: 1px solid var(--color-gold); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
                         <i class="fa-solid fa-vr-cardboard" style="color: var(--color-gold);"></i> 360° Tour
                     </div>
                     {% endif %}
@@ -401,8 +467,8 @@ body {
                     <h3 class="card-price">
                         {% if property.price %}
                         <div style="display: flex; align-items: center; gap: 0.35rem;">
-                            <span style="font-size: 0.78rem; font-weight: 800; font-family: var(--font-body); color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.5px;">UGX</span>
-                            <span style="font-family: 'Playfair Display', var(--font-heading), Georgia, serif; font-size: 1.35rem; font-weight: 800; color: #ffffff;">{{ property.price|floatformat:0|intcomma }}</span>
+                            <span class="card-price-ugx" style="font-size: 0.78rem; font-weight: 800; font-family: var(--font-body); color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.5px;">UGX</span>
+                            <span class="card-price-val" style="font-family: 'Playfair Display', var(--font-heading), Georgia, serif; font-size: 1.35rem; font-weight: 800; color: #ffffff;">{{ property.price|floatformat:0|intcomma }}</span>
                         </div>
                         {% else %}
                         <span style="color: #ffffff;">Custom Pricing</span>
