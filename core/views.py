@@ -2613,17 +2613,21 @@ def chat_api_close(request, thread_id):
     return JsonResponse({'status': 'success', 'thread_id': thread.id})
 
 
-from io import BytesIO
-from django.http import HttpResponse
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-
 def download_payments_pdf(request):
     if not request.user.is_authenticated or not request.user.is_superuser:
         messages.error(request, 'Access denied. Only system administrators can access this feature.')
         return redirect('login')
+
+    try:
+        from io import BytesIO
+        from django.http import HttpResponse
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import A4
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    except ImportError:
+        messages.error(request, "PDF generation library (reportlab) is not installed on the server. Please run 'pip install reportlab'.")
+        return redirect('admin_dashboard')
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(
