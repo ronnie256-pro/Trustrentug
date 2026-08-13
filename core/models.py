@@ -490,5 +490,34 @@ class HeroVideo(models.Model):
         ordering = ['order', '-created_at']
 
     def __str__(self):
-        return f"{self.title} ({'Active' if self.is_active else 'Inactive'})"
+        return self.title
 
+
+class ConstructionProject(models.Model):
+    STATUS_CHOICES = [
+        ('ongoing', 'Ongoing Construction'),
+        ('completed', 'Completed Project'),
+        ('upcoming', 'Upcoming Project'),
+    ]
+
+    title = models.CharField(max_length=255, help_text="e.g. Heights Executive Villa - Naalya Phase 2")
+    location = models.CharField(max_length=255, blank=True, help_text="e.g. Naalya, Kampala, Uganda")
+    short_description = models.TextField(help_text="Brief summary of the ongoing construction work")
+    full_description = models.TextField(blank=True, help_text="Detailed project specifications, materials, and milestones")
+    video = models.FileField(upload_to='project_videos/', blank=True, null=True, help_text="Upload MP4 video demonstrating construction progress")
+    video_url = models.URLField(blank=True, help_text="Optional external video URL (e.g. MP4 or YouTube embed link)")
+    thumbnail = models.ImageField(upload_to='project_thumbnails/', blank=True, null=True, help_text="Project cover image poster")
+    progress_percentage = models.IntegerField(default=0, help_text="Construction completion percentage (0 to 100)")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ongoing')
+    supervisor_name = models.CharField(max_length=150, blank=True, default="TRUST Engineering & Supervision Unit")
+    client_name = models.CharField(max_length=150, blank=True, help_text="Optional client/owner reference")
+    start_date = models.DateField(blank=True, null=True)
+    expected_completion = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.progress_percentage}% Complete)"

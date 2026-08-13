@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Running Construction Projects | TRUST Protocol Uganda{% endblock %}
+
+{% block extra_css %}
+<style>
+.projects-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
+
+.projects-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.projects-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-emerald-darkest);
+    margin-bottom: 0.75rem;
+}
+
+.projects-subtitle {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+    max-width: 750px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+}
+
+.project-row-card {
+    background: #fbf7f0;
+    border: 2px solid rgba(10, 92, 54, 0.16);
+    border-radius: 22px;
+    padding: 1.65rem;
+    box-shadow: 0 10px 30px rgba(10, 92, 54, 0.06);
+    display: grid;
+    grid-template-columns: 500px 1fr;
+    gap: 2.25rem;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-row-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(10, 92, 54, 0.12);
+}
+
+.project-video-wrapper {
+    width: 100%;
+    height: 310px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #111827;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    border: 1.5px solid rgba(203, 163, 88, 0.3);
+}
+
+.project-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.project-content-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0.25rem 0;
+}
+
+.project-header-info {
+    margin-bottom: 1rem;
+}
+
+.project-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+}
+
+.project-name {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e1b18;
+    margin: 0;
+    line-height: 1.25;
+}
+
+.project-location {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.project-desc {
+    font-size: 1.02rem;
+    color: #44403c;
+    line-height: 1.65;
+    margin: 0 0 1.75rem 0;
+}
+
+.project-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(203, 163, 88, 0.25);
+}
+
+.btn-details {
+    background: linear-gradient(135deg, var(--color-emerald-dark), var(--color-emerald-darkest));
+    color: #ffffff;
+    padding: 0.75rem 2rem;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.02rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 14px rgba(7, 94, 84, 0.25);
+    transition: all 0.25s ease;
+    border: 1px solid var(--color-gold);
+}
+
+.btn-details:hover {
+    background: var(--color-emerald-darkest);
+    color: var(--color-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(7, 94, 84, 0.35);
+}
+
+.progress-display-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+}
+
+.progress-number {
+    font-size: 1.65rem;
+    font-weight: 900;
+    color: #1e1b18;
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+
+.progress-bar-track {
+    width: 160px;
+    height: 9px;
+    background: rgba(203, 163, 88, 0.25);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 20px;
+    transition: width 1s ease-in-out;
+}
+
+@media (max-width: 1100px) {
+    .project-row-card {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .project-video-wrapper {
+        height: 260px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="projects-container">
+    <div class="projects-header">
+        <h1 class="projects-title">Running Construction Projects</h1>
+    </div>
+
+    <div class="projects-list">
+        {% for project in projects %}
+        <div class="project-row-card">
+            <!-- Left Side Video Player -->
+            <div class="project-video-wrapper">
+                {% if project.video %}
+                <video class="project-video" controls playsinline poster="{% if project.thumbnail %}{{ project.thumbnail.url }}{% endif %}">
+                    <source src="{{ project.video.url }}" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+                {% elif project.video_url %}
+                <video class="project-video" controls playsinline poster="{% if project.thumbnail %}{{ project.thumbnail.url }}{% endif %}">
+                    <source src="{{ project.video_url }}" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+                {% else %}
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--color-gold); background: radial-gradient(circle at center, #1e293b, #0f172a); text-align: center; padding: 1.5rem;">
+                    <i class="fa-solid fa-person-digging" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p style="font-weight: 700; color: #f8fafc; margin: 0;">Live Construction Feed</p>
+                    <span style="font-size: 0.85rem; color: #94a3b8;">TRUST Engineering Team On-Site</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Side Project Details -->
+            <div class="project-content-col">
+                <div class="project-header-info">
+                    <div class="project-name-row">
+                        <h2 class="project-name">{{ project.title }}</h2>
+                        <span style="background: rgba(16, 185, 129, 0.12); color: #047857; font-weight: 800; font-size: 0.78rem; padding: 0.35rem 0.85rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.3); text-transform: uppercase; white-space: nowrap;">
+                            {{ project.get_status_display }}
+                        </span>
+                    </div>
+                    {% if project.location %}
+                    <div class="project-location">
+                        <i class="fa-solid fa-location-dot"></i> {{ project.location }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <p class="project-desc">
+                    {{ project.short_description }}
+                </p>
+
+                <div class="project-footer-row" style="justify-content: flex-end;">
+                    <div class="progress-display-box">
+                        <div class="progress-number">
+                            {{ project.progress_percentage }}/100
+                        </div>
+                        <div class="progress-bar-track" title="{{ project.progress_percentage }}% Complete">
+                            <div class="progress-bar-fill" style="width: {{ project.progress_percentage }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 4rem 0; color: var(--color-text-muted);">
+            <i class="fa-solid fa-helmet-safety" style="font-size: 3.5rem; color: var(--color-gold); margin-bottom: 1rem;"></i>
+            <h3 style="font-size: 1.4rem; color: var(--color-text-dark); font-weight: 700;">No active projects at this moment</h3>
+            <p>New diaspora construction projects will appear here as supervision contracts are activated.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

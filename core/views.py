@@ -1510,6 +1510,28 @@ def search_view(request):
         properties = properties.filter(Q(amenities__name__icontains='security') | Q(amenities__name__icontains='guard') | Q(amenities__name__icontains='cctv'))
         selected_amenities.append('security')
         
+    # 5. Sale vs Rent Filters ("For sale only" vs "For Rent only")
+    for_sale = request.GET.get('for_sale') == 'on' or p_type == 'sale'
+    for_rent = request.GET.get('for_rent') == 'on' or p_type == 'rent'
+    
+    sale_query = (
+        Q(category__in=['bungalow', 'standalone']) | 
+        Q(title__icontains='sale') | 
+        Q(title__icontains='land') | 
+        Q(title__icontains='plot') |
+        Q(title__icontains='house') |
+        Q(title__icontains='villa') |
+        Q(title__icontains='cottage') |
+        Q(title__icontains='townhouse') |
+        Q(description__icontains='sale') |
+        Q(price__gte=50000000)
+    )
+
+    if for_sale and not for_rent:
+        properties = properties.filter(sale_query)
+    elif for_rent and not for_sale:
+        properties = properties.exclude(sale_query)
+        
     properties = properties.distinct().order_by('-created_at')
     total_count = properties.count()
     
@@ -1522,6 +1544,8 @@ def search_view(request):
         'type': p_type,
         'min_price': min_price,
         'max_price': max_price,
+        'for_sale': for_sale,
+        'for_rent': for_rent,
         'selected_amenities': selected_amenities,
         'active_popup': active_popup
     })
@@ -2811,8 +2835,37 @@ def download_payments_pdf(request):
     buffer.close()
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="TRUST_Received_Payments_Report.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="TRUST_Payments_Ledger_{timezone.now().strftime("%Y%m%d")}.pdf"'
     response.write(pdf)
     return response
 
 
+def projects_list_view(request):
+    """
+    Renders running construction projects supervised by TRUST Protocol.
+    """
+    from core.models import ConstructionProject, PopupLogic
+    projects = ConstructionProject.objects.all().order_by('-created_at')
+    active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+
+    return render(request, 'tenant/projects.html', {
+        'projects': projects,
+        'active_popup': active_popup
+    })
+
+
+def project_detail_view(request, project_id):
+    """
+    Renders detailed breakdown for a specific construction project.
+    """
+    from core.models import ConstructionProject, PopupLogic
+    from django.shortcuts import get_object_or_404, render
+    project = get_object_or_404(ConstructionProject, id=project_id)
+    other_projects = ConstructionProject.objects.exclude(id=project.id)[:3]
+    active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+
+    return render(request, 'tenant/project_detail.html', {
+        'project': project,
+        'other_projects': other_projects,
+        'active_popup': active_popup
+    })

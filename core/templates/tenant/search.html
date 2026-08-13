@@ -37,44 +37,28 @@ body {
 }
 
 .layout {
-    display: grid;
-    grid-template-columns: 330px 1fr;
-    gap: 2rem;
-    padding: 2.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
     max-width: 1650px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .filters {
     background: #fbf7f0;
-    padding: 1.8rem;
-    border-radius: 18px;
+    padding: 0.85rem 1.1rem;
+    border-radius: 16px;
     border: 2px solid rgba(10, 92, 54, 0.94);
-    height: fit-content;
-    box-shadow: 0 10px 30px rgba(10, 92, 54, 0.08);
-    position: sticky;
-    top: 90px;
-    max-height: calc(100vh - 110px);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(203, 163, 88, 0.6) rgba(10, 92, 54, 0.05);
-}
-.filters::-webkit-scrollbar {
-    width: 5px;
-}
-.filters::-webkit-scrollbar-track {
-    background: rgba(10, 92, 54, 0.05);
-    border-radius: 4px;
-}
-.filters::-webkit-scrollbar-thumb {
-    background: rgba(203, 163, 88, 0.6);
-    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06);
+    margin-bottom: 1rem;
 }
 .filters input[type="text"],
 .filters input[type="number"],
 .filters select {
     background: #f4eee2 !important;
-    border: 1px solid rgba(203, 163, 88, 0.35) !important;
+    border: 1px solid rgba(203, 163, 88, 0.4) !important;
     border-radius: 10px !important;
     color: #1e1b18 !important;
     font-weight: 600;
@@ -86,31 +70,11 @@ body {
     border-color: var(--color-gold) !important;
     box-shadow: 0 0 0 3px rgba(203, 163, 88, 0.2) !important;
 }
-.filter-group {
-    margin-bottom: 1.5rem;
-}
-.filter-group:last-child {
-    margin-bottom: 0;
-}
-.filter-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.6rem;
-    color: var(--color-emerald-dark);
-}
-.checkbox-list label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-    cursor: pointer;
-}
 
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.15rem;
 }
 
 .property-card {
@@ -149,19 +113,41 @@ body {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #0f172a;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: #ffffff;
     font-weight: 800;
     font-size: 0.72rem;
     border-radius: 20px;
-    padding: 0.28rem 0.7rem;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 0.28rem 0.75rem;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+    display: inline-block;
+    border: none;
+    letter-spacing: 0.3px;
+    z-index: 5;
+}
+
+.property-card.on-sale .card-img-wrapper {
+    border: 2.5px solid #2563eb !important;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3) !important;
+}
+.blue-sale-ribbon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.7rem;
+    border-radius: 20px;
+    padding: 0.28rem 0.75rem;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    letter-spacing: 0.4px;
+    z-index: 6;
+    text-transform: uppercase;
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .card-body-upper {
@@ -181,116 +167,11 @@ body {
     overflow: hidden;
 }
 
-/* Lower Section - Price & Location (Full Emerald Green Background) */
-.card-body-lower-green {
-    background: rgba(10, 92, 54, 0.96);
-    padding: 0.85rem 1.35rem 1.1rem 1.35rem;
-    border-top: 2.5px solid var(--color-gold);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    position: relative;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-    flex: 1;
-}
-
-.card-price {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card-location {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--color-gold-light);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    border-top: 1px solid rgba(203, 163, 88, 0.35);
-    padding-top: 0.5rem;
-    width: 100%;
-}
-.card-location i {
-    color: var(--color-gold);
-    font-size: 0.95rem;
-}
-
-    /* Mobile Filter Button & Responsive Search */
-    .mobile-filter-trigger-wrapper {
-        display: none;
-        margin-bottom: 1.25rem;
+    @media (max-width: 1500px) {
+        .results-grid { grid-template-columns: repeat(4, 1fr); }
     }
-    .mobile-filter-btn {
-        width: 100%;
-        padding: 0.85rem 1.25rem;
-        background: var(--color-emerald-darkest);
-        color: #ffffff;
-        border: 1.5px solid var(--color-gold);
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-        box-shadow: 0 4px 14px rgba(7, 94, 84, 0.2);
-        transition: all 0.25s ease;
-    }
-    .mobile-filter-btn:hover {
-        background: #062419;
-        transform: translateY(-1px);
-    }
-    .mobile-filter-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.25rem;
-        border-bottom: 2px solid var(--color-gold);
-        padding-bottom: 0.5rem;
-    }
-    .close-mobile-filter-btn {
-        display: none;
-        background: none;
-        border: none;
-        font-size: 1.6rem;
-        color: var(--color-emerald-darkest);
-        cursor: pointer;
-        line-height: 1;
-        padding: 0.2rem 0.5rem;
-        font-weight: 800;
-    }
-
-    @media (max-width: 1400px) {
+    @media (max-width: 1150px) {
         .results-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 1080px) {
-        .layout { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
-        .mobile-filter-trigger-wrapper { display: block; }
-        .close-mobile-filter-btn { display: block; }
-        .filters {
-            display: none;
-            order: -1;
-            margin-bottom: 1.75rem;
-            animation: slideDownFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: static !important;
-            max-height: none !important;
-            overflow-y: visible !important;
-        }
-        .filters.is-open {
-            display: block !important;
-        }
-        .results-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     }
     @media (max-width: 768px) {
         .results-grid {
@@ -305,40 +186,20 @@ body {
         }
         .verified-tag {
             top: 6px !important;
-            right: 6px !important;
-            padding: 0.18rem 0.5rem !important;
-            font-size: 0.62rem !important;
-        }
-        .vr-tour-tag {
-            top: 6px !important;
             left: 6px !important;
             padding: 0.18rem 0.5rem !important;
             font-size: 0.62rem !important;
         }
-        .card-body-upper {
-            padding: 0.65rem 0.6rem 0.35rem 0.6rem !important;
+        .blue-sale-ribbon {
+            top: 6px !important;
+            right: 6px !important;
+            padding: 0.18rem 0.5rem !important;
+            font-size: 0.6rem !important;
         }
         .card-title {
             font-size: 0.92rem !important;
             line-height: 1.2 !important;
             -webkit-line-clamp: 1 !important;
-        }
-        .card-body-lower-green {
-            padding: 0.55rem 0.6rem 0.65rem 0.6rem !important;
-            gap: 0.3rem !important;
-        }
-        .card-price-ugx {
-            font-size: 0.62rem !important;
-        }
-        .card-price-val {
-            font-size: 0.98rem !important;
-        }
-        .card-location {
-            font-size: 0.8rem !important;
-            padding-top: 0.3rem !important;
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
         }
     }
 
@@ -356,85 +217,74 @@ body {
 {% endblock %}
 
 {% block content %}
-<div class="layout" style="margin: 0 auto;">
-    <!-- Mobile Filter Trigger Button -->
-    <div class="mobile-filter-trigger-wrapper">
-        <button id="mobileFilterToggleBtn" type="button" class="mobile-filter-btn">
-            <i class="fa-solid fa-sliders"></i> Filter Properties
-            {% if q or type or min_price or max_price or selected_amenities %}
-            <span style="background: var(--color-gold); color: #000; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 9999px; font-weight: 800; margin-left: 0.3rem;">Active</span>
-            {% endif %}
-        </button>
-    </div>
-
-    <!-- Filters Sidebar -->
-    <form method="GET" action="{% url 'search' %}" class="filters">
-        <!-- Search via Map Link Button -->
-        <div style="margin-bottom: 1.25rem;">
-            <a href="{% url 'nearby_properties' %}" class="btn btn-gold" style="width: 100%; padding: 0.75rem; text-decoration: none; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(203,163,88,0.3);">
-                Search via Map
-            </a>
-        </div>
-
-        <div class="mobile-filter-header">
-            <h3 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.3rem; margin: 0; font-weight: 700;">
-                Filter Properties
-            </h3>
-            <button type="button" id="closeMobileFilterBtn" class="close-mobile-filter-btn" title="Close Filters">&times;</button>
-        </div>
-
-        <!-- Location Filter -->
-        <div class="filter-group">
-            <h4 class="filter-title">Location / Area</h4>
-            <input type="text" name="q" value="{{ q|default:'' }}" class="form-control" style="padding: 0.75rem; width: 100%;">
-        </div>
-
-        <!-- Property Type Filter -->
-        <div class="filter-group">
-            <h4 class="filter-title">Property Type</h4>
-            <select name="type" class="form-control" style="padding: 0.75rem; width: 100%; cursor: pointer;">
-                <option value="" {% if not type %}selected{% endif %}>All Property Types</option>
-                <option value="apartment" {% if type == 'apartment' %}selected{% endif %}>Apartment</option>
-                <option value="flat" {% if type == 'flat' %}selected{% endif %}>Flat</option>
-                <option value="condo" {% if type == 'condo' %}selected{% endif %}>Condo</option>
-                <option value="bungalow" {% if type == 'bungalow' or type == 'villa' %}selected{% endif %}>Bungalow / Standalone</option>
-            </select>
-        </div>
-
-        <!-- Price Range Filter -->
-        <div class="filter-group">
-            <h4 class="filter-title">Price Range (UGX / Month)</h4>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <input type="number" name="min_price" value="{{ min_price|default:'' }}" class="form-control" style="padding: 0.75rem; width: 100%;">
-                <span style="color: var(--color-text-muted);">to</span>
-                <input type="number" name="max_price" value="{{ max_price|default:'' }}" class="form-control" style="padding: 0.75rem; width: 100%;">
-            </div>
-        </div>
-
-        <!-- Amenities Filter -->
-        <div class="filter-group">
-            <h4 class="filter-title">Amenities</h4>
-            <div class="checkbox-list">
-                <label><input type="checkbox" name="pool" {% if 'pool' in selected_amenities %}checked{% endif %}> Swimming Pool</label>
-                <label><input type="checkbox" name="power" {% if 'power' in selected_amenities %}checked{% endif %}> 24/7 Power / Gen</label>
-                <label><input type="checkbox" name="gym" {% if 'gym' in selected_amenities %}checked{% endif %}> Gym</label>
-                <label><input type="checkbox" name="security" {% if 'security' in selected_amenities %}checked{% endif %}> Security</label>
-            </div>
-        </div>
+<div class="layout">
+    <!-- REPOSITIONED HORIZONTAL FILTER FORM WITH FULL BLUE TOP TOGGLE -->
+    <form id="topFilterForm" method="GET" action="{% url 'search' %}" class="filters" style="max-width: 1100px; width: 100%; margin: 0 auto 1.25rem auto; border: none; background: transparent; padding: 0; box-shadow: none;">
         
-        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;">
-            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-size: 1rem;">Apply Filters</button>
-            {% if q or type or min_price or max_price or selected_amenities %}
-            <a href="{% url 'search' %}" class="btn btn-outline" style="width: 100%; text-align: center; padding: 0.75rem;">Clear Filters</a>
-            {% endif %}
+        <!-- TOP TOGGLE PILLS: "For sale only" (Blue) & "For Rent only" (Orange) (CENTERED & REDUCED SIZE) -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; max-width: 440px; width: 100%; margin: 0 auto 0.65rem auto;">
+            <!-- 1. For sale only (Blue) -->
+            <div style="flex: 1; min-width: 170px; background: linear-gradient(135deg, #1d4ed8, #2563eb); border: 1.5px solid #1e40af; padding: 0.4rem 0.85rem; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">
+                <label for="for_sale_checkbox" style="font-weight: 800; font-size: 0.82rem; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; margin: 0;">
+                    <i class="fa-solid fa-tag" style="color: #ffffff !important; font-size: 0.85rem;"></i> For sale only
+                </label>
+                <input type="checkbox" id="for_sale_checkbox" name="for_sale" value="on" {% if for_sale %}checked{% endif %} onchange="if(this.checked){ document.getElementById('for_rent_checkbox').checked = false; } this.form.submit();" style="width: 17px; height: 17px; accent-color: #2563eb; cursor: pointer; margin: 0;">
+            </div>
+
+            <!-- 2. For Rent only (Orange) -->
+            <div style="flex: 1; min-width: 170px; background: linear-gradient(135deg, #ea580c, #f97316); border: 1.5px solid #c2410c; padding: 0.4rem 0.85rem; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);">
+                <label for="for_rent_checkbox" style="font-weight: 800; font-size: 0.82rem; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; margin: 0;">
+                    <i class="fa-solid fa-key" style="color: #ffffff !important; font-size: 0.85rem;"></i> For Rent only
+                </label>
+                <input type="checkbox" id="for_rent_checkbox" name="for_rent" value="on" {% if for_rent %}checked{% endif %} onchange="if(this.checked){ document.getElementById('for_sale_checkbox').checked = false; } this.form.submit();" style="width: 17px; height: 17px; accent-color: #ea580c; cursor: pointer; margin: 0;">
+            </div>
+        </div>
+
+        <!-- 2. HORIZONTAL FILTER BAR CONTAINER -->
+        <div style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06); display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; justify-content: space-between;">
+            <!-- Location Filter -->
+            <div style="flex: 2; min-width: 180px;">
+                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Location / Area or title..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
+            </div>
+
+            <!-- Property Type Filter -->
+            <div style="flex: 1.5; min-width: 160px;">
+                <select name="type" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;">
+                    <option value="" {% if not type %}selected{% endif %}>All Property Types</option>
+                    <option value="apartment" {% if type == 'apartment' %}selected{% endif %}>Apartment</option>
+                    <option value="flat" {% if type == 'flat' %}selected{% endif %}>Flat</option>
+                    <option value="condo" {% if type == 'condo' %}selected{% endif %}>Condo</option>
+                    <option value="bungalow" {% if type == 'bungalow' or type == 'villa' %}selected{% endif %}>Bungalow / Standalone</option>
+                </select>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div style="flex: 2; min-width: 200px; display: flex; gap: 0.4rem; align-items: center;">
+                <input type="number" name="min_price" value="{{ min_price|default:'' }}" placeholder="Min UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
+                <span style="color: var(--color-text-muted); font-size: 0.85rem;">-</span>
+                <input type="number" name="max_price" value="{{ max_price|default:'' }}" placeholder="Max UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
+            </div>
+
+            <!-- Filter Buttons -->
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 700; border-radius: 10px; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-magnifying-glass"></i> Filter
+                </button>
+                <a href="{% url 'nearby_properties' %}" class="btn btn-gold" style="padding: 0.65rem 1rem; text-decoration: none; font-weight: 700; border-radius: 10px; white-space: nowrap; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-map-location-dot"></i> Map
+                </a>
+                {% if q or type or min_price or max_price or for_sale %}
+                <a href="{% url 'search' %}" class="btn btn-outline" style="padding: 0.65rem 0.85rem; text-decoration: none; border-radius: 10px;" title="Reset All Filters">Clear</a>
+                {% endif %}
+            </div>
         </div>
     </form>
 
-    <!-- Results Grid -->
+    <!-- 3. CARDS GRID (5 CARDS PER ROW, IMMEDIATELY BELOW) -->
     <main>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <p style="color: var(--color-text-muted);">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> verified properties</p>
-            <select class="form-control" style="width: auto; padding: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+            <p style="color: var(--color-text-muted); margin: 0;">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> verified properties</p>
+            <select class="form-control" style="width: auto; padding: 0.45rem 0.75rem; border-radius: 8px;">
                 <option>Sort by: Recommended</option>
                 <option>Price: Low to High</option>
                 <option>Price: High to Low</option>
@@ -443,8 +293,8 @@ body {
 
         <div class="results-grid">
             {% for property in properties %}
-            <a href="/property/{{ property.id }}/" class="property-card">
-                <!-- Image Box with Rounded Corners & Top Left Verified Badge -->
+            <a href="/property/{{ property.id }}/" class="property-card {% if for_sale or property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}on-sale{% endif %}">
+                <!-- Image Box with Rounded Corners -->
                 <div class="card-img-wrapper">
                     {% if property.hero_image %}
                     <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="card-img">
@@ -456,19 +306,24 @@ body {
                     <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
                     {% endif %}
                     
-                    <!-- Verified Tag (Top Left White Pill Badge with Shield) -->
-                    <div class="verified-tag">
-                        <i class="fa-solid fa-shield-halved" style="color: var(--color-emerald-darkest);"></i> TRUST Verified
+                    {% if for_sale or property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}
+                    <!-- ONLY Blue For Sale Badge on Top Right Corner -->
+                    <div class="blue-sale-ribbon">
+                        <i class="fa-solid fa-tag"></i> For Sale
                     </div>
+                    {% else %}
+                    <!-- ONLY Orange Verified Badge on Top Left Corner -->
+                    <div class="verified-tag">Verified</div>
+                    {% endif %}
 
                     {% if property.panoramas.all %}
-                    <div class="vr-tour-tag" style="position: absolute; top: 12px; right: 12px; background: rgba(7, 94, 84, 0.92); color: #fff; padding: 0.28rem 0.75rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.25); border: 1px solid var(--color-gold); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+                    <div class="vr-tour-tag" style="position: absolute; bottom: 12px; right: 12px; background: rgba(7, 94, 84, 0.92); color: #fff; padding: 0.28rem 0.75rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.25); border: 1px solid var(--color-gold); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
                         <i class="fa-solid fa-vr-cardboard" style="color: var(--color-gold);"></i> 360°
                     </div>
                     {% endif %}
                 </div>
 
-                <!-- Centered Title & Price (Matching Landing Page) -->
+                <!-- Centered Title & Price -->
                 <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
                     <h4 class="card-title-text" style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
                         {{ property.title }}
