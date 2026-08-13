@@ -114,25 +114,27 @@ body {
 }
 
 .property-card {
-    border-radius: 18px;
-    overflow: hidden;
-    background: #ffffff;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1.5px solid rgba(4, 120, 87, 0.22);
+    text-decoration: none;
+    color: inherit;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 .property-card:hover {
-    box-shadow: 0 20px 45px rgba(4, 120, 87, 0.22);
-    transform: translateY(-6px);
-    border-color: var(--color-gold);
+    transform: translateY(-5px);
 }
 .card-img-wrapper {
-    height: 210px;
-    width: 100%;
     position: relative;
+    width: 100%;
+    height: 210px;
+    border-radius: 18px;
     overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 .card-img {
     height: 100%;
@@ -146,18 +148,20 @@ body {
 .verified-tag {
     position: absolute;
     top: 12px;
-    right: 12px;
-    background: rgba(10, 92, 54, 0.92);
+    left: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.72rem;
+    border-radius: 20px;
+    padding: 0.28rem 0.7rem;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    color: #ffffff;
-    padding: 0.3rem 0.8rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    border: 1px solid var(--color-gold);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: none;
 }
 
 .card-body-upper {
@@ -439,46 +443,43 @@ body {
 
         <div class="results-grid">
             {% for property in properties %}
-            <a href="/property/{{ property.id }}/" class="property-card" style="color: inherit; text-decoration: none;">
+            <a href="/property/{{ property.id }}/" class="property-card">
+                <!-- Image Box with Rounded Corners & Top Left Verified Badge -->
                 <div class="card-img-wrapper">
                     {% if property.hero_image %}
                     <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="card-img">
-                    {% else %}
+                    {% elif property.category == 'studio' %}
                     <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
+                    {% elif property.category == '2_bed' or property.category == '1_bed' %}
+                    <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
                     {% endif %}
                     
-                    <!-- Verified Tag (Top Right, No Shield) -->
-                    <div class="verified-tag">Verified</div>
+                    <!-- Verified Tag (Top Left White Pill Badge with Shield) -->
+                    <div class="verified-tag">
+                        <i class="fa-solid fa-shield-halved" style="color: var(--color-emerald-darkest);"></i> TRUST Verified
+                    </div>
 
                     {% if property.panoramas.all %}
-                    <div class="vr-tour-tag" style="position: absolute; top: 12px; left: 12px; background: rgba(7, 94, 84, 0.92); color: #fff; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.25); border: 1px solid var(--color-gold); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
-                        <i class="fa-solid fa-vr-cardboard" style="color: var(--color-gold);"></i> 360° Tour
+                    <div class="vr-tour-tag" style="position: absolute; top: 12px; right: 12px; background: rgba(7, 94, 84, 0.92); color: #fff; padding: 0.28rem 0.75rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.25); border: 1px solid var(--color-gold); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+                        <i class="fa-solid fa-vr-cardboard" style="color: var(--color-gold);"></i> 360°
                     </div>
                     {% endif %}
                 </div>
-                <!-- Upper Body: Title (White Background) -->
-                <div class="card-body-upper">
-                    <h4 class="card-title">{{ property.title }}</h4>
-                </div>
 
-                <!-- Lower Body: Price & Location (Full Emerald Green Section with Golden Location Text) -->
-                <div class="card-body-lower-green">
-                    <!-- 2. Price (Luxury Font & Automatic Commas) -->
-                    <h3 class="card-price">
+                <!-- Centered Title & Price (Matching Landing Page) -->
+                <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
+                    <h4 class="card-title-text" style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
+                        {{ property.title }}
+                    </h4>
+                    <div class="card-price-text" style="font-size: 0.92rem; color: #57534e; font-weight: 700; text-align: center;">
                         {% if property.price %}
-                        <div style="display: flex; align-items: center; gap: 0.35rem;">
-                            <span class="card-price-ugx" style="font-size: 0.78rem; font-weight: 800; font-family: var(--font-body); color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.5px;">UGX</span>
-                            <span class="card-price-val" style="font-family: 'Playfair Display', var(--font-heading), Georgia, serif; font-size: 1.35rem; font-weight: 800; color: #ffffff;">{{ property.price|floatformat:0|intcomma }}</span>
-                        </div>
+                        UGX {{ property.price|floatformat:0|intcomma }} / mo
                         {% else %}
-                        <span style="color: #ffffff;">Custom Pricing</span>
+                        Custom Pricing
                         {% endif %}
-                    </h3>
-
-                    <!-- 3. Location (Times New Roman in Golden Text) -->
-                    <p class="card-location">
-                        <i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.95rem;"></i> {{ property.location|default:"Kampala, Uganda" }}
-                    </p>
+                    </div>
                 </div>
             </a>
             {% empty %}

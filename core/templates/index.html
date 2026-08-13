@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}TRUST | The Rental Verification Protocol{% endblock %}
 
@@ -815,23 +816,6 @@
       font-size: 1.05rem !important;
     }
 
-    .hero-search-form {
-      grid-template-columns: 1fr !important;
-      gap: 0.85rem !important;
-      padding: 1.25rem 1rem !important;
-      border-radius: 18px !important;
-      margin: 0 auto !important;
-      width: 94% !important;
-    }
-
-    .hero-search-form button[type="submit"] {
-      width: 100% !important;
-      padding: 0.9rem !important;
-      font-size: 1rem !important;
-      border-radius: 12px !important;
-      justify-content: center !important;
-    }
-
     .showcase-split-grid {
       grid-template-columns: 1fr !important;
       gap: 2.25rem !important;
@@ -1539,7 +1523,7 @@
 
 <!-- 1. HERO SECTION -->
 <section class="hero-container"
-  style="position: relative; overflow: hidden; width: 100%; min-height: 680px; background: #000; padding: 0;">
+  style="position: relative; overflow: hidden; width: 100%; min-height: 600px; background: #000; padding: 0;">
   <!-- Background Video Slider -->
   <div class="hero-slider"
     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1;">
@@ -1559,131 +1543,190 @@
   </div>
 </section>
 
-<!-- HERO SEARCH FILTER BAR (GLASSMORPHIC LIGHT EMERALD GREEN) -->
-<div style="position: relative; z-index: 30; margin-top: -3.5rem; margin-bottom: 2rem;">
-  <div class="container" style="max-width: 1050px;">
-    <form method="GET" action="/search/" class="hero-search-form"
-      style="background: rgba(16, 61, 40, 0.82); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1.5px solid rgba(203, 163, 88, 0.45); border-radius: 22px; padding: 1.1rem 1.5rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: center;">
+<!-- 2. SERVICES CIRCLES BLOCK (GREEN BUTTON TITLES & BLACK SUBTEXT) -->
+<div style="position: relative; z-index: 30; margin-top: -4.5rem; margin-bottom: 2.5rem;">
+  <style>
+    .service-circle-card:hover .service-circle-img-wrapper {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 35px rgba(10, 61, 40, 0.3) !important;
+      border-color: #ffffff !important;
+    }
+    .service-circle-card:hover img {
+      transform: scale(1.08);
+    }
+    .service-btn {
+      background: var(--color-emerald-darkest);
+      color: #ffffff !important;
+      padding: 0.45rem 1.25rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 800;
+      display: inline-block;
+      margin-top: 0.85rem;
+      margin-bottom: 0.35rem;
+      box-shadow: 0 6px 18px rgba(10, 61, 40, 0.25);
+      border: 1.5px solid var(--color-gold);
+      transition: all 0.3s ease;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .service-circle-card:hover .service-btn {
+      background: var(--color-gold);
+      color: #040d08 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(203, 163, 88, 0.45);
+    }
+    @media (max-width: 900px) {
+      .services-circular-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.75rem 1rem !important;
+      }
+      .service-circle-img-wrapper {
+        width: 115px !important;
+        height: 115px !important;
+      }
+      .service-btn {
+        font-size: 0.9rem !important;
+        padding: 0.4rem 1rem !important;
+      }
+    }
+    @media (max-width: 500px) {
+      .service-circle-img-wrapper {
+        width: 100px !important;
+        height: 100px !important;
+      }
+    }
+  </style>
 
-      <!-- 1. Location -->
-      <div style="position: relative; width: 100%;">
-        <select name="q"
-          style="width: 100%; padding: 0.85rem 2.5rem 0.85rem 1.25rem; border-radius: 14px; border: none; background: #faf7f2; color: #1e293b; font-size: 0.95rem; font-weight: 700; appearance: none; -webkit-appearance: none; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); font-family: var(--font-body);">
-          <option value="">Location</option>
-          <option value="Kampala">Kampala</option>
-          <option value="Kololo">Kololo</option>
-          <option value="Nakasero">Nakasero</option>
-          <option value="Bugolobi">Bugolobi</option>
-          <option value="Naguru">Naguru</option>
-          <option value="Entebbe">Entebbe</option>
-          <option value="Kira">Kira</option>
-          <option value="Ntinda">Ntinda</option>
-          <option value="Muyenga">Muyenga</option>
-        </select>
-        <i class="fa-solid fa-location-dot"
-          style="position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.95rem; pointer-events: none;"></i>
+  <div class="container" style="max-width: 1050px; margin: 0 auto; padding: 0 1rem;">
+    <div style="background: transparent; border: none; padding: 0; box-shadow: none;">
+      
+      <!-- 4 Circular Service Cards Grid (GREEN BUTTON TITLES & BLACK SUBTEXT) -->
+      <div class="services-circular-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; align-items: start; justify-items: center;">
+        
+        <!-- 1. We Sale -->
+        <a href="/search/?type=sale" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
+          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff;">
+            <img src="{% static 'images/service_sale.jpg' %}" alt="We Sale" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+          </div>
+          <span class="service-btn">We Sale</span>
+          <span style="font-size: 0.85rem; color: #1e1b18; font-weight: 700; text-align: center;">Verified Properties</span>
+        </a>
+
+        <!-- 2. We Rent -->
+        <a href="/search/?type=rent" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
+          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff;">
+            <img src="{% static 'images/service_rent.jpg' %}" alt="We Rent" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+          </div>
+          <span class="service-btn">We Rent</span>
+          <span style="font-size: 0.85rem; color: #1e1b18; font-weight: 700; text-align: center;">Homes & Apartments</span>
+        </a>
+
+        <!-- 3. We Construct -->
+        <a href="/search/" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
+          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff;">
+            <img src="{% static 'images/service_construct.jpg' %}" alt="We Construct" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+          </div>
+          <span class="service-btn">We Construct</span>
+          <span style="font-size: 0.85rem; color: #1e1b18; font-weight: 700; text-align: center;">Building & Design</span>
+        </a>
+
+        <!-- 4. Locate Land for You -->
+        <a href="/search/?q=land" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
+          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff;">
+            <img src="{% static 'images/service_land.jpg' %}" alt="Locate Land for You" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+          </div>
+          <span class="service-btn">Locate Land for You</span>
+          <span style="font-size: 0.85rem; color: #1e1b18; font-weight: 700; text-align: center;">Prime Land Plots</span>
+        </a>
+
       </div>
-
-      <!-- 2. Type of House -->
-      <div style="position: relative; width: 100%;">
-        <select name="type"
-          style="width: 100%; padding: 0.85rem 2.5rem 0.85rem 1.25rem; border-radius: 14px; border: none; background: #faf7f2; color: #1e293b; font-size: 0.95rem; font-weight: 700; appearance: none; -webkit-appearance: none; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); font-family: var(--font-body);">
-          <option value="">Type</option>
-          <option value="apartment">Apartment</option>
-          <option value="flat">Flat</option>
-          <option value="condo">Condo</option>
-          <option value="bungalow">Bungalow / Villa</option>
-        </select>
-        <i class="fa-solid fa-house"
-          style="position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.9rem; pointer-events: none;"></i>
-      </div>
-
-      <!-- 3. Price Range -->
-      <div style="position: relative; width: 100%;">
-        <select id="priceRangeSelect"
-          style="width: 100%; padding: 0.85rem 2.5rem 0.85rem 1.25rem; border-radius: 14px; border: none; background: #faf7f2; color: #1e293b; font-size: 0.95rem; font-weight: 700; appearance: none; -webkit-appearance: none; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); font-family: var(--font-body);">
-          <option value="">Price Range</option>
-          <option value="0-500000">Under UGX 500k</option>
-          <option value="500000-1500000">UGX 500k - 1.5M</option>
-          <option value="1500000-3000000">UGX 1.5M - 3M</option>
-          <option value="3000000-99999999">UGX 3M+</option>
-        </select>
-        <input type="hidden" name="min_price" id="minPriceInput" value="">
-        <input type="hidden" name="max_price" id="maxPriceInput" value="">
-        <i class="fa-solid fa-coins"
-          style="position: absolute; right: 1.1rem; top: 50%; transform: translateY(-50%); color: #475569; font-size: 0.9rem; pointer-events: none;"></i>
-      </div>
-
-      <!-- 4. Search Button -->
-      <button type="submit"
-        style="background: #14100c; color: #ffffff; padding: 0.85rem 2.25rem; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-        Search
-      </button>
-
-    </form>
+    </div>
   </div>
 </div>
 
-<!-- 2. RECENTLY ADDED LANDINGS SECTION (CLEAN BACKGROUND, GLASSMORPHIC LIGHT EMERALD CARDS) -->
-<section
-  style="padding: 2.25rem 0 3rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
-  <div class="vetted-container-padding">
+<!-- 3. RECENTLY ADDED LANDINGS SECTION (POSITION 3: IMMEDIATELY AFTER SERVICES, 6 CARDS PER ROW, CENTERED TITLE & PRICE) -->
+<section style="padding: 1.5rem 0 3.5rem 0; background: #ffffff; width: 100%; border-bottom: 1px solid rgba(0,0,0,0.04);">
+  <style>
+    .newly-added-grid-6col {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1.25rem;
+    }
+    .newly-added-card {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .newly-added-card:hover {
+      transform: translateY(-5px);
+    }
+    .newly-added-card:hover .newly-added-img {
+      transform: scale(1.06);
+    }
+    @media (max-width: 1480px) {
+      .newly-added-grid-6col {
+        grid-template-columns: repeat(4, 1fr) !important;
+      }
+    }
+    @media (max-width: 1000px) {
+      .newly-added-grid-6col {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+    }
+    @media (max-width: 680px) {
+      .newly-added-grid-6col {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.85rem !important;
+      }
+    }
+  </style>
 
-    <!-- Centered Looped Typewriter Header (Brand Colors & Gold Underline) -->
-    <div class="typewriter-header-container"
-      style="text-align: center; margin-bottom: 1.5rem; min-height: 2.2rem; display: flex; align-items: center; justify-content: center;">
-      <h3 class="typewriter-header-h3"
-        style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 700; margin: 0; letter-spacing: 0.3px; border-bottom: 2px solid var(--color-gold); padding-bottom: 0.35rem; display: inline-block;">
-        <span id="typewriterText"></span><span class="typewriter-cursor"
-          style="color: var(--color-gold); font-weight: 400; margin-left: 2px;">|</span>
+  <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+    
+    <!-- Static Centered Header (NO Typing Animation) -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h3 style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 800; color: #1e1b18; margin: 0; letter-spacing: -0.3px; display: inline-block; border-bottom: 2.5px solid var(--color-gold); padding-bottom: 0.4rem;">
+        Newly inspected, fresh and clean. <span style="color: var(--color-gold);">Move in now.</span>
       </h3>
     </div>
 
-    <!-- Premium Vetted Grid Layout -->
-    <div class="vetted-grid-container">
+    <!-- 6 Cards Per Row Grid -->
+    <div class="newly-added-grid-6col">
       {% for property in properties|slice:":12" %}
-      <a href="/property/{{ property.id }}/" class="vetted-card-grid-wrapper animate__animated animate__fadeIn"
-        style="animation-delay: {{ forloop.counter }}00ms; border-radius: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 10px 25px rgba(0,0,0,0.06); text-decoration: none; transition: transform 0.35s ease, box-shadow 0.35s ease;">
-
-        <div class="glass-img-wrapper" style="position: relative; height: 210px; overflow: hidden;">
+      <a href="/property/{{ property.id }}/" class="newly-added-card" style="width: 100%;">
+        
+        <!-- Image Box with Rounded Corners (NO Badge, NO Heart) -->
+        <div style="position: relative; width: 100%; height: 210px; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.06);">
           {% if property.hero_image %}
-          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="glass-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% elif property.category == 'studio' %}
-          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% elif property.category == '2_bed' or property.category == '1_bed' %}
-          <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-          {% elif property.is_multi_unit %}
-          <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% else %}
-          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="glass-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% endif %}
         </div>
 
-        <!-- Light Emerald Glassmorphic Card Footer Body -->
-        <div class="glass-body"
-          style="padding: 1.1rem 1.25rem; background: rgba(16, 61, 40, 0.93); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgba(203, 163, 88, 0.35);">
-          <h4 class="glass-title"
-            style="margin: 0 0 0.35rem 0; color: #ffffff; font-size: 1.15rem; font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; height: auto;">
-            {{ property.title }}</h4>
-          <p class="glass-location"
-            style="margin: 0; color: var(--color-gold-light); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
-            <i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.85rem;"></i> {{ property.location|default:"Kampala, Uganda" }}
-          </p>
+        <!-- Centered Title & Price (NO Rate) -->
+        <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
+          <h4 style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
+            {{ property.title }}
+          </h4>
+          <div style="font-size: 0.92rem; color: #57534e; font-weight: 700; text-align: center;">
+            UGX {{ property.price|floatformat:0|intcomma }} / mo
+          </div>
         </div>
+
       </a>
       {% empty %}
       <div style="text-align: center; padding: 5rem 0; color: #94a3b8; grid-column: 1 / -1;">
-        <i class="fa-solid fa-house-circle-xmark"
-          style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+        <i class="fa-solid fa-house-circle-xmark" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
         <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No recently added vetted properties found.</p>
       </div>
       {% endfor %}
@@ -1692,9 +1735,9 @@
   </div>
 </section>
 
-<!-- 3. DREAM HOME & STATS SHOWCASE SECTION (CENTERED HEADER & BLENDED STATS) -->
+<!-- 4. DREAM HOME & STATS SHOWCASE SECTION -->
 <section
-  style="padding: 4.5rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
+  style="padding: 3.5rem 0; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
   <div class="vetted-container-padding">
 
     <!-- CENTERED TEXT HEADER BLOCK -->
@@ -1793,8 +1836,8 @@
   </div>
 </section>
 
-<!-- TESTIMONIES HEADER (OUTSIDE THE WATERMARK BLOCK) -->
-<div style="text-align: center; padding: 2.5rem 0 1.25rem 0; background: #ffffff;">
+<!-- 5. TESTIMONIALS SECTION -->
+<div style="text-align: center; padding: 3rem 0 1.25rem 0; background: #ffffff;">
   <h3
     style="font-family: var(--font-heading); font-size: 3rem; color: var(--color-emerald-darkest); font-weight: 800; position: relative; display: inline-block; padding-bottom: 0.5rem; margin: 0 0 0.5rem 0; letter-spacing: -0.5px;">
     Testimonies
@@ -1807,7 +1850,6 @@
   </p>
 </div>
 
-<!-- TENANT TESTIMONIAL MARQUEE SECTION (REDUCED WATERMARK BLOCK FOR CARDS ONLY) -->
 <section class="testimonials-section"
   style="padding: 0.5rem 0 1.25rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #eef5f1 100%); overflow: hidden; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; border-bottom: 1px solid rgba(0,0,0,0.03);">
 
@@ -1954,7 +1996,7 @@
   </div>
 </section>
 
-<!-- 5. SAFETY GUARANTEES -->
+<!-- 6. SAFETY GUARANTEES -->
 <section class="bg-surface" style="padding: 4.5rem 0;">
   <div class="container">
 
@@ -1993,6 +2035,7 @@
         </div>
       </div>
     </div>
+  </div>
 </section>
 
 <!-- LANDLORD CALL TO ACTION (STANDALONE COMPACT CONTAINER SECTION) -->
@@ -2118,52 +2161,6 @@
         document.getElementById('maxPriceInput').value = '';
       }
     });
-
-    // Looped Typewriter Effect (Brand Colors & Faster Animation)
-    const fullSentence = "Newly inspected, fresh and clean. Move in now.";
-    const twElement = document.getElementById("typewriterText");
-    let twIndex = 0;
-    let twIsDeleting = false;
-
-    function renderColoredText(count) {
-      const current = fullSentence.substring(0, count);
-      const seg1End = "Newly inspected, ".length;
-      const seg2End = "Newly inspected, fresh and clean. ".length;
-
-      let html = "";
-      if (count <= seg1End) {
-        html = `<span style="color: var(--color-emerald-darkest);">${current}</span>`;
-      } else if (count <= seg2End) {
-        const p1 = current.substring(0, seg1End);
-        const p2 = current.substring(seg1End);
-        html = `<span style="color: var(--color-emerald-darkest);">${p1}</span><span style="color: #0d5c3a;">${p2}</span>`;
-      } else {
-        const p1 = current.substring(0, seg1End);
-        const p2 = current.substring(seg1End, seg2End);
-        const p3 = current.substring(seg2End);
-        html = `<span style="color: var(--color-emerald-darkest);">${p1}</span><span style="color: #0d5c3a;">${p2}</span><span style="color: var(--color-gold); font-weight: 800;">${p3}</span>`;
-      }
-      return html;
-    }
-
-    function runTypewriter() {
-      if (!twElement) return;
-      twElement.innerHTML = renderColoredText(twIndex);
-
-      let speed = twIsDeleting ? 22 : 48;
-
-      if (!twIsDeleting && twIndex === fullSentence.length) {
-        speed = 2200; // Pause at end
-        twIsDeleting = true;
-      } else if (twIsDeleting && twIndex === 0) {
-        twIsDeleting = false;
-        speed = 450; // Pause before typing again
-      }
-
-      twIndex += twIsDeleting ? -1 : 1;
-      setTimeout(runTypewriter, speed);
-    }
-    runTypewriter();
 
     // Animated Stats Counter (IntersectionObserver Triggered Count-Up)
     const counterElements = document.querySelectorAll('.counter-num');
