@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="64" height="64">
+  <!-- Bottom Shadow Line -->
+  <ellipse cx="256" cy="500" rx="140" ry="12" fill="#075e24" opacity="0.4"/>
+
+  <!-- Outer Green Pin Body -->
+  <path fill="#0d953b" d="M256 10C150 10 64 96 64 202c0 145 174 310 181 317a16 16 0 0 0 22 0c7-7 181-172 181-317 0-106-86-192-192-192z"/>
+
+  <!-- Inner White Circle -->
+  <circle cx="256" cy="190" r="125" fill="#ffffff"/>
+
+  <!-- Chimney -->
+  <rect x="310" y="145" width="24" height="45" rx="3" fill="#335384"/>
+
+  <!-- House Main Roof & Body -->
+  <path fill="#f7cd46" d="M256 110 L160 195 C160 195 172 195 175 195 L175 260 C175 268 182 275 190 275 L322 275 C330 275 337 268 337 260 L337 195 L352 195 Z"/>
+
+  <!-- House Door -->
+  <path fill="#f29c38" d="M230 275 L230 215 C230 202 241 195 256 195 C271 195 282 202 282 215 L282 275 Z"/>
+  <circle cx="272" cy="245" r="4.5" fill="#f7cd46"/>
+</svg>

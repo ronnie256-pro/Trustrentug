@@ -8,9 +8,9 @@ __pycache__/
 venv/
 env/
 
-# Media and Static
+# Media and Collected Static
 media/
-static/
+staticfiles/
 __pycache__/
 *.pyc
 *.pyo
