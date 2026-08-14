@@ -1,0 +1,574 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Construction Assignment Follow-up Dashboard | TRUST Protocol Uganda{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: #ffffff !important;
+        background-image: none !important;
+    }
+
+    .dash-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2.25rem 1.5rem 4rem 1.5rem;
+    }
+
+    /* 1. Top Project Title - Black Text without background */
+    .top-project-title-container {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 0.5rem 0;
+    }
+
+    .top-project-title {
+        font-family: var(--font-heading);
+        font-size: 2.3rem;
+        font-weight: 900;
+        margin: 0;
+        letter-spacing: -0.5px;
+        color: #000000 !important;
+    }
+
+    /* 2. Main 2-Column Grid Layout */
+    .dashboard-main-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    /* Left Column Elements */
+    .video-player-card {
+        background: #0f172a;
+        border: 2px solid rgba(203, 163, 88, 0.4);
+        border-radius: 22px;
+        overflow: hidden;
+        margin-bottom: 1.75rem;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+        position: relative;
+    }
+
+    .video-container {
+        position: relative;
+        width: 100%;
+        height: 420px;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .video-poster-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.85;
+        transition: opacity 0.4s ease;
+    }
+
+    .video-play-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.35);
+        cursor: pointer;
+    }
+
+    .video-play-btn {
+        width: 76px;
+        height: 76px;
+        background: var(--color-emerald-darkest);
+        border: 2.5px solid var(--color-gold);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 1.9rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        transition: transform 0.25s ease;
+    }
+
+    .video-play-overlay:hover .video-play-btn {
+        transform: scale(1.1);
+        background: #10b981;
+    }
+
+    .video-label-bar {
+        background: #1e293b;
+        color: #cbd5e1;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.88rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .btn-download-pics {
+        background: var(--color-gold);
+        color: #000000;
+        border: none;
+        border-radius: 8px;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.82rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .btn-download-pics:hover {
+        background: var(--color-gold-dark);
+        transform: translateY(-1px);
+    }
+
+    /* Phase Video Clips Quick Switcher Buttons */
+    .phase-buttons-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.85rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .btn-phase-tab {
+        background: #f8fafc;
+        border: 2px solid rgba(10, 92, 54, 0.2);
+        border-radius: 14px;
+        padding: 0.9rem 0.5rem;
+        text-align: center;
+        font-weight: 800;
+        font-size: 0.98rem;
+        color: #1e293b;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .btn-phase-tab:hover, .btn-phase-tab.active {
+        background: var(--color-emerald-darkest);
+        color: #ffffff !important;
+        border-color: var(--color-gold);
+        transform: translateY(-2px);
+    }
+
+    /* Roadmap Section Card */
+    .roadmap-section-card {
+        background: #ffffff;
+        border: 2px solid rgba(10, 92, 54, 0.16);
+        border-radius: 22px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(10, 92, 54, 0.05);
+    }
+
+    .card-head-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(203, 163, 88, 0.25);
+    }
+
+    .card-head-title {
+        font-family: var(--font-heading);
+        font-size: 1.65rem;
+        font-weight: 800;
+        color: var(--color-emerald-darkest);
+        margin: 0;
+    }
+
+    /* Right Column Elements */
+    .client-profile-card {
+        background: #ffffff;
+        border: 2px solid rgba(10, 92, 54, 0.18);
+        border-radius: 22px;
+        padding: 1.75rem 1.5rem;
+        margin-bottom: 1.75rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .client-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3.5px solid var(--color-gold);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        margin-bottom: 1.25rem;
+    }
+
+    .client-info-fields {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .info-field-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 0.65rem 0.9rem;
+        font-size: 0.9rem;
+        color: #1e293b;
+    }
+
+    .info-field-box strong {
+        color: var(--color-emerald-darkest);
+    }
+
+    .project-details-card {
+        background: #ffffff;
+        border: 2px solid rgba(10, 92, 54, 0.18);
+        border-radius: 22px;
+        padding: 1.75rem 1.5rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .pd-section-title {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-emerald-darkest);
+        margin: 0 0 1rem 0;
+        border-bottom: 2px solid rgba(203, 163, 88, 0.25);
+        padding-bottom: 0.5rem;
+    }
+
+    .pd-item {
+        font-size: 0.92rem;
+        color: #334155;
+        margin-bottom: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .pd-item strong {
+        color: #1e293b;
+    }
+
+    .fin-record-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 0.75rem 0.9rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.88rem;
+    }
+
+    @media (max-width: 1050px) {
+        .dashboard-main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .phase-buttons-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 550px) {
+        .phase-buttons-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .video-container {
+            height: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-container">
+
+    <!-- 1. TOP FULL-WIDTH PROJECT TITLE (Black Text, No Background) -->
+    <div class="top-project-title-container">
+        <h1 class="top-project-title">
+            {% if project_obj %}{{ project_obj.title }}{% elif app and app.full_name %}{{ app.full_name }}'s Residential House Construction{% else %}Supervised Construction Assignment{% endif %}
+        </h1>
+    </div>
+
+    <!-- 2. MAIN 2-COLUMN GRID -->
+    <div class="dashboard-main-grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+            <!-- Dynamic Phase Video Player Box -->
+            <div class="video-player-card">
+                <div class="video-container">
+                    <img id="videoPosterImg" src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80"
+                        alt="Phase Video Stream" class="video-poster-img">
+                    <div class="video-play-overlay" onclick="triggerVideoPlay()">
+                        <div class="video-play-btn" title="Play Phase Drone Video Stream">&#9658;</div>
+                        <span id="videoStreamText" style="color: #ffffff; font-weight: 800; font-size: 1rem; margin-top: 0.85rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                            Watch Phase 1 Drone Inspection Stream (1m 45s)
+                        </span>
+                    </div>
+                </div>
+                <div class="video-label-bar">
+                    <span id="videoClipTitle">Phase 1: Planning, Demarcation & Surveying Drone Stream</span>
+                    <button id="btnDownloadPics" class="btn-download-pics" onclick="downloadPhasePics()">
+                        &#128247; Download Pics
+                    </button>
+                </div>
+            </div>
+
+            <!-- Phase 1 to Phase 5 Video Clip Switcher Buttons -->
+            <div class="phase-buttons-row">
+                <div class="btn-phase-tab active" onclick="selectPhaseVideo(1)">Phase 1</div>
+                <div class="btn-phase-tab" onclick="selectPhaseVideo(2)">Phase 2</div>
+                <div class="btn-phase-tab" onclick="selectPhaseVideo(3)">Phase 3</div>
+                <div class="btn-phase-tab" onclick="selectPhaseVideo(4)">Phase 4</div>
+                <div class="btn-phase-tab" onclick="selectPhaseVideo(5)">Phase 5</div>
+            </div>
+
+            <!-- Construction Milestone Roadmap Card -->
+            <div class="roadmap-section-card" id="sectionMilestones">
+                <div class="card-head-row">
+                    <div>
+                        <h2 class="card-head-title">Construction Milestone Roadmap</h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">Overall Completion Score</span>
+                        <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 900; color: var(--color-emerald-darkest); line-height: 1.1;">
+                            {{ overall_completion_pct }}%
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 Master Phase Accordions (Compact Height & Padding) -->
+                <div style="display: flex; flex-direction: column; gap: 1.1rem;">
+                    {% for phase in roadmap_phases %}
+                    <div id="phaseCard{{ phase.phase_number }}" style="background: #ffffff; border: 1.5px solid rgba(11, 104, 37, 0.25); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.03);">
+                        
+                        <!-- Phase Accordion Header (Compact Solid Green #0b6825 Progress Bar) -->
+                        <div style="position: relative; background: #e2e8f0; cursor: pointer; overflow: hidden;" onclick="togglePhaseBody({{ phase.phase_number }})">
+                            <!-- Dynamic Inner Solid Green Progress Bar Fill Layer (#0b6825) -->
+                            <div style="position: absolute; top: 0; bottom: 0; left: 0; width: {{ phase.fill_pct }}%; background: #0b6825; transition: width 0.8s ease-in-out;"></div>
+
+                            <!-- Overlaid Header Text Content (Compact 0.95rem 1.35rem Padding) -->
+                            <div style="position: relative; z-index: 2; padding: 0.95rem 1.35rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                                <h3 style="font-size: 1.12rem; font-weight: 800; color: {% if phase.fill_pct >= 50 %}#ffffff{% else %}#1e293b{% endif %}; margin: 0; transition: color 0.3s ease;">
+                                    {{ phase.title }}
+                                </h3>
+
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <span style="font-weight: 900; font-size: 1.18rem; color: {% if phase.fill_pct >= 50 %}#ffffff{% else %}#0b6825{% endif %}; font-family: var(--font-heading);">
+                                        ({{ phase.earned_house_pct|floatformat:"-1" }}/{{ phase.phase_weight|floatformat:"-1" }})
+                                    </span>
+                                    <span id="phaseToggleArrow{{ phase.phase_number }}" style="font-size: 1rem; color: {% if phase.fill_pct >= 50 %}#ffffff{% else %}#475569{% endif %}; transition: transform 0.3s ease; transform: rotate(-90deg);">&#9660;</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phase Accordion Body (All Closed by Default) -->
+                        <div id="phaseBody{{ phase.phase_number }}" style="padding: 0.95rem 1.35rem; display: none;">
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                                    <thead>
+                                        <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.78rem; text-transform: uppercase;">
+                                            <th style="padding: 0.5rem 0.4rem;">Milestone Description</th>
+                                            <th style="padding: 0.5rem 0.4rem; text-align: center;">House Contribution</th>
+                                            <th style="padding: 0.5rem 0.4rem; text-align: right;">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for m in phase.milestones %}
+                                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                                            <td style="padding: 0.65rem 0.4rem; font-weight: 800; color: #1e293b;">{{ m.title }}</td>
+                                            <td style="padding: 0.65rem 0.4rem; text-align: center; font-weight: 900; color: var(--color-emerald-darkest);">{{ m.house_pct }}%</td>
+                                            <td style="padding: 0.65rem 0.4rem; text-align: right;">
+                                                {% if m.status == 'completed' %}
+                                                <span style="background: rgba(16, 185, 129, 0.12); color: #047857; font-weight: 800; font-size: 0.74rem; padding: 0.2rem 0.65rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                                    &#10004; Completed
+                                                </span>
+                                                {% elif m.status == 'in_progress' %}
+                                                <span style="background: rgba(245, 158, 11, 0.15); color: #b45309; font-weight: 800; font-size: 0.74rem; padding: 0.2rem 0.65rem; border-radius: 50px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                                                    In Progress
+                                                </span>
+                                                {% else %}
+                                                <span style="background: #f1f5f9; color: #94a3b8; font-weight: 700; font-size: 0.74rem; padding: 0.2rem 0.65rem; border-radius: 50px;">
+                                                    Pending
+                                                </span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+            <!-- Client Profile Box -->
+            <div class="client-profile-card">
+                <!-- Circular Profile Pic of Client -->
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"
+                    alt="Client Profile Pic" class="client-avatar">
+
+                <div class="client-info-fields">
+                    <div class="info-field-box">
+                        <strong>Name:</strong> {% if app and app.full_name %}{{ app.full_name }}{% else %}Dr. Moses Kagimu{% endif %}
+                    </div>
+                    <div class="info-field-box">
+                        <strong>Country:</strong> {% if app and app.country_of_residence %}{{ app.country_of_residence }}{% else %}United Kingdom{% endif %}
+                    </div>
+                    <div class="info-field-box">
+                        <strong>Contacts:</strong> {% if app and app.phone_number %}{{ app.phone_number }}{% else %}+44 7911 123456{% endif %}
+                    </div>
+                    <div class="info-field-box">
+                        <strong>Project ID:</strong> #TRUST-DSP-{% if app %}{{ app.id|stringformat:"04d" }}{% else %}0003{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Details & Financial Records Card -->
+            <div class="project-details-card">
+                <h3 class="pd-section-title">Project Details</h3>
+                
+                <!-- Added Project Cost right above Date of Commencement -->
+                <div class="pd-item">
+                    <strong>Project cost:</strong><br>
+                    <span style="font-weight: 900; font-size: 1.15rem; color: var(--color-emerald-darkest);">{% if payment_status.total_budget %}{{ payment_status.total_budget }}{% else %}UGX 220,000,000{% endif %}</span>
+                </div>
+                <div class="pd-item">
+                    <strong>Date of commencement:</strong><br>
+                    {{ contract_status.start_date }}
+                </div>
+                <div class="pd-item">
+                    <strong>Handover Date:</strong><br>
+                    {{ contract_status.expected_handover }}
+                </div>
+                <div class="pd-item">
+                    <strong>Next of KIN:</strong><br>
+                    {% if app and app.next_of_kin_name %}{{ app.next_of_kin_name }} ({% if app.next_of_kin_relationship %}{{ app.next_of_kin_relationship }}{% else %}Kin{% endif %}) — {{ app.next_of_kin_phone }}{% else %}Sarah Namukasa (Sister) — 0772 123456{% endif %}
+                </div>
+
+                <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 2px solid rgba(203, 163, 88, 0.25);">
+                    <h4 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--color-emerald-darkest); margin: 0 0 0.75rem 0;">
+                        Financial Records
+                    </h4>
+
+                    <div class="fin-record-box">
+                        <span>TRUST Received Deposit 1:</span>
+                        <strong style="color: #047857;">UGX 100,000,000</strong>
+                    </div>
+                    <div class="fin-record-box">
+                        <span>TRUST Received Deposit 2:</span>
+                        <strong style="color: #047857;">UGX 50,000,000</strong>
+                    </div>
+                    <div class="fin-record-box" style="background: #f0fdf4; border-color: rgba(16, 185, 129, 0.3);">
+                        <span>Funds Received:</span>
+                        <strong style="color: #047857; font-weight: 900;">{{ payment_status.escrow_deposited }}</strong>
+                    </div>
+                    <div class="fin-record-box" style="background: #fef2f2; border-color: rgba(239, 68, 68, 0.3);">
+                        <span>Remaining Balance:</span>
+                        <strong style="color: #b91c1c; font-weight: 900;">UGX 70,000,000</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Phase Video Clips Data Switcher
+    const phaseVideos = {
+        1: {
+            title: "Phase 1: Planning, Demarcation & Surveying Drone Stream",
+            poster: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80",
+            duration: "1m 45s"
+        },
+        2: {
+            title: "Phase 2: Site Excavation & Foundation Concrete Pouring",
+            poster: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+            duration: "2m 10s"
+        },
+        3: {
+            title: "Phase 3: Structural Frame & Brickwork Elevation Drone Clip",
+            poster: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+            duration: "1m 55s"
+        },
+        4: {
+            title: "Phase 4: Roof Framing, Plastering & Services First Fix",
+            poster: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+            duration: "2m 30s"
+        },
+        5: {
+            title: "Phase 5: External Development & Handover Turnkey Stream",
+            poster: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+            duration: "1m 20s"
+        }
+    };
+
+    let currentVideoPhase = 1;
+
+    function selectPhaseVideo(phaseNum) {
+        currentVideoPhase = phaseNum;
+        const clip = phaseVideos[phaseNum];
+        if (clip) {
+            document.getElementById('videoPosterImg').src = clip.poster;
+            document.getElementById('videoClipTitle').innerText = clip.title;
+            document.getElementById('videoStreamText').innerText = `Watch ${clip.title} (${clip.duration})`;
+        }
+        
+        // Highlight active phase video button
+        document.querySelectorAll('.btn-phase-tab').forEach((btn, idx) => {
+            btn.classList.toggle('active', idx === (phaseNum - 1));
+        });
+
+        // NOTE: Auto-opening accordion logic removed per user request!
+    }
+
+    function downloadPhasePics() {
+        alert(`Downloading high-resolution site inspection photos archive for Phase ${currentVideoPhase}...`);
+    }
+
+    function triggerVideoPlay() {
+        alert("Playing high-definition drone inspection footage stream...");
+    }
+
+    // Single Accordion Logic (Only ONE open at a time to save space)
+    function togglePhaseBody(phaseNum) {
+        for (let i = 1; i <= 5; i++) {
+            const body = document.getElementById('phaseBody' + i);
+            const arrow = document.getElementById('phaseToggleArrow' + i);
+            if (i === phaseNum) {
+                if (body) {
+                    const isHidden = (body.style.display === 'none');
+                    body.style.display = isHidden ? 'block' : 'none';
+                    if (arrow) arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+                }
+            } else {
+                if (body) body.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(-90deg)';
+            }
+        }
+    }
+</script>
+{% endblock %}

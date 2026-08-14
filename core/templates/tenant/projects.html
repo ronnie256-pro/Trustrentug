@@ -607,7 +607,7 @@
     <!-- PROJECTS LIST (2 CARDS PER ROW, IMAGE DISPLAY) -->
     <div class="projects-list">
         {% for project in projects %}
-        <div class="project-card">
+        <a href="/projects/{{ project.id }}/" class="project-card" style="text-decoration: none; color: inherit;">
             <div>
                 <!-- Fast-Loading Construction Progress Image -->
                 <div class="project-img-wrapper">
@@ -654,7 +654,7 @@
                     {{ project.progress_percentage }}%
                 </span>
             </div>
-        </div>
+        </a>
         {% empty %}
         <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 0; color: var(--color-text-muted);">
             <h3 style="font-size: 1.4rem; color: var(--color-text-dark); font-weight: 700;">No active projects at this moment</h3>
@@ -937,7 +937,10 @@
             </div>
             <h3 style="font-size: 1.6rem; color: var(--color-emerald-darkest); font-weight: 800; margin-bottom: 0.75rem;">Application Received!</h3>
             <p id="successAlertMsg" style="font-size: 1.05rem; color: #475569; line-height: 1.65; max-width: 650px; margin: 0 auto 1.5rem auto;"></p>
-            <button type="button" class="btn-wizard-next" id="closeSuccessModalBtn">Done & Close</button>
+            <div style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
+                <a href="/projects/construction-dashboard/" id="goToDashBtn" class="btn-wizard-next" style="text-decoration: none; display: inline-block;">Go to Construction Dashboard &rarr;</a>
+                <button type="button" class="btn-wizard-back" id="closeSuccessModalBtn">Close</button>
+            </div>
         </div>
     </div>
 </div>
@@ -1169,6 +1172,9 @@
                             form.style.display = 'none';
                             document.querySelector('.wizard-steps-bar').style.display = 'none';
                             successMsg.textContent = data.message;
+                            if (data.application_id) {
+                                document.getElementById('goToDashBtn').href = '/projects/construction-dashboard/' + data.application_id + '/';
+                            }
                             successAlert.style.display = 'block';
                         } else {
                             alert('Submission Error: ' + (data.error || 'Failed to submit application.'));

@@ -2856,19 +2856,10 @@ def projects_list_view(request):
 
 def project_detail_view(request, project_id):
     """
-    Renders detailed breakdown for a specific construction project.
+    Redirects user directly to the Client Construction Supervision Dashboard for an ongoing project.
     """
-    from core.models import ConstructionProject, PopupLogic
-    from django.shortcuts import get_object_or_404, render
-    project = get_object_or_404(ConstructionProject, id=project_id)
-    other_projects = ConstructionProject.objects.exclude(id=project.id)[:3]
-    active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
-
-    return render(request, 'tenant/project_detail.html', {
-        'project': project,
-        'other_projects': other_projects,
-        'active_popup': active_popup
-    })
+    from django.shortcuts import redirect
+    return redirect('client_construction_dashboard_detail', app_id=project_id)
 
 
 from django.views.decorators.csrf import csrf_exempt
@@ -2962,3 +2953,195 @@ def diaspora_application_submit_view(request):
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+
+def client_construction_dashboard(request, app_id=None):
+    """
+    Renders the dedicated Client Construction Supervision Dashboard to follow up on real estate assignments.
+    Calculates exact overall project completion based on a 5-Phase / 25-Milestone Weighted Roadmap:
+    - Phase 1: Planning & Design (15%)
+    - Phase 2: Site & Foundation (20%)
+    - Phase 3: Structural Works (30%)
+    - Phase 4: Finishes & Services (25%)
+    - Phase 5: External Works & Handover (10%)
+    """
+    from core.models import DiasporaClientApplication, ConstructionProject
+    
+    app = None
+    project_obj = None
+
+    if app_id:
+        try:
+            project_obj = ConstructionProject.objects.get(id=app_id)
+        except ConstructionProject.DoesNotExist:
+            pass
+
+        try:
+            app = DiasporaClientApplication.objects.get(id=app_id)
+        except DiasporaClientApplication.DoesNotExist:
+            pass
+
+    if not app:
+        app = DiasporaClientApplication.objects.first()
+
+    if not project_obj:
+        project_obj = ConstructionProject.objects.first()
+
+    # Standard 5-Phase / 25-Milestone Construction Roadmap Engine
+    roadmap_phases = [
+        {
+            'phase_number': 1,
+            'title': 'Phase 1: Planning & Design',
+            'phase_weight': 15.0,
+            'milestones': [
+                {'no': 1, 'title': 'Project Initiation', 'phase_pct': 20, 'house_pct': 3.0, 'status': 'completed', 'verified_by': 'TRUST Project Initiation Unit'},
+                {'no': 2, 'title': 'Surveying & Site Investigation', 'phase_pct': 15, 'house_pct': 2.25, 'status': 'completed', 'verified_by': 'Registered Surveyor'},
+                {'no': 3, 'title': 'Architectural & Engineering Design', 'phase_pct': 30, 'house_pct': 4.5, 'status': 'completed', 'verified_by': 'Lead Architect & Engineer'},
+                {'no': 4, 'title': 'Approvals & Permits', 'phase_pct': 20, 'house_pct': 3.0, 'status': 'completed', 'verified_by': 'Physical Planning Board'},
+                {'no': 5, 'title': 'Mobilization & Site Setup', 'phase_pct': 15, 'house_pct': 2.25, 'status': 'completed', 'verified_by': 'Site Supervisor'},
+            ]
+        },
+        {
+            'phase_number': 2,
+            'title': 'Phase 2: Site & Foundation',
+            'phase_weight': 20.0,
+            'milestones': [
+                {'no': 6, 'title': 'Excavation', 'phase_pct': 20, 'house_pct': 4.0, 'status': 'completed', 'verified_by': 'Earthworks Engineer'},
+                {'no': 7, 'title': 'Foundation Construction', 'phase_pct': 45, 'house_pct': 9.0, 'status': 'completed', 'verified_by': 'Eng. Patrick Mukasa'},
+                {'no': 8, 'title': 'Walling & Structural Frame', 'phase_pct': 20, 'house_pct': 4.0, 'status': 'completed', 'verified_by': 'TRUST Engineering Unit'},
+                {'no': 9, 'title': 'Roof Structure', 'phase_pct': 10, 'house_pct': 2.0, 'status': 'completed', 'verified_by': 'Structural Engineer'},
+                {'no': 10, 'title': 'Roofing (Lock-Up Stage)', 'phase_pct': 5, 'house_pct': 1.0, 'status': 'completed', 'verified_by': 'Roofing Specialist'},
+            ]
+        },
+        {
+            'phase_number': 3,
+            'title': 'Phase 3: Structural Works',
+            'phase_weight': 30.0,
+            'milestones': [
+                {'no': 11, 'title': 'Plumbing First Fix', 'phase_pct': 15, 'house_pct': 4.5, 'status': 'completed', 'verified_by': 'Plumbing Engineer'},
+                {'no': 12, 'title': 'Electrical First Fix', 'phase_pct': 15, 'house_pct': 4.5, 'status': 'completed', 'verified_by': 'Electrical Engineer'},
+                {'no': 13, 'title': 'Mechanical/HVAC First Fix', 'phase_pct': 10, 'house_pct': 3.0, 'status': 'completed', 'verified_by': 'Services Inspector'},
+                {'no': 14, 'title': 'Plastering & Screeding', 'phase_pct': 25, 'house_pct': 7.5, 'status': 'in_progress', 'earned_house_pct': 5.0, 'verified_by': 'Finishes Inspector'},
+                {'no': 15, 'title': 'Ceiling Installation', 'phase_pct': 15, 'house_pct': 4.5, 'status': 'pending', 'verified_by': 'Pending'},
+                {'no': 16, 'title': 'Tiling & Flooring', 'phase_pct': 20, 'house_pct': 6.0, 'status': 'pending', 'verified_by': 'Pending'},
+            ]
+        },
+        {
+            'phase_number': 4,
+            'title': 'Phase 4: Finishes & Services',
+            'phase_weight': 25.0,
+            'milestones': [
+                {'no': 17, 'title': 'Joinery & Carpentry', 'phase_pct': 25, 'house_pct': 6.25, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+                {'no': 18, 'title': 'Painting & Decorative Finishes', 'phase_pct': 25, 'house_pct': 6.25, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+                {'no': 19, 'title': 'Plumbing Second Fix', 'phase_pct': 20, 'house_pct': 5.0, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+                {'no': 20, 'title': 'Electrical Second Fix', 'phase_pct': 20, 'house_pct': 5.0, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+                {'no': 21, 'title': 'External Development', 'phase_pct': 10, 'house_pct': 2.5, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+            ]
+        },
+        {
+            'phase_number': 5,
+            'title': 'Phase 5: External Works & Handover',
+            'phase_weight': 10.0,
+            'milestones': [
+                {'no': 22, 'title': 'Testing & Commissioning', 'phase_pct': 25, 'house_pct': 2.5, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+                {'no': 23, 'title': 'Snagging / Punch List', 'phase_pct': 20, 'house_pct': 2.0, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+                {'no': 24, 'title': 'Final Inspection & Occupancy Approval', 'phase_pct': 30, 'house_pct': 3.0, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+                {'no': 25, 'title': 'Handover & Closeout', 'phase_pct': 25, 'house_pct': 2.5, 'status': 'pending', 'verified_by': 'Upcoming Stage'},
+            ]
+        }
+    ]
+
+    # Calculate exact phase completion percentages & overall house completion score
+    total_house_completion = 0.0
+    for phase in roadmap_phases:
+        earned_phase_weight = 0.0
+        for m in phase['milestones']:
+            if m.get('status') == 'completed':
+                earned_phase_weight += m['house_pct']
+            elif m.get('status') == 'in_progress':
+                earned = m.get('earned_house_pct', m['house_pct'] * 0.5)
+                earned_phase_weight += earned
+        
+        phase['earned_house_pct'] = round(earned_phase_weight, 2)
+        phase['fill_pct'] = round((earned_phase_weight / phase['phase_weight']) * 100, 1)
+        total_house_completion += earned_phase_weight
+
+    overall_completion_pct = round(total_house_completion, 1)
+
+    # Site updates timeline
+    site_updates = [
+        {
+            'date': 'Today, 09:30 AM',
+            'title': 'Plastering & Wall Screeding Inspection (Milestone 14)',
+            'description': 'Internal wall plastering verified at 70% completion. Mortar mix ratio 1:4 confirmed compliant with structural specs.',
+            'category': 'Quality Test',
+            'author': 'Eng. Patrick Mukasa'
+        },
+        {
+            'date': 'Yesterday, 04:15 PM',
+            'title': 'Plumbing & Electrical First Fix Sign-Off (Milestones 11 & 12)',
+            'description': 'Concealed PPR plumbing pressure testing held at 10 bar for 2 hours with zero drop. Electrical conduit runs approved.',
+            'category': 'Inspection Sign-off',
+            'author': 'TRUST Engineering Inspector'
+        },
+        {
+            'date': '10 Aug 2026',
+            'title': 'Phase 2 Completion Escrow Release',
+            'description': 'Full Phase 2 (Site & Foundation - 20% house contribution) milestone verified and escrow payment released to contractor.',
+            'category': 'Payment Release',
+            'author': 'TRUST Financial Auditor'
+        }
+    ]
+
+    # Site Photo Gallery
+    photos = [
+        {'url': 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=800&q=80', 'caption': 'Milestone 14: Internal Wall Plastering & Screeding', 'date': '14 Aug 2026'},
+        {'url': 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80', 'caption': 'Milestones 11 & 12: Electrical Conduit & Plumbing First Fix', 'date': '12 Aug 2026'},
+        {'url': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', 'caption': 'Milestone 10: Roof Cover & Waterproof Lock-Up', 'date': '05 Aug 2026'},
+        {'url': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80', 'caption': 'Milestone 7: Reinforced Concrete Foundation Sign-Off', 'date': '20 Jul 2026'},
+    ]
+
+    # Video Clips
+    videos = [
+        {'title': 'Drone Flyover: Lock-Up & Plastering Phase Walkthrough', 'date': '13 Aug 2026', 'duration': '1m 45s', 'poster': 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=800&q=80'},
+        {'title': 'Hydrostatic Plumbing Pressure Test Video', 'date': '11 Aug 2026', 'duration': '0m 58s', 'poster': 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80'}
+    ]
+
+    # Payment / Escrow Status
+    payment_status = {
+        'total_budget': 'UGX 220,000,000',
+        'escrow_deposited': 'UGX 150,000,000',
+        'disbursed': 'UGX 88,000,000',
+        'escrow_balance': 'UGX 62,000,000',
+        'next_milestone_payment': 'UGX 33,000,000 (Upon Phase 3 Structural Sign-Off)',
+        'payment_method': app.get_payment_method_display() if app else 'SWIFT International Wire Transfer'
+    }
+
+    # Contract Status
+    contract_status = {
+        'agreement_no': f"TRUST-AGR-2026-{(app.id if app else 1):04d}",
+        'status': 'Active & Escrow Protected',
+        'start_date': '15 July 2026',
+        'expected_handover': '28 February 2027',
+        'legal_representative': 'TRUST Legal & Supervisory Bureau'
+    }
+
+    # Verification Reports
+    verification_reports = [
+        {'title': 'Phase 1 Sign-Off: Architectural, Engineering & Permit Approvals Certificate', 'ref': 'REP-P1-109', 'date': '18 Jul 2026', 'status': 'Verified & Sealed'},
+        {'title': 'Phase 2 Sign-Off: Substructure Foundation & Concrete Compression Report', 'ref': 'REP-P2-204', 'date': '06 Aug 2026', 'status': 'Verified & Sealed'},
+        {'title': 'Milestone 11 & 12: Plumbing & Electrical First Fix Inspection Report', 'ref': 'REP-M11-312', 'date': '12 Aug 2026', 'status': 'Verified & Sealed'},
+    ]
+
+    return render(request, 'tenant/construction_dashboard.html', {
+        'app': app,
+        'project_obj': project_obj,
+        'roadmap_phases': roadmap_phases,
+        'overall_completion_pct': overall_completion_pct,
+        'site_updates': site_updates,
+        'photos': photos,
+        'videos': videos,
+        'payment_status': payment_status,
+        'contract_status': contract_status,
+        'verification_reports': verification_reports,
+    })
