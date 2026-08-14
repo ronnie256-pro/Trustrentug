@@ -521,3 +521,66 @@ class ConstructionProject(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.progress_percentage}% Complete)"
+
+
+class DiasporaClientApplication(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('under_review', 'Under Verification'),
+        ('approved', 'Approved & Contract Active'),
+        ('rejected', 'Declined'),
+    ]
+
+    PAYMENT_CHOICES = [
+        ('swift', 'SWIFT Wire Transfer'),
+        ('bank_direct', 'Direct Bank Transfer'),
+        ('escrow', 'TRUST Escrow Account'),
+        ('mobile_money', 'Mobile Money (MTN / Airtel)'),
+        ('other', 'Other Arrangement'),
+    ]
+
+    # 1. Personal details
+    full_name = models.CharField(max_length=255)
+    passport_or_id = models.CharField(max_length=100, help_text="Passport Number or National ID Number")
+    id_document = models.FileField(upload_to='diaspora_ids/', blank=True, null=True, help_text="Passport or ID Upload")
+    country_of_residence = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=50)
+
+    # 2. Land ownership status & details
+    owns_land = models.CharField(max_length=10, default='yes', help_text="yes or no")
+    land_proof = models.FileField(upload_to='diaspora_land_proofs/', blank=True, null=True, help_text="Proof of land ownership: Title, Agreement, or Search Letter")
+    district = models.CharField(max_length=150)
+    sub_county = models.CharField(max_length=150, blank=True)
+    village = models.CharField(max_length=150, blank=True)
+
+    # Land acquisition requirements (if owns_land == 'no')
+    desired_land_size = models.CharField(max_length=100, blank=True, help_text="e.g. 50x100 ft, 100x100 ft, 1 Acre")
+    desired_land_type = models.CharField(max_length=100, blank=True, help_text="Agricultural, Rental setup, Commercial, Urban, Off-town residential")
+    land_budget_range = models.CharField(max_length=100, blank=True, help_text="e.g. UGX 30M - 70M")
+
+    # 3. Building concept & budget
+    building_plans = models.FileField(upload_to='diaspora_plans/', blank=True, null=True, help_text="Building plans or architectural concept files")
+    building_concept_notes = models.TextField(blank=True, help_text="Building concept notes or custom specs")
+    budget_range = models.CharField(max_length=100, blank=True, help_text="e.g. UGX 100M - 250M")
+    construction_budget_range = models.CharField(max_length=100, blank=True, help_text="Construction budget range")
+    preferred_timeline = models.CharField(max_length=100, help_text="e.g. Immediate (1-3 months)")
+
+    # 4. Next of kin in Uganda
+    next_of_kin_name = models.CharField(max_length=255)
+    next_of_kin_relationship = models.CharField(max_length=100, blank=True)
+    next_of_kin_phone = models.CharField(max_length=50)
+    next_of_kin_district = models.CharField(max_length=150, blank=True)
+
+    # 5. Payment method
+    payment_method = models.CharField(max_length=50, choices=PAYMENT_CHOICES, default='swift')
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.full_name} ({self.country_of_residence}) - {self.district}"

@@ -35,6 +35,7 @@ urlpatterns = [
     path('nearby/', views.nearby_properties_view, name='nearby_properties'),
     path('projects/', views.projects_list_view, name='projects_list'),
     path('projects/<int:project_id>/', views.project_detail_view, name='project_detail'),
+    path('projects/diaspora-apply/', views.diaspora_application_submit_view, name='diaspora_application_submit'),
     path('api/properties/nearby/', views.api_nearby_properties, name='api_nearby_properties'),
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
     path('property/<int:property_id>/tour/', views.property_tour_view, name='property_tour'),

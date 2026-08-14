@@ -2869,3 +2869,96 @@ def project_detail_view(request, project_id):
         'other_projects': other_projects,
         'active_popup': active_popup
     })
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def diaspora_application_submit_view(request):
+    """
+    Handles form submission from Diaspora clients requesting construction building or supervision.
+    Collects minimum required TRUST Protocol fields:
+    - Full Name, Passport/ID, Country of Residence, Email, Phone
+    - Land Ownership Proof, Location (District, Sub-County, Village)
+    - Building Plans/Concept, Budget Range, Preferred Timeline
+    - Next of Kin in Uganda (Name, Relationship, Phone, District)
+    - Payment Method
+    """
+    if request.method == 'POST':
+        from core.models import DiasporaClientApplication
+        from django.http import JsonResponse
+
+        try:
+            full_name = request.POST.get('full_name', '').strip()
+            passport_or_id = request.POST.get('passport_or_id', '').strip()
+            country_of_residence = request.POST.get('country_of_residence', '').strip()
+            email = request.POST.get('email', '').strip()
+            phone_number = request.POST.get('phone_number', '').strip()
+
+            owns_land = request.POST.get('owns_land', 'yes').strip().lower()
+            district = request.POST.get('district', '').strip()
+            sub_county = request.POST.get('sub_county', '').strip()
+            village = request.POST.get('village', '').strip()
+
+            desired_land_size = request.POST.get('desired_land_size', '').strip()
+            desired_land_type = request.POST.get('desired_land_type', '').strip()
+            land_budget_range = request.POST.get('land_budget_range', '').strip()
+
+            building_concept_notes = request.POST.get('building_concept_notes', '').strip()
+            budget_range = request.POST.get('budget_range', '').strip()
+            construction_budget_range = request.POST.get('construction_budget_range', '').strip()
+            preferred_timeline = request.POST.get('preferred_timeline', '').strip()
+
+            next_of_kin_name = request.POST.get('next_of_kin_name', '').strip()
+            next_of_kin_relationship = request.POST.get('next_of_kin_relationship', '').strip()
+            next_of_kin_phone = request.POST.get('next_of_kin_phone', '').strip()
+            next_of_kin_district = request.POST.get('next_of_kin_district', '').strip()
+
+            payment_method = request.POST.get('payment_method', 'swift').strip()
+
+            # Files
+            id_document = request.FILES.get('id_document')
+            land_proof = request.FILES.get('land_proof')
+            building_plans = request.FILES.get('building_plans')
+
+            if not full_name or not passport_or_id or not country_of_residence or not email or not phone_number or not district or not next_of_kin_name:
+                return JsonResponse({'success': False, 'error': 'Please fill in all required fields marked with *.'}, status=400)
+
+            app = DiasporaClientApplication.objects.create(
+                full_name=full_name,
+                passport_or_id=passport_or_id,
+                id_document=id_document,
+                country_of_residence=country_of_residence,
+                email=email,
+                phone_number=phone_number,
+                owns_land=owns_land,
+                land_proof=land_proof,
+                district=district,
+                sub_county=sub_county,
+                village=village,
+                desired_land_size=desired_land_size,
+                desired_land_type=desired_land_type,
+                land_budget_range=land_budget_range,
+                building_plans=building_plans,
+                building_concept_notes=building_concept_notes,
+                budget_range=budget_range,
+                construction_budget_range=construction_budget_range,
+                preferred_timeline=preferred_timeline,
+                next_of_kin_name=next_of_kin_name,
+                next_of_kin_relationship=next_of_kin_relationship,
+                next_of_kin_phone=next_of_kin_phone,
+                next_of_kin_district=next_of_kin_district,
+                payment_method=payment_method,
+                status='pending'
+            )
+
+            return JsonResponse({
+                'success': True,
+                'message': f'Thank you {full_name}! Your TRUST Construction Application (Ref: #TRUST-DSP-{app.id:04d}) has been submitted successfully. A TRUST Protocol engineering officer will contact you via email ({email}) within 24 hours.',
+                'application_id': app.id
+            })
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)

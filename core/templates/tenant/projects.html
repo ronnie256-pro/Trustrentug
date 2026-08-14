@@ -36,22 +36,6 @@
         margin-bottom: 3.5rem;
     }
 
-    .initiative-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(203, 163, 88, 0.16);
-        border: 1.5px solid var(--color-gold);
-        color: var(--color-emerald-darkest);
-        padding: 0.4rem 1.1rem;
-        border-radius: 50px;
-        font-size: 0.88rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        margin-bottom: 1.25rem;
-    }
-
     .initiative-title {
         font-family: var(--font-heading);
         font-size: 2.3rem;
@@ -83,6 +67,7 @@
         transition: all 0.25s ease;
         border: 1.5px solid var(--color-gold);
         width: fit-content;
+        cursor: pointer;
     }
 
     .btn-partner:hover {
@@ -288,6 +273,226 @@
         text-align: right;
     }
 
+    /* Diaspora Application Modal Styles */
+    .diaspora-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(6, 30, 20, 0.78);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .diaspora-modal-overlay.is-active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .diaspora-modal-card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 840px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(203, 163, 88, 0.4);
+        position: relative;
+        padding: 2.25rem 2.5rem;
+    }
+
+    .diaspora-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1.25rem;
+        border-bottom: 2px solid rgba(203, 163, 88, 0.2);
+        margin-bottom: 1.5rem;
+    }
+
+    .diaspora-modal-title {
+        font-family: var(--font-heading);
+        font-size: 1.65rem;
+        font-weight: 800;
+        color: var(--color-emerald-darkest);
+        margin: 0;
+    }
+
+    .diaspora-modal-close {
+        background: #f1f5f9;
+        border: none;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .diaspora-modal-close:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    /* Step Wizard Progress Bar (5 Steps) */
+    .wizard-steps-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .wizard-steps-bar::before {
+        content: '';
+        position: absolute;
+        top: 18px;
+        left: 6%;
+        right: 6%;
+        height: 3px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+
+    .wizard-step-item {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .wizard-step-node {
+        background: #ffffff;
+        border: 2.5px solid #cbd5e1;
+        color: #64748b;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.92rem;
+        transition: all 0.3s ease;
+    }
+
+    .wizard-step-item.active .wizard-step-node {
+        border-color: var(--color-emerald-dark);
+        background: var(--color-emerald-dark);
+        color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(10, 92, 54, 0.15);
+    }
+
+    .wizard-step-item.completed .wizard-step-node {
+        border-color: #10b981;
+        background: #10b981;
+        color: #ffffff;
+    }
+
+    .wizard-step-label {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #64748b;
+        text-align: center;
+    }
+
+    .wizard-step-item.active .wizard-step-label {
+        color: var(--color-emerald-darkest);
+        font-weight: 800;
+    }
+
+    .form-step-panel {
+        display: none;
+    }
+
+    .form-step-panel.active {
+        display: block;
+        animation: fadeInStep 0.35s ease-in-out;
+    }
+
+    @keyframes fadeInStep {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+
+    .form-field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1.1rem;
+    }
+
+    .form-field-label {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1e293b;
+    }
+
+    .form-field-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        border: 1.5px solid #cbd5e1;
+        font-size: 0.95rem;
+        background: #f8fafc;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-field-input:focus {
+        outline: none;
+        border-color: var(--color-emerald-dark);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(10, 92, 54, 0.12);
+    }
+
+    .wizard-nav-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2rem;
+        padding-top: 1.25rem;
+        border-top: 1.5.px solid #f1f5f9;
+    }
+
+    .btn-wizard-back {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 0.75rem 1.75rem;
+        border-radius: 10px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-wizard-next {
+        background: linear-gradient(135deg, var(--color-emerald-dark), var(--color-emerald-darkest));
+        color: #ffffff;
+        padding: 0.8rem 2.2rem;
+        border-radius: 10px;
+        font-weight: 800;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(7, 94, 84, 0.25);
+    }
+
     @media (max-width: 1000px) {
         .initiative-hero-card {
             grid-template-columns: 1fr;
@@ -306,6 +511,9 @@
         .projects-list {
             grid-template-columns: 1fr;
             gap: 1.35rem;
+        }
+        .form-grid-2 {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -326,6 +534,12 @@
         .project-img-wrapper {
             height: 180px;
         }
+        .diaspora-modal-card {
+            padding: 1.5rem 1.2rem;
+        }
+        .wizard-step-label {
+            display: none;
+        }
     }
 </style>
 {% endblock %}
@@ -344,9 +558,9 @@
                 milestone-based escrow disbursements, and live site reporting, we safeguard your investment and
                 guarantee structural quality from foundation to key handover.
             </p>
-            <a href="#" class="btn-partner">
+            <button type="button" class="btn-partner" id="openDiasporaModalBtn">
                 Partner with Us
-            </a>
+            </button>
         </div>
 
         <!-- Right Side Pure Image Slider (Just Images, No Text Overlay) -->
@@ -443,11 +657,288 @@
         </div>
         {% empty %}
         <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 0; color: var(--color-text-muted);">
-            <h3 style="font-size: 1.4rem; color: var(--color-text-dark); font-weight: 700;">No active projects at this
-                moment</h3>
+            <h3 style="font-size: 1.4rem; color: var(--color-text-dark); font-weight: 700;">No active projects at this moment</h3>
             <p>New diaspora construction projects will appear here as supervision contracts are activated.</p>
         </div>
         {% endfor %}
+    </div>
+</div>
+
+<!-- DIASPORA CLIENT ONBOARDING APPLICATION MODAL -->
+<div class="diaspora-modal-overlay" id="diasporaModal">
+    <div class="diaspora-modal-card">
+        <div class="diaspora-modal-header">
+            <h2 class="diaspora-modal-title">TRUST Construction Application</h2>
+            <button type="button" class="diaspora-modal-close" id="closeDiasporaModalBtn">&times;</button>
+        </div>
+
+        <!-- 5-Step Wizard Progress Bar -->
+        <div class="wizard-steps-bar">
+            <div class="wizard-step-item active" id="stepNode1">
+                <div class="wizard-step-node">1</div>
+                <span class="wizard-step-label">Personal</span>
+            </div>
+            <div class="wizard-step-item" id="stepNode2">
+                <div class="wizard-step-node">2</div>
+                <span class="wizard-step-label">Land & Location</span>
+            </div>
+            <div class="wizard-step-item" id="stepNode3">
+                <div class="wizard-step-node">3</div>
+                <span class="wizard-step-label">Concept & Budget</span>
+            </div>
+            <div class="wizard-step-item" id="stepNode4">
+                <div class="wizard-step-node">4</div>
+                <span class="wizard-step-label">Kin & Payment</span>
+            </div>
+            <div class="wizard-step-item" id="stepNode5">
+                <div class="wizard-step-node">5</div>
+                <span class="wizard-step-label">Review Preview</span>
+            </div>
+        </div>
+
+        <!-- Form Submission Form -->
+        <form id="diasporaApplicationForm" enctype="multipart/form-data">
+            <!-- STEP 1: PERSONAL DETAILS -->
+            <div class="form-step-panel active" id="stepPanel1">
+                <h3 style="font-size: 1.1rem; color: #1e293b; font-weight: 800; margin-bottom: 1rem;">1. Personal Details</h3>
+                <div class="form-grid-2">
+                    <div class="form-field-group">
+                        <label class="form-field-label">Full Name <span style="color: #ef4444;">*</span></label>
+                        <input type="text" name="full_name" class="form-field-input" placeholder="e.g. Dr. Moses Kagimu" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-field-label">Passport or National ID No. <span style="color: #ef4444;">*</span></label>
+                        <input type="text" name="passport_or_id" class="form-field-input" placeholder="e.g. A01928475 or CM910283" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-field-group">
+                        <label class="form-field-label">Country of Residence <span style="color: #ef4444;">*</span></label>
+                        <input type="text" name="country_of_residence" class="form-field-input" placeholder="e.g. United Kingdom, USA, UAE, Canada" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-field-label">Upload Passport or National ID Document</label>
+                        <input type="file" name="id_document" class="form-field-input" accept="image/*,.pdf">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-field-group">
+                        <label class="form-field-label">Email Address <span style="color: #ef4444;">*</span></label>
+                        <input type="email" name="email" class="form-field-input" placeholder="e.g. moses.kagimu@example.com" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-field-label">Phone Number (with Country Code) <span style="color: #ef4444;">*</span></label>
+                        <input type="tel" name="phone_number" class="form-field-input" placeholder="e.g. +44 7911 123456" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: LAND & LOCATION (DYNAMIC BRANCHING: OWNS LAND VS NEEDS LAND) -->
+            <div class="form-step-panel" id="stepPanel2">
+                <h3 style="font-size: 1.1rem; color: #1e293b; font-weight: 800; margin-bottom: 1rem;">2. Land Ownership & Location in Uganda</h3>
+
+                <!-- Land Ownership Toggle Question -->
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 1rem 1.25rem; border-radius: 14px; margin-bottom: 1.25rem;">
+                    <label class="form-field-label" style="font-size: 0.98rem; margin-bottom: 0.6rem; display: block;">Do you own land in Uganda? <span style="color: #ef4444;">*</span></label>
+                    <div style="display: flex; gap: 1.75rem; align-items: center;">
+                        <label style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; cursor: pointer; color: #1e293b;">
+                            <input type="radio" name="owns_land" value="yes" checked id="ownsLandYes"> Yes, I own land
+                        </label>
+                        <label style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; cursor: pointer; color: #1e293b;">
+                            <input type="radio" name="owns_land" value="no" id="ownsLandNo"> No, I need to acquire land
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Container IF YES (Owns Land) -->
+                <div id="ownsLandContainer">
+                    <div class="form-field-group">
+                        <label class="form-field-label">Proof of Land Ownership (Title, Sale Agreement, Search Letter) <span style="color: #ef4444;">*</span></label>
+                        <input type="file" name="land_proof" class="form-field-input" accept="image/*,.pdf" id="landProofInput">
+                        <span style="font-size: 0.8rem; color: #64748b;">Upload scanned Land Title deed, Sales Agreement, or Land Search Letter.</span>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-field-group">
+                            <label class="form-field-label">District <span style="color: #ef4444;">*</span></label>
+                            <input type="text" name="district" class="form-field-input" placeholder="e.g. Wakiso, Kampala, Mukono, Mbarara" id="districtInput">
+                        </div>
+                        <div class="form-field-group">
+                            <label class="form-field-label">Sub-County / Division</label>
+                            <input type="text" name="sub_county" class="form-field-input" placeholder="e.g. Kira Division / Makindye">
+                        </div>
+                    </div>
+
+                    <div class="form-field-group">
+                        <label class="form-field-label">Village / LC1 Zone</label>
+                        <input type="text" name="village" class="form-field-input" placeholder="e.g. Naalya Estate, Zone 4">
+                    </div>
+                </div>
+
+                <!-- Container IF NO (Does NOT Own Land - Only District Required) -->
+                <div id="needsLandContainer" style="display: none;">
+                    <div class="form-field-group">
+                        <label class="form-field-label">Desired District for Property Construction <span style="color: #ef4444;">*</span></label>
+                        <input type="text" name="desired_district" class="form-field-input" placeholder="e.g. Wakiso, Kampala, Mukono, Jinja, Gulu" id="desiredDistrictInput">
+                        <span style="font-size: 0.8rem; color: #64748b;">Specify the target district where you want TRUST Protocol to acquire land and build your property.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: CONCEPT & BUDGET (DYNAMIC BRANCHING) -->
+            <div class="form-step-panel" id="stepPanel3">
+                <h3 style="font-size: 1.1rem; color: #1e293b; font-weight: 800; margin-bottom: 1rem;">3. Concept & Design Requirements</h3>
+
+                <!-- IF NO LAND (Land Acquisition Preferences & Budgets) -->
+                <div id="landAcquisitionOptions" style="display: none; background: #fffbf0; border: 1.5px solid rgba(203, 163, 88, 0.4); padding: 1.25rem; border-radius: 14px; margin-bottom: 1.25rem;">
+                    <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--color-emerald-darkest); margin-top: 0; margin-bottom: 0.85rem;">Land Acquisition Requirements</h4>
+                    
+                    <div class="form-grid-2">
+                        <div class="form-field-group">
+                            <label class="form-field-label">Size of Land Desired (ft / Area) <span style="color: #ef4444;">*</span></label>
+                            <select name="desired_land_size" class="form-field-input">
+                                <option value="50 x 100 ft (Standard Plot)">50 x 100 ft (Standard Plot)</option>
+                                <option value="100 x 100 ft (Double Plot)">100 x 100 ft (Double Plot)</option>
+                                <option value="50 x 50 ft (Half Plot)">50 x 50 ft (Half Plot)</option>
+                                <option value="1 Acre +">1 Acre + (Estate / Farm Plot)</option>
+                                <option value="Custom Size">Custom Size / Consultative Assessment</option>
+                            </select>
+                        </div>
+                        <div class="form-field-group">
+                            <label class="form-field-label">Type of Land Required <span style="color: #ef4444;">*</span></label>
+                            <select name="desired_land_type" class="form-field-input">
+                                <option value="Off town-residential land" selected>Off town-residential land</option>
+                                <option value="Urban/town land">Urban/town land</option>
+                                <option value="Rental setup land">Rental setup land</option>
+                                <option value="Business-commercial land">Business-commercial land</option>
+                                <option value="Agricultural land">Agricultural land</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-field-group">
+                            <label class="form-field-label">Price Range for Land Acquisition (UGX) <span style="color: #ef4444;">*</span></label>
+                            <select name="land_budget_range" class="form-field-input">
+                                <option value="UGX 10M - 30M">UGX 10M - 30M</option>
+                                <option value="UGX 30M - 70M" selected>UGX 30M - 70M</option>
+                                <option value="UGX 70M - 150M">UGX 70M - 150M</option>
+                                <option value="UGX 150M+">UGX 150M+</option>
+                            </select>
+                        </div>
+                        <div class="form-field-group">
+                            <label class="form-field-label">Price Range for Construction (UGX) <span style="color: #ef4444;">*</span></label>
+                            <select name="construction_budget_range" class="form-field-input">
+                                <option value="UGX 50M - 100M">UGX 50M - 100M</option>
+                                <option value="UGX 100M - 250M" selected>UGX 100M - 250M</option>
+                                <option value="UGX 250M - 500M">UGX 250M - 500M</option>
+                                <option value="UGX 500M+">UGX 500M+</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IF YES LAND (Normal Construction Budget) -->
+                <div id="normalConstructionBudget">
+                    <div class="form-grid-2">
+                        <div class="form-field-group">
+                            <label class="form-field-label">Building Plans or Architectural Drawings (if available)</label>
+                            <input type="file" name="building_plans" class="form-field-input" accept="image/*,.pdf,.dwg">
+                        </div>
+                        <div class="form-field-group">
+                            <label class="form-field-label">Construction Budget Range (UGX) <span style="color: #ef4444;">*</span></label>
+                            <select name="budget_range" class="form-field-input">
+                                <option value="UGX 50M - 100M">UGX 50M - 100M</option>
+                                <option value="UGX 100M - 250M" selected>UGX 100M - 250M</option>
+                                <option value="UGX 250M - 500M">UGX 250M - 500M</option>
+                                <option value="UGX 500M+">UGX 500M+ (Luxury Commercial / Residential)</option>
+                                <option value="Consultative / Custom">Consultative / Custom Assessment</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-field-group">
+                    <label class="form-field-label">Preferred Construction Timeline <span style="color: #ef4444;">*</span></label>
+                    <select name="preferred_timeline" class="form-field-input">
+                        <option value="Immediate (1-3 months)" selected>Immediate (Start within 1-3 months)</option>
+                        <option value="Within 6 months">Within 6 months</option>
+                        <option value="1 Year +">1 Year + Planning Stage</option>
+                        <option value="Milestone / Phased">Phased Stage-by-Stage Build</option>
+                    </select>
+                </div>
+
+                <div class="form-field-group">
+                    <label class="form-field-label">Building Concept & Custom Specifications</label>
+                    <textarea name="building_concept_notes" class="form-field-input" rows="3" placeholder="Describe bedrooms, stories, architectural style, or custom engineering requirements..."></textarea>
+                </div>
+            </div>
+
+            <!-- STEP 4: NEXT OF KIN & PAYMENT -->
+            <div class="form-step-panel" id="stepPanel4">
+                <h3 style="font-size: 1.1rem; color: #1e293b; font-weight: 800; margin-bottom: 1rem;">4. Next of Kin in Uganda & Payment Method</h3>
+                <div class="form-grid-2">
+                    <div class="form-field-group">
+                        <label class="form-field-label">Next of Kin Full Name (in Uganda) <span style="color: #ef4444;">*</span></label>
+                        <input type="text" name="next_of_kin_name" class="form-field-input" placeholder="e.g. Sarah Namukasa" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-field-label">Relationship to Client</label>
+                        <input type="text" name="next_of_kin_relationship" class="form-field-input" placeholder="e.g. Sister, Brother, Spouse, Attorney">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-field-group">
+                        <label class="form-field-label">Kin Phone Number (Uganda) <span style="color: #ef4444;">*</span></label>
+                        <input type="tel" name="next_of_kin_phone" class="form-field-input" placeholder="e.g. 0772 123456" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-field-label">Kin District / Location</label>
+                        <input type="text" name="next_of_kin_district" class="form-field-input" placeholder="e.g. Kampala / Mukono">
+                    </div>
+                </div>
+
+                <div class="form-field-group">
+                    <label class="form-field-label">Preferred Milestone Escrow Payment Method <span style="color: #ef4444;">*</span></label>
+                    <select name="payment_method" class="form-field-input" required>
+                        <option value="swift" selected>SWIFT International Wire Transfer</option>
+                        <option value="bank_direct">Direct Bank Wire Transfer</option>
+                        <option value="escrow">TRUST Escrow Managed Account</option>
+                        <option value="mobile_money">Mobile Money Transfer (MTN / Airtel)</option>
+                        <option value="other">Other Direct Arrangement</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- STEP 5: PREVIEW & REVIEW SUMMARY BEFORE SUBMITTING -->
+            <div class="form-step-panel" id="stepPanel5">
+                <h3 style="font-size: 1.1rem; color: #1e293b; font-weight: 800; margin-bottom: 0.4rem;">5. Application Review & Preview</h3>
+                <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 1rem;">Please review your application summary below before confirming submission to TRUST Protocol.</p>
+
+                <div id="applicationPreviewContainer" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 1.25rem; font-size: 0.92rem; color: #334155; max-height: 340px; overflow-y: auto;">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Wizard Footer Controls -->
+            <div class="wizard-nav-row">
+                <button type="button" class="btn-wizard-back" id="prevStepBtn" style="visibility: hidden;">Back</button>
+                <button type="button" class="btn-wizard-next" id="nextStepBtn">Next Step &rarr;</button>
+            </div>
+        </form>
+
+        <!-- Application Success Alert Box -->
+        <div id="applicationSuccessAlert" style="display: none; text-align: center; padding: 2rem 1rem;">
+            <div style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.15); color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 1.25rem auto;">
+                &#10004;
+            </div>
+            <h3 style="font-size: 1.6rem; color: var(--color-emerald-darkest); font-weight: 800; margin-bottom: 0.75rem;">Application Received!</h3>
+            <p id="successAlertMsg" style="font-size: 1.05rem; color: #475569; line-height: 1.65; max-width: 650px; margin: 0 auto 1.5rem auto;"></p>
+            <button type="button" class="btn-wizard-next" id="closeSuccessModalBtn">Done & Close</button>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -455,6 +946,7 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Pure Image Slider JS
         const initSlides = document.querySelectorAll('.initiative-slide');
         const initDots = document.querySelectorAll('.initiative-slider-dot');
         let initCurrentIndex = 0;
@@ -481,6 +973,224 @@
             };
 
             setInterval(nextInitSlide, 4000);
+        }
+
+        // Diaspora Application Wizard Modal JS
+        const diasporaModal = document.getElementById('diasporaModal');
+        const openBtn = document.getElementById('openDiasporaModalBtn');
+        const closeBtn = document.getElementById('closeDiasporaModalBtn');
+        const closeSuccessBtn = document.getElementById('closeSuccessModalBtn');
+        const form = document.getElementById('diasporaApplicationForm');
+        const successAlert = document.getElementById('applicationSuccessAlert');
+        const successMsg = document.getElementById('successAlertMsg');
+
+        // Land Ownership Dynamic Toggles
+        const radioYes = document.getElementById('ownsLandYes');
+        const radioNo = document.getElementById('ownsLandNo');
+        const ownsLandContainer = document.getElementById('ownsLandContainer');
+        const needsLandContainer = document.getElementById('needsLandContainer');
+        const landAcquisitionOptions = document.getElementById('landAcquisitionOptions');
+        const normalConstructionBudget = document.getElementById('normalConstructionBudget');
+
+        function toggleLandBranch() {
+            const ownsLand = radioYes && radioYes.checked;
+
+            if (ownsLand) {
+                ownsLandContainer.style.display = 'block';
+                needsLandContainer.style.display = 'none';
+                landAcquisitionOptions.style.display = 'none';
+                normalConstructionBudget.style.display = 'block';
+
+                document.getElementById('landProofInput').required = true;
+                document.getElementById('districtInput').required = true;
+                document.getElementById('desiredDistrictInput').required = false;
+            } else {
+                ownsLandContainer.style.display = 'none';
+                needsLandContainer.style.display = 'block';
+                landAcquisitionOptions.style.display = 'block';
+                normalConstructionBudget.style.display = 'none';
+
+                document.getElementById('landProofInput').required = false;
+                document.getElementById('districtInput').required = false;
+                document.getElementById('desiredDistrictInput').required = true;
+            }
+        }
+
+        if (radioYes && radioNo) {
+            radioYes.addEventListener('change', toggleLandBranch);
+            radioNo.addEventListener('change', toggleLandBranch);
+            toggleLandBranch();
+        }
+
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        if (openBtn && diasporaModal) {
+            openBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                diasporaModal.classList.add('is-active');
+            });
+        }
+
+        function closeModal() {
+            if (diasporaModal) {
+                diasporaModal.classList.remove('is-active');
+            }
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeModal);
+
+        diasporaModal.addEventListener('click', function(e) {
+            if (e.target === diasporaModal) closeModal();
+        });
+
+        // Step Navigation Controls
+        const prevBtn = document.getElementById('prevStepBtn');
+        const nextBtn = document.getElementById('nextStepBtn');
+
+        function generatePreviewSummary() {
+            const formData = new FormData(form);
+            const ownsLand = radioYes && radioYes.checked;
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.85rem;">';
+            html += '<div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;"><strong style="color: var(--color-emerald-darkest); font-size: 0.95rem;">1. Personal Details</strong>';
+            html += `<div><strong>Name:</strong> ${formData.get('full_name') || '-'}</div>`;
+            html += `<div><strong>ID/Passport:</strong> ${formData.get('passport_or_id') || '-'} | <strong>Country:</strong> ${formData.get('country_of_residence') || '-'}</div>`;
+            html += `<div><strong>Contact:</strong> ${formData.get('email') || '-'} | ${formData.get('phone_number') || '-'}</div>`;
+            html += '</div>';
+
+            html += '<div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;"><strong style="color: var(--color-emerald-darkest); font-size: 0.95rem;">2. Land & Location</strong>';
+            html += `<div><strong>Land Status:</strong> ${ownsLand ? 'Yes, Client owns land' : 'No, Needs TRUST Land Acquisition'}</div>`;
+            if (ownsLand) {
+                html += `<div><strong>Location:</strong> District: ${formData.get('district') || '-'} | Division: ${formData.get('sub_county') || '-'} | Village: ${formData.get('village') || '-'}</div>`;
+            } else {
+                html += `<div><strong>Target Location:</strong> District: ${formData.get('desired_district') || '-'}</div>`;
+            }
+            html += '</div>';
+
+            html += '<div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;"><strong style="color: var(--color-emerald-darkest); font-size: 0.95rem;">3. Concept & Budget</strong>';
+            if (!ownsLand) {
+                html += `<div><strong>Land Size Desired:</strong> ${formData.get('desired_land_size') || '-'} | <strong>Land Type:</strong> ${formData.get('desired_land_type') || '-'}</div>`;
+                html += `<div><strong>Land Budget Range:</strong> ${formData.get('land_budget_range') || '-'}</div>`;
+                html += `<div><strong>Construction Budget Range:</strong> ${formData.get('construction_budget_range') || '-'}</div>`;
+            } else {
+                html += `<div><strong>Construction Budget Range:</strong> ${formData.get('budget_range') || '-'}</div>`;
+            }
+            html += `<div><strong>Preferred Timeline:</strong> ${formData.get('preferred_timeline') || '-'}</div>`;
+            if (formData.get('building_concept_notes')) {
+                html += `<div><strong>Concept Notes:</strong> ${formData.get('building_concept_notes')}</div>`;
+            }
+            html += '</div>';
+
+            html += '<div><strong style="color: var(--color-emerald-darkest); font-size: 0.95rem;">4. Kin in Uganda & Payment</strong>';
+            html += `<div><strong>Kin Name:</strong> ${formData.get('next_of_kin_name') || '-'} (${formData.get('next_of_kin_relationship') || 'Kin'}) | <strong>Phone:</strong> ${formData.get('next_of_kin_phone') || '-'}</div>`;
+            html += `<div><strong>Payment Method:</strong> ${formData.get('payment_method') ? formData.get('payment_method').toUpperCase() : 'SWIFT'}</div>`;
+            html += '</div>';
+
+            html += '</div>';
+
+            const previewBox = document.getElementById('applicationPreviewContainer');
+            if (previewBox) previewBox.innerHTML = html;
+        }
+
+        function updateStepView() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const panel = document.getElementById('stepPanel' + i);
+                const node = document.getElementById('stepNode' + i);
+                
+                if (panel) {
+                    panel.classList.toggle('active', i === currentStep);
+                }
+                if (node) {
+                    node.classList.toggle('active', i === currentStep);
+                    node.classList.toggle('completed', i < currentStep);
+                }
+            }
+
+            if (currentStep === 1) {
+                prevBtn.style.visibility = 'hidden';
+            } else {
+                prevBtn.style.visibility = 'visible';
+            }
+
+            if (currentStep === 5) {
+                generatePreviewSummary();
+                nextBtn.innerHTML = 'Confirm & Submit Application &rarr;';
+                nextBtn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
+            } else {
+                nextBtn.innerHTML = 'Next Step &rarr;';
+                nextBtn.style.background = 'linear-gradient(135deg, var(--color-emerald-dark), var(--color-emerald-darkest))';
+            }
+        }
+
+        function validateCurrentStep() {
+            const currentPanel = document.getElementById('stepPanel' + currentStep);
+            if (!currentPanel) return true;
+            
+            const requiredInputs = currentPanel.querySelectorAll('[required]');
+            for (let input of requiredInputs) {
+                if (input.offsetParent !== null && (!input.value || !input.value.trim())) {
+                    input.focus();
+                    alert('Please fill in required field: ' + (input.previousElementSibling ? input.previousElementSibling.textContent.replace('*', '').trim() : 'required input'));
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                if (!validateCurrentStep()) return;
+
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepView();
+                } else {
+                    // Final Submit AJAX
+                    const formData = new FormData(form);
+                    // Copy desired_district into district if no land owned
+                    const ownsLand = radioYes && radioYes.checked;
+                    if (!ownsLand) {
+                        formData.set('district', formData.get('desired_district'));
+                    }
+
+                    nextBtn.disabled = true;
+                    nextBtn.innerHTML = 'Submitting Application...';
+
+                    fetch('/projects/diaspora-apply/', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        nextBtn.disabled = false;
+                        if (data.success) {
+                            form.style.display = 'none';
+                            document.querySelector('.wizard-steps-bar').style.display = 'none';
+                            successMsg.textContent = data.message;
+                            successAlert.style.display = 'block';
+                        } else {
+                            alert('Submission Error: ' + (data.error || 'Failed to submit application.'));
+                            updateStepView();
+                        }
+                    })
+                    .catch(err => {
+                        nextBtn.disabled = false;
+                        alert('Network Error: Unable to submit application. Please try again.');
+                        updateStepView();
+                    });
+                }
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateStepView();
+                }
+            });
         }
     });
 </script>
