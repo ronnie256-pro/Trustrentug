@@ -154,7 +154,8 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
-    .btn-phase-tab:hover, .btn-phase-tab.active {
+    .btn-phase-tab:hover,
+    .btn-phase-tab.active {
         background: var(--color-emerald-darkest);
         color: #ffffff !important;
         border-color: var(--color-gold);
@@ -311,11 +312,13 @@
             <!-- Dynamic Phase Video Player Box -->
             <div class="video-player-card">
                 <div class="video-container">
-                    <img id="videoPosterImg" src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80"
+                    <img id="videoPosterImg"
+                        src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80"
                         alt="Phase Video Stream" class="video-poster-img">
                     <div class="video-play-overlay" onclick="triggerVideoPlay()">
                         <div class="video-play-btn" title="Play Phase Drone Video Stream">&#9658;</div>
-                        <span id="videoStreamText" style="color: #ffffff; font-weight: 800; font-size: 1rem; margin-top: 0.85rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                        <span id="videoStreamText"
+                            style="color: #ffffff; font-weight: 800; font-size: 1rem; margin-top: 0.85rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
                             Watch Phase 1 Drone Inspection Stream (1m 45s)
                         </span>
                     </div>
@@ -344,8 +347,10 @@
                         <h2 class="card-head-title">Construction Milestone Roadmap</h2>
                     </div>
                     <div style="text-align: right;">
-                        <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">Overall Completion Score</span>
-                        <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 900; color: var(--color-emerald-darkest); line-height: 1.1;">
+                        <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">Overall Completion
+                            Score</span>
+                        <div
+                            style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 900; color: var(--color-emerald-darkest); line-height: 1.1;">
                             {{ overall_completion_pct }}%
                         </div>
                     </div>
@@ -354,22 +359,28 @@
                 <!-- 5 Master Phase Accordions (Compact Height & Padding) -->
                 <div style="display: flex; flex-direction: column; gap: 1.1rem;">
                     {% for phase in roadmap_phases %}
-                    <div id="phaseCard{{ phase.phase_number }}" style="background: #ffffff; border: 1.5px solid rgba(11, 104, 37, 0.25); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.03);">
-                        
+                    <div id="phaseCard{{ phase.phase_number }}"
+                        style="background: #ffffff; border: 1.5px solid rgba(11, 104, 37, 0.25); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.03);">
+
                         <!-- Phase Accordion Header (Compact Solid Green #0b6825 Progress Bar) -->
-                        <div style="position: relative; background: #e2e8f0; cursor: pointer; overflow: hidden;" onclick="togglePhaseBody({{ phase.phase_number }})">
+                        <div style="position: relative; background: #e2e8f0; cursor: pointer; overflow: hidden;"
+                            onclick="togglePhaseBody({{ phase.phase_number }})">
                             <!-- Dynamic Inner Solid Green Progress Bar Fill Layer (#0b6825) -->
-                            <div style="position: absolute; top: 0; bottom: 0; left: 0; width: {{ phase.fill_pct }}%; background: #0b6825; transition: width 0.8s ease-in-out;"></div>
+                            <div
+                                style="position: absolute; top: 0; bottom: 0; left: 0; width: {{ phase.fill_pct }}%; background: #0b6825; transition: width 0.8s ease-in-out;">
+                            </div>
 
                             <!-- Overlaid Header Text Content (Compact 0.95rem 1.35rem Padding) -->
-                            <div style="position: relative; z-index: 2; padding: 0.95rem 1.35rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                                <h3 style="font-size: 1.12rem; font-weight: 800; color: {% if phase.fill_pct >= 50 %}#ffffff{% else %}#1e293b{% endif %}; margin: 0; transition: color 0.3s ease;">
+                            <div
+                                style="position: relative; z-index: 2; padding: 0.95rem 1.35rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                                <h3
+                                    style="font-size: 1.12rem; font-weight: 800; color: {% if phase.fill_pct >= 50 %}#ffffff{% else %}#1e293b{% endif %}; margin: 0; transition: color 0.3s ease;">
                                     {{ phase.title }}
                                 </h3>
 
                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                     <span style="font-weight: 900; font-size: 1.18rem; color: {% if phase.fill_pct >= 50 %}#ffffff{% else %}#0b6825{% endif %}; font-family: var(--font-heading);">
-                                        ({{ phase.earned_house_pct|floatformat:"-1" }}/{{ phase.phase_weight|floatformat:"-1" }})
+                                        ({{ phase.earned_display }}/{{ phase.weight_display }})
                                     </span>
                                     <span id="phaseToggleArrow{{ phase.phase_number }}" style="font-size: 1rem; color: {% if phase.fill_pct >= 50 %}#ffffff{% else %}#475569{% endif %}; transition: transform 0.3s ease; transform: rotate(-90deg);">&#9660;</span>
                                 </div>
@@ -438,15 +449,28 @@
                         <strong>Contacts:</strong> {% if app and app.phone_number %}{{ app.phone_number }}{% else %}+44 7911 123456{% endif %}
                     </div>
                     <div class="info-field-box">
+                        <strong>Email:</strong> {% if app and app.email %}{{ app.email }}{% else %}moses.kagimu@example.com{% endif %}
+                    </div>
+                    <div class="info-field-box">
                         <strong>Project ID:</strong> #TRUST-DSP-{% if app %}{{ app.id|stringformat:"04d" }}{% else %}0003{% endif %}
                     </div>
                 </div>
             </div>
 
+            <!-- Building Materials Cost Estimation Prompt Box -->
+            <div style="background: #f8fafc; border: 1.5px solid rgba(10, 92, 54, 0.2); border-radius: 18px; padding: 1.25rem 1.35rem; margin-bottom: 1.5rem; box-shadow: 0 4px 14px rgba(0,0,0,0.03);">
+                <p style="font-size: 0.88rem; color: #334155; line-height: 1.5; margin: 0 0 0.85rem 0; font-weight: 600;">
+                    For your accuracy in project costs calculations, please find the current prices of building materials in uganda
+                </p>
+                <button type="button" style="background: #38bdf8; color: #0f172a; border: 1.5px solid #0284c7; border-radius: 10px; padding: 0.5rem 1.25rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease;">
+                    Click Here
+                </button>
+            </div>
+
             <!-- Project Details & Financial Records Card -->
             <div class="project-details-card">
                 <h3 class="pd-section-title">Project Details</h3>
-                
+
                 <!-- Added Project Cost right above Date of Commencement -->
                 <div class="pd-item">
                     <strong>Project cost:</strong><br>
@@ -485,6 +509,13 @@
                     <div class="fin-record-box" style="background: #fef2f2; border-color: rgba(239, 68, 68, 0.3);">
                         <span>Remaining Balance:</span>
                         <strong style="color: #b91c1c; font-weight: 900;">UGX 70,000,000</strong>
+                    </div>
+
+                    <!-- Download Report Button below Financial Records -->
+                    <div style="margin-top: 1.25rem;">
+                        <button type="button" style="width: 100%; background: #38bdf8; color: #0f172a; border: 1.5px solid #0284c7; border-radius: 10px; padding: 0.7rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25); transition: all 0.2s ease;">
+                            &#128196; Download Report
+                        </button>
                     </div>
                 </div>
             </div>
@@ -536,7 +567,7 @@
             document.getElementById('videoClipTitle').innerText = clip.title;
             document.getElementById('videoStreamText').innerText = `Watch ${clip.title} (${clip.duration})`;
         }
-        
+
         // Highlight active phase video button
         document.querySelectorAll('.btn-phase-tab').forEach((btn, idx) => {
             btn.classList.toggle('active', idx === (phaseNum - 1));

@@ -3062,7 +3062,10 @@ def client_construction_dashboard(request, app_id=None):
                 earned = m.get('earned_house_pct', m['house_pct'] * 0.5)
                 earned_phase_weight += earned
         
-        phase['earned_house_pct'] = round(earned_phase_weight, 2)
+        earned_val = round(earned_phase_weight, 2)
+        phase['earned_house_pct'] = earned_val
+        phase['earned_display'] = int(earned_val) if float(earned_val).is_integer() else earned_val
+        phase['weight_display'] = int(phase['phase_weight']) if float(phase['phase_weight']).is_integer() else phase['phase_weight']
         phase['fill_pct'] = round((earned_phase_weight / phase['phase_weight']) * 100, 1)
         total_house_completion += earned_phase_weight
 
