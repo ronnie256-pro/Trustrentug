@@ -677,8 +677,11 @@
                 <div class="booking-card">
                     <div class="price-block"
                         style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border);">
-                        <span
-                            style="color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 0.4rem;">Monthly Rent</span>
+                        {% if not property.category == 'bungalow' and not property.category == 'standalone' and not 'sale' in property.title|lower and not 'land' in property.title|lower and not 'plot' in property.title|lower and not 'house' in property.title|lower and not 'villa' in property.title|lower and not 'cottage' in property.title|lower and not 'townhouse' in property.title|lower and property.price < 50000000 %}
+                        <span style="color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 0.4rem;">Monthly Rent</span>
+                        {% else %}
+                        <span style="color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: block; margin-bottom: 0.4rem;">Property Price</span>
+                        {% endif %}
                         <div class="price-main">
                             {% if property.price %}
                             <div

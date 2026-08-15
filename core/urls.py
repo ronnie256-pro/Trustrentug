@@ -60,6 +60,8 @@ urlpatterns = [
     path('admin-dashboard/viewing/<int:viewing_id>/', views.admin_viewing_detail, name='admin_viewing_detail'),
     path('admin-dashboard/viewing/status/<int:viewing_id>/', views.admin_viewing_status_update, name='admin_viewing_status_update'),
     path('admin-dashboard/tenant/<int:tenant_id>/', views.admin_tenant_detail, name='admin_tenant_detail'),
+    path('admin-dashboard/application/<int:app_id>/', views.admin_application_detail, name='admin_application_detail'),
+    path('admin-dashboard/construction-progress/<int:project_id>/', views.admin_construction_progress, name='admin_construction_progress'),
     path('agent/report/', views.agent_report_auth, name='agent_report_auth'),
     path('agent/submit-report/', views.agent_submit_report, name='agent_submit_report'),
     

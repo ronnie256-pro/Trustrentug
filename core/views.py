@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -568,6 +568,57 @@ def admin_dashboard(request):
                 messages.error(request, "Tenant profile not found.")
             return redirect('/admin-dashboard/?tab=tenants')
 
+        elif action == 'update_application_status':
+            app_id = request.POST.get('application_id')
+            new_status = request.POST.get('status', 'approved')
+            try:
+                app = DiasporaClientApplication.objects.get(id=app_id)
+                app.status = new_status
+                app.save()
+
+                if new_status == 'approved':
+                    proj, created = ConstructionProject.objects.get_or_create(
+                        id=app.id,
+                        defaults={
+                            'title': f"{app.full_name}'s Construction Project",
+                            'location': f"{app.district}, Uganda",
+                            'short_description': f"Active supervision build for {app.full_name}",
+                            'client_name': app.full_name,
+                            'progress_percentage': 0,
+                            'status': 'ongoing'
+                        }
+                    )
+                    if not created:
+                        proj.client_name = app.full_name
+                        proj.save()
+                    messages.success(request, f"Application for '{app.full_name}' has been APPROVED and added to Active Construction Contracts!")
+                else:
+                    messages.success(request, f"Application status for '{app.full_name}' updated to '{new_status.title()}'.")
+            except DiasporaClientApplication.DoesNotExist:
+                messages.error(request, "Application record not found.")
+            return redirect('/admin-dashboard/?tab=applications')
+
+        elif action == 'update_construction_progress':
+            project_id = request.POST.get('project_id')
+            progress_val = request.POST.get('progress_percentage', '0')
+            proj_status = request.POST.get('status')
+            video_url = request.POST.get('video_url')
+            supervisor_name = request.POST.get('supervisor_name')
+            try:
+                proj = ConstructionProject.objects.get(id=project_id)
+                proj.progress_percentage = int(progress_val)
+                if proj_status:
+                    proj.status = proj_status
+                if video_url is not None:
+                    proj.video_url = video_url.strip()
+                if supervisor_name:
+                    proj.supervisor_name = supervisor_name.strip()
+                proj.save()
+                messages.success(request, f"Construction progress for '{proj.title}' updated to {progress_val}%!")
+            except ConstructionProject.DoesNotExist:
+                messages.error(request, "Construction project record not found.")
+            return redirect('/admin-dashboard/?tab=construction')
+
     # Fetch properties based on active tab
     if tab == 'properties':
         properties = Property.objects.all().select_related('owner', 'parent').order_by('-created_at')
@@ -1071,6 +1122,9 @@ def admin_dashboard(request):
                     'total_portfolio_value': tot_val,
                 }
 
+    construction_applications = DiasporaClientApplication.objects.all().order_by('-created_at')
+    construction_projects = ConstructionProject.objects.all().order_by('-created_at')
+
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
         'stats': stats,
@@ -1096,6 +1150,8 @@ def admin_dashboard(request):
         'selected_landlord': selected_landlord,
         'landlord_properties': landlord_properties,
         'landlord_metrics': landlord_metrics,
+        'construction_applications': construction_applications,
+        'construction_projects': construction_projects,
         'current_tab': tab
     })
 
@@ -2385,6 +2441,201 @@ def admin_tenant_detail(request, tenant_id):
     })
 
 
+def admin_application_detail(request, app_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+
+    app_obj = get_object_or_404(DiasporaClientApplication, id=app_id)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'update_application_status':
+            new_status = request.POST.get('status', 'approved')
+            app_obj.status = new_status
+            app_obj.save()
+
+            if new_status == 'approved':
+                proj, created = ConstructionProject.objects.get_or_create(
+                    id=app_obj.id,
+                    defaults={
+                        'title': f"{app_obj.full_name}'s Construction Project",
+                        'location': f"{app_obj.district}, Uganda",
+                        'short_description': f"Active supervision build for {app_obj.full_name}",
+                        'client_name': app_obj.full_name,
+                        'progress_percentage': 0,
+                        'status': 'ongoing'
+                    }
+                )
+                if not created:
+                    proj.client_name = app_obj.full_name
+                    proj.save()
+                messages.success(request, f"Application for '{app_obj.full_name}' has been APPROVED and added to Active Construction Contracts!")
+            else:
+                messages.success(request, f"Application status updated to '{new_status.title()}'.")
+            return redirect('admin_application_detail', app_id=app_obj.id)
+
+    return render(request, 'admin/application_detail.html', {
+        'app': app_obj,
+        'current_tab': 'applications'
+    })
+
+
+def admin_construction_progress(request, project_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+
+    project_obj = get_object_or_404(ConstructionProject, id=project_id)
+    app_obj = DiasporaClientApplication.objects.filter(id=project_id).first()
+
+    # Standard 5-Phase / 25-Milestone Engine Definition
+    roadmap_phases_def = [
+        {
+            'phase_number': 1,
+            'title': 'Phase 1: Planning & Design',
+            'phase_weight': 15.0,
+            'milestones': [
+                {'no': 1, 'title': 'Project Initiation', 'phase_pct': 20, 'house_pct': 3.0},
+                {'no': 2, 'title': 'Surveying & Site Investigation', 'phase_pct': 15, 'house_pct': 2.25},
+                {'no': 3, 'title': 'Architectural & Engineering Design', 'phase_pct': 30, 'house_pct': 4.5},
+                {'no': 4, 'title': 'Approvals & Permits', 'phase_pct': 20, 'house_pct': 3.0},
+                {'no': 5, 'title': 'Mobilization & Site Setup', 'phase_pct': 15, 'house_pct': 2.25},
+            ]
+        },
+        {
+            'phase_number': 2,
+            'title': 'Phase 2: Site & Foundation',
+            'phase_weight': 20.0,
+            'milestones': [
+                {'no': 6, 'title': 'Excavation', 'phase_pct': 20, 'house_pct': 4.0},
+                {'no': 7, 'title': 'Foundation Construction', 'phase_pct': 45, 'house_pct': 9.0},
+                {'no': 8, 'title': 'Walling & Structural Frame', 'phase_pct': 20, 'house_pct': 4.0},
+                {'no': 9, 'title': 'Roof Structure', 'phase_pct': 10, 'house_pct': 2.0},
+                {'no': 10, 'title': 'Roofing (Lock-Up Stage)', 'phase_pct': 5, 'house_pct': 1.0},
+            ]
+        },
+        {
+            'phase_number': 3,
+            'title': 'Phase 3: Structural Works',
+            'phase_weight': 30.0,
+            'milestones': [
+                {'no': 11, 'title': 'Plumbing First Fix', 'phase_pct': 15, 'house_pct': 4.5},
+                {'no': 12, 'title': 'Electrical First Fix', 'phase_pct': 15, 'house_pct': 4.5},
+                {'no': 13, 'title': 'Mechanical/HVAC First Fix', 'phase_pct': 10, 'house_pct': 3.0},
+                {'no': 14, 'title': 'Plastering & Screeding', 'phase_pct': 25, 'house_pct': 7.5},
+                {'no': 15, 'title': 'Ceiling Installation', 'phase_pct': 15, 'house_pct': 4.5},
+                {'no': 16, 'title': 'Tiling & Flooring', 'phase_pct': 20, 'house_pct': 6.0},
+            ]
+        },
+        {
+            'phase_number': 4,
+            'title': 'Phase 4: Finishes & Services',
+            'phase_weight': 25.0,
+            'milestones': [
+                {'no': 17, 'title': 'Joinery & Carpentry', 'phase_pct': 25, 'house_pct': 6.25},
+                {'no': 18, 'title': 'Painting & Decorative Finishes', 'phase_pct': 25, 'house_pct': 6.25},
+                {'no': 19, 'title': 'Plumbing Second Fix', 'phase_pct': 20, 'house_pct': 5.0},
+                {'no': 20, 'title': 'Electrical Second Fix', 'phase_pct': 20, 'house_pct': 5.0},
+                {'no': 21, 'title': 'External Development', 'phase_pct': 10, 'house_pct': 2.5},
+            ]
+        },
+        {
+            'phase_number': 5,
+            'title': 'Phase 5: External Works & Handover',
+            'phase_weight': 10.0,
+            'milestones': [
+                {'no': 22, 'title': 'Testing & Commissioning', 'phase_pct': 25, 'house_pct': 2.5},
+                {'no': 23, 'title': 'Snagging / Punch List', 'phase_pct': 20, 'house_pct': 2.0},
+                {'no': 24, 'title': 'Final Inspection & Occupancy Approval', 'phase_pct': 30, 'house_pct': 3.0},
+                {'no': 25, 'title': 'Handover & Closeout', 'phase_pct': 25, 'house_pct': 2.5},
+            ]
+        }
+    ]
+
+    # Handle POST update of completed milestone checkboxes
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'save_milestones':
+            completed_str_list = request.POST.getlist('completed_milestones')
+            completed_ids = [int(m) for m in completed_str_list if m.isdigit()]
+            
+            # Recalculate total progress percentage from checked milestones
+            total_earned = 0.0
+            for phase in roadmap_phases_def:
+                for m in phase['milestones']:
+                    if m['no'] in completed_ids:
+                        total_earned += m['house_pct']
+
+            total_earned_round = round(total_earned, 1)
+            project_obj.completed_milestones = completed_ids
+            project_obj.progress_percentage = int(round(total_earned_round))
+            
+            # Also update video URL and supervisor name if provided
+            if request.POST.get('video_url'):
+                project_obj.video_url = request.POST.get('video_url').strip()
+            if request.POST.get('supervisor_name'):
+                project_obj.supervisor_name = request.POST.get('supervisor_name').strip()
+            if request.POST.get('status'):
+                project_obj.status = request.POST.get('status')
+                
+            project_obj.save()
+            messages.success(request, f"Construction Roadmap updated! New Overall Completion Score: {total_earned_round:.1f}%")
+            return redirect('admin_construction_progress', project_id=project_obj.id)
+
+    # Initialize completed milestones if empty
+    completed_ids = project_obj.completed_milestones
+    if completed_ids is None or len(completed_ids) == 0:
+        # Default first 13 milestones if new project to match ~52%
+        completed_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        project_obj.completed_milestones = completed_ids
+        project_obj.progress_percentage = 52
+        project_obj.save()
+
+    # Calculate ratios for rendering
+    total_score = 0.0
+    phases_render = []
+    for phase_def in roadmap_phases_def:
+        earned_phase_weight = 0.0
+        milestones_render = []
+        for m in phase_def['milestones']:
+            is_done = m['no'] in completed_ids
+            if is_done:
+                earned_phase_weight += m['house_pct']
+            milestones_render.append({
+                'no': m['no'],
+                'title': m['title'],
+                'phase_pct': m['phase_pct'],
+                'house_pct': m['house_pct'],
+                'is_completed': is_done,
+            })
+
+        earned_val = round(earned_phase_weight, 2)
+        earned_disp = int(earned_val) if float(earned_val).is_integer() else earned_val
+        weight_disp = int(phase_def['phase_weight']) if float(phase_def['phase_weight']).is_integer() else phase_def['phase_weight']
+        
+        phases_render.append({
+            'phase_number': phase_def['phase_number'],
+            'title': phase_def['title'],
+            'phase_weight': phase_def['phase_weight'],
+            'earned_display': earned_disp,
+            'weight_display': weight_disp,
+            'milestones': milestones_render,
+        })
+        total_score += earned_phase_weight
+
+    overall_score = round(total_score, 1)
+
+    return render(request, 'admin/construction_progress.html', {
+        'project': project_obj,
+        'app': app_obj,
+        'phases': phases_render,
+        'overall_score': overall_score,
+        'completed_ids': completed_ids,
+        'current_tab': 'construction'
+    })
+
+
 # --- CHATROOM VIEWS & APIS ---
 
 def chat_agent_dashboard(request):
@@ -2909,6 +3160,7 @@ def diaspora_application_submit_view(request):
 
             # Files
             id_document = request.FILES.get('id_document')
+            applicant_photo = request.FILES.get('applicant_photo')
             land_proof = request.FILES.get('land_proof')
             building_plans = request.FILES.get('building_plans')
 
@@ -2919,6 +3171,7 @@ def diaspora_application_submit_view(request):
                 full_name=full_name,
                 passport_or_id=passport_or_id,
                 id_document=id_document,
+                applicant_photo=applicant_photo,
                 country_of_residence=country_of_residence,
                 email=email,
                 phone_number=phone_number,
@@ -3052,10 +3305,18 @@ def client_construction_dashboard(request, app_id=None):
     ]
 
     # Calculate exact phase completion percentages & overall house completion score
+    completed_ids = project_obj.completed_milestones if (project_obj and project_obj.completed_milestones) else None
+
     total_house_completion = 0.0
     for phase in roadmap_phases:
         earned_phase_weight = 0.0
         for m in phase['milestones']:
+            if completed_ids is not None:
+                if m['no'] in completed_ids:
+                    m['status'] = 'completed'
+                else:
+                    m['status'] = 'pending'
+
             if m.get('status') == 'completed':
                 earned_phase_weight += m['house_pct']
             elif m.get('status') == 'in_progress':

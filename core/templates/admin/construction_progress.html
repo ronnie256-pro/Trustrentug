@@ -1,0 +1,260 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="animate__animated animate__fadeIn" style="max-width: 1100px; margin: 0 auto; font-family: var(--font-body);">
+    
+    <!-- Navigation Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="/admin-dashboard/?tab=construction" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.95rem;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Construction Directory
+            </a>
+            <span style="color: #cbd5e1;">/</span>
+            <span style="color: #64748b; font-size: 0.95rem; font-weight: 600;">Contract #{{ project.id }} Progress Roadmap</span>
+        </div>
+        
+        <a href="/projects/construction-dashboard/{{ project.id }}/" target="_blank" class="btn" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid rgba(29, 78, 216, 0.3); font-weight: 800; padding: 0.5rem 1.15rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.88rem;">
+            <i class="fa-solid fa-up-right-from-square"></i> Open Live Client Dashboard
+        </a>
+    </div>
+
+    <!-- Contract Header Card -->
+    <div style="background: white; border-radius: 16px; border: 1.5px solid #cbd5e1; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+                <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; color: var(--color-gold); display: block; margin-bottom: 0.35rem;">
+                    Construction Milestone Progress Control Engine
+                </span>
+                <h2 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 2rem; font-weight: 800;">
+                    {{ project.title }}
+                </h2>
+                <div style="font-size: 0.95rem; color: #475569; margin-top: 0.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <span><i class="fa-solid fa-user-check" style="color: var(--color-gold);"></i> Client: <strong>{{ project.client_name|default:'Diaspora Client' }}</strong></span>
+                    <span>&bull;</span>
+                    <span><i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> Site: <strong>{{ project.location }}</strong></span>
+                    <span>&bull;</span>
+                    <span><i class="fa-solid fa-user-shield" style="color: #0369a1;"></i> Lead Supervisor: <strong>{{ project.supervisor_name }}</strong></span>
+                </div>
+            </div>
+
+            <!-- Overall Completion Score Card Widget (Matching requested format) -->
+            <div style="background: linear-gradient(135deg, #0b6825, #047857); color: white; border-radius: 14px; padding: 1.25rem 1.75rem; text-align: center; min-width: 240px; box-shadow: 0 6px 18px rgba(4, 120, 87, 0.25);">
+                <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.9; margin-bottom: 0.25rem;">
+                    Overall Completion Score
+                </div>
+                <div id="liveOverallScore" style="font-size: 2.75rem; font-weight: 900; font-family: var(--font-heading); line-height: 1; margin-bottom: 0.35rem;">
+                    {{ overall_score }}%
+                </div>
+                <div style="background: rgba(255,255,255,0.25); height: 8px; border-radius: 4px; overflow: hidden; width: 100%;">
+                    <div id="liveProgressBar" style="background: #fbbf24; width: {{ overall_score }}%; height: 100%; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN FORM FOR MILESTONE CHECKBOXES -->
+    <form action="{% url 'admin_construction_progress' project.id %}" method="POST" id="milestoneProgressForm">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_milestones">
+
+        <!-- Construction Milestone Roadmap Section Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-route" style="color: var(--color-gold);"></i> Construction Milestone Roadmap
+            </h3>
+            <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">
+                Check or uncheck individual milestones to calculate live progress
+            </span>
+        </div>
+
+        <!-- 5-PHASE ACCORDION LIST -->
+        <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem;">
+            
+            {% for phase in phases %}
+            <div class="phase-accordion-card" style="background: white; border-radius: 14px; border: 1.5px solid #cbd5e1; box-shadow: 0 4px 14px rgba(0,0,0,0.02); overflow: hidden;">
+                
+                <!-- Phase Header Accordion Toggle Bar -->
+                <div onclick="togglePhaseAccordion('phasePanel{{ phase.phase_number }}', 'phaseIcon{{ phase.phase_number }}')" style="padding: 1.25rem 1.75rem; background: #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                    <div style="display: flex; align-items: center; gap: 0.85rem;">
+                        <span style="background: var(--color-emerald-darkest); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.95rem;">
+                            {{ phase.phase_number }}
+                        </span>
+                        <h4 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">
+                            {{ phase.title }}
+                        </h4>
+                    </div>
+
+                    <!-- Earned Ratio Display Format: (15/15) or (17/30) -->
+                    <div style="display: flex; align-items: center; gap: 1.25rem;">
+                        <span id="phaseScoreBadge{{ phase.phase_number }}" style="font-size: 1.05rem; font-weight: 900; color: #047857; background: #ecfdf5; border: 1.5px solid rgba(4, 120, 87, 0.25); padding: 0.35rem 1rem; border-radius: 30px;">
+                            ({{ phase.earned_display }}/{{ phase.weight_display }})
+                        </span>
+                        <i id="phaseIcon{{ phase.phase_number }}" class="fa-solid fa-chevron-down" style="color: #64748b; font-size: 1.1rem; transition: transform 0.3s ease;"></i>
+                    </div>
+                </div>
+
+                <!-- Phase Milestones Checkbox Table Panel -->
+                <div id="phasePanel{{ phase.phase_number }}" style="display: block; padding: 1.25rem 1.75rem;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.78rem; text-transform: uppercase; font-weight: 800;">
+                                <th style="padding: 0.6rem 0.5rem; width: 60px; text-align: center;">Status</th>
+                                <th style="padding: 0.6rem 0.75rem;">Milestone Title & Spec</th>
+                                <th style="padding: 0.6rem 0.75rem; text-align: center;">Phase Weight</th>
+                                <th style="padding: 0.6rem 0.75rem; text-align: right;">Overall House Contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in phase.milestones %}
+                            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
+                                
+                                <!-- Checkbox Column -->
+                                <td style="padding: 0.85rem 0.5rem; text-align: center; vertical-align: middle;">
+                                    <input type="checkbox" 
+                                           name="completed_milestones" 
+                                           value="{{ m.no }}" 
+                                           data-house-pct="{{ m.house_pct }}"
+                                           data-phase-num="{{ phase.phase_number }}"
+                                           data-phase-weight="{{ phase.phase_weight }}"
+                                           {% if m.is_completed %}checked{% endif %}
+                                           onchange="calculateLiveScore()"
+                                           style="width: 20px; height: 20px; accent-color: #059669; cursor: pointer; vertical-align: middle;">
+                                </td>
+
+                                <!-- Title Column -->
+                                <td style="padding: 0.85rem 0.75rem; vertical-align: middle;">
+                                    <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">
+                                        Milestone #{{ m.no }}: {{ m.title }}
+                                    </div>
+                                </td>
+
+                                <!-- Phase Weight Column -->
+                                <td style="padding: 0.85rem 0.75rem; text-align: center; vertical-align: middle; font-weight: 700; color: #475569;">
+                                    {{ m.phase_pct }}% of Phase {{ phase.phase_number }}
+                                </td>
+
+                                <!-- House PCT Column -->
+                                <td style="padding: 0.85rem 0.75rem; text-align: right; vertical-align: middle; font-weight: 900; color: #047857;">
+                                    +{{ m.house_pct }}%
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- Additional Project Control Parameters (Drone Video URL & Supervisor) -->
+        <div style="background: white; border-radius: 14px; border: 1.5px solid #cbd5e1; padding: 1.75rem; margin-bottom: 2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.02);">
+            <h4 style="margin: 0 0 1.25rem 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-video" style="color: var(--color-gold);"></i> Supervision Stream & Settings
+            </h4>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                        Live Drone Video Feed URL (MP4 / YouTube):
+                    </label>
+                    <input type="url" name="video_url" value="{{ project.video_url }}" placeholder="https://example.com/drone-feed.mp4" class="form-control" style="width: 100%; padding: 0.6rem; font-weight: 600; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                        Lead Supervisory Engineer Name:
+                    </label>
+                    <input type="text" name="supervisor_name" value="{{ project.supervisor_name }}" placeholder="e.g. Eng. Patrick Mukasa" class="form-control" style="width: 100%; padding: 0.6rem; font-weight: 700; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                        Construction Build Status:
+                    </label>
+                    <select name="status" class="form-control" style="width: 100%; padding: 0.6rem; font-weight: 800; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem; cursor: pointer;">
+                        <option value="ongoing" {% if project.status == 'ongoing' %}selected{% endif %}>Ongoing Construction</option>
+                        <option value="completed" {% if project.status == 'completed' %}selected{% endif %}>Completed & Handed Over</option>
+                        <option value="upcoming" {% if project.status == 'upcoming' %}selected{% endif %}>Upcoming Project</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- STICKY SAVE BUTTON BAR -->
+        <div style="position: sticky; bottom: 1.5rem; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-radius: 14px; padding: 1.25rem 2rem; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; z-index: 100;">
+            <div style="color: white;">
+                <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--color-gold); letter-spacing: 0.05em;">
+                    Live Calculator Score
+                </div>
+                <div style="font-size: 1.2rem; font-weight: 800;">
+                    Overall Calculated Score: <span id="stickyCalculatedScore" style="color: #34d399;">{{ overall_score }}%</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="padding: 0.75rem 2rem; font-size: 1.05rem; font-weight: 900; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 15px rgba(203, 163, 88, 0.4);">
+                <i class="fa-solid fa-floppy-disk"></i> Save Milestone Progress & Update Roadmap
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+<!-- Interactive Live Score Calculator Script -->
+<script>
+function togglePhaseAccordion(panelId, iconId) {
+    const panel = document.getElementById(panelId);
+    const icon = document.getElementById(iconId);
+    if (panel.style.display === "none") {
+        panel.style.display = "block";
+        icon.style.transform = "rotate(0deg)";
+    } else {
+        panel.style.display = "none";
+        icon.style.transform = "rotate(-90deg)";
+    }
+}
+
+function calculateLiveScore() {
+    let totalScore = 0.0;
+    const phaseScores = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0, 5: 0.0};
+    const phaseWeights = {1: 15.0, 2: 20.0, 3: 30.0, 4: 25.0, 5: 10.0};
+
+    const checkboxes = document.querySelectorAll('input[name="completed_milestones"]');
+    checkboxes.forEach(cb => {
+        if (cb.checked) {
+            const housePct = parseFloat(cb.getAttribute('data-house-pct')) || 0.0;
+            const phaseNum = parseInt(cb.getAttribute('data-phase-num'));
+            totalScore += housePct;
+            if (phaseScores[phaseNum] !== undefined) {
+                phaseScores[phaseNum] += housePct;
+            }
+        }
+    });
+
+    const finalScore = Math.min(100.0, Math.round(totalScore * 10) / 10);
+    const scoreStr = finalScore.toFixed(1) + '%';
+
+    // Update Overall Score Display
+    document.getElementById('liveOverallScore').innerText = scoreStr;
+    document.getElementById('stickyCalculatedScore').innerText = scoreStr;
+    document.getElementById('liveProgressBar').style.width = scoreStr;
+
+    // Update Phase Earned Ratios (e.g. (15/15), (20/20), (17/30), (0/25), (0/10))
+    for (let i = 1; i <= 5; i++) {
+        const earnedVal = Math.round(phaseScores[i] * 100) / 100;
+        const earnedDisp = Number.isInteger(earnedVal) ? earnedVal : earnedVal.toFixed(1);
+        const weightDisp = Number.isInteger(phaseWeights[i]) ? phaseWeights[i] : phaseWeights[i].toFixed(1);
+        
+        const badge = document.getElementById('phaseScoreBadge' + i);
+        if (badge) {
+            badge.innerText = '(' + earnedDisp + '/' + weightDisp + ')';
+        }
+    }
+}
+
+// Run on page load
+document.addEventListener('DOMContentLoaded', calculateLiveScore);
+</script>
+{% endblock %}

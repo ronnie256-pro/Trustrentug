@@ -332,17 +332,25 @@ body {
                     {% endif %}
                 </div>
 
-                <!-- Centered Title & Price -->
+                <!-- Centered Title, Price & Location -->
                 <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
                     <h4 class="card-title-text" style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
                         {{ property.title }}
                     </h4>
                     <div class="card-price-text" style="font-size: 0.92rem; color: #57534e; font-weight: 700; text-align: center;">
                         {% if property.price %}
-                        UGX {{ property.price|floatformat:0|intcomma }} / mo
+                            {% if for_sale or property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}
+                            UGX {{ property.price|floatformat:0|intcomma }}
+                            {% else %}
+                            UGX {{ property.price|floatformat:0|intcomma }} / mo
+                            {% endif %}
                         {% else %}
                         Custom Pricing
                         {% endif %}
+                    </div>
+                    <!-- Location below price -->
+                    <div class="card-location-text" style="font-size: 0.82rem; color: #78716c; font-weight: 600; text-align: center; margin-top: 0.2rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.78rem;"></i> {{ property.location|default:'Uganda' }}
                     </div>
                 </div>
             </a>

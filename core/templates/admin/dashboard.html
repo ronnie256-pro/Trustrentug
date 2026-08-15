@@ -1231,6 +1231,221 @@ document.addEventListener("DOMContentLoaded", function() {
         </table>
     </div>
 </div>
+{% elif current_tab == 'applications' %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <div>
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; margin: 0; font-weight: 800;">
+            Construction Supervision Applications
+        </h2>
+        <p style="color: #64748b; margin-top: 0.25rem; margin-bottom: 0;">
+            Review, process, and approve client construction onboarding requests.
+        </p>
+    </div>
+    <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <i class="fa-solid fa-file-signature"></i> {{ construction_applications.count }} Application{{ construction_applications.count|pluralize }}
+    </div>
+</div>
+
+<div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden;">
+    <div class="table-header" style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-clipboard-list" style="color: var(--color-gold);"></i> Onboarding Submissions Directory
+        </h3>
+        <span style="font-size: 0.82rem; color: #64748b; font-weight: 600;">
+            <i class="fa-solid fa-circle" style="color: #3b82f6; font-size: 0.5rem; margin-right: 0.25rem;"></i> Active Supervision Registry
+        </span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="admin-table" style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; color: #334155; font-size: 0.8rem; text-transform: uppercase; font-weight: 800;">
+                    <th style="padding: 1.1rem 1.5rem;">Name</th>
+                    <th style="padding: 1.1rem 1.5rem;">Country</th>
+                    <th style="padding: 1.1rem 1.5rem;">Email</th>
+                    <th style="padding: 1.1rem 1.5rem;">Contact</th>
+                    <th style="padding: 1.1rem 1.5rem; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in construction_applications %}
+                <tr style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <!-- 1. Name -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
+                        <div style="font-weight: 800; color: #0f172a; font-size: 1.02rem;">
+                            {{ app.full_name }}
+                        </div>
+                        {% if app.status == 'approved' %}
+                        <span style="font-size: 0.72rem; color: #047857; font-weight: 800; background: #ecfdf5; border: 1px solid rgba(4, 120, 87, 0.2); padding: 0.15rem 0.5rem; border-radius: 20px; display: inline-block; margin-top: 0.2rem;">✔ Approved</span>
+                        {% elif app.status == 'under_review' %}
+                        <span style="font-size: 0.72rem; color: #1d4ed8; font-weight: 800; background: #eff6ff; border: 1px solid rgba(29, 78, 216, 0.2); padding: 0.15rem 0.5rem; border-radius: 20px; display: inline-block; margin-top: 0.2rem;">Under Review</span>
+                        {% elif app.status == 'rejected' %}
+                        <span style="font-size: 0.72rem; color: #b91c1c; font-weight: 800; background: #fef2f2; border: 1px solid rgba(185, 28, 28, 0.2); padding: 0.15rem 0.5rem; border-radius: 20px; display: inline-block; margin-top: 0.2rem;">Declined</span>
+                        {% else %}
+                        <span style="font-size: 0.72rem; color: #b45309; font-weight: 800; background: #fffbeb; border: 1px solid rgba(180, 83, 9, 0.2); padding: 0.15rem 0.5rem; border-radius: 20px; display: inline-block; margin-top: 0.2rem;">Pending Review</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 2. Country -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
+                        <div style="font-weight: 700; color: #0369a1; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                            <i class="fa-solid fa-earth-africa"></i> {{ app.country_of_residence }}
+                        </div>
+                    </td>
+
+                    <!-- 3. Email -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
+                        <div style="font-weight: 600; color: #334155; font-size: 0.92rem;">
+                            <i class="fa-solid fa-envelope" style="color: #94a3b8; margin-right: 0.25rem;"></i> {{ app.email }}
+                        </div>
+                    </td>
+
+                    <!-- 4. Contact -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
+                        <div style="font-weight: 700; color: #047857; font-size: 0.92rem;">
+                            <i class="fa-solid fa-phone" style="color: #94a3b8; margin-right: 0.25rem;"></i> {{ app.phone_number }}
+                        </div>
+                    </td>
+
+                    <!-- 5. Action -->
+                    <td style="padding: 1.25rem 1.5rem; text-align: center; vertical-align: middle;">
+                        <a href="{% url 'admin_application_detail' app.id %}" class="btn btn-gold" style="padding: 0.5rem 1.15rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 2px 6px rgba(203, 163, 88, 0.25);">
+                            <i class="fa-solid fa-eye"></i> View Application
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;">
+                            <i class="fa-solid fa-file-circle-xmark"></i>
+                        </div>
+                        <p style="margin: 0; font-size: 1rem; font-weight: 600;">No construction supervision applications received yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% elif current_tab == 'construction' %}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <div>
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; margin: 0; font-weight: 800;">
+            Construction Supervision Contracts & Progress Control
+        </h2>
+        <p style="color: #64748b; margin-top: 0.25rem; margin-bottom: 0;">
+            Manage milestone progress, drone verification links, and engineering sign-offs for approved construction applications.
+        </p>
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <a href="/projects/construction-dashboard/3/" target="_blank" class="btn btn-gold" style="padding: 0.55rem 1rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-eye"></i> View Public Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Active Construction Projects Grid -->
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <div>
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; margin: 0; font-weight: 800;">
+            Construction Contracts & Progress Management
+        </h2>
+        <p style="color: #64748b; margin-top: 0.25rem; margin-bottom: 0;">
+            Select an approved application contract to manage its 5-Phase / 25-Milestone progress roadmap.
+        </p>
+    </div>
+    <div style="background: rgba(11, 104, 37, 0.1); border: 1px solid rgba(11, 104, 37, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; color: var(--color-emerald-darkest); font-size: 0.9rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <i class="fa-solid fa-helmet-safety"></i> {{ construction_projects.count }} Active Contract{{ construction_projects.count|pluralize }}
+    </div>
+</div>
+
+<div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden;">
+    <div class="table-header" style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-list-check" style="color: var(--color-gold);"></i> Approved Construction Contracts Directory
+        </h3>
+        <span style="font-size: 0.82rem; color: #64748b; font-weight: 600;">
+            <i class="fa-solid fa-circle" style="color: #10b981; font-size: 0.5rem; margin-right: 0.25rem;"></i> Live Milestone Engine
+        </span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="admin-table" style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; color: #334155; font-size: 0.8rem; text-transform: uppercase; font-weight: 800;">
+                    <th style="padding: 1.1rem 1.5rem;">Contract & Client Name</th>
+                    <th style="padding: 1.1rem 1.5rem;">Location</th>
+                    <th style="padding: 1.1rem 1.5rem;">Overall Completion</th>
+                    <th style="padding: 1.1rem 1.5rem;">Status</th>
+                    <th style="padding: 1.1rem 1.5rem; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for proj in construction_projects %}
+                <tr style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <!-- 1. Contract & Client Name -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
+                        <a href="{% url 'admin_construction_progress' proj.id %}" style="font-weight: 800; color: #0f172a; font-size: 1.05rem; text-decoration: none; display: block;">
+                            {{ proj.title }}
+                        </a>
+                        <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.2rem;">
+                            <i class="fa-solid fa-user-check" style="color: var(--color-gold);"></i> Client: <strong>{{ proj.client_name|default:'Diaspora Client' }}</strong>
+                        </div>
+                    </td>
+
+                    <!-- 2. Location -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
+                        <div style="font-weight: 700; color: #334155; font-size: 0.92rem;">
+                            <i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ proj.location }}
+                        </div>
+                    </td>
+
+                    <!-- 3. Overall Completion -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle; width: 220px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                            <span style="font-size: 0.78rem; font-weight: 700; color: #64748b;">Progress Score:</span>
+                            <span style="font-size: 0.95rem; font-weight: 900; color: var(--color-emerald-darkest);">{{ proj.progress_percentage }}%</span>
+                        </div>
+                        <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, #0b6825, #059669); width: {{ proj.progress_percentage }}%; height: 100%;"></div>
+                        </div>
+                    </td>
+
+                    <!-- 4. Status -->
+                    <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
+                        {% if proj.status == 'completed' %}
+                        <span style="font-size: 0.75rem; font-weight: 800; color: #047857; background: #ecfdf5; border: 1px solid rgba(4, 120, 87, 0.2); padding: 0.25rem 0.65rem; border-radius: 20px;">Completed</span>
+                        {% elif proj.status == 'upcoming' %}
+                        <span style="font-size: 0.75rem; font-weight: 800; color: #b45309; background: #fffbeb; border: 1px solid rgba(180, 83, 9, 0.2); padding: 0.25rem 0.65rem; border-radius: 20px;">Upcoming</span>
+                        {% else %}
+                        <span style="font-size: 0.75rem; font-weight: 800; color: #1d4ed8; background: #eff6ff; border: 1px solid rgba(29, 78, 216, 0.2); padding: 0.25rem 0.65rem; border-radius: 20px;">Ongoing Build</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- 5. Action -->
+                    <td style="padding: 1.25rem 1.5rem; text-align: center; vertical-align: middle;">
+                        <a href="{% url 'admin_construction_progress' proj.id %}" class="btn btn-gold" style="padding: 0.5rem 1.15rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 2px 6px rgba(203, 163, 88, 0.25);">
+                            <i class="fa-solid fa-list-check"></i> Manage Progress & Milestones
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;">
+                            <i class="fa-solid fa-helmet-safety"></i>
+                        </div>
+                        <p style="margin: 0; font-size: 1rem; font-weight: 600;">No active construction contracts approved yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 {% elif current_tab == 'agents' %}
 <div class="dashboard-header" style="margin-bottom: 2rem;">
     <div>
