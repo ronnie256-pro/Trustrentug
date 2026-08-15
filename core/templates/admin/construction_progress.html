@@ -6,15 +6,15 @@
     <!-- Navigation Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <a href="/admin-dashboard/?tab=construction" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.95rem;">
-                <i class="fa-solid fa-arrow-left"></i> Back to Construction Directory
+            <a href="/admin-dashboard/?tab=construction" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 700; font-size: 0.95rem;">
+                Back to Construction Directory
             </a>
             <span style="color: #cbd5e1;">/</span>
             <span style="color: #64748b; font-size: 0.95rem; font-weight: 600;">Contract #{{ project.id }} Progress Roadmap</span>
         </div>
         
         <a href="/projects/construction-dashboard/{{ project.id }}/" target="_blank" class="btn" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid rgba(29, 78, 216, 0.3); font-weight: 800; padding: 0.5rem 1.15rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.88rem;">
-            <i class="fa-solid fa-up-right-from-square"></i> Open Live Client Dashboard
+            Open Live Client Dashboard
         </a>
     </div>
 
@@ -29,15 +29,15 @@
                     {{ project.title }}
                 </h2>
                 <div style="font-size: 0.95rem; color: #475569; margin-top: 0.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                    <span><i class="fa-solid fa-user-check" style="color: var(--color-gold);"></i> Client: <strong>{{ project.client_name|default:'Diaspora Client' }}</strong></span>
+                    <span>Client: <strong>{{ project.client_name|default:'Diaspora Client' }}</strong></span>
                     <span>&bull;</span>
-                    <span><i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> Site: <strong>{{ project.location }}</strong></span>
+                    <span>Site: <strong>{{ project.location }}</strong></span>
                     <span>&bull;</span>
-                    <span><i class="fa-solid fa-user-shield" style="color: #0369a1;"></i> Lead Supervisor: <strong>{{ project.supervisor_name }}</strong></span>
+                    <span>Lead Supervisor: <strong>{{ project.supervisor_name }}</strong></span>
                 </div>
             </div>
 
-            <!-- Overall Completion Score Card Widget (Matching requested format) -->
+            <!-- Overall Completion Score Card Widget -->
             <div style="background: linear-gradient(135deg, #0b6825, #047857); color: white; border-radius: 14px; padding: 1.25rem 1.75rem; text-align: center; min-width: 240px; box-shadow: 0 6px 18px rgba(4, 120, 87, 0.25);">
                 <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.9; margin-bottom: 0.25rem;">
                     Overall Completion Score
@@ -59,8 +59,8 @@
 
         <!-- Construction Milestone Roadmap Section Header -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-route" style="color: var(--color-gold);"></i> Construction Milestone Roadmap
+            <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.4rem; font-weight: 800;">
+                Construction Milestone Roadmap
             </h3>
             <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">
                 Check or uncheck individual milestones to calculate live progress
@@ -74,7 +74,7 @@
             <div class="phase-accordion-card" style="background: white; border-radius: 14px; border: 1.5px solid #cbd5e1; box-shadow: 0 4px 14px rgba(0,0,0,0.02); overflow: hidden;">
                 
                 <!-- Phase Header Accordion Toggle Bar -->
-                <div onclick="togglePhaseAccordion('phasePanel{{ phase.phase_number }}', 'phaseIcon{{ phase.phase_number }}')" style="padding: 1.25rem 1.75rem; background: #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                <div onclick="togglePhaseAccordion('phasePanel{{ phase.phase_number }}', 'phaseIndicator{{ phase.phase_number }}')" style="padding: 1.25rem 1.75rem; background: #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; border-bottom: 1px solid #e2e8f0; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
                         <span style="background: var(--color-emerald-darkest); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.95rem;">
                             {{ phase.phase_number }}
@@ -84,17 +84,19 @@
                         </h4>
                     </div>
 
-                    <!-- Earned Ratio Display Format: (15/15) or (17/30) -->
+                    <!-- Earned Ratio Display & Expand Indicator -->
                     <div style="display: flex; align-items: center; gap: 1.25rem;">
                         <span id="phaseScoreBadge{{ phase.phase_number }}" style="font-size: 1.05rem; font-weight: 900; color: #047857; background: #ecfdf5; border: 1.5px solid rgba(4, 120, 87, 0.25); padding: 0.35rem 1rem; border-radius: 30px;">
                             ({{ phase.earned_display }}/{{ phase.weight_display }})
                         </span>
-                        <i id="phaseIcon{{ phase.phase_number }}" class="fa-solid fa-chevron-down" style="color: #64748b; font-size: 1.1rem; transition: transform 0.3s ease;"></i>
+                        <span id="phaseIndicator{{ phase.phase_number }}" style="font-size: 0.85rem; font-weight: 800; color: #64748b; background: #e2e8f0; padding: 0.35rem 0.85rem; border-radius: 20px;">
+                            ▼ Click to Expand
+                        </span>
                     </div>
                 </div>
 
-                <!-- Phase Milestones Checkbox Table Panel -->
-                <div id="phasePanel{{ phase.phase_number }}" style="display: block; padding: 1.25rem 1.75rem;">
+                <!-- Phase Milestones Checkbox Table Panel (Accordions start collapsed) -->
+                <div id="phasePanel{{ phase.phase_number }}" style="display: none; padding: 1.25rem 1.75rem;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
                         <thead>
                             <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 0.78rem; text-transform: uppercase; font-weight: 800;">
@@ -150,8 +152,8 @@
 
         <!-- Additional Project Control Parameters (Drone Video URL & Supervisor) -->
         <div style="background: white; border-radius: 14px; border: 1.5px solid #cbd5e1; padding: 1.75rem; margin-bottom: 2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.02);">
-            <h4 style="margin: 0 0 1.25rem 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fa-solid fa-video" style="color: var(--color-gold);"></i> Supervision Stream & Settings
+            <h4 style="margin: 0 0 1.25rem 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 800;">
+                Supervision Stream & Settings
             </h4>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
@@ -193,8 +195,8 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-gold" style="padding: 0.75rem 2rem; font-size: 1.05rem; font-weight: 900; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 15px rgba(203, 163, 88, 0.4);">
-                <i class="fa-solid fa-floppy-disk"></i> Save Milestone Progress & Update Roadmap
+            <button type="submit" class="btn btn-gold" style="padding: 0.75rem 2rem; font-size: 1.05rem; font-weight: 900; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(203, 163, 88, 0.4);">
+                Save Milestone Progress & Update Roadmap
             </button>
         </div>
 
@@ -202,17 +204,17 @@
 
 </div>
 
-<!-- Interactive Live Score Calculator Script -->
+<!-- Interactive Live Score Calculator & Accordion Toggle Script -->
 <script>
-function togglePhaseAccordion(panelId, iconId) {
+function togglePhaseAccordion(panelId, indicatorId) {
     const panel = document.getElementById(panelId);
-    const icon = document.getElementById(iconId);
-    if (panel.style.display === "none") {
+    const indicator = document.getElementById(indicatorId);
+    if (panel.style.display === "none" || panel.style.display === "") {
         panel.style.display = "block";
-        icon.style.transform = "rotate(0deg)";
+        if (indicator) indicator.innerText = "▲ Click to Collapse";
     } else {
         panel.style.display = "none";
-        icon.style.transform = "rotate(-90deg)";
+        if (indicator) indicator.innerText = "▼ Click to Expand";
     }
 }
 

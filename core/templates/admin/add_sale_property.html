@@ -1,0 +1,227 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="animate__animated animate__fadeIn" style="max-width: 1100px; margin: 0 auto; font-family: var(--font-body);">
+    
+    <!-- Navigation Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <a href="/admin-dashboard/?tab=properties" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 700; font-size: 0.95rem;">
+                Back to Properties Directory
+            </a>
+            <span style="color: #cbd5e1;">/</span>
+            <span style="color: #64748b; font-size: 0.95rem; font-weight: 600;">Add Property for Sale</span>
+        </div>
+    </div>
+
+    <!-- Main Creation Card -->
+    <div style="background: white; border-radius: 16px; border: 1.5px solid #cbd5e1; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 2.5rem;">
+        
+        <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 1.25rem; margin-bottom: 2rem;">
+            <h2 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; font-weight: 800;">
+                Add Property Listing for Sale
+            </h2>
+            <p style="color: #64748b; margin-top: 0.35rem; margin-bottom: 0; font-size: 0.95rem;">
+                Specify listing details, 7 gallery photos, amenities, and proximity distances to local services.
+            </p>
+        </div>
+
+        <form action="{% url 'admin_add_sale_property' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- SECTION 1: Listing Details -->
+            <div style="margin-bottom: 2.5rem;">
+                <h4 style="margin: 0 0 1.25rem 0; font-size: 1.05rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.03em;">
+                    1. General Listing Details
+                </h4>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    
+                    <!-- Title -->
+                    <div style="grid-column: span 2;">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Property Title / Name <span style="color: #ef4444;">*</span>
+                        </label>
+                        <input type="text" name="title" required placeholder="e.g. Royal Palms Executive Villa - Naalya Phase 2" class="form-control" style="width: 100%; padding: 0.75rem; font-weight: 700; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.95rem;">
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Category / Property Type <span style="color: #ef4444;">*</span>
+                        </label>
+                        <select name="category" class="form-control" style="width: 100%; padding: 0.75rem; font-weight: 700; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; cursor: pointer; background: white;">
+                            <option value="standalone">Standalone House / Villa</option>
+                            <option value="bungalow">Bungalow / Estate</option>
+                            <option value="studio">Studio Apartment</option>
+                            <option value="1_bed">1 Bedroom Apartment</option>
+                            <option value="2_bed">2 Bedroom Apartment</option>
+                            <option value="3_plus_bed">3+ Bedroom Luxury Residence</option>
+                            <option value="apartment_block">Apartment Block / Commercial Complex</option>
+                            <option value="condo_block">Condominium Block</option>
+                        </select>
+                    </div>
+
+                    <!-- Full Purchase Price -->
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Full Purchase Price (UGX) <span style="color: #ef4444;">*</span>
+                        </label>
+                        <input type="number" name="price" required placeholder="e.g. 650000000" class="form-control" style="width: 100%; padding: 0.75rem; font-weight: 800; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; color: var(--color-emerald-darkest);">
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Location / Address <span style="color: #ef4444;">*</span>
+                        </label>
+                        <input type="text" name="location" required placeholder="e.g. Naalya, Kira Municipality, Wakiso District" class="form-control" style="width: 100%; padding: 0.75rem; font-weight: 700; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.95rem;">
+                    </div>
+
+                    <!-- Bedrooms -->
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Number of Bedrooms:
+                        </label>
+                        <input type="number" name="bedrooms" placeholder="e.g. 5" min="0" class="form-control" style="width: 100%; padding: 0.75rem; font-weight: 700; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.95rem;">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SECTION 2: Overview Description -->
+            <div style="margin-bottom: 2.5rem;">
+                <h4 style="margin: 0 0 1.25rem 0; font-size: 1.05rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.03em;">
+                    2. Detailed Description & Specifications
+                </h4>
+
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                        Property Description:
+                    </label>
+                    <textarea name="description" rows="4" placeholder="Provide full details about land title type (Mailo/Freehold), plot size, architectural finish, security features, and neighborhood amenities..." class="form-control" style="width: 100%; padding: 0.85rem; font-weight: 500; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 0.95rem; line-height: 1.5;"></textarea>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Property Images Upload (Hero + 7 Gallery Photos Batch Upload) -->
+            <div style="margin-bottom: 2.5rem; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1.25rem 0; font-size: 1.05rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.03em;">
+                    3. Property Photos (Hero Cover + 7 Gallery Photos Upload)
+                </h4>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <!-- Cover Hero Image -->
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 0.35rem;">
+                            Cover / Hero Image <span style="color: #ef4444;">*</span>
+                        </label>
+                        <input type="file" name="hero_image" accept="image/*" class="form-control" style="width: 100%; padding: 0.65rem; font-size: 0.88rem; border-radius: 8px; border: 1.5px solid #cbd5e1; background: white;">
+                    </div>
+
+                    <!-- BATCH UPLOAD: Select 7 Gallery Images All at Once -->
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 800; color: #0369a1; display: block; margin-bottom: 0.35rem;">
+                            Upload 7 Gallery Photos at Once (Select All)
+                        </label>
+                        <input type="file" name="gallery_images" multiple accept="image/*" class="form-control" style="width: 100%; padding: 0.65rem; font-size: 0.88rem; border-radius: 8px; border: 1.5px solid #0284c7; background: #eff6ff;">
+                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem; display: block;">
+                            Hold <strong>Ctrl</strong> or <strong>Shift</strong> to select up to 7 images at once in one go.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 4: Amenities Accordion -->
+            <div style="margin-bottom: 1.5rem;">
+                <div onclick="toggleAccordion('amenities-accordion-panel', 'amenities-indicator')" style="cursor: pointer; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1.1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; user-select: none;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.03em;">
+                            4. Property Amenities & Features
+                        </h4>
+                        <span style="font-size: 0.82rem; color: #64748b; margin-top: 0.2rem; display: block;">Select all amenities present on this property</span>
+                    </div>
+                    <span id="amenities-indicator" style="font-size: 0.85rem; font-weight: 800; color: var(--color-emerald-darkest); background: #e2e8f0; padding: 0.35rem 0.85rem; border-radius: 20px;">
+                        ▼ Click to Expand
+                    </span>
+                </div>
+
+                <div id="amenities-accordion-panel" style="display: none; margin-top: 0.75rem; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.85rem;">
+                        {% for amenity in amenities %}
+                        <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; padding: 0.5rem 0.75rem; background: white; border: 1px solid #cbd5e1; border-radius: 8px; transition: background 0.15s;" onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='white'">
+                            <input type="checkbox" name="amenities" value="{{ amenity.id }}" style="width: 18px; height: 18px; accent-color: #059669; cursor: pointer;">
+                            <span style="font-size: 0.88rem; font-weight: 700; color: #334155;">
+                                {{ amenity.name }}
+                            </span>
+                        </label>
+                        {% empty %}
+                        <div style="color: #94a3b8; font-size: 0.88rem; font-style: italic;">No amenities configured in Admin Settings yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 5: Proximity Accordion -->
+            <div style="margin-bottom: 2.5rem;">
+                <div onclick="toggleAccordion('proximity-accordion-panel', 'proximity-indicator')" style="cursor: pointer; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1.1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; user-select: none;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.03em;">
+                            5. Proximity to Local Services & Key Landmarks
+                        </h4>
+                        <span style="font-size: 0.82rem; color: #64748b; margin-top: 0.2rem; display: block;">Enter approximate distance in Kilometers (KM) for nearby services</span>
+                    </div>
+                    <span id="proximity-indicator" style="font-size: 0.85rem; font-weight: 800; color: var(--color-emerald-darkest); background: #e2e8f0; padding: 0.35rem 0.85rem; border-radius: 20px;">
+                        ▼ Click to Expand
+                    </span>
+                </div>
+
+                <div id="proximity-accordion-panel" style="display: none; margin-top: 0.75rem; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+                        {% for item in proximity_items %}
+                        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.75rem 1rem;">
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: space-between;">
+                                <span>{{ item.name }}</span>
+                                <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">({{ item.category.name }})</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="number" step="0.1" min="0" name="proximity_distance_{{ item.id }}" placeholder="Distance (e.g. 1.5)" class="form-control" style="width: 100%; padding: 0.45rem; font-weight: 700; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+                                <span style="font-size: 0.8rem; font-weight: 800; color: #047857;">KM</span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div style="color: #94a3b8; font-size: 0.88rem; font-style: italic;">No proximity items configured.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button Bar -->
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; border-top: 2px solid #f1f5f9; padding-top: 1.5rem;">
+                <a href="/admin-dashboard/?tab=properties" class="btn" style="padding: 0.8rem 1.5rem; font-weight: 700; font-size: 0.95rem; border-radius: 8px; background: #f1f5f9; color: #475569; text-decoration: none;">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-gold" style="padding: 0.85rem 2.25rem; font-weight: 900; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(203, 163, 88, 0.4);">
+                    Publish Property for Sale
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+function toggleAccordion(panelId, indicatorId) {
+    const panel = document.getElementById(panelId);
+    const indicator = document.getElementById(indicatorId);
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        if (indicator) indicator.textContent = '▲ Click to Collapse';
+    } else {
+        panel.style.display = 'none';
+        if (indicator) indicator.textContent = '▼ Click to Expand';
+    }
+}
+</script>
+{% endblock %}

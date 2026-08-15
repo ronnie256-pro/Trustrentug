@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, PropertyProximity, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -2478,6 +2478,87 @@ def admin_application_detail(request, app_id):
     return render(request, 'admin/application_detail.html', {
         'app': app_obj,
         'current_tab': 'applications'
+    })
+
+
+def admin_add_sale_property(request):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        category = request.POST.get('category', 'standalone')
+        price = request.POST.get('price', '').strip()
+        location = request.POST.get('location', '').strip()
+        description = request.POST.get('description', '').strip()
+        bedrooms = request.POST.get('bedrooms', None)
+        
+        hero_image = request.FILES.get('hero_image')
+        
+        # Batch upload for up to 7 gallery images at once
+        gallery_files = request.FILES.getlist('gallery_images')
+        image_1 = gallery_files[0] if len(gallery_files) > 0 else request.FILES.get('image_1')
+        image_2 = gallery_files[1] if len(gallery_files) > 1 else request.FILES.get('image_2')
+        image_3 = gallery_files[2] if len(gallery_files) > 2 else request.FILES.get('image_3')
+        image_4 = gallery_files[3] if len(gallery_files) > 3 else request.FILES.get('image_4')
+        image_5 = gallery_files[4] if len(gallery_files) > 4 else request.FILES.get('image_5')
+        image_6 = gallery_files[5] if len(gallery_files) > 5 else request.FILES.get('image_6')
+        image_7 = gallery_files[6] if len(gallery_files) > 6 else request.FILES.get('image_7')
+
+        if not title or not price or not location:
+            messages.error(request, "Please fill in all required fields (Title, Price, and Location).")
+        else:
+            try:
+                price_val = float(price.replace(',', ''))
+            except ValueError:
+                price_val = 0.0
+
+            prop = Property.objects.create(
+                owner=request.user,
+                title=title,
+                category=category,
+                listing_type='sale',
+                status='available',
+                price=price_val,
+                location=location,
+                description=description,
+                bedrooms=int(bedrooms) if bedrooms and bedrooms.isdigit() else None,
+                hero_image=hero_image,
+                image_1=image_1,
+                image_2=image_2,
+                image_3=image_3,
+                image_4=image_4,
+                image_5=image_5,
+                image_6=image_6,
+                image_7=image_7,
+            )
+
+            # 1. Attach selected amenities
+            selected_amenities = request.POST.getlist('amenities')
+            if selected_amenities:
+                prop.amenities.set(selected_amenities)
+
+            # 2. Attach proximity distances
+            proximity_items = ProximityItem.objects.all()
+            for item in proximity_items:
+                dist_val = request.POST.get(f'proximity_distance_{item.id}', '').strip()
+                if dist_val:
+                    try:
+                        dist_float = float(dist_val)
+                        PropertyProximity.objects.create(property=prop, item=item, distance_km=dist_float)
+                    except ValueError:
+                        pass
+
+            messages.success(request, f"Property for Sale '{prop.title}' created and published successfully!")
+            return redirect('/admin-dashboard/?tab=properties')
+
+    amenities = PropertyAmenity.objects.all()
+    proximity_items = ProximityItem.objects.select_related('category').filter(is_active=True)
+    return render(request, 'admin/add_sale_property.html', {
+        'amenities': amenities,
+        'proximity_items': proximity_items,
+        'current_tab': 'properties'
     })
 
 

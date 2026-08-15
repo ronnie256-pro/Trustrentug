@@ -563,7 +563,17 @@
         <!-- Split Image Section Container -->
         <div class="property-gallery-split">
             <!-- Left Container: Display Section (Shows Hero Image on Page Load) -->
-            <div class="gallery-main-container">
+            <div class="gallery-main-container" style="position: relative;">
+                {% if property.listing_type == 'sale' or property.price >= 50000000 or 'sale' in property.title|lower or 'estate' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower %}
+                <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #2563eb; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-tags"></i> For Sale
+                </span>
+                {% else %}
+                <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #059669; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-key"></i> For Rent
+                </span>
+                {% endif %}
+
                 {% if property.hero_image %}
                 <img id="mainGalleryImg" src="{{ property.hero_image.url }}" alt="{{ property.title }} - Featured View"
                     class="gallery-main-img">
@@ -605,22 +615,22 @@
                     </div>
                     <!-- Tile 4 -->
                     <div class="mosaic-tile" title="Click to swap with main display">
-                        <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80"
+                        <img src="{% if property.image_4 %}{{ property.image_4.url }}{% else %}https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 4">
                     </div>
                     <!-- Tile 5 -->
                     <div class="mosaic-tile" title="Click to swap with main display">
-                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80"
+                        <img src="{% if property.image_5 %}{{ property.image_5.url }}{% else %}https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 5">
                     </div>
                     <!-- Tile 6 -->
                     <div class="mosaic-tile" title="Click to swap with main display">
-                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80"
+                        <img src="{% if property.image_6 %}{{ property.image_6.url }}{% else %}https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 6">
                     </div>
                     <!-- Tile 7 -->
                     <div class="mosaic-tile" title="Click to swap with main display">
-                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80"
+                        <img src="{% if property.image_7 %}{{ property.image_7.url }}{% else %}https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 7">
                     </div>
                 </div>
@@ -697,6 +707,7 @@
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        {% if property.listing_type != 'sale' and not property.category == 'bungalow' and not property.category == 'standalone' and not 'sale' in property.title|lower and not 'estate' in property.title|lower and not 'land' in property.title|lower and not 'plot' in property.title|lower and property.price < 50000000 %}
                         <form id="book-property-form" action="{% url 'tenant_create_booking' property.id %}"
                             method="POST">
                             {% csrf_token %}
@@ -705,6 +716,7 @@
                                 Book Property
                             </button>
                         </form>
+                        {% endif %}
 
                         <form action="{% url 'tenant_add_favorite' property.id %}" method="POST">
                             {% csrf_token %}

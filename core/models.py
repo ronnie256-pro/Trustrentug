@@ -28,9 +28,15 @@ class Property(models.Model):
         ('under_inspection', 'Under Inspection'),
     ]
 
+    LISTING_TYPE_CHOICES = [
+        ('rent', 'For Rent'),
+        ('sale', 'For Sale'),
+    ]
+
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    listing_type = models.CharField(max_length=20, choices=LISTING_TYPE_CHOICES, default='rent')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending_verification')
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     price_per_month = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
@@ -45,11 +51,15 @@ class Property(models.Model):
     is_multi_unit = models.BooleanField(default=False)
     bedrooms = models.IntegerField(null=True, blank=True)
     
-    # Images (Hero + 3 Gallery supporting photos)
+    # Images (Hero + 7 Gallery supporting photos)
     hero_image = models.FileField(upload_to='properties/hero/', null=True, blank=True)
     image_1 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
     image_2 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
     image_3 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+    image_4 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+    image_5 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+    image_6 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+    image_7 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
 
     # Documents
     building_plans = models.FileField(upload_to='properties/documents/', null=True, blank=True)

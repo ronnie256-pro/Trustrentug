@@ -1129,10 +1129,13 @@ document.addEventListener("DOMContentLoaded", function() {
         <p style="color: #64748b; margin-top: 0.25rem;">Review uploaded physical vetting documents, view property media,
             and list verified properties.</p>
     </div>
-    <div
-        style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
-        <i class="fa-solid fa-house-shield" style="margin-right: 0.5rem;"></i> {{ properties.count }} Total Submission{{
-        properties.count|pluralize }}
+    <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <a href="{% url 'admin_add_sale_property' %}" class="btn btn-gold" style="padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">
+            <i class="fa-solid fa-plus-circle"></i> Add for Sale
+        </a>
+        <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
+            <i class="fa-solid fa-house-shield" style="margin-right: 0.5rem;"></i> {{ properties.count }} Total Submission{{ properties.count|pluralize }}
+        </div>
     </div>
 </div>
 
@@ -1330,22 +1333,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 {% elif current_tab == 'construction' %}
-<div class="dashboard-header" style="margin-bottom: 2rem;">
-    <div>
-        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; margin: 0; font-weight: 800;">
-            Construction Supervision Contracts & Progress Control
-        </h2>
-        <p style="color: #64748b; margin-top: 0.25rem; margin-bottom: 0;">
-            Manage milestone progress, drone verification links, and engineering sign-offs for approved construction applications.
-        </p>
-    </div>
-    <div style="display: flex; gap: 0.5rem; align-items: center;">
-        <a href="/projects/construction-dashboard/3/" target="_blank" class="btn btn-gold" style="padding: 0.55rem 1rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
-            <i class="fa-solid fa-eye"></i> View Public Dashboard
-        </a>
-    </div>
-</div>
-
 <!-- Active Construction Projects Grid -->
 <div class="dashboard-header" style="margin-bottom: 2rem;">
     <div>
@@ -1357,20 +1344,11 @@ document.addEventListener("DOMContentLoaded", function() {
         </p>
     </div>
     <div style="background: rgba(11, 104, 37, 0.1); border: 1px solid rgba(11, 104, 37, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; color: var(--color-emerald-darkest); font-size: 0.9rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.35rem;">
-        <i class="fa-solid fa-helmet-safety"></i> {{ construction_projects.count }} Active Contract{{ construction_projects.count|pluralize }}
+        {{ construction_projects.count }} Active Contract{{ construction_projects.count|pluralize }}
     </div>
 </div>
 
 <div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden;">
-    <div class="table-header" style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-list-check" style="color: var(--color-gold);"></i> Approved Construction Contracts Directory
-        </h3>
-        <span style="font-size: 0.82rem; color: #64748b; font-weight: 600;">
-            <i class="fa-solid fa-circle" style="color: #10b981; font-size: 0.5rem; margin-right: 0.25rem;"></i> Live Milestone Engine
-        </span>
-    </div>
-
     <div style="overflow-x: auto;">
         <table class="admin-table" style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
             <thead>
@@ -1391,14 +1369,14 @@ document.addEventListener("DOMContentLoaded", function() {
                             {{ proj.title }}
                         </a>
                         <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.2rem;">
-                            <i class="fa-solid fa-user-check" style="color: var(--color-gold);"></i> Client: <strong>{{ proj.client_name|default:'Diaspora Client' }}</strong>
+                            Client: <strong>{{ proj.client_name|default:'Diaspora Client' }}</strong>
                         </div>
                     </td>
 
                     <!-- 2. Location -->
                     <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
                         <div style="font-weight: 700; color: #334155; font-size: 0.92rem;">
-                            <i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ proj.location }}
+                            {{ proj.location }}
                         </div>
                     </td>
 
@@ -1426,17 +1404,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     <!-- 5. Action -->
                     <td style="padding: 1.25rem 1.5rem; text-align: center; vertical-align: middle;">
-                        <a href="{% url 'admin_construction_progress' proj.id %}" class="btn btn-gold" style="padding: 0.5rem 1.15rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 2px 6px rgba(203, 163, 88, 0.25);">
-                            <i class="fa-solid fa-list-check"></i> Manage Progress & Milestones
+                        <a href="{% url 'admin_construction_progress' proj.id %}" class="btn btn-gold" style="padding: 0.5rem 1.15rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(203, 163, 88, 0.25);">
+                            Manage Progress & Milestones
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
                     <td colspan="5" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
-                        <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;">
-                            <i class="fa-solid fa-helmet-safety"></i>
-                        </div>
                         <p style="margin: 0; font-size: 1rem; font-weight: 600;">No active construction contracts approved yet.</p>
                     </td>
                 </tr>
