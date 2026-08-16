@@ -737,12 +737,6 @@
 
                 <div class="form-grid-2">
                     <div class="form-field-group">
-                        <label class="form-field-label">Upload Passport or National ID Document</label>
-                        <input type="file" name="id_document" class="form-field-input" accept="image/*,.pdf">
-                    </div>
-
-                <div class="form-grid-2">
-                    <div class="form-field-group">
                         <label class="form-field-label">Email Address <span style="color: #ef4444;">*</span></label>
                         <input type="email" name="email" class="form-field-input" placeholder="e.g. moses.kagimu@example.com" required>
                     </div>
@@ -750,6 +744,11 @@
                         <label class="form-field-label">Phone Number (with Country Code) <span style="color: #ef4444;">*</span></label>
                         <input type="tel" name="phone_number" class="form-field-input" placeholder="e.g. +44 7911 123456" required>
                     </div>
+                </div>
+
+                <div class="form-field-group" style="margin-top: 0.85rem;">
+                    <label class="form-field-label">Upload Passport or National ID Document</label>
+                    <input type="file" name="id_document" class="form-field-input" accept="image/*,.pdf">
                 </div>
             </div>
 
@@ -1149,11 +1148,13 @@
             const currentPanel = document.getElementById('stepPanel' + currentStep);
             if (!currentPanel) return true;
             
-            const requiredInputs = currentPanel.querySelectorAll('[required]');
+            const requiredInputs = currentPanel.querySelectorAll('input[required], select[required], textarea[required]');
             for (let input of requiredInputs) {
-                if (input.offsetParent !== null && (!input.value || !input.value.trim())) {
+                const isVisible = (input.offsetWidth > 0 || input.offsetHeight > 0 || input.getClientRects().length > 0);
+                if (isVisible && (!input.value || !input.value.trim())) {
                     input.focus();
-                    alert('Please fill in required field: ' + (input.previousElementSibling ? input.previousElementSibling.textContent.replace('*', '').trim() : 'required input'));
+                    const labelText = input.previousElementSibling ? input.previousElementSibling.textContent.replace('*', '').trim() : 'required field';
+                    alert('Please fill in required field: ' + labelText);
                     return false;
                 }
             }
