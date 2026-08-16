@@ -585,6 +585,7 @@ def admin_dashboard(request):
                             'short_description': f"Active supervision build for {app.full_name}",
                             'client_name': app.full_name,
                             'progress_percentage': 0,
+                            'completed_milestones': [],
                             'status': 'ongoing'
                         }
                     )
@@ -2466,6 +2467,7 @@ def admin_application_detail(request, app_id):
                         'short_description': f"Active supervision build for {app_obj.full_name}",
                         'client_name': app_obj.full_name,
                         'progress_percentage': 0,
+                        'completed_milestones': [],
                         'status': 'ongoing'
                     }
                 )
@@ -2671,11 +2673,10 @@ def admin_construction_progress(request, project_id):
 
     # Initialize completed milestones if empty
     completed_ids = project_obj.completed_milestones
-    if completed_ids is None or len(completed_ids) == 0:
-        # Default first 13 milestones if new project to match ~52%
-        completed_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-        project_obj.completed_milestones = completed_ids
-        project_obj.progress_percentage = 52
+    if completed_ids is None:
+        completed_ids = []
+        project_obj.completed_milestones = []
+        project_obj.progress_percentage = 0
         project_obj.save()
 
     # Calculate ratios for rendering
