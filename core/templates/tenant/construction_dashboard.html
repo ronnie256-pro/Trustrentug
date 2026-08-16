@@ -440,19 +440,19 @@
 
                 <div class="client-info-fields">
                     <div class="info-field-box">
-                        <strong>Name:</strong> {% if app and app.full_name %}{{ app.full_name }}{% else %}Dr. Moses Kagimu{% endif %}
+                        <strong>Name:</strong> {% if app and app.full_name %}{{ app.full_name }}{% elif project_obj and project_obj.client_name %}{{ project_obj.client_name }}{% else %}-{% endif %}
                     </div>
                     <div class="info-field-box">
-                        <strong>Country:</strong> {% if app and app.country_of_residence %}{{ app.country_of_residence }}{% else %}United Kingdom{% endif %}
+                        <strong>Country:</strong> {% if app and app.country_of_residence %}{{ app.country_of_residence }}{% else %}-{% endif %}
                     </div>
                     <div class="info-field-box">
-                        <strong>Contacts:</strong> {% if app and app.phone_number %}{{ app.phone_number }}{% else %}+44 7911 123456{% endif %}
+                        <strong>Contacts:</strong> {% if app and app.phone_number %}{{ app.phone_number }}{% else %}-{% endif %}
                     </div>
                     <div class="info-field-box">
-                        <strong>Email:</strong> {% if app and app.email %}{{ app.email }}{% else %}moses.kagimu@example.com{% endif %}
+                        <strong>Email:</strong> {% if app and app.email %}{{ app.email }}{% else %}-{% endif %}
                     </div>
                     <div class="info-field-box">
-                        <strong>Project ID:</strong> #TRUST-DSP-{% if app %}{{ app.id|stringformat:"04d" }}{% else %}0003{% endif %}
+                        <strong>Project ID:</strong> {% if app %}#TRUST-DSP-{{ app.id|stringformat:"04d" }}{% elif project_obj %}#TRUST-DSP-{{ project_obj.id|stringformat:"04d" }}{% else %}-{% endif %}
                     </div>
                 </div>
             </div>
@@ -471,53 +471,47 @@
             <div class="project-details-card">
                 <h3 class="pd-section-title">Project Details</h3>
 
-                <!-- Added Project Cost right above Date of Commencement -->
                 <div class="pd-item">
                     <strong>Project cost:</strong><br>
-                    <span style="font-weight: 900; font-size: 1.15rem; color: var(--color-emerald-darkest);">{% if payment_status.total_budget %}{{ payment_status.total_budget }}{% else %}UGX 220,000,000{% endif %}</span>
+                    <span style="font-weight: 900; font-size: 1.15rem; color: var(--color-emerald-darkest);">
+                        {% if app and app.estimated_budget %}
+                        UGX {{ app.estimated_budget }}
+                        {% elif project_obj and project_obj.price %}
+                        UGX {{ project_obj.price|floatformat:0 }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </span>
                 </div>
                 <div class="pd-item">
                     <strong>Date of commencement:</strong><br>
-                    {{ contract_status.start_date }}
+                    {% if contract_status.start_date %}{{ contract_status.start_date }}{% else %}-{% endif %}
                 </div>
                 <div class="pd-item">
                     <strong>Handover Date:</strong><br>
-                    {{ contract_status.expected_handover }}
+                    {% if contract_status.expected_handover %}{{ contract_status.expected_handover }}{% else %}-{% endif %}
                 </div>
                 <div class="pd-item">
                     <strong>Next of KIN:</strong><br>
-                    {% if app and app.next_of_kin_name %}{{ app.next_of_kin_name }} ({% if app.next_of_kin_relationship %}{{ app.next_of_kin_relationship }}{% else %}Kin{% endif %}) — {{ app.next_of_kin_phone }}{% else %}Sarah Namukasa (Sister) — 0772 123456{% endif %}
+                    {% if app and app.next_of_kin_name %}
+                        {{ app.next_of_kin_name }}{% if app.next_of_kin_relationship %} ({{ app.next_of_kin_relationship }}){% endif %}{% if app.next_of_kin_phone %} — {{ app.next_of_kin_phone }}{% endif %}
+                    {% else %}
+                        -
+                    {% endif %}
                 </div>
 
+                {% if payment_status.payment_method %}
                 <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 2px solid rgba(203, 163, 88, 0.25);">
                     <h4 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--color-emerald-darkest); margin: 0 0 0.75rem 0;">
                         Financial Records
                     </h4>
 
                     <div class="fin-record-box">
-                        <span>TRUST Received Deposit 1:</span>
-                        <strong style="color: #047857;">UGX 100,000,000</strong>
-                    </div>
-                    <div class="fin-record-box">
-                        <span>TRUST Received Deposit 2:</span>
-                        <strong style="color: #047857;">UGX 50,000,000</strong>
-                    </div>
-                    <div class="fin-record-box" style="background: #f0fdf4; border-color: rgba(16, 185, 129, 0.3);">
-                        <span>Funds Received:</span>
-                        <strong style="color: #047857; font-weight: 900;">{{ payment_status.escrow_deposited }}</strong>
-                    </div>
-                    <div class="fin-record-box" style="background: #fef2f2; border-color: rgba(239, 68, 68, 0.3);">
-                        <span>Remaining Balance:</span>
-                        <strong style="color: #b91c1c; font-weight: 900;">UGX 70,000,000</strong>
-                    </div>
-
-                    <!-- Download Report Button below Financial Records -->
-                    <div style="margin-top: 1.25rem;">
-                        <button type="button" style="width: 100%; background: #38bdf8; color: #0f172a; border: 1.5px solid #0284c7; border-radius: 10px; padding: 0.7rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25); transition: all 0.2s ease;">
-                            &#128196; Download Report
-                        </button>
+                        <span>Payment Method:</span>
+                        <strong style="color: #047857;">{{ payment_status.payment_method }}</strong>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
 
