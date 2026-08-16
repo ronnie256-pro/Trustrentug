@@ -1,108 +1,346 @@
 {% extends "base.html" %}
 
-{% block title %}Sign In | TRUST{% endblock %}
+{% block title %}Sign In | TRUST Protocol{% endblock %}
 
 {% block extra_css %}
 <style>
-.auth-container {
-    min-height: 80vh;
+.auth-split-wrapper {
+    min-height: calc(100vh - 120px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 4rem 2rem;
-    background: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=2000&q=80') center/cover;
-    position: relative;
+    background: #f1f5f9;
 }
+
 footer {
     margin-top: 0 !important;
 }
-.auth-container::before {
+
+.auth-split-card {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    max-width: 1350px;
+    width: 100%;
+    min-height: 700px;
+    background: #ffffff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.14);
+    border: 1px solid #e2e8f0;
+}
+
+/* Left Side Panel - Light Green Branding */
+.auth-left-panel {
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+    padding: 5.5rem 4.5rem;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-left-panel::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(4, 26, 17, 0.85); /* Emerald dark overlay */
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 60%);
+    pointer-events: none;
 }
-.auth-card {
-    background: #fff;
-    padding: 3rem;
-    border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 450px;
-    z-index: 10;
-    box-shadow: var(--shadow-lg);
-    border-top: 4px solid var(--color-gold);
-}
-.auth-header {
-    text-align: center;
+
+.auth-panel-logo {
     margin-bottom: 2rem;
+    z-index: 2;
 }
-.auth-header h2 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+
+.auth-panel-content {
+    margin: auto 0;
+    z-index: 2;
 }
-.auth-header p {
-    color: var(--color-text-muted);
+
+.auth-panel-content h2 {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #ffffff !important;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
 }
-.form-footer {
-    margin-top: 1.5rem;
+
+.auth-panel-content p {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-size: 1.3rem;
+    margin-bottom: 2.75rem;
+}
+
+.btn-panel-outline {
+    display: inline-block;
+    padding: 1rem 3.5rem;
+    border: 3px solid #ffffff;
+    border-radius: 50px;
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: all 0.25s ease;
+}
+
+.btn-panel-outline:hover {
+    background: #ffffff;
+    color: #047857;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+/* Right Side Panel - Form Container */
+.auth-right-panel {
+    padding: 5.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #ffffff;
+}
+
+.auth-form-title {
     text-align: center;
-    font-size: 0.9rem;
+    font-family: var(--font-heading);
+    font-size: 2.85rem;
+    font-weight: 800;
+    color: #047857;
+    margin-bottom: 2.75rem;
 }
-    /* Responsive Auth */
-    @media (max-width: 768px) {
-        .auth-container { padding: 2rem 1rem; }
-        .auth-card { padding: 2rem 1.5rem; }
-        .auth-header h2 { font-size: 1.5rem; }
+
+.form-group-modern {
+    margin-bottom: 1.75rem;
+    position: relative;
+}
+
+.input-with-icon-modern {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon-modern i {
+    position: absolute;
+    left: 1.35rem;
+    color: #94a3b8;
+    font-size: 1.35rem;
+    transition: color 0.2s ease;
+}
+
+.input-with-icon-modern input:focus + i,
+.input-with-icon-modern select:focus + i {
+    color: #047857;
+}
+
+.form-control-modern {
+    width: 100%;
+    padding: 1.15rem 1.5rem 1.15rem 3.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    font-size: 1.15rem;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+.form-control-modern:focus {
+    outline: none;
+    border-color: #047857;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.18);
+}
+
+.btn-green-submit {
+    width: 100%;
+    background: #047857;
+    color: #ffffff;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    padding: 1.25rem 2rem;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: all 0.25s ease;
+    margin-top: 1.5rem;
+    box-shadow: 0 8px 22px rgba(4, 120, 87, 0.28);
+}
+
+.btn-green-submit:hover {
+    background: #065f46;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(4, 120, 87, 0.38);
+}
+
+.auth-form-footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    font-size: 1.05rem;
+    color: #64748b;
+}
+
+.auth-form-footer a {
+    color: #64748b;
+    text-decoration: none;
+    margin: 0 0.6rem;
+    font-weight: 600;
+}
+
+.auth-form-footer a:hover {
+    color: #047857;
+    text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+    .auth-split-card {
+        grid-template-columns: 1fr;
+        max-width: 700px;
     }
+    .auth-left-panel {
+        padding: 3.5rem 2.5rem;
+    }
+    .auth-right-panel {
+        padding: 3.5rem 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-split-wrapper {
+        padding: 1.5rem 0.75rem;
+    }
+    .auth-split-card {
+        border-radius: 18px;
+        min-height: auto;
+    }
+    .auth-left-panel {
+        padding: 2.25rem 1.25rem;
+    }
+    .auth-panel-content h2 {
+        font-size: 2.15rem;
+    }
+    .auth-panel-content p {
+        font-size: 1.05rem;
+        margin-bottom: 1.75rem;
+    }
+    .btn-panel-outline {
+        padding: 0.65rem 2.25rem;
+        font-size: 0.95rem;
+    }
+    .auth-right-panel {
+        padding: 2.25rem 1.25rem;
+    }
+    .auth-form-title {
+        font-size: 1.85rem;
+        margin-bottom: 1.5rem;
+    }
+    .form-control-modern {
+        padding: 0.85rem 1rem 0.85rem 2.85rem;
+        font-size: 0.98rem;
+        border-radius: 10px;
+    }
+    .input-with-icon-modern i {
+        left: 1rem;
+        font-size: 1.1rem;
+    }
+    .btn-green-submit {
+        padding: 0.95rem 1.25rem;
+        font-size: 1.05rem;
+        border-radius: 10px;
+    }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="auth-card">
-        <div class="auth-header">
-            <h2>Welcome Back</h2>
-            <p>Access your verified TRUST dashboard.</p>
-        </div>
+<div class="auth-split-wrapper">
+    <div class="auth-split-card">
         
-        <form action="/login/" method="POST">
-            {% csrf_token %}
-
-            <div class="form-group">
-                <label class="form-label" for="role">Login as</label>
-                <select name="role" id="role" class="form-control" required style="cursor: pointer;">
-                    <option value="" disabled selected>Select your role...</option>
-                    <option value="owner">Property owner</option>
-                    <option value="tenant">Tenant</option>
-                    <option value="admin">System Admin</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label" for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="tenant or owner" required>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.85rem;">
-                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                    <input type="checkbox" style="accent-color: var(--color-gold);"> Remember me
-                </label>
-                <a href="/reset-password/" style="color: var(--color-emerald);">Forgot Password?</a>
+        <!-- Left Side Light Green Panel -->
+        <div class="auth-left-panel">
+            <div class="auth-panel-logo">
+                {% if site_settings.site_logo %}
+                    <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 68px; width: auto; object-fit: contain; vertical-align: middle;">
+                {% else %}
+                    <div style="font-size: 2.85rem; font-weight: 800; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.75rem; color: #ffffff;">
+                        <i class="fa-solid fa-shield-halved"></i> TRUST
+                    </div>
+                {% endif %}
             </div>
 
-            <button type="submit" class="btn btn-gold" style="width: 100%; font-size: 1.1rem; padding: 1rem;">
-                Sign In to Pipeline <i class="fa-solid fa-arrow-right-to-bracket" style="margin-left: 0.5rem;"></i>
-            </button>
-            
-            <div class="form-footer">
-                <p>Not part of TRUST yet? <a href="/register/" style="font-weight: 600;">Apply here</a></p>
+            <div class="auth-panel-content">
+                <h2>Welcome Back</h2>
+                <p>Don't have an account yet?</p>
+                <a href="/register/" class="btn-panel-outline">Sign up</a>
             </div>
-        </form>
+
+            <div style="font-size: 1rem; color: rgba(255,255,255,0.85); font-weight: 600;">
+                Verified Real Estate Protocol
+            </div>
+        </div>
+
+        <!-- Right Side Form Panel -->
+        <div class="auth-right-panel">
+            <h3 class="auth-form-title">Sign In</h3>
+
+            <form action="/login/" method="POST">
+                {% csrf_token %}
+
+                <div class="form-group-modern">
+                    <div class="input-with-icon-modern">
+                        <i class="fa-solid fa-user-gear"></i>
+                        <select name="role" id="role" class="form-control-modern" required style="cursor: pointer;">
+                            <option value="" disabled selected>Select account role...</option>
+                            <option value="tenant">Tenant Account</option>
+                            <option value="owner">Property Owner / Landlord</option>
+                            <option value="admin">System Administrator</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group-modern">
+                    <div class="input-with-icon-modern">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="username" name="username" class="form-control-modern" placeholder="Username" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group-modern">
+                    <div class="input-with-icon-modern">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" name="password" class="form-control-modern" placeholder="Password" required autocomplete="current-password">
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0 1.75rem 0; font-size: 1.05rem; color: #475569;">
+                    <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #047857; width: 20px; height: 20px; cursor: pointer;"> Keep Me Logged In
+                    </label>
+                    <a href="/reset-password/" style="color: #047857; text-decoration: none; font-weight: 700;">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-green-submit">
+                    Log In
+                </button>
+
+                <div class="auth-form-footer">
+                    <a href="/terms/">Terms & Conditions</a> • <a href="/privacy/">Privacy Policy</a>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 {% endblock %}

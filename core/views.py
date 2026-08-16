@@ -163,15 +163,17 @@ def login_view(request):
 
 def register_view(request):
     if request.method == 'POST':
-        role = request.POST.get('role')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
+        role = request.POST.get('role', 'tenant')
         username = request.POST.get('username')
-        email = request.POST.get('email')
         phone = request.POST.get('phone')
-        nin = request.POST.get('nin', '')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+
+        # Optional for tenant, compulsory for landlord
+        first_name = request.POST.get('first_name', '')
+        last_name = request.POST.get('last_name', '')
+        email = request.POST.get('email', '')
+        nin = request.POST.get('nin', '')
 
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
@@ -181,11 +183,14 @@ def register_view(request):
             messages.error(request, 'This username is already taken.')
             return render(request, 'auth/register.html')
 
-        if User.objects.filter(email=email).exists():
+        if email and User.objects.filter(email=email).exists():
             messages.error(request, 'A user with this email address already exists.')
             return render(request, 'auth/register.html')
 
         if role == 'landlord':
+            if not first_name or not last_name or not email or not nin:
+                messages.error(request, 'Full name, email, and NIN are required for property owners.')
+                return render(request, 'auth/register.html')
             if not request.FILES.get('image'):
                 messages.error(request, 'Profile picture is compulsory for property owners.')
                 return render(request, 'auth/register.html')
@@ -193,7 +198,7 @@ def register_view(request):
         # Create user
         user = User.objects.create_user(
             username=username,
-            email=email,
+            email=email if email else f"{username}@tenant.trust",
             password=password,
             first_name=first_name,
             last_name=last_name
@@ -237,10 +242,34 @@ def landlord_dashboard(request):
         'revenue': sum(p.price for p in Property.objects.filter(owner=request.user, price__isnull=False))
     }
     
+    buildings = Property.objects.filter(is_multi_unit=True)
+    amenities = list(PropertyAmenity.objects.all().order_by('layer', 'category', 'name'))
+    for a in amenities:
+        key = a.name.strip().lower()
+        a.icon_class = AMENITY_ICONS.get(key, 'fa-circle-check')
+        
+    proximity_categories = list(ProximityCategory.objects.prefetch_related('items').all().order_by('name'))
+    for cat in proximity_categories:
+        for item in cat.items.all():
+            key = item.name.strip().lower()
+            item.icon_class = AMENITY_ICONS.get(key, 'fa-location-dot')
+
+    amenity_categories = [
+        {'id': 'indoor', 'name': 'Indoor Comfort', 'icon': 'fa-couch'},
+        {'id': 'utilities', 'name': 'Utilities & Infrastructure', 'icon': 'fa-plug'},
+        {'id': 'security', 'name': 'Security Features', 'icon': 'fa-shield-halved'},
+        {'id': 'outdoor', 'name': 'Outdoor & Paving', 'icon': 'fa-tree'},
+        {'id': 'building', 'name': 'Building & Gym', 'icon': 'fa-building'},
+    ]
+    
     return render(request, 'landlord/dashboard.html', {
         'properties': owner_properties,
         'stats': stats,
-        'is_approved': is_approved
+        'is_approved': is_approved,
+        'buildings': buildings,
+        'amenities': amenities,
+        'proximity_categories': proximity_categories,
+        'amenity_categories': amenity_categories,
     })
 
 def admin_dashboard(request):
@@ -1251,6 +1280,12 @@ def add_property(request):
         # Create property listing
         price_per_month = request.POST.get('price_per_month')
         price_per_year = request.POST.get('price_per_year')
+        if not price_per_year and price_per_month:
+            try:
+                price_per_year = str(float(price_per_month) * 12)
+            except ValueError:
+                price_per_year = None
+
         bedrooms_count = request.POST.get('bedrooms_count')
         
         description_text = request.POST.get('description', '').strip()
@@ -1263,6 +1298,7 @@ def add_property(request):
             category=category,
             parent=parent,
             location=location,
+            listing_type='rent',
             is_multi_unit=is_multi_unit,
             bedrooms=int(bedrooms_count) if (bedrooms_count and bedrooms_count.isdigit()) else None,
             status='pending_verification',  # Marked as pending until admin manually verifies files and approves
@@ -1272,17 +1308,22 @@ def add_property(request):
             price=price_per_month if price_per_month else None
         )
         
-        # Handle Images
+        # Handle Primary Hero Image
         if 'hero_image' in request.FILES:
             property_obj.hero_image = request.FILES['hero_image']
-        if 'image_1' in request.FILES:
-            property_obj.image_1 = request.FILES['image_1']
-        if 'image_2' in request.FILES:
-            property_obj.image_2 = request.FILES['image_2']
-        if 'image_3' in request.FILES:
-            property_obj.image_3 = request.FILES['image_3']
             
-        # Handle Documents
+        # Handle Bulk Gallery Photos
+        bulk_images = request.FILES.getlist('additional_images')
+        for idx, img_file in enumerate(bulk_images[:7]):
+            setattr(property_obj, f'image_{idx+1}', img_file)
+            
+        # Fallback individual image uploads if passed
+        for idx in range(1, 8):
+            key = f'image_{idx}'
+            if key in request.FILES and not getattr(property_obj, key):
+                setattr(property_obj, key, request.FILES[key])
+            
+        # Handle Optional Documents
         if 'building_plans' in request.FILES:
             property_obj.building_plans = request.FILES['building_plans']
         if 'occupancy_permit' in request.FILES:

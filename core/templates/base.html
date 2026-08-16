@@ -27,6 +27,12 @@
     {% block extra_css %}{% endblock %}
 
     <style>
+        .navbar {
+            background-color: #047857 !important;
+            border-bottom: 2px solid var(--color-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+
         /* Mobile Navbar Styling */
         .navbar .container {
             display: flex;
@@ -61,11 +67,8 @@
         }
 
         .nav-icon-link:hover {
-            color: var(--color-emerald-darkest);
             background: var(--color-gold);
-            border-color: var(--color-gold);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(203, 163, 88, 0.4);
+            color: #041a11;
         }
 
         .mobile-only-auth {
@@ -92,7 +95,7 @@
                 top: 100%;
                 left: 0;
                 right: 0;
-                background-color: var(--color-emerald-darkest);
+                background-color: #047857;
                 padding: 1.5rem 1.5rem 1.75rem 1.5rem;
                 box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
                 border-top: 1px solid rgba(203, 163, 88, 0.3);
@@ -108,10 +111,6 @@
                 color: white;
                 font-size: 1.05rem;
                 font-weight: 600;
-                text-decoration: none;
-                display: block;
-                padding: 0.6rem 0;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             }
 
             .navbar .container {
@@ -190,14 +189,9 @@
                         <button type="submit" class="btn btn-outline-gold" style="width: 100%; text-align: center; display: block;">Logout</button>
                     </form>
                     {% else %}
-                    <div style="display: flex; gap: 0.75rem; width: 100%; margin-top: 0.25rem;">
-                        <a href="/login/" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem; background: rgba(203, 163, 88, 0.15); border: 1.5px solid var(--color-gold); color: var(--color-gold); border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.95rem;">
-                            <i class="fa-solid fa-right-to-bracket"></i> Sign In
-                        </a>
-                        <a href="/register/" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem; background: var(--color-gold); border: 1.5px solid var(--color-gold); color: var(--color-emerald-darkest); border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 0.95rem;">
-                            <i class="fa-solid fa-user-plus"></i> Register
-                        </a>
-                    </div>
+                    <a href="/login/" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1rem; background: var(--color-gold); border: 1.5px solid var(--color-gold); color: #041a11; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 1rem; width: 100%;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login/Register
+                    </a>
                     {% endif %}
                 </li>
             </ul>
@@ -211,11 +205,8 @@
                     <button type="submit" class="btn btn-outline-gold" style="padding: 0.65rem 1.25rem;">Logout</button>
                 </form>
                 {% else %}
-                <a href="/login/" class="nav-icon-link" title="Sign In" aria-label="Sign In">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                </a>
-                <a href="/register/" class="nav-icon-link" title="Register / Sign Up" aria-label="Register">
-                    <i class="fa-solid fa-user-plus"></i>
+                <a href="/login/" class="btn btn-gold" style="padding: 0.6rem 1.35rem; font-weight: 700; font-size: 0.95rem; text-decoration: none; border-radius: 8px;">
+                    Login/Register
                 </a>
                 {% endif %}
             </div>

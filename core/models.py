@@ -47,6 +47,8 @@ class Property(models.Model):
     
     @property
     def is_for_sale(self):
+        if self.listing_type == 'rent':
+            return False
         if self.listing_type == 'sale':
             return True
         if self.category in ['bungalow', 'standalone']:

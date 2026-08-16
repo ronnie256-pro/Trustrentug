@@ -28,7 +28,6 @@
         margin-bottom: 2rem;
     }
     
-    /* Responsive stats and table */
     @media (max-width: 1200px) {
         .stats-row { grid-template-columns: repeat(2, 1fr); }
     }
@@ -36,7 +35,7 @@
         .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
         .stats-row { grid-template-columns: 1fr; }
         .content-card { overflow-x: auto; }
-        .admin-table { min-width: 800px; }
+        .dashboard-table { min-width: 750px; }
         .dashboard-header .btn { width: 100%; text-align: center; }
     }
 
@@ -45,9 +44,11 @@
         padding: 1.5rem;
         border-radius: 12px;
         border: 1px solid #e2e8f0;
+        text-align: center;
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
     .stat-details h4 {
         margin: 0;
@@ -55,84 +56,58 @@
         color: #64748b;
         text-transform: uppercase;
         letter-spacing: 0.025em;
+        text-align: center;
     }
     .stat-details .value {
         font-size: 1.5rem;
         font-weight: 700;
-        margin: 0.5rem 0;
+        margin: 0.5rem 0 0 0;
         color: #1e293b;
+        text-align: center;
     }
-    .stat-icon {
-        width: 45px;
-        height: 45px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-    }
-    .icon-emerald { background: rgba(10, 61, 40, 0.1); color: var(--color-emerald); }
-    .icon-gold { background: rgba(203, 163, 88, 0.1); color: var(--color-gold); }
-    .icon-blue { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
 
-    .content-card {
+    .table-card {
         background: white;
         border-radius: 12px;
         border: 1px solid #e2e8f0;
         overflow: hidden;
         margin-bottom: 2rem;
     }
-    .card-header {
-        padding: 1.5rem 2rem;
+    .table-header {
+        padding: 1.25rem 1.75rem;
         border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        text-align: center;
     }
     
-    .admin-table {
+    .dashboard-table {
         width: 100%;
         border-collapse: collapse;
+        text-align: center;
     }
-    .admin-table th {
+    .dashboard-table th {
         background: #f8fafc;
-        padding: 1rem 2rem;
-        text-align: left;
-        font-size: 0.75rem;
+        padding: 1rem 1.25rem;
+        text-align: center;
+        font-size: 0.82rem;
         text-transform: uppercase;
-        color: #64748b;
-        font-weight: 600;
+        color: #475569;
+        font-weight: 700;
+        border-bottom: 1px solid #e2e8f0;
     }
-    .admin-table td {
-        padding: 1.25rem 2rem;
+    .dashboard-table td {
+        padding: 1.15rem 1.25rem;
         border-bottom: 1px solid #f1f5f9;
-        font-size: 0.9rem;
-    }
-
-    .verification-status {
-        display: flex;
-        gap: 8px;
-    }
-    .step-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #e2e8f0;
-    }
-    .step-dot.completed { background: var(--color-success); }
-    .step-dot.current { background: var(--color-gold); animation: pulse 2s infinite; }
-
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+        font-size: 0.92rem;
+        vertical-align: middle;
+        text-align: center;
     }
 
     .status-pill {
         padding: 0.25rem 0.75rem;
         border-radius: 50px;
         font-size: 0.75rem;
-        font-weight: 600;
+        font-weight: 700;
+        display: inline-block;
     }
     .pill-active { background: #ecfdf5; color: #059669; }
     .pill-pending { background: #fffbe6; color: #d48806; }
@@ -141,8 +116,7 @@
 
 {% block admin_content %}
 {% if not is_approved %}
-<div class="alert alert-warning" style="padding: 1.25rem 1.75rem; border-radius: 12px; border-left: 5px solid var(--color-gold); background-color: rgba(203, 163, 88, 0.08); color: #1e293b; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: var(--shadow-sm); border-top: 1px solid rgba(203, 163, 88, 0.15); border-right: 1px solid rgba(203, 163, 88, 0.15); border-bottom: 1px solid rgba(203, 163, 88, 0.15);">
-    <i class="fa-solid fa-shield-halved" style="color: var(--color-gold); font-size: 2rem;"></i>
+<div class="alert alert-warning" style="padding: 1.25rem 1.75rem; border-radius: 12px; border-left: 5px solid var(--color-gold); background-color: rgba(203, 163, 88, 0.08); color: #1e293b; margin-bottom: 2rem; box-shadow: var(--shadow-sm); border: 1px solid rgba(203, 163, 88, 0.25); text-align: center;">
     <div>
         <strong style="display: block; font-size: 1.05rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); margin-bottom: 0.25rem;">Vetting Protocol Pending Manual Approval</strong>
         <span style="font-size: 0.88rem; color: #475569; line-height: 1.5;">Your property owner account is currently under manual identity vetting by the TRUST administrator. You will not be able to list new properties or transact until your account verification is finalized.</span>
@@ -156,12 +130,12 @@
         <p>Manage your properties through the TRUST verification pipeline.</p>
     </div>
     {% if is_approved %}
-    <a href="/landlord/property/add/" class="btn btn-gold">
-        <i class="fa-solid fa-plus" style="margin-right: 0.5rem;"></i> Submit New Property
-    </a>
+    <button type="button" onclick="openAddPropertyModal()" class="btn btn-gold" style="border: none; cursor: pointer; padding: 0.75rem 1.5rem; font-weight: 700;">
+        Submit New Property
+    </button>
     {% else %}
-    <button class="btn btn-gold" disabled style="opacity: 0.6; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.5rem; border: none;" title="Account vetting pending manual approval">
-        <i class="fa-solid fa-lock"></i> Submit New Property
+    <button class="btn btn-gold" disabled style="opacity: 0.6; cursor: not-allowed; display: inline-flex; align-items: center; border: none; padding: 0.75rem 1.5rem; font-weight: 700;" title="Account vetting pending manual approval">
+        Submit New Property
     </button>
     {% endif %}
 </div>
@@ -173,162 +147,117 @@
             <h4>Total Units</h4>
             <div class="value">{{ stats.total }}</div>
         </div>
-        <div class="stat-icon icon-blue">
-            <i class="fa-solid fa-building"></i>
+    </div>
+    <div class="stat-card">
+        <div class="stat-details">
+            <h4>Listed & Available</h4>
+            <div class="value" style="color: var(--color-emerald);">{{ stats.available }}</div>
         </div>
     </div>
     <div class="stat-card">
         <div class="stat-details">
-            <h4>Live & Verified</h4>
-            <div class="value">{{ stats.available }}</div>
-        </div>
-        <div class="stat-icon icon-emerald">
-            <i class="fa-solid fa-shield-check"></i>
+            <h4>Pending Verification</h4>
+            <div class="value" style="color: var(--color-gold);">{{ stats.pending }}</div>
         </div>
     </div>
     <div class="stat-card">
         <div class="stat-details">
-            <h4>Awaiting Verification</h4>
-            <div class="value">{{ stats.pending }}</div>
-        </div>
-        <div class="stat-icon icon-gold">
-            <i class="fa-solid fa-clock"></i>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Portfolio Value (Yr)</h4>
-            <div class="value">UGX {{ stats.revenue|floatformat:0 }}M</div>
-        </div>
-        <div class="stat-icon icon-gold">
-            <i class="fa-solid fa-money-bill-trend-up"></i>
+            <h4>Est. Portfolio Value</h4>
+            <div class="value" style="color: var(--color-emerald-dark);">UGX {{ stats.revenue|floatformat:0|intcomma }}</div>
         </div>
     </div>
 </div>
 
-<!-- Properties Pipeline Table -->
-<div class="content-card">
-    <div class="card-header">
-        <h3 style="margin:0; font-size: 1.1rem;">Property Verification Pipeline</h3>
-        <span style="font-size: 0.85rem; color: #64748b;">Tracking verification gates</span>
+<!-- Property Table section -->
+<div class="table-card">
+    <div class="table-header">
+        <h3 style="margin:0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-darkest);">My Listed Properties</h3>
     </div>
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Property</th>
-                <th>Category</th>
-                <th>Verification Progress</th>
-                <th>Status</th>
-                <th>Income (UGX)</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for property in properties %}
-            <tr>
-                <td style="font-weight: 600; color: #1e293b;">
-                    {{ property.title }}
-                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 400; margin-top: 0.25rem;">{{ property.location }}</div>
-                </td>
-                <td style="text-transform: capitalize;">{{ property.get_category_display }}</td>
-                <td>
-                    <div class="verification-status" title="Doc Upload > Physical Inspection > Title Search > Final Approval">
-                        <div class="step-dot completed"></div>
-                        <div class="step-dot {% if property.status != 'pending_verification' %}completed{% else %}current{% endif %}"></div>
-                        <div class="step-dot {% if property.status == 'available' or property.status == 'rented' %}completed{% endif %}"></div>
-                        <div class="step-dot {% if property.status == 'available' or property.status == 'rented' %}completed{% endif %}"></div>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.4rem;">
-                        {% if property.status == 'pending_verification' %}Awaiting Field inspection{% else %}Verification Complete{% endif %}
-                    </div>
-                </td>
-                <td>
-                    <span class="status-pill {% if property.status == 'available' %}pill-active{% else %}pill-pending{% endif %}">
-                        {{ property.get_status_display }}
-                    </span>
-                </td>
-                <td style="font-weight: 600;">
-                    {% if property.price_per_month %}
-                        UGX {{ property.price_per_month|floatformat:0|intcomma }} / Mo
-                    {% else %}
-                        UGX {{ property.price|floatformat:0|intcomma }} / Mo
-                    {% endif %}
-                    {% if property.price_per_year %}
-                        <div style="font-size: 0.75rem; color: var(--color-gold); font-weight: 500; margin-top: 0.15rem;">UGX {{ property.price_per_year|floatformat:0|intcomma }} / Yr</div>
-                    {% endif %}
-                </td>
-                <td>
-                    <form action="{% url 'delete_property' property.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this property listing? This action cannot be undone.');" style="margin: 0; display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem; padding: 0.25rem 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Property">
-                            <i class="fa-solid fa-trash-can"></i> Delete
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% if property.is_multi_unit %}
-                {% for unit in property.units.all %}
-                <tr style="background: #fafafa;">
-                    <td style="padding-left: 3rem; font-size: 0.85rem; color: #64748b;">— {{ unit.title }}</td>
-                    <td style="font-size: 0.8rem; color: #94a3b8;">Unit ({{ unit.get_category_display }})</td>
-                    <td></td>
-                    <td>
-                        <span class="status-pill {% if unit.status == 'available' %}pill-active{% else %}pill-pending{% endif %}" style="font-size: 0.7rem; opacity: 0.8;">
-                            {{ unit.get_status_display }}
+    <div style="overflow-x: auto;">
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;">Property Name</th>
+                    <th style="text-align: center;">Category</th>
+                    <th style="text-align: center;">Units</th>
+                    <th style="text-align: center;">Status</th>
+                    <th style="text-align: center;">Monthly Rate</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for property in properties %}
+                <tr>
+                    <td style="font-weight: 700; text-align: center;">
+                        <a href="{% url 'property_detail' property.id %}" style="color: var(--color-emerald-darkest); text-decoration: none;" target="_blank">
+                            {{ property.title }}
+                        </a>
+                        <div style="font-size: 0.78rem; color: var(--color-text-muted); font-weight: normal; margin-top: 0.2rem;">{{ property.location }}</div>
+                    </td>
+                    <td style="text-align: center;">{{ property.get_category_display }}</td>
+                    <td style="text-align: center;">{% if property.is_multi_unit %}{{ property.units.count }} Units{% else %}Single Unit{% endif %}</td>
+                    <td style="text-align: center;">
+                        <span class="status-pill {% if property.status == 'available' %}pill-active{% else %}pill-pending{% endif %}">
+                            {{ property.get_status_display }}
                         </span>
                     </td>
-                    <td style="font-size: 0.85rem; color: #64748b; font-weight: 600;">
-                        {% if unit.price_per_month %}
-                            UGX {{ unit.price_per_month|floatformat:0|intcomma }} / Mo
+                    <td style="font-weight: 700; text-align: center;">
+                        {% if property.price_per_month %}
+                            UGX {{ property.price_per_month|floatformat:0|intcomma }}
                         {% else %}
-                            UGX {{ unit.price|floatformat:0|intcomma }} / Mo
+                            UGX {{ property.price|floatformat:0|intcomma }}
                         {% endif %}
                     </td>
-                    <td>
-                        <form action="{% url 'delete_property' unit.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this unit? This action cannot be undone.');" style="margin: 0; display: inline;">
+                    <td style="text-align: center;">
+                        <form action="{% url 'delete_property' property.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this property listing? This action cannot be undone.');" style="margin: 0; display: inline;">
                             {% csrf_token %}
-                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0.25rem 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Unit">
-                                <i class="fa-solid fa-trash-can"></i> Delete
+                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0.25rem 0.5rem; font-weight: 600;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Property">
+                                Delete
                             </button>
                         </form>
                     </td>
                 </tr>
+                {% if property.is_multi_unit %}
+                    {% for unit in property.units.all %}
+                    <tr style="background: #fafafa;">
+                        <td style="text-align: center; font-size: 0.85rem; color: #64748b;">— {{ unit.title }}</td>
+                        <td style="text-align: center; font-size: 0.8rem; color: #94a3b8;">Unit ({{ unit.get_category_display }})</td>
+                        <td style="text-align: center;">-</td>
+                        <td style="text-align: center;">
+                            <span class="status-pill {% if unit.status == 'available' %}pill-active{% else %}pill-pending{% endif %}" style="font-size: 0.7rem; opacity: 0.8;">
+                                {{ unit.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="text-align: center; font-size: 0.85rem; color: #64748b; font-weight: 600;">
+                            {% if unit.price_per_month %}
+                                UGX {{ unit.price_per_month|floatformat:0|intcomma }}
+                            {% else %}
+                                UGX {{ unit.price|floatformat:0|intcomma }}
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center;">
+                            <form action="{% url 'delete_property' unit.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this unit? This action cannot be undone.');" style="margin: 0; display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0.25rem 0.5rem; font-weight: 600;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Unit">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center; padding: 3rem; color: var(--color-text-muted);">
+                        <p>No properties listed yet. Submit your first property to begin physical verification.</p>
+                    </td>
+                </tr>
                 {% endfor %}
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- Recent Notifications / Activities -->
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-    <div class="content-card">
-        <div class="card-header">
-            <h3 style="margin:0; font-size: 1.1rem;">Escrow Updates</h3>
-        </div>
-        <div style="padding: 1.5rem;">
-            <div style="display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1rem;">
-                <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.5rem; border-radius: 8px;"><i class="fa-solid fa-lock-open"></i></div>
-                <div>
-                    <div style="font-weight: 600; font-size: 0.9rem;">Rent Release Authorized</div>
-                    <div style="font-size: 0.8rem; color: #64748b;">Unit 102 (Emerald Heights) funds are moving to your wallet.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-card">
-        <div class="card-header">
-            <h3 style="margin:0; font-size: 1.1rem;">System Alerts</h3>
-        </div>
-        <div style="padding: 1.5rem;">
-            <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                <div style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 0.5rem; border-radius: 8px;"><i class="fa-solid fa-calendar-check"></i></div>
-                <div>
-                    <div style="font-weight: 600; font-size: 0.9rem;">Field Inspection Scheduled</div>
-                    <div style="font-size: 0.8rem; color: #64748b;">Lakeside Bungalow visit set for Tomorrow, 10:00 AM.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Add Property Pop-up Modal -->
+{% include "landlord/modal_add_property.html" %}
 {% endblock %}
