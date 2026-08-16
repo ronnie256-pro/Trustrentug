@@ -517,6 +517,7 @@ class ConstructionProject(models.Model):
     video = models.FileField(upload_to='project_videos/', blank=True, null=True, help_text="Upload MP4 video demonstrating construction progress")
     video_url = models.URLField(blank=True, help_text="Optional external video URL (e.g. MP4 or YouTube embed link)")
     thumbnail = models.ImageField(upload_to='project_thumbnails/', blank=True, null=True, help_text="Project cover image poster")
+    hero_image = models.FileField(upload_to='project_thumbnails/', blank=True, null=True, help_text="Project hero/cover image")
     progress_percentage = models.IntegerField(default=0, help_text="Construction completion percentage (0 to 100)")
     completed_milestones = models.JSONField(default=list, blank=True, help_text="List of completed milestone numbers (1 to 25)")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ongoing')
@@ -532,6 +533,17 @@ class ConstructionProject(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.progress_percentage}% Complete)"
+
+
+class ConstructionSliderImage(models.Model):
+    image = models.FileField(upload_to='construction/slider/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Construction Slider Image #{self.id}"
 
 
 class DiasporaClientApplication(models.Model):

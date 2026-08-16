@@ -1333,6 +1333,40 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 {% elif current_tab == 'construction' %}
+<!-- BULK SLIDER IMAGES UPLOAD CARD -->
+<div style="background: white; border-radius: 14px; border: 1.5px solid #cbd5e1; padding: 1.5rem 2rem; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+    <form action="{% url 'admin_upload_construction_slider' %}" method="POST" enctype="multipart/form-data" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
+        {% csrf_token %}
+        <div style="flex: 1; min-width: 280px;">
+            <h4 style="margin: 0 0 0.35rem 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.1rem; font-weight: 800;">
+                Construction Slider Images (Bulk Upload)
+            </h4>
+            <p style="margin: 0; font-size: 0.85rem; color: #64748b;">
+                Upload multiple images at once to display on the main Construction Projects page image slider.
+            </p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
+            <input type="file" name="slider_images" multiple accept="image/*" required class="form-control" style="padding: 0.5rem 0.75rem; font-size: 0.85rem; border-radius: 8px; border: 1.5px solid #0284c7; background: #eff6ff; max-width: 320px;">
+            <button type="submit" class="btn btn-gold" style="padding: 0.6rem 1.35rem; font-size: 0.88rem; font-weight: 800; border-radius: 8px; border: none; cursor: pointer;">
+                Upload Slider Images
+            </button>
+        </div>
+    </form>
+
+    {% if slider_images %}
+    <div style="margin-top: 1.25rem; border-top: 1px solid #f1f5f9; padding-top: 1rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: #475569;">Active Slider Photos ({{ slider_images.count }}):</span>
+        {% for img in slider_images %}
+        <div style="position: relative; display: inline-block;">
+            <img src="{{ img.image.url }}" style="width: 50px; height: 35px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+            <a href="{% url 'admin_delete_construction_slider' img.id %}" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 900;" title="Delete Image">&times;</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
 <!-- Active Construction Projects Grid -->
 <div class="dashboard-header" style="margin-bottom: 2rem;">
     <div>

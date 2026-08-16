@@ -22,9 +22,6 @@
     <div style="background: white; border-radius: 16px; border: 1.5px solid #cbd5e1; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 2rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
             <div>
-                <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; color: var(--color-gold); display: block; margin-bottom: 0.35rem;">
-                    Construction Milestone Progress Control Engine
-                </span>
                 <h2 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 2rem; font-weight: 800;">
                     {{ project.title }}
                 </h2>
@@ -52,8 +49,8 @@
         </div>
     </div>
 
-    <!-- MAIN FORM FOR MILESTONE CHECKBOXES -->
-    <form action="{% url 'admin_construction_progress' project.id %}" method="POST" id="milestoneProgressForm">
+    <!-- MAIN FORM FOR MILESTONE CHECKBOXES & HERO IMAGE UPLOAD -->
+    <form action="{% url 'admin_construction_progress' project.id %}" method="POST" enctype="multipart/form-data" id="milestoneProgressForm">
         {% csrf_token %}
         <input type="hidden" name="action" value="save_milestones">
 
@@ -62,9 +59,6 @@
             <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.4rem; font-weight: 800;">
                 Construction Milestone Roadmap
             </h3>
-            <span style="font-size: 0.85rem; color: #64748b; font-weight: 700;">
-                Check or uncheck individual milestones to calculate live progress
-            </span>
         </div>
 
         <!-- 5-PHASE ACCORDION LIST -->
@@ -150,13 +144,27 @@
 
         </div>
 
-        <!-- Additional Project Control Parameters (Drone Video URL & Supervisor) -->
+        <!-- Additional Project Control Parameters (Hero Image, Drone Video URL & Supervisor) -->
         <div style="background: white; border-radius: 14px; border: 1.5px solid #cbd5e1; padding: 1.75rem; margin-bottom: 2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.02);">
             <h4 style="margin: 0 0 1.25rem 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 800;">
-                Supervision Stream & Settings
+                Supervision Stream & Media Settings
             </h4>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+                
+                <!-- Project Hero Image Upload -->
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                        Project Hero Cover Image:
+                    </label>
+                    <input type="file" name="hero_image" accept="image/*" class="form-control" style="width: 100%; padding: 0.5rem; font-weight: 600; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: #f8fafc;">
+                    {% if project.hero_image %}
+                    <span style="font-size: 0.75rem; color: #059669; font-weight: 700; display: block; margin-top: 0.2rem;">Current: {{ project.hero_image.name }}</span>
+                    {% elif project.thumbnail %}
+                    <span style="font-size: 0.75rem; color: #059669; font-weight: 700; display: block; margin-top: 0.2rem;">Current: {{ project.thumbnail.name }}</span>
+                    {% endif %}
+                </div>
+
                 <div>
                     <label style="font-size: 0.85rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
                         Live Drone Video Feed URL (MP4 / YouTube):
@@ -184,19 +192,10 @@
             </div>
         </div>
 
-        <!-- STICKY SAVE BUTTON BAR -->
-        <div style="position: sticky; bottom: 1.5rem; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-radius: 14px; padding: 1.25rem 2rem; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; z-index: 100;">
-            <div style="color: white;">
-                <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--color-gold); letter-spacing: 0.05em;">
-                    Live Calculator Score
-                </div>
-                <div style="font-size: 1.2rem; font-weight: 800;">
-                    Overall Calculated Score: <span id="stickyCalculatedScore" style="color: #34d399;">{{ overall_score }}%</span>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-gold" style="padding: 0.75rem 2rem; font-size: 1.05rem; font-weight: 900; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(203, 163, 88, 0.4);">
-                Save Milestone Progress & Update Roadmap
+        <!-- STICKY SAVE BUTTON BAR (GREEN UPDATE BUTTON ONLY) -->
+        <div style="position: sticky; bottom: 1.5rem; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-radius: 14px; padding: 1rem 2rem; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; justify-content: flex-end; align-items: center; z-index: 100;">
+            <button type="submit" class="btn" style="background: #059669; color: #ffffff; padding: 0.75rem 2.5rem; font-size: 1.05rem; font-weight: 900; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);">
+                Update
             </button>
         </div>
 
@@ -239,9 +238,10 @@ function calculateLiveScore() {
     const scoreStr = finalScore.toFixed(1) + '%';
 
     // Update Overall Score Display
-    document.getElementById('liveOverallScore').innerText = scoreStr;
-    document.getElementById('stickyCalculatedScore').innerText = scoreStr;
-    document.getElementById('liveProgressBar').style.width = scoreStr;
+    const liveOverallScore = document.getElementById('liveOverallScore');
+    const liveProgressBar = document.getElementById('liveProgressBar');
+    if (liveOverallScore) liveOverallScore.innerText = scoreStr;
+    if (liveProgressBar) liveProgressBar.style.width = scoreStr;
 
     // Update Phase Earned Ratios (e.g. (15/15), (20/20), (17/30), (0/25), (0/10))
     for (let i = 1; i <= 5; i++) {

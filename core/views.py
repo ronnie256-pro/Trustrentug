@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, PropertyProximity, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject
+from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, PropertyProximity, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject, ConstructionSliderImage
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -1124,6 +1124,7 @@ def admin_dashboard(request):
 
     construction_applications = DiasporaClientApplication.objects.all().order_by('-created_at')
     construction_projects = ConstructionProject.objects.all().order_by('-created_at')
+    slider_images = ConstructionSliderImage.objects.all().order_by('-created_at')
 
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
@@ -1152,6 +1153,7 @@ def admin_dashboard(request):
         'landlord_metrics': landlord_metrics,
         'construction_applications': construction_applications,
         'construction_projects': construction_projects,
+        'slider_images': slider_images,
         'current_tab': tab
     })
 
@@ -2652,7 +2654,10 @@ def admin_construction_progress(request, project_id):
             project_obj.completed_milestones = completed_ids
             project_obj.progress_percentage = int(round(total_earned_round))
             
-            # Also update video URL and supervisor name if provided
+            # Also update video URL, supervisor name, status, and hero_image if provided
+            if request.FILES.get('hero_image'):
+                project_obj.hero_image = request.FILES.get('hero_image')
+                project_obj.thumbnail = request.FILES.get('hero_image')
             if request.POST.get('video_url'):
                 project_obj.video_url = request.POST.get('video_url').strip()
             if request.POST.get('supervisor_name'):
@@ -3172,16 +3177,47 @@ def download_payments_pdf(request):
     return response
 
 
+def admin_upload_construction_slider(request):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        images = request.FILES.getlist('slider_images')
+        count = 0
+        for img in images:
+            ConstructionSliderImage.objects.create(image=img)
+            count += 1
+        if count > 0:
+            messages.success(request, f"Successfully uploaded {count} construction slider image(s)!")
+        else:
+            messages.error(request, "No slider images were selected.")
+    return redirect('/admin-dashboard/?tab=construction')
+
+
+def admin_delete_construction_slider(request, image_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+
+    img_obj = get_object_or_404(ConstructionSliderImage, id=image_id)
+    img_obj.delete()
+    messages.success(request, "Construction slider image deleted successfully.")
+    return redirect('/admin-dashboard/?tab=construction')
+
+
 def projects_list_view(request):
     """
     Renders running construction projects supervised by TRUST Protocol.
     """
-    from core.models import ConstructionProject, PopupLogic
+    from core.models import ConstructionProject, PopupLogic, ConstructionSliderImage
     projects = ConstructionProject.objects.all().order_by('-created_at')
     active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+    slider_images = ConstructionSliderImage.objects.all().order_by('-created_at')
 
     return render(request, 'tenant/projects.html', {
         'projects': projects,
+        'slider_images': slider_images,
         'active_popup': active_popup
     })
 
