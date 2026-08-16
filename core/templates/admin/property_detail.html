@@ -1,4 +1,5 @@
 {% extends "admin/base_admin.html" %}
+{% load humanize %}
 
 {% block title %}Property Vetting Details | TRUST{% endblock %}
 
@@ -290,9 +291,9 @@
                     <span class="info-label">Monthly Rate (Price/Month)</span>
                     <span class="info-value" style="color: var(--color-emerald-dark);">
                         {% if property.price_per_month %}
-                            UGX {{ property.price_per_month|floatformat:0 }}
+                            UGX {{ property.price_per_month|floatformat:0|intcomma }}
                         {% else %}
-                            UGX {{ property.price|floatformat:0 }}
+                            UGX {{ property.price|floatformat:0|intcomma }}
                         {% endif %}
                     </span>
                 </div>
@@ -301,7 +302,7 @@
                     <span class="info-label">Yearly Rate (Price/Year)</span>
                     <span class="info-value" style="color: var(--color-emerald-dark);">
                         {% if property.price_per_year %}
-                            UGX {{ property.price_per_year|floatformat:0 }}
+                            UGX {{ property.price_per_year|floatformat:0|intcomma }}
                         {% else %}
                             Not Specified
                         {% endif %}

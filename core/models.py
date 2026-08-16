@@ -45,6 +45,19 @@ class Property(models.Model):
     latitude = models.FloatField(null=True, blank=True, help_text="Latitude coordinate (e.g. 0.3476)")
     longitude = models.FloatField(null=True, blank=True, help_text="Longitude coordinate (e.g. 32.5825)")
     
+    @property
+    def is_for_sale(self):
+        if self.listing_type == 'sale':
+            return True
+        if self.category in ['bungalow', 'standalone']:
+            return True
+        t_lower = (self.title or '').lower()
+        if any(k in t_lower for k in ['sale', 'land', 'plot', 'estate', 'villa']):
+            return True
+        if self.price and float(self.price) >= 50000000:
+            return True
+        return False
+    
     # Parent-Child relationship
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='units')
     

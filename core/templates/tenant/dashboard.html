@@ -1,4 +1,5 @@
 {% extends "tenant/base_tenant.html" %}
+{% load humanize %}
 
 {% block title %}Tenant Dashboard | TRUST{% endblock %}
 
@@ -768,7 +769,7 @@
                         <div class="rental-stats-grid">
                             <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
                                 <small style="color: var(--color-text-muted); text-transform: uppercase; font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Escrow Rental Rate</small>
-                                <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--color-emerald);">UGX {{ active_rental.property.price|floatformat:0 }} <small style="font-size: 0.8rem; font-family: var(--font-body); font-weight: 400;">/ mo</small></span>
+                                <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--color-emerald);">UGX {{ active_rental.property.price|floatformat:0|intcomma }} <small style="font-size: 0.8rem; font-family: var(--font-body); font-weight: 400;">/ mo</small></span>
                             </div>
                             <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
                                 <small style="color: var(--color-text-muted); text-transform: uppercase; font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Lease Commencement Date</small>
@@ -904,7 +905,9 @@
                                 <div style="flex: 1; min-width: 0;">
                                     <h5 style="margin: 0; font-size: 1.15rem; color: var(--color-emerald-darkest); font-weight: 600;">{{ booking.property.title }}</h5>
                                     <p style="margin: 0.2rem 0; font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-solid fa-location-dot"></i> {{ booking.property.location }}</p>
-                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 1.1rem; display: block; margin-top: 0.5rem;">UGX {{ booking.property.price|floatformat:0 }} / mo</span>
+                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 1.1rem; display: block; margin-top: 0.5rem;">
+                                        UGX {{ booking.property.price|floatformat:0|intcomma }}{% if booking.property.listing_type != 'sale' and not booking.property.category == 'bungalow' and not booking.property.category == 'standalone' and not 'sale' in booking.property.title|lower and not 'land' in booking.property.title|lower and not 'plot' in booking.property.title|lower and booking.property.price < 50000000 %} / mo{% endif %}
+                                    </span>
                                     <button onclick="openCancelModal('{{ booking.id }}', '{{ booking.property.title }}', '{% url 'tenant_cancel_booking' booking.id %}')" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; margin-top: 0.75rem; padding: 0.35rem 0.75rem; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; transition: all 0.2s ease; background: transparent; border-radius: 4px;">
                                         <i class="fa-solid fa-trash-can"></i> Cancel Booking
                                     </button>
@@ -975,7 +978,9 @@
                                         </a>
                                     </h4>
                                     <small style="color: var(--color-text-muted); font-size: 0.78rem; display: block; margin-top: 0.2rem;"><i class="fa-solid fa-location-dot"></i> {{ booking.property.location }}</small>
-                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 0.95rem; display: block; margin-top: 0.4rem;">UGX {{ booking.property.price|floatformat:0 }} / mo</span>
+                                    <span style="font-weight: 700; color: var(--color-emerald); font-size: 0.95rem; display: block; margin-top: 0.4rem;">
+                                        UGX {{ booking.property.price|floatformat:0|intcomma }}{% if booking.property.listing_type != 'sale' and not booking.property.category == 'bungalow' and not booking.property.category == 'standalone' and not 'sale' in booking.property.title|lower and not 'land' in booking.property.title|lower and not 'plot' in booking.property.title|lower and booking.property.price < 50000000 %} / mo{% endif %}
+                                    </span>
                                 </div>
                                 <div style="margin-top: 0.8rem; display: flex; gap: 0.5rem; align-items: center;">
                                     <a href="?tab=payments&booking_id={{ booking.id }}" class="btn btn-gold" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
@@ -1002,8 +1007,14 @@
                 <div class="card-body-lux">
                     <div class="fav-grid">
                         {% for fav in favorite_properties %}
-                        <div class="fav-card">
-                            <a href="{% url 'property_detail' fav.property.id %}" class="fav-card-img-link">
+                        <div class="fav-card" style="position: relative;">
+                            <a href="{% url 'property_detail' fav.property.id %}" class="fav-card-img-link" style="position: relative; display: block;">
+                                {% if fav.property.listing_type == 'sale' or fav.property.category == 'bungalow' or fav.property.category == 'standalone' or 'sale' in fav.property.title|lower or 'land' in fav.property.title|lower or 'plot' in fav.property.title|lower or fav.property.price >= 50000000 %}
+                                <span style="position: absolute; top: 10px; right: 10px; background: #0284c7; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For Sale</span>
+                                {% else %}
+                                <span style="position: absolute; top: 10px; right: 10px; background: #047857; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For Rent</span>
+                                {% endif %}
+
                                 {% if fav.property.hero_image %}
                                 <img src="{{ fav.property.hero_image.url }}" alt="{{ fav.property.title }}" class="fav-card-img">
                                 {% else %}
@@ -1018,7 +1029,13 @@
                                         </a>
                                     </h4>
                                     <small class="fav-card-loc"><i class="fa-solid fa-location-dot"></i> {{ fav.property.location }}</small>
-                                    <span class="fav-card-price">UGX {{ fav.property.price|floatformat:0 }} / mo</span>
+                                    <span class="fav-card-price">
+                                        {% if fav.property.listing_type == 'sale' or fav.property.category == 'bungalow' or fav.property.category == 'standalone' or 'sale' in fav.property.title|lower or 'land' in fav.property.title|lower or 'plot' in fav.property.title|lower or fav.property.price >= 50000000 %}
+                                        UGX {{ fav.property.price|floatformat:0|intcomma }}
+                                        {% else %}
+                                        UGX {{ fav.property.price|floatformat:0|intcomma }} / mo
+                                        {% endif %}
+                                    </span>
                                 </div>
                                 <div class="fav-card-actions">
                                     <a href="{% url 'property_detail' fav.property.id %}?book=true" class="btn btn-gold btn-fav-action">
@@ -1125,9 +1142,13 @@
                         </h4>
                         <div class="form-group" style="margin: 0;">
                             <select name="payment_type" class="form-control" id="payment-type-selector" onchange="calculateAmounts()" style="border-color: #fca5a5; font-weight: 600; background: white;">
-                                <option value="booking">48 hours booking (Non-refundable)</option>
+                                {% if active_booking.property.is_for_sale %}
+                                <option value="booking_sale">Pay 1% 7days booking fee (Non-refundable)</option>
+                                {% else %}
+                                <option value="booking">24 hours booking (Non-refundable)</option>
                                 <option value="rent_2">Pay 2 months rent</option>
                                 <option value="rent_3">Pay 3 months rent</option>
+                                {% endif %}
                             </select>
                         </div>
                     </div>
@@ -1231,33 +1252,38 @@
                     <!-- Booking Fee breakdown (active dynamic display) -->
                     <div id="booking-invoice-display">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="color: var(--color-text-muted);">Non-Refundable Booking Lock Deposit (5%)</span>
-                            <strong>UGX {{ active_booking.booking_fee|floatformat:0 }}</strong>
+                            <span style="color: var(--color-text-muted);">
+                                {% if active_booking.property.is_for_sale %}
+                                Non-Refundable 7-Day Booking Lock Deposit (1%)
+                                {% else %}
+                                Non-Refundable 24-Hour Booking Lock Deposit (5%)
+                                {% endif %}
+                            </span>
+                            <strong>UGX {{ active_booking.booking_fee|floatformat:0|intcomma }}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; background: rgba(16, 185, 129, 0.05); padding: 0.5rem; border-radius: 4px; color: var(--color-success); font-size: 0.85rem;">
-                            <span><span><i class="fa-solid fa-shield-check"></i> 24-Hour Listing Exclusivity</span></span>
+                            <span>
+                                <i class="fa-solid fa-shield-check"></i> 
+                                {% if active_booking.property.is_for_sale %}
+                                7-Day Listing Exclusivity & Walkthrough Hold
+                                {% else %}
+                                24-Hour Listing Exclusivity
+                                {% endif %}
+                            </span>
                             <span>Included</span>
                         </div>
                         <hr style="border: none; border-top: 1px dashed var(--color-border); margin: 1rem 0;">
                         <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-family: var(--font-heading); color: var(--color-emerald-darkest);">
                             <span>Total Due Today</span>
-                            <span style="color: var(--color-emerald); font-weight: 700;">UGX {{ active_booking.booking_fee|floatformat:0 }}</span>
+                            <span style="color: var(--color-emerald); font-weight: 700;">UGX {{ active_booking.booking_fee|floatformat:0|intcomma }}</span>
                         </div>
                     </div>
 
                     <!-- Rent Fee breakdown -->
                     <div id="rent-invoice-display" style="display: none;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="color: var(--color-text-muted);" id="rent-duration-label">Base Rent (2 Months)</span>
+                            <span style="color: var(--color-text-muted);" id="rent-duration-label">Total Rent (2 Months)</span>
                             <strong id="invoice-rent-subtotal">UGX ...</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="color: var(--color-text-muted);">Security Bond Escrow Deposit (10%)</span>
-                            <strong id="invoice-security">UGX ...</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="color: var(--color-text-muted);">TRUST System Infrastructure Escrow Fee (1%)</span>
-                            <strong id="invoice-fee">UGX ...</strong>
                         </div>
                         <div style="background: rgba(203, 163, 88, 0.08); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--color-gold); font-size: 0.82rem; color: var(--color-text-dark); line-height: 1.4; margin-top: 1rem;">
                             <strong>Escrow Lock Terms:</strong> Your funds will reside securely inside the TRUST platform escrow vault. Funds are only released to the owner upon successful move-in, and full security clearance of legal vetting protocols.
@@ -1292,7 +1318,9 @@
                 const rentLabel = document.getElementById("rent-duration-label");
                 const rentSubtotalEl = document.getElementById("invoice-rent-subtotal");
                 
-                if (selector.value === "booking") {
+                if (!selector) return;
+
+                if (selector.value === "booking" || selector.value === "booking_sale") {
                     bDisplay.style.display = "block";
                     rDisplay.style.display = "none";
                 } else {
@@ -1300,17 +1328,12 @@
                     rDisplay.style.display = "block";
                     
                     const months = selector.value === "rent_3" ? 3 : 2;
-                    const rentTotal = basePrice * months;
-                    const security = basePrice * 0.1;
-                    const fee = basePrice * 0.01;
-                    const total = rentTotal + security + fee;
+                    const total = basePrice * months;
                     
                     const fmt = (val) => "UGX " + Math.round(val).toLocaleString();
-                    if (rentLabel) rentLabel.innerText = `Base Rent (${months} Months)`;
-                    if (rentSubtotalEl) rentSubtotalEl.innerText = fmt(rentTotal);
-                    document.getElementById("invoice-security").innerText = fmt(security);
-                    document.getElementById("invoice-fee").innerText = fmt(fee);
-                    document.getElementById("invoice-total").innerText = fmt(total);
+                    if (rentLabel) rentLabel.innerText = `Total Rent (${months} Months)`;
+                    if (rentSubtotalEl) rentSubtotalEl.innerText = fmt(total);
+                    if (document.getElementById("invoice-total")) document.getElementById("invoice-total").innerText = fmt(total);
                 }
             }
 

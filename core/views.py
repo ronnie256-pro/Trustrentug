@@ -1634,14 +1634,19 @@ def property_detail_view(request, property_id):
     panoramas = list(property_obj.panoramas.all())
     has_tour = len(panoramas) > 0
 
-    # Fetch Similar Properties (Same area or price range)
-    similar_properties = Property.objects.exclude(id=property_obj.id)
+    # Fetch Similar Properties (Same category prioritized by same area)
+    base_qs = Property.objects.exclude(id=property_obj.id)
+    cat_qs = base_qs.filter(category=property_obj.category)
+    if not cat_qs.exists():
+        cat_qs = base_qs
+        
+    same_area_items = []
     if property_obj.location:
         loc_part = property_obj.location.split(',')[0].strip()
-        loc_qs = similar_properties.filter(location__icontains=loc_part)
-        if loc_qs.exists():
-            similar_properties = loc_qs
-    similar_properties = similar_properties[:3]
+        same_area_items = list(cat_qs.filter(location__icontains=loc_part))
+        
+    other_items = [p for p in cat_qs if p not in same_area_items]
+    similar_properties = (same_area_items + other_items)[:6]
 
     return render(request, 'tenant/property_detail.html', {
         'property': property_obj,
@@ -2130,8 +2135,12 @@ def tenant_create_booking(request, property_id):
         messages.info(request, f"You already have an active/pending booking for '{property_obj.title}'.")
         return redirect('/tenant/dashboard/?tab=my_property')
         
-    # Calculate non-refundable booking fee (Fixed to 50,000 UGX for simplicity)
-    booking_fee = Decimal('50000')
+    # Calculate non-refundable booking fee: 1% for sale properties (7 days hold), 5% for rental properties (24 hours hold)
+    price_dec = property_obj.price or Decimal('0')
+    if property_obj.is_for_sale:
+        booking_fee = (price_dec * Decimal('0.01')).quantize(Decimal('1'))
+    else:
+        booking_fee = (price_dec * Decimal('0.05')).quantize(Decimal('1'))
     
     # In initial 'reserved' state, no expiration timer exists yet
     booking = TenantBooking.objects.create(
@@ -2142,7 +2151,7 @@ def tenant_create_booking(request, property_id):
         status='reserved'
     )
     
-    messages.success(request, f"Booking reservation for '{property_obj.title}' has been successfully initiated! Complete the booking fee payment below to lock it exclusively.")
+    messages.success(request, f"Booking reservation for '{property_obj.title}' has been successfully initiated! Complete the non-refundable booking fee payment below to lock it exclusively.")
     return redirect(f'/tenant/dashboard/?tab=payments&booking_id={booking.id}')
 
 def tenant_cancel_booking(request, booking_id):
@@ -2173,10 +2182,10 @@ def tenant_process_payment(request, property_id):
         return redirect('login')
         
     property_obj = get_object_or_404(Property, id=property_id)
-    payment_type = request.POST.get('payment_type') # 'booking' or 'rent'
+    payment_type = request.POST.get('payment_type') # 'booking', 'booking_sale', 'rent_2', 'rent_3'
     payment_method = request.POST.get('payment_method') # 'mobile_money', 'card', 'paypal', 'stripe', 'cash'
     
-    if payment_type == 'booking':
+    if property_obj.is_for_sale or payment_type in ['booking', 'booking_sale']:
         # Find reserved booking to activate, or fallback to active
         booking = TenantBooking.objects.filter(tenant=request.user, property=property_obj, status='reserved').first()
         if not booking:
@@ -2185,25 +2194,31 @@ def tenant_process_payment(request, property_id):
         if booking:
             booking.payment_method = payment_method
             booking.status = 'active'
-            # Start the 24-hour expiration timer here
-            booking.expires_at = timezone.now() + timezone.timedelta(hours=24)
-            booking.save()
             
-            # Lock property only upon official booking lock
-            property_obj.status = 'under_inspection'
-            property_obj.save()
-            
-            messages.success(request, f"Booking fee of UGX {booking.booking_fee:,.0f} received via {payment_method.replace('_', ' ').title()}. Property locked successfully and your 24-hour exclusive lock timer has started!")
+            if property_obj.is_for_sale:
+                # 7-day exclusive lock for sale properties
+                booking.expires_at = timezone.now() + timezone.timedelta(days=7)
+                booking.save()
+                property_obj.status = 'under_inspection'
+                property_obj.save()
+                messages.success(request, f"Non-refundable 1% Booking fee of UGX {booking.booking_fee:,.0f} received via {payment_method.replace('_', ' ').title()}. Property locked exclusively for 7 days!")
+            else:
+                # 24-hour exclusive lock for rental properties
+                booking.expires_at = timezone.now() + timezone.timedelta(hours=24)
+                booking.save()
+                property_obj.status = 'under_inspection'
+                property_obj.save()
+                messages.success(request, f"Non-refundable 5% Booking fee of UGX {booking.booking_fee:,.0f} received via {payment_method.replace('_', ' ').title()}. Property locked successfully and your 24-hour exclusive lock timer has started!")
         else:
             messages.error(request, "No active booking reservation found for this property.")
             
     elif payment_type in ['rent', 'rent_2', 'rent_3']:
+        if property_obj.is_for_sale:
+            messages.error(request, "Properties for sale cannot be purchased through rental payment. You can only pay the 1% 7-day booking fee.")
+            return redirect(f'/tenant/dashboard/?tab=payments&booking_id={property_id}')
         price = float(property_obj.price) if property_obj.price else 0.0
         months = 3 if payment_type == 'rent_3' else 2
-        rent_total = price * months
-        security = price * 0.10
-        fee = price * 0.01
-        total_escrow = rent_total + security + fee
+        total_escrow = price * months
 
         # Create active lease rental with recorded payment details
         rental = TenantRental.objects.create(

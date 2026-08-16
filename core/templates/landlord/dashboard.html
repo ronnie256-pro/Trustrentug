@@ -1,4 +1,5 @@
 {% extends "landlord/base_landlord.html" %}
+{% load humanize %}
 
 {% block title %}Owner Dashboard | TRUST{% endblock %}
 
@@ -248,12 +249,12 @@
                 </td>
                 <td style="font-weight: 600;">
                     {% if property.price_per_month %}
-                        UGX {{ property.price_per_month|floatformat:0 }} / Mo
+                        UGX {{ property.price_per_month|floatformat:0|intcomma }} / Mo
                     {% else %}
-                        UGX {{ property.price|floatformat:0 }} / Mo
+                        UGX {{ property.price|floatformat:0|intcomma }} / Mo
                     {% endif %}
                     {% if property.price_per_year %}
-                        <div style="font-size: 0.75rem; color: var(--color-gold); font-weight: 500; margin-top: 0.15rem;">UGX {{ property.price_per_year|floatformat:0 }} / Yr</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gold); font-weight: 500; margin-top: 0.15rem;">UGX {{ property.price_per_year|floatformat:0|intcomma }} / Yr</div>
                     {% endif %}
                 </td>
                 <td>
@@ -278,9 +279,9 @@
                     </td>
                     <td style="font-size: 0.85rem; color: #64748b; font-weight: 600;">
                         {% if unit.price_per_month %}
-                            UGX {{ unit.price_per_month|floatformat:0 }} / Mo
+                            UGX {{ unit.price_per_month|floatformat:0|intcomma }} / Mo
                         {% else %}
-                            UGX {{ unit.price|floatformat:0 }} / Mo
+                            UGX {{ unit.price|floatformat:0|intcomma }} / Mo
                         {% endif %}
                     </td>
                     <td>

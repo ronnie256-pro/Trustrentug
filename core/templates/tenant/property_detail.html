@@ -707,7 +707,6 @@
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        {% if property.listing_type != 'sale' and not property.category == 'bungalow' and not property.category == 'standalone' and not 'sale' in property.title|lower and not 'estate' in property.title|lower and not 'land' in property.title|lower and not 'plot' in property.title|lower and property.price < 50000000 %}
                         <form id="book-property-form" action="{% url 'tenant_create_booking' property.id %}"
                             method="POST">
                             {% csrf_token %}
@@ -716,7 +715,6 @@
                                 Book Property
                             </button>
                         </form>
-                        {% endif %}
 
                         <form action="{% url 'tenant_add_favorite' property.id %}" method="POST">
                             {% csrf_token %}
@@ -764,12 +762,17 @@
                 {% for sim in similar_properties %}
                 <a href="/property/{{ sim.id }}/" class="property-card" style="flex: 0 0 280px; width: 280px; min-width: 280px; max-width: 280px; scroll-snap-align: start; color: inherit; text-decoration: none; border-radius: 14px; overflow: hidden; background: #ffffff; border: 1px solid rgba(203, 163, 88, 0.25); box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: all 0.3s ease;">
                     <div style="position: relative; height: 140px; overflow: hidden;">
+                        {% if sim.is_for_sale or sim.listing_type == 'sale' %}
+                        <span style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.18rem 0.55rem; background: #0284c7; color: #ffffff; border-radius: 6px; font-weight: 800;">For Sale</span>
+                        {% else %}
+                        <span style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.18rem 0.55rem; background: #047857; color: #ffffff; border-radius: 6px; font-weight: 800;">For Rent</span>
+                        {% endif %}
+
                         {% if sim.hero_image %}
                         <img src="{{ sim.hero_image.url }}" alt="{{ sim.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                         {% else %}
                         <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ sim.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                         {% endif %}
-                        <div class="verified-tag" style="position: absolute; top: 8px; left: 8px; z-index: 5; font-size: 0.65rem; padding: 0.18rem 0.55rem; background: #10b981; color: #ffffff; border-radius: 20px; font-weight: 800; border: none;">Verified</div>
                     </div>
                     <div style="padding: 0.65rem 0.85rem; background: #ffffff; border-bottom: 1px solid #f1f5f9;">
                         <h4 style="font-size: 0.92rem; font-weight: 700; margin: 0; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ sim.title }}</h4>
@@ -778,7 +781,7 @@
                         <div style="display: flex; align-items: center; gap: 0.3rem;">
                             <span style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.85);">UGX</span>
                             <span style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.05rem; font-weight: 800; color: #ffffff;">
-                                {% if sim.price %}{{ sim.price|floatformat:0|intcomma }}{% else %}Custom Pricing{% endif %}
+                                {% if sim.price %}{{ sim.price|floatformat:0|intcomma }}{% if sim.is_for_sale or sim.listing_type == 'sale' %}{% else %} / mo{% endif %}{% else %}Custom Pricing{% endif %}
                             </span>
                         </div>
                         <div style="font-size: 0.78rem; color: var(--color-gold); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; border-top: 1px solid rgba(203, 163, 88, 0.3); padding-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -985,10 +988,13 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 0.85rem;">
-                <button type="button" id="btn-proceed-booking" class="btn btn-gold"
-                    style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 8px;">
-                    Yes, I have visited (Proceed with Booking)
-                </button>
+                <form action="{% url 'tenant_create_booking' property.id %}" method="POST" style="margin: 0; width: 100%;">
+                    {% csrf_token %}
+                    <button type="submit" id="btn-proceed-booking" class="btn btn-gold"
+                        style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; cursor: pointer; border-radius: 8px;">
+                        Yes, I have visited (Proceed with Booking)
+                    </button>
+                </form>
                 <button type="button" id="btn-show-scheduler" class="btn btn-outline"
                     style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1.5px solid var(--color-emerald); color: var(--color-emerald); background: transparent; cursor: pointer; border-radius: 8px;">
                     No, Schedule Physical Inspection

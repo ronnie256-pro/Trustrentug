@@ -230,22 +230,22 @@ body {
     <!-- REPOSITIONED HORIZONTAL FILTER FORM WITH FULL BLUE TOP TOGGLE -->
     <form id="topFilterForm" method="GET" action="{% url 'search' %}" class="filters" style="max-width: 1100px; width: 100%; margin: 0 auto 1.25rem auto; border: none; background: transparent; padding: 0; box-shadow: none;">
         
-        <!-- TOP TOGGLE PILLS: "For sale only" (Blue) & "For Rent only" (Orange) (CENTERED & REDUCED SIZE) -->
+        <!-- TOP TOGGLE PILLS: "For sale" (Blue) & "For Rent" (Green) (CENTERED & REDUCED SIZE) -->
         <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; justify-content: center; max-width: 440px; width: 100%; margin: 0 auto 0.65rem auto;">
-            <!-- 1. For sale only (Blue) -->
+            <!-- 1. For sale (Blue) -->
             <div style="flex: 1; min-width: 170px; background: linear-gradient(135deg, #1d4ed8, #2563eb); border: 1.5px solid #1e40af; padding: 0.4rem 0.85rem; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">
                 <label for="for_sale_checkbox" style="font-weight: 800; font-size: 0.82rem; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; margin: 0;">
-                    <i class="fa-solid fa-tag" style="color: #ffffff !important; font-size: 0.85rem;"></i> For sale only
+                    <i class="fa-solid fa-tag" style="color: #ffffff !important; font-size: 0.85rem;"></i> For sale
                 </label>
                 <input type="checkbox" id="for_sale_checkbox" name="for_sale" value="on" {% if for_sale %}checked{% endif %} onchange="if(this.checked){ document.getElementById('for_rent_checkbox').checked = false; } this.form.submit();" style="width: 17px; height: 17px; accent-color: #2563eb; cursor: pointer; margin: 0;">
             </div>
 
-            <!-- 2. For Rent only (Orange) -->
-            <div style="flex: 1; min-width: 170px; background: linear-gradient(135deg, #ea580c, #f97316); border: 1.5px solid #c2410c; padding: 0.4rem 0.85rem; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);">
+            <!-- 2. For Rent (Green) -->
+            <div style="flex: 1; min-width: 170px; background: linear-gradient(135deg, #047857, #10b981); border: 1.5px solid #065f46; padding: 0.4rem 0.85rem; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
                 <label for="for_rent_checkbox" style="font-weight: 800; font-size: 0.82rem; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; margin: 0;">
-                    <i class="fa-solid fa-key" style="color: #ffffff !important; font-size: 0.85rem;"></i> For Rent only
+                    <i class="fa-solid fa-key" style="color: #ffffff !important; font-size: 0.85rem;"></i> For Rent
                 </label>
-                <input type="checkbox" id="for_rent_checkbox" name="for_rent" value="on" {% if for_rent %}checked{% endif %} onchange="if(this.checked){ document.getElementById('for_sale_checkbox').checked = false; } this.form.submit();" style="width: 17px; height: 17px; accent-color: #ea580c; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="for_rent_checkbox" name="for_rent" value="on" {% if for_rent %}checked{% endif %} onchange="if(this.checked){ document.getElementById('for_sale_checkbox').checked = false; } this.form.submit();" style="width: 17px; height: 17px; accent-color: #10b981; cursor: pointer; margin: 0;">
             </div>
         </div>
 
@@ -292,7 +292,7 @@ body {
     <!-- 3. CARDS GRID (5 CARDS PER ROW, IMMEDIATELY BELOW) -->
     <main>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-            <p style="color: var(--color-text-muted); margin: 0;">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> verified properties</p>
+            <p style="color: var(--color-text-muted); margin: 0;">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> properties</p>
             <select class="form-control" style="width: auto; padding: 0.45rem 0.75rem; border-radius: 8px;">
                 <option>Sort by: Recommended</option>
                 <option>Price: Low to High</option>
@@ -316,13 +316,15 @@ body {
                     {% endif %}
                     
                     {% if for_sale or property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}
-                    <!-- ONLY Blue For Sale Badge on Top Right Corner -->
+                    <!-- Blue For Sale Badge on Top Right Corner -->
                     <div class="blue-sale-ribbon">
                         <i class="fa-solid fa-tag"></i> For Sale
                     </div>
                     {% else %}
-                    <!-- ONLY Orange Verified Badge on Top Left Corner -->
-                    <div class="verified-tag">Verified</div>
+                    <!-- Green For Rent Badge on Top Right Corner -->
+                    <div class="blue-sale-ribbon" style="background: #047857 !important;">
+                        <i class="fa-solid fa-key"></i> For Rent
+                    </div>
                     {% endif %}
 
                     {% if property.panoramas.all %}
