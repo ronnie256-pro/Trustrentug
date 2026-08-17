@@ -210,6 +210,16 @@ body {
         .layout {
             padding: 1rem 0.5rem !important;
         }
+        .mobile-filter-toggle-container {
+            display: block !important;
+        }
+        #topFilterForm {
+            display: none;
+        }
+        #topFilterForm.mobile-active {
+            display: block !important;
+            animation: slideDownFade 0.3s ease-out;
+        }
     }
 
     @keyframes slideDownFade {
@@ -227,6 +237,13 @@ body {
 
 {% block content %}
 <div class="layout">
+    <!-- MOBILE FILTER TOGGLE BUTTON -->
+    <div class="mobile-filter-toggle-container" style="display: none; width: 100%; margin-bottom: 0.85rem; text-align: center;">
+        <button type="button" id="mobile-filter-toggle-btn" onclick="toggleMobileSearchFilter()" style="width: 100%; max-width: 400px; padding: 0.75rem 1.25rem; background: #047857; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);">
+            <i class="fa-solid fa-sliders"></i> Filter Properties <span id="filter-chevron" style="margin-left: 0.25rem;">▼</span>
+        </button>
+    </div>
+
     <!-- REPOSITIONED HORIZONTAL FILTER FORM WITH FULL BLUE TOP TOGGLE -->
     <form id="topFilterForm" method="GET" action="{% url 'search' %}" class="filters" style="max-width: 1100px; width: 100%; margin: 0 auto 1.25rem auto; border: none; background: transparent; padding: 0; box-shadow: none;">
         
@@ -370,6 +387,22 @@ body {
 
 {% block extra_js %}
 <script>
+function toggleMobileSearchFilter() {
+    const form = document.getElementById('topFilterForm');
+    const chevron = document.getElementById('filter-chevron');
+    if (form) {
+        if (form.style.display === 'block' || form.classList.contains('mobile-active')) {
+            form.style.display = 'none';
+            form.classList.remove('mobile-active');
+            if (chevron) chevron.innerText = '▼';
+        } else {
+            form.style.display = 'block';
+            form.classList.add('mobile-active');
+            if (chevron) chevron.innerText = '▲';
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('mobileFilterToggleBtn');
     const closeBtn = document.getElementById('closeMobileFilterBtn');

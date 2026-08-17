@@ -447,40 +447,51 @@
     }
 
     .proximity-card {
-        background: var(--color-bg-base);
-        padding: 1.25rem;
-        border-radius: var(--radius-md);
+        background: #f8fafc;
+        padding: 0.45rem 0.75rem;
+        border-radius: 8px;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        text-align: center;
-        transition: transform 0.3s ease, border-color 0.3s ease;
-        border: 1px solid transparent;
+        justify-content: space-between;
+        gap: 0.5rem;
+        border: 1px solid #e2e8f0;
+        transition: border-color 0.2s ease;
     }
 
     .proximity-card:hover {
-        transform: translateY(-5px);
         border-color: var(--color-gold);
     }
 
+    .proximity-icon-title {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        overflow: hidden;
+    }
+
     .proximity-icon {
-        font-size: 1.5rem;
-        color: var(--color-emerald);
-        margin-bottom: 0.75rem;
+        font-size: 0.85rem;
+        color: #047857;
+        flex-shrink: 0;
     }
 
     .proximity-label {
-        font-size: 0.85rem;
-        color: var(--color-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.25rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #334155;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .proximity-value {
-        font-weight: 700;
-        color: var(--color-emerald-darkest);
-        font-size: 1.1rem;
+        font-weight: 800;
+        color: #047857;
+        font-size: 0.75rem;
+        background: #e6f4ea;
+        padding: 0.15rem 0.45rem;
+        border-radius: 6px;
+        flex-shrink: 0;
     }
 
     @media (max-width: 1650px) {
@@ -727,21 +738,21 @@
                 </div>
 
                 <!-- Proximity to Local Services directly below Booking Card -->
-                <div class="proximity-section" style="margin-top: 1.5rem; border-top: none; padding-top: 0;">
-                    <h3
-                        style="font-family: var(--font-heading); margin-bottom: 1rem; font-size: 1.15rem; color: var(--color-emerald-darkest);">
+                <div class="proximity-section" style="margin-top: 1.25rem; border-top: none; padding-top: 0;">
+                    <h3 style="font-family: var(--font-heading); margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--color-emerald-darkest); font-weight: 700;">
                         Proximity to Local Services
                     </h3>
-                    <div class="proximity-grid" style="grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                    <div class="proximity-grid" style="grid-template-columns: repeat(2, 1fr); gap: 0.45rem;">
                         {% for proximity in property_proximities %}
                         <div class="proximity-card">
-                            <div class="proximity-icon"><i class="fa-solid {{ proximity.icon_class }}"></i></div>
-                            <div class="proximity-label">{{ proximity.item.name }}</div>
+                            <div class="proximity-icon-title">
+                                <div class="proximity-icon"><i class="fa-solid {{ proximity.icon_class }}"></i></div>
+                                <div class="proximity-label">{{ proximity.item.name }}</div>
+                            </div>
                             <div class="proximity-value">{{ proximity.distance_km }} KM</div>
                         </div>
                         {% empty %}
-                        <div
-                            style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); padding: 1rem 0; font-size: 0.85rem;">
+                        <div style="grid-column: 1 / -1; text-align: center; color: var(--color-text-muted); padding: 0.5rem 0; font-size: 0.8rem;">
                             No local proximity services configured for this property address.
                         </div>
                         {% endfor %}
