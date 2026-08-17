@@ -1678,19 +1678,23 @@ def property_detail_view(request, property_id):
     panoramas = list(property_obj.panoramas.all())
     has_tour = len(panoramas) > 0
 
-    # Fetch Similar Properties (Same category prioritized by same area)
+    # Fetch Similar Properties (prioritizing same location, same category, and same listing_type [sale/rent])
     base_qs = Property.objects.exclude(id=property_obj.id)
-    cat_qs = base_qs.filter(category=property_obj.category)
-    if not cat_qs.exists():
-        cat_qs = base_qs
-        
+    cat_items = list(base_qs.filter(category=property_obj.category))
+    type_items = list(base_qs.filter(listing_type=property_obj.listing_type))
+
     same_area_items = []
     if property_obj.location:
         loc_part = property_obj.location.split(',')[0].strip()
-        same_area_items = list(cat_qs.filter(location__icontains=loc_part))
-        
-    other_items = [p for p in cat_qs if p not in same_area_items]
-    similar_properties = (same_area_items + other_items)[:6]
+        if loc_part:
+            same_area_items = list(base_qs.filter(location__icontains=loc_part))
+
+    ordered_items = []
+    for item in (same_area_items + cat_items + type_items + list(base_qs)):
+        if item not in ordered_items:
+            ordered_items.append(item)
+
+    similar_properties = ordered_items[:6]
 
     return render(request, 'tenant/property_detail.html', {
         'property': property_obj,

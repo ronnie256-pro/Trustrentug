@@ -1152,76 +1152,11 @@
                         </div>
                     </div>
 
-                    <h4 style="font-size: 1rem; color: var(--color-emerald-darkest); margin: 0 0 1.25rem 0; font-weight: 600;">Select Payment Channel</h4>
-                    
-                    <div class="payment-methods-grid">
-                        <label class="payment-method-card selected" onclick="selectPaymentMethod(this)">
-                            <input type="radio" name="payment_method" value="mobile_money" checked>
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                            <span>Mobile Money</span>
-                        </label>
-                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
-                            <input type="radio" name="payment_method" value="card">
-                            <i class="fa-solid fa-credit-card"></i>
-                            <span>Visa / Mastercard</span>
-                        </label>
-                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
-                            <input type="radio" name="payment_method" value="paypal">
-                            <i class="fa-brands fa-paypal"></i>
-                            <span>PayPal</span>
-                        </label>
-                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
-                            <input type="radio" name="payment_method" value="stripe">
-                            <i class="fa-brands fa-stripe"></i>
-                            <span>Stripe</span>
-                        </label>
-                        <label class="payment-method-card" onclick="selectPaymentMethod(this)">
-                            <input type="radio" name="payment_method" value="cash">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>Cash / Office</span>
-                        </label>
-                    </div>
-
-                    <!-- Dynamic payment input details -->
-                    <div id="channel-inputs-wrapper" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
-                        <!-- Mobile Money -->
-                        <div id="input-mobile_money">
-                            <h5 style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">Uganda Mobile Money Gateway</h5>
-                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                                <select class="form-control" style="width: 140px;">
-                                    <option>MTN MoMo</option>
-                                    <option>Airtel Money</option>
-                                </select>
-                                <input type="text" class="form-control" placeholder="07... Mobile Money number" required style="flex: 1; min-width: 180px;">
-                            </div>
-                            <small style="color: var(--color-text-muted); display: block; margin-top: 0.5rem;">A prompt code will be sent instantly to authorize checkout on your handset.</small>
-                        </div>
-                        
-                        <!-- Credit Card -->
-                        <div id="input-card" style="display: none;">
-                            <h5 style="margin: 0 0 0.75rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">Card Details</h5>
-                            <div class="form-group" style="margin-bottom: 0.75rem;">
-                                <input type="text" class="form-control" placeholder="Card Number (16 Digits)">
-                            </div>
-                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                                <input type="text" class="form-control" placeholder="MM/YY" style="flex: 1;">
-                                <input type="text" class="form-control" placeholder="CVV" style="flex: 1;">
-                            </div>
-                        </div>
-
-                        <!-- PayPal / Stripe -->
-                        <div id="input-paypal" style="display: none;">
-                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-brands fa-paypal"></i> Click the confirm checkout button to redirect to Paypal credentials authorization page.</p>
-                        </div>
-                        <div id="input-stripe" style="display: none;">
-                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-brands fa-stripe"></i> Dynamic Stripe transaction checkout sheet will load securely on approval click.</p>
-                        </div>
-
-                        <!-- Cash at Office -->
-                        <div id="input-cash" style="display: none;">
-                            <h5 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: var(--color-emerald-darkest);">TRUST Headquarters Address</h5>
-                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5;">Please visit our secure desk at: <strong>Level 4, Imperial Mall Chambers, Entebbe Road, Kampala</strong>. Provide ID booking reference number <strong>#{{ active_booking.property.property_id }}</strong> to make cash payment.</p>
-                        </div>
+                    <!-- Pesapal Gateway Redirect Notice -->
+                    <div style="background: rgba(10, 92, 54, 0.04); border: 1.5px solid rgba(10, 92, 54, 0.2); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; text-align: center;">
+                        <p style="font-size: 0.95rem; color: #475569; margin: 0; line-height: 1.5; font-weight: 500;">
+                            You will be redirected to a PESAPAL payment dashboard, please select your preferred payment method.
+                        </p>
                     </div>
 
                     <div class="desktop-confirm-container">
