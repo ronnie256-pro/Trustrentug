@@ -1,3 +1,6 @@
+import json
+from datetime import timedelta
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
@@ -3645,7 +3648,7 @@ def pesapal_callback(request):
 
     # 1. Fetch Bearer Token & Query Pesapal API v3 GetTransactionStatus
     token, _ = get_pesapal_bearer_token()
-    if token:
+    if token and order_tracking_id:
         status_data, err = get_pesapal_transaction_status(order_tracking_id, token)
         if status_data:
             st_code = status_data.get('status_code')
@@ -3665,14 +3668,14 @@ def pesapal_callback(request):
 
                     if tx.booking:
                         booking = tx.booking
-                        booking.status = 'PAID'
+                        booking.status = 'active'
                         booking.payment_method = payment_method or 'Pesapal Mobile Money'
+                        prop = booking.property
+                        booking.expires_at = timezone.now() + (timedelta(days=7) if prop.is_for_sale else timedelta(hours=24))
                         booking.save()
 
                         # Lock property exclusively
-                        prop = booking.property
                         prop.status = 'reserved'
-                        prop.locked_until = timezone.now() + (timezone.timedelta(days=7) if prop.is_for_sale else timezone.timedelta(hours=24))
                         prop.save()
 
                 messages.success(request, f"Pesapal Mobile Money/Card payment of UGX {tx.amount:,.0f} processed successfully! Property locked exclusively.")
@@ -3708,7 +3711,7 @@ def pesapal_ipn_listener(request):
                     tx.save()
                     if tx.booking:
                         booking = tx.booking
-                        booking.status = 'PAID'
+                        booking.status = 'active'
                         booking.save()
                         prop = booking.property
                         prop.status = 'reserved'

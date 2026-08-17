@@ -108,7 +108,7 @@ def get_pesapal_transaction_status(order_tracking_id, token):
     Endpoint: GET /api/Transactions/GetTransactionStatus?orderTrackingId={orderTrackingId}
     Returns: status_dict, error
     """
-    url = f"{settings.PESAPAL_BASE_URL}/api/Transactions/GetTransactionStatus?orderTrackingId={orderTrackingId}"
+    url = f"{settings.PESAPAL_BASE_URL}/api/Transactions/GetTransactionStatus?orderTrackingId={order_tracking_id}"
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
