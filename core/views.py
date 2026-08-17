@@ -3525,3 +3525,194 @@ def client_construction_dashboard(request, app_id=None):
         'payment_status': payment_status,
         'contract_status': contract_status,
     })
+
+
+# ==========================================
+# PESAPAL UGANDA API v3 PAYMENT VIEWS
+# ==========================================
+from core.pesapal_utils import (
+    get_pesapal_bearer_token,
+    register_pesapal_ipn,
+    submit_pesapal_order,
+    get_pesapal_transaction_status
+)
+from core.models import PesapalTransaction
+
+
+def pesapal_initiate_payment(request, property_id=None):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please sign in to proceed with payment.")
+        return redirect('login')
+
+    payment_type = request.POST.get('payment_type') or request.GET.get('payment_type') or 'booking'
+    booking_id = request.POST.get('booking_id') or request.GET.get('booking_id')
+    
+    booking_obj = None
+    if booking_id:
+        booking_obj = TenantBooking.objects.filter(id=booking_id, tenant=request.user).first()
+    
+    if not booking_obj and property_id:
+        prop = Property.objects.filter(id=property_id).first()
+        if prop:
+            booking_obj = TenantBooking.objects.filter(property=prop, tenant=request.user).first()
+
+    if not booking_obj and property_id:
+        prop = Property.objects.filter(id=property_id).first()
+        if prop:
+            fee = (prop.price or 0) * 0.01 if prop.is_for_sale else (prop.price or 0) * 0.05
+            booking_obj = TenantBooking.objects.create(
+                tenant=request.user,
+                property=prop,
+                booking_fee=fee,
+                status='reserved'
+            )
+
+    if not booking_obj:
+        messages.error(request, "Invalid property booking payment request.")
+        return redirect('/tenant/dashboard/?tab=payments')
+
+    property_obj = booking_obj.property
+    amount = float(booking_obj.booking_fee or 0)
+    if amount <= 0:
+        amount = float(property_obj.price or 0) * (0.01 if property_obj.is_for_sale else 0.05)
+
+    # 1. Fetch Pesapal OAuth Bearer Token
+    token, token_err = get_pesapal_bearer_token()
+    if not token:
+        messages.error(request, f"Pesapal Authentication Failed: {token_err}")
+        return redirect(f'/tenant/dashboard/?tab=payments&booking_id={booking_obj.id}')
+
+    # 2. Register IPN Listener (or fetch cached ipn_id)
+    ipn_id, ipn_err = register_pesapal_ipn(token)
+
+    # 3. Generate unique merchant reference
+    merchant_ref = f"TRUST-PAY-{booking_obj.id}-{int(timezone.now().timestamp())}"
+
+    # Build callback URL
+    callback_url = request.build_absolute_uri('/payments/pesapal/callback/')
+
+    # 4. Submit Order Request to Pesapal API v3
+    redirect_url, order_tracking_id, order_err = submit_pesapal_order(
+        merchant_reference=merchant_ref,
+        amount=amount,
+        description=f"TRUST Verification & Lock Fee for {property_obj.title}",
+        customer_email=request.user.email or f"{request.user.username}@trustrentug.com",
+        customer_phone=getattr(request.user.profile, 'phone', '0700000000') if hasattr(request.user, 'profile') else '0700000000',
+        customer_first_name=request.user.first_name or request.user.username,
+        customer_last_name=request.user.last_name or "Client",
+        callback_url=callback_url,
+        token=token,
+        ipn_id=ipn_id
+    )
+
+    if not redirect_url:
+        messages.error(request, f"Failed to launch Pesapal payment window: {order_err}")
+        return redirect(f'/tenant/dashboard/?tab=payments&booking_id={booking_obj.id}')
+
+    # 5. Create Pending PesapalTransaction Record
+    PesapalTransaction.objects.create(
+        user=request.user,
+        booking=booking_obj,
+        merchant_reference=merchant_ref,
+        order_tracking_id=order_tracking_id,
+        amount=amount,
+        currency='UGX',
+        payment_type=payment_type,
+        status='PENDING',
+        ipn_id=ipn_id,
+        redirect_url=redirect_url
+    )
+
+    # Redirect user to Pesapal secure payment gateway window
+    return redirect(redirect_url)
+
+
+def pesapal_callback(request):
+    """
+    Pesapal Callback Target URL after tenant completes payment.
+    Parameters in query string: OrderTrackingId, OrderMerchantReference
+    """
+    order_tracking_id = request.GET.get('OrderTrackingId')
+    merchant_ref = request.GET.get('OrderMerchantReference')
+
+    if not order_tracking_id:
+        messages.error(request, "Payment transaction verification failed: missing order reference.")
+        return redirect('/tenant/dashboard/?tab=payments')
+
+    tx = PesapalTransaction.objects.filter(order_tracking_id=order_tracking_id).first()
+    if not tx and merchant_ref:
+        tx = PesapalTransaction.objects.filter(merchant_reference=merchant_ref).first()
+
+    # 1. Fetch Bearer Token & Query Pesapal API v3 GetTransactionStatus
+    token, _ = get_pesapal_bearer_token()
+    if token:
+        status_data, err = get_pesapal_transaction_status(order_tracking_id, token)
+        if status_data:
+            st_code = status_data.get('status_code')
+            desc = (status_data.get('payment_status_description') or '').lower()
+            payment_method = status_data.get('payment_method')
+
+            if tx:
+                tx.raw_response = json.dumps(status_data)
+                if payment_method:
+                    tx.payment_method = payment_method
+                tx.save()
+
+            if st_code == 1 or 'completed' in desc:
+                if tx:
+                    tx.status = 'COMPLETED'
+                    tx.save()
+
+                    if tx.booking:
+                        booking = tx.booking
+                        booking.status = 'PAID'
+                        booking.payment_method = payment_method or 'Pesapal Mobile Money'
+                        booking.save()
+
+                        # Lock property exclusively
+                        prop = booking.property
+                        prop.status = 'reserved'
+                        prop.locked_until = timezone.now() + (timezone.timedelta(days=7) if prop.is_for_sale else timezone.timedelta(hours=24))
+                        prop.save()
+
+                messages.success(request, f"Pesapal Mobile Money/Card payment of UGX {tx.amount:,.0f} processed successfully! Property locked exclusively.")
+                return redirect('/tenant/dashboard/?tab=my_property&payment_success=1')
+            elif st_code == 2 or 'failed' in desc:
+                if tx:
+                    tx.status = 'FAILED'
+                    tx.save()
+                messages.error(request, "Pesapal payment failed or was declined by user. Please try again.")
+                return redirect('/tenant/dashboard/?tab=payments')
+
+    messages.info(request, "Pesapal transaction received and pending confirmation.")
+    return redirect('/tenant/dashboard/?tab=payments')
+
+
+def pesapal_ipn_listener(request):
+    """
+    Asynchronous Instant Payment Notification (IPN) listener for Pesapal API v3.
+    """
+    order_tracking_id = request.GET.get('OrderTrackingId') or request.POST.get('OrderTrackingId')
+    merchant_ref = request.GET.get('OrderMerchantReference') or request.POST.get('OrderMerchantReference')
+
+    if order_tracking_id:
+        tx = PesapalTransaction.objects.filter(order_tracking_id=order_tracking_id).first()
+        token, _ = get_pesapal_bearer_token()
+        if token:
+            status_data, _ = get_pesapal_transaction_status(order_tracking_id, token)
+            if status_data and tx:
+                st_code = status_data.get('status_code')
+                desc = (status_data.get('payment_status_description') or '').lower()
+                if st_code == 1 or 'completed' in desc:
+                    tx.status = 'COMPLETED'
+                    tx.save()
+                    if tx.booking:
+                        booking = tx.booking
+                        booking.status = 'PAID'
+                        booking.save()
+                        prop = booking.property
+                        prop.status = 'reserved'
+                        prop.save()
+
+    return JsonResponse({"orderNotificationType": "IPNChange", "orderTrackingId": order_tracking_id, "status": "200"})
+

@@ -623,3 +623,37 @@ class DiasporaClientApplication(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.country_of_residence}) - {self.district}"
+
+
+class PesapalTransaction(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('COMPLETED', 'Completed'),
+        ('FAILED', 'Failed'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    booking = models.ForeignKey(TenantBooking, on_delete=models.SET_NULL, null=True, blank=True)
+    rental = models.ForeignKey(TenantRental, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    merchant_reference = models.CharField(max_length=100, unique=True)
+    order_tracking_id = models.CharField(max_length=150, blank=True, null=True)
+    amount = models.DecimalField(max_digits=14, decimal_places=2, default=0.00)
+    currency = models.CharField(max_length=10, default='UGX')
+    payment_type = models.CharField(max_length=50, default='booking_fee')
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    ipn_id = models.CharField(max_length=150, blank=True, null=True)
+    redirect_url = models.URLField(max_length=500, blank=True, null=True)
+    raw_response = models.TextField(blank=True, null=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.merchant_reference} - UGX {self.amount:,.0f} ({self.status})"
+

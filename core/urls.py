@@ -42,6 +42,13 @@ urlpatterns = [
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
     path('property/<int:property_id>/tour/', views.property_tour_view, name='property_tour'),
     path('checkout/<int:property_id>/', views.checkout_view, name='checkout'),
+
+    # Pesapal Payment Gateway Routes
+    path('payments/pesapal/initiate/', views.pesapal_initiate_payment, name='pesapal_initiate'),
+    path('payments/pesapal/initiate/<int:property_id>/', views.pesapal_initiate_payment, name='pesapal_initiate_property'),
+    path('payments/pesapal/callback/', views.pesapal_callback, name='pesapal_callback'),
+    path('payments/pesapal/ipn/', views.pesapal_ipn_listener, name='pesapal_ipn'),
+
     path('about-us/', views.about_us_view, name='about_us'),
     path('how-it-works/', views.how_escrow_works_view, name='how_escrow_works'),
     path('verification/', views.verification_process_view, name='verification_process'),

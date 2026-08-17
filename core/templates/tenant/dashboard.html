@@ -1125,12 +1125,11 @@
 
         {% if active_booking %}
         <!-- Checkout Interface for active booking -->
-        <div class="payments-checkout-wrapper">
-            
-            <form action="{% url 'tenant_process_payment' active_booking.property.id %}" method="POST" class="premium-card payment-form-card" id="payment-form">
+            <form action="{% url 'pesapal_initiate' %}" method="POST" class="premium-card payment-form-card" id="payment-form">
                 {% csrf_token %}
+                <input type="hidden" name="booking_id" value="{{ active_booking.id }}">
                 <div class="card-header-lux">
-                    <h3>Secure Checkout Gateway</h3>
+                    <h3>Secure Pesapal Gateway (Uganda UGX)</h3>
                     <span class="badge badge-escrow" style="background: rgba(203,163,88,0.15); color: var(--color-gold-light);"><i class="fa-solid fa-shield-halved"></i> Escrow Secured</span>
                 </div>
                 

@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- THE PRODUCTION SWITCH ---
 # Keep this as True while working on your laptop.
 # IMPORTANT: Change this to False before you commit and push to GitHub!
-IS_LOCAL = True
+IS_LOCAL = False
 
 
 # Quick-start development settings - unsuitable for production
@@ -145,3 +145,11 @@ STATICFILES_DIRS = [BASE_DIR / 'core' / 'static']
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Pesapal Uganda API v3 Settings
+PESAPAL_CONSUMER_KEY = os.environ.get('PESAPAL_CONSUMER_KEY', 'TDpigBOOhs+zAl8cwH2Fl82jJGyD8xev')
+PESAPAL_CONSUMER_SECRET = os.environ.get('PESAPAL_CONSUMER_SECRET', '1KpqkfsMaihIcOlhnBo/gBZ5smw=')
+PESAPAL_BASE_URL = os.environ.get('PESAPAL_BASE_URL', 'https://cybqa.pesapal.com/pesapalv3')
+PESAPAL_IPN_URL = os.environ.get('PESAPAL_IPN_URL', 'https://trustrentug.com/payments/pesapal/ipn/')
+PESAPAL_CURRENCY = 'UGX'
+
