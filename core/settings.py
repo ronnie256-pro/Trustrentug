@@ -12,29 +12,28 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file if it exists
+load_dotenv(BASE_DIR / '.env')
+
 # --- THE PRODUCTION SWITCH ---
-# Keep this as True while working on your laptop.
-# IMPORTANT: Change this to False before you commit and push to GitHub!
-IS_LOCAL = False
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# Automatically controlled by IS_LOCAL in .env (Defaults to True for local development)
+IS_LOCAL = os.environ.get('IS_LOCAL', 'True').lower() in ('true', '1', 't')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-!&vh9lmobs+mj(88@^a9on)3jdk^71_3xzxv-_!=ma3dcp#dwp')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-only-change-in-production-env')
 
 if IS_LOCAL:
     DEBUG = True
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['*']
 else:
     DEBUG = False
-    ALLOWED_HOSTS = ['trustrentug.com', 'www.trustrentug.com']
-    CSRF_TRUSTED_ORIGINS = ['https://trustrentug.com', 'https://www.trustrentug.com']
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'trustrentug.com,www.trustrentug.com').split(',')
+    CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://trustrentug.com,https://www.trustrentug.com').split(',')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
@@ -124,15 +123,15 @@ if IS_LOCAL:
         }
     }
 else:
-    # VPS: PostgreSQL
+    # VPS: PostgreSQL (Read from environment variables)
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'trustrent_db',
-            'USER': 'trustrent_user',
-            'PASSWORD': '*@trustrent2026#',
-            'HOST': 'localhost',
-            'PORT': '5432',
+            'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+            'NAME': os.environ.get('DB_NAME', 'trustrent_db'),
+            'USER': os.environ.get('DB_USER', 'trustrent_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
         }
     }
 
@@ -183,8 +182,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Pesapal Uganda API v3 Settings
-PESAPAL_CONSUMER_KEY = os.environ.get('PESAPAL_CONSUMER_KEY', 'TDpigBOOhs+zAl8cwH2Fl82jJGyD8xev')
-PESAPAL_CONSUMER_SECRET = os.environ.get('PESAPAL_CONSUMER_SECRET', '1KpqkfsMaihIcOlhnBo/gBZ5smw=')
+PESAPAL_CONSUMER_KEY = os.environ.get('PESAPAL_CONSUMER_KEY', '')
+PESAPAL_CONSUMER_SECRET = os.environ.get('PESAPAL_CONSUMER_SECRET', '')
 PESAPAL_BASE_URL = os.environ.get('PESAPAL_BASE_URL', 'https://cybqa.pesapal.com/pesapalv3')
 PESAPAL_IPN_URL = os.environ.get('PESAPAL_IPN_URL', 'https://trustrentug.com/payments/pesapal/ipn/')
 PESAPAL_CURRENCY = 'UGX'
