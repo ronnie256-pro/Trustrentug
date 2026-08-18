@@ -26,7 +26,7 @@ IS_LOCAL = False
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!&vh9lmobs+mj(88@^a9on)3jdk^71_3xzxv-_!=ma3dcp#dwp'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-!&vh9lmobs+mj(88@^a9on)3jdk^71_3xzxv-_!=ma3dcp#dwp')
 
 if IS_LOCAL:
     DEBUG = True
@@ -35,6 +35,21 @@ else:
     DEBUG = False
     ALLOWED_HOSTS = ['trustrentug.com', 'www.trustrentug.com']
     CSRF_TRUSTED_ORIGINS = ['https://trustrentug.com', 'https://www.trustrentug.com']
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+
+# Password Reset Token Timeout (15 minutes)
+PASSWORD_RESET_TIMEOUT = 900
+
+# File Upload Limits (Max 100MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
 
 
 # Application definition
@@ -47,6 +62,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'axes',
+    'django_recaptcha',
     'core',
 ]
 
@@ -58,7 +75,23 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Django Axes Security Settings (Account Lockout)
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 0.5
+AXES_RESET_ON_SUCCESS = True
+
+# ReCAPTCHA Settings (Read from environment in production)
+RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeJ64stAAAAADYbJvZU1lakCejp8Sb8dsdzPU1w')
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '6LeJ64stAAAAACyHQ_YaJ2QW7jgsBy7DAKLoHWOy')
+SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 
 ROOT_URLCONF = 'core.urls'
 
@@ -113,6 +146,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',

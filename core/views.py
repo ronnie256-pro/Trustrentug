@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta
 from django.utils import timezone
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
@@ -162,7 +163,19 @@ def login_view(request):
             messages.error(request, 'Invalid username or password.')
             return redirect('login')
             
-    return render(request, 'auth/login.html')
+    return render(request, 'auth/login.html', {
+        'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
+    })
+
+def password_reset_view(request):
+    if request.method == 'POST':
+        messages.info(request, 'If an account exists with that email, a password reset link has been dispatched.')
+        return render(request, 'auth/password_reset.html', {
+            'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
+        })
+    return render(request, 'auth/password_reset.html', {
+        'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
+    })
 
 def register_view(request):
     if request.method == 'POST':
@@ -178,25 +191,29 @@ def register_view(request):
         email = request.POST.get('email', '')
         nin = request.POST.get('nin', '')
 
+        if len(password) < 6:
+            messages.error(request, 'Password must be at least 6 characters long.')
+            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
+
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
-            return render(request, 'auth/register.html')
+            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
 
         if User.objects.filter(username=username).exists():
             messages.error(request, 'This username is already taken.')
-            return render(request, 'auth/register.html')
+            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
 
         if email and User.objects.filter(email=email).exists():
             messages.error(request, 'A user with this email address already exists.')
-            return render(request, 'auth/register.html')
+            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
 
         if role == 'landlord':
             if not first_name or not last_name or not email or not nin:
                 messages.error(request, 'Full name, email, and NIN are required for property owners.')
-                return render(request, 'auth/register.html')
+                return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
             if not request.FILES.get('image'):
                 messages.error(request, 'Profile picture is compulsory for property owners.')
-                return render(request, 'auth/register.html')
+                return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
 
         # Create user
         user = User.objects.create_user(
@@ -219,7 +236,9 @@ def register_view(request):
         messages.success(request, 'Registration successful! You can now sign in.')
         return redirect('login')
 
-    return render(request, 'auth/register.html')
+    return render(request, 'auth/register.html', {
+        'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
+    })
 
 def landlord_dashboard(request):
     if not request.user.is_authenticated:

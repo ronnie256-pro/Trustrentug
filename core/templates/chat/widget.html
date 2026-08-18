@@ -25,6 +25,7 @@
             <button onclick="toggleChatWidget()" style="background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; opacity: 0.8;"><i class="fa-solid fa-minus"></i></button>
         </div>
 
+        {% if request.user.is_authenticated %}
         <!-- WhatsApp Message Body -->
         <div id="chat-widget-stream" style="flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; background-image: radial-gradient(rgba(0,0,0,0.03) 1px, transparent 0); background-size: 16px 16px;">
             <div style="align-self: center; background: rgba(255,255,255,0.85); padding: 0.3rem 0.75rem; border-radius: 12px; font-size: 0.72rem; color: #54656f; box-shadow: 0 1px 2px rgba(0,0,0,0.05); text-align: center;">
@@ -39,6 +40,25 @@
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
         </div>
+        {% else %}
+        <!-- Anonymous User Login Required Message -->
+        <div style="flex: 1; padding: 2.25rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #ffffff;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(4, 120, 87, 0.1); color: #047857; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem;">
+                <i class="fa-solid fa-user-lock"></i>
+            </div>
+            <h4 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin: 0 0 0.6rem 0; font-family: var(--font-heading);">Live Support Portal</h4>
+            <p style="font-size: 0.95rem; color: #475569; margin: 0 0 1.75rem 0; line-height: 1.5; font-weight: 500;">
+                Please login, and we help you professionally
+            </p>
+            <a href="/login/?next={{ request.path }}" style="background: #047857; color: #ffffff; padding: 0.85rem 1.75rem; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.95rem; display: inline-block; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.25); transition: all 0.2s ease;">
+                <i class="fa-solid fa-right-to-bracket"></i> Sign In to Chat
+            </a>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 0.85rem; text-align: center; border-top: 1px solid #e2e8f0; font-size: 0.85rem; color: #64748b;">
+            Don't have an account? <a href="/register/" style="color: #047857; font-weight: 700; text-decoration: none;">Create one here</a>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -80,9 +100,12 @@
     let widgetThreadId = null;
     let widgetLastMessageId = 0;
     let widgetPollTimer = null;
+    const isUserAuthenticated = {% if request.user.is_authenticated %}true{% else %}false{% endif %};
 
     document.addEventListener('DOMContentLoaded', function() {
-        initChatWidget();
+        if (isUserAuthenticated) {
+            initChatWidget();
+        }
         
         const isOpen = localStorage.getItem('trust_chat_open') === 'true';
         if (isOpen) {
@@ -90,8 +113,9 @@
         }
         
         const draft = localStorage.getItem('trust_chat_draft');
-        if (draft) {
-            document.getElementById('chat-widget-input').value = draft;
+        if (draft && isUserAuthenticated) {
+            const inputEl = document.getElementById('chat-widget-input');
+            if (inputEl) inputEl.value = draft;
         }
         
         const inputEl = document.getElementById('chat-widget-input');
