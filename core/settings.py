@@ -21,17 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 # --- THE PRODUCTION SWITCH ---
-# Automatically controlled by IS_LOCAL in .env (Defaults to True for local development)
+# Automatically controlled by IS_LOCAL and DEBUG in .env
 IS_LOCAL = os.environ.get('IS_LOCAL', 'True').lower() in ('true', '1', 't')
+DEBUG = os.environ.get('DEBUG', str(IS_LOCAL)).lower() in ('true', '1', 't')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-only-change-in-production-env')
 
 if IS_LOCAL:
-    DEBUG = True
     ALLOWED_HOSTS = ['*']
 else:
-    DEBUG = False
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'trustrentug.com,www.trustrentug.com').split(',')
     CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://trustrentug.com,https://www.trustrentug.com').split(',')
     SESSION_COOKIE_SECURE = True
