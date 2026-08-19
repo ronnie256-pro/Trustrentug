@@ -180,10 +180,9 @@ STATICFILES_DIRS = [BASE_DIR / 'core' / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Pesapal Uganda API v3 Settings
+# Pesapal Uganda API v3 Settings (Live Production)
 PESAPAL_CONSUMER_KEY = os.environ.get('PESAPAL_CONSUMER_KEY', '')
 PESAPAL_CONSUMER_SECRET = os.environ.get('PESAPAL_CONSUMER_SECRET', '')
-PESAPAL_BASE_URL = os.environ.get('PESAPAL_BASE_URL', 'https://cybqa.pesapal.com/pesapalv3')
-PESAPAL_IPN_URL = os.environ.get('PESAPAL_IPN_URL', 'https://trustrentug.com/payments/pesapal/ipn/')
+PESAPAL_BASE_URL = os.environ.get('PESAPAL_BASE_URL', 'https://pay.pesapal.com/v3')
+PESAPAL_IPN_URL = os.environ.get('PESAPAL_IPN_URL', 'https://www.trustrentug.com/payments/pesapal/ipn/')
 PESAPAL_CURRENCY = 'UGX'
-

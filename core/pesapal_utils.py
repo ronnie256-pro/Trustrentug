@@ -77,7 +77,7 @@ def submit_pesapal_order(merchant_reference, amount, description, customer_email
 
     payload = {
         "id": merchant_reference,
-        "currency": getattr(settings, 'PESAPAL_CURRENCY', 'UGX'),
+        "currency": "UGX",
         "amount": float(amount),
         "description": description,
         "callback_url": callback_url,

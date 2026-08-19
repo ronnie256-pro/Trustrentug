@@ -1010,8 +1010,14 @@ def admin_dashboard(request):
     filter_month = request.GET.get('filter_month', '')
     filter_day = request.GET.get('filter_day', '')
 
-    received_bookings = TenantBooking.objects.filter(booking_fee__gt=0).select_related('tenant', 'property').order_by('-booked_at')
-    received_rentals = TenantRental.objects.select_related('tenant', 'property').order_by('-created_at', '-start_date')
+    # Only include transactions that have initiated or completed a Pesapal payment attempt
+    received_bookings = TenantBooking.objects.filter(
+        Q(pesapaltransaction__isnull=False) | Q(status__in=['active', 'paid_rent'])
+    ).filter(booking_fee__gt=0).distinct().select_related('tenant', 'property').order_by('-booked_at')
+
+    received_rentals = TenantRental.objects.filter(
+        Q(pesapaltransaction__isnull=False) | Q(status='active')
+    ).distinct().select_related('tenant', 'property').order_by('-created_at', '-start_date')
 
     if filter_month:
         try:
@@ -1061,21 +1067,22 @@ def admin_dashboard(request):
                 badge_bg = 'rgba(20, 184, 166, 0.15)'
                 badge_color = '#0f766e'
 
-        status_str = "Paid"
-        status_bg = "#f0fdf4"
-        status_color = "#16a34a"
-        status_border = "#bbf7d0"
-
-        if b.status == 'pending_payment':
-            status_str = "Pending payment"
-            status_bg = "#fffbeb"
-            status_color = "#d97706"
-            status_border = "#fef08a"
+        has_completed_tx = PesapalTransaction.objects.filter(booking=b, status='COMPLETED').exists()
+        if b.status in ['active', 'paid_rent'] or has_completed_tx:
+            status_str = "Paid"
+            status_bg = "#f0fdf4"
+            status_color = "#16a34a"
+            status_border = "#bbf7d0"
         elif b.status in ['failed_payment', 'expired', 'cancelled']:
             status_str = "Failed payment"
             status_bg = "#fef2f2"
             status_color = "#dc2626"
             status_border = "#fecaca"
+        else:
+            status_str = "Pending payment"
+            status_bg = "#fffbeb"
+            status_color = "#d97706"
+            status_border = "#fef08a"
 
         payments_list.append({
             'id': getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
@@ -1120,21 +1127,21 @@ def admin_dashboard(request):
             badge_bg = 'rgba(168, 85, 247, 0.15)'
             badge_color = '#6b21a8'
 
-        status_str = "Paid"
-        status_bg = "#f0fdf4"
-        status_color = "#16a34a"
-        status_border = "#bbf7d0"
-
-        if getattr(r, 'status', '') in ['pending', 'pending_payment']:
-            status_str = "Pending payment"
-            status_bg = "#fffbeb"
-            status_color = "#d97706"
-            status_border = "#fef08a"
-        elif getattr(r, 'status', '') in ['failed', 'cancelled', 'expired']:
+        if r.status == 'active':
+            status_str = "Paid"
+            status_bg = "#f0fdf4"
+            status_color = "#16a34a"
+            status_border = "#bbf7d0"
+        elif r.status in ['failed', 'cancelled', 'expired']:
             status_str = "Failed payment"
             status_bg = "#fef2f2"
             status_color = "#dc2626"
             status_border = "#fecaca"
+        else:
+            status_str = "Pending payment"
+            status_bg = "#fffbeb"
+            status_color = "#d97706"
+            status_border = "#fef08a"
 
         payments_list.append({
             'id': getattr(r, 'order_tracking_id', None) or f"RNT-{r.id:04d}",
@@ -2385,7 +2392,7 @@ def tenant_create_booking(request, property_id):
         property=property_obj,
         expires_at=None,
         booking_fee=booking_fee,
-        status='reserved'
+        status='pending_payment'
     )
     
     messages.success(request, f"Booking reservation for '{property_obj.title}' has been successfully initiated! Complete the non-refundable booking fee payment below to lock it exclusively.")
@@ -3296,8 +3303,14 @@ def download_payments_pdf(request):
     filter_month = request.GET.get('filter_month', '')
     filter_day = request.GET.get('filter_day', '')
 
-    received_bookings = TenantBooking.objects.filter(booking_fee__gt=0).select_related('tenant', 'property').order_by('-booked_at')
-    received_rentals = TenantRental.objects.select_related('tenant', 'property').order_by('-created_at', '-start_date')
+    # Only include transactions that have initiated or completed a Pesapal payment attempt
+    received_bookings = TenantBooking.objects.filter(
+        Q(pesapaltransaction__isnull=False) | Q(status__in=['active', 'paid_rent'])
+    ).filter(booking_fee__gt=0).distinct().select_related('tenant', 'property').order_by('-booked_at')
+
+    received_rentals = TenantRental.objects.filter(
+        Q(pesapaltransaction__isnull=False) | Q(status='active')
+    ).distinct().select_related('tenant', 'property').order_by('-created_at', '-start_date')
 
     if filter_month:
         try:
@@ -3333,11 +3346,13 @@ def download_payments_pdf(request):
             elif getattr(b.property, 'category', '') == 'land':
                 reason = "Land"
 
-        st_str = "Paid"
-        if b.status == 'pending_payment':
-            st_str = "Pending payment"
+        has_completed_tx = PesapalTransaction.objects.filter(booking=b, status='COMPLETED').exists()
+        if b.status in ['active', 'paid_rent'] or has_completed_tx:
+            st_str = "Paid"
         elif b.status in ['failed_payment', 'expired', 'cancelled']:
             st_str = "Failed payment"
+        else:
+            st_str = "Pending payment"
 
         dt_str = timezone.localtime(b.booked_at).strftime('%Y-%m-%d %H:%M') if b.booked_at else "-"
         payments_list.append([
@@ -3364,11 +3379,12 @@ def download_payments_pdf(request):
         if r.property and r.property.listing_type == 'sale':
             reason = "Buying a House"
 
-        st_str = "Paid"
-        if getattr(r, 'status', '') in ['pending', 'pending_payment']:
-            st_str = "Pending payment"
-        elif getattr(r, 'status', '') in ['failed', 'cancelled', 'expired']:
+        if r.status == 'active':
+            st_str = "Paid"
+        elif r.status in ['failed', 'cancelled', 'expired']:
             st_str = "Failed payment"
+        else:
+            st_str = "Pending payment"
 
         r_date = r.created_at or r.start_date
         dt_str = timezone.localtime(r_date).strftime('%Y-%m-%d %H:%M') if r_date else "-"
