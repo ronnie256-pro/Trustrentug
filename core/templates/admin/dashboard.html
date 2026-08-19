@@ -2462,8 +2462,14 @@ function filterTenantsByProgress(val) {
                             <small style="color: #475569; font-weight: 800; font-size: 0.85rem;">{{ p.date|date:"H:i" }}</small>
                         </td>
                         <td style="padding: 1.2rem 1.25rem;">
-                            <span class="status-pill pill-active" style="font-size: 0.82rem; font-weight: 800; padding: 0.4rem 0.8rem;">
-                                <i class="fa-solid fa-circle-check"></i> {{ p.status }}
+                            <span class="status-pill" style="background: {{ p.status_bg }}; color: {{ p.status_color }}; border: 1px solid {{ p.status_border }}; font-size: 0.82rem; font-weight: 800; padding: 0.4rem 0.85rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                {% if p.status == 'Paid' %}
+                                    <i class="fa-solid fa-circle-check" style="color: #16a34a;"></i> Paid
+                                {% elif p.status == 'Pending payment' %}
+                                    <i class="fa-solid fa-clock" style="color: #d97706;"></i> Pending payment
+                                {% else %}
+                                    <i class="fa-solid fa-circle-xmark" style="color: #dc2626;"></i> Failed payment
+                                {% endif %}
                             </span>
                         </td>
                     </tr>

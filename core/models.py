@@ -256,9 +256,16 @@ class TenantBooking(models.Model):
     booked_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(
-        max_length=20, 
-        choices=[('reserved', 'Reserved'), ('active', 'Active'), ('expired', 'Expired'), ('paid_rent', 'Paid Rent & Finalized')], 
-        default='reserved'
+        max_length=30, 
+        choices=[
+            ('pending_payment', 'Pending payment'),
+            ('active', 'Paid'),
+            ('reserved', 'Paid'),
+            ('failed_payment', 'Failed payment'),
+            ('expired', 'Failed payment'),
+            ('paid_rent', 'Paid')
+        ], 
+        default='pending_payment'
     )
     booking_fee = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     payment_method = models.CharField(max_length=50, blank=True, null=True)

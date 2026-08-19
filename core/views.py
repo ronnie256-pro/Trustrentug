@@ -1061,6 +1061,22 @@ def admin_dashboard(request):
                 badge_bg = 'rgba(20, 184, 166, 0.15)'
                 badge_color = '#0f766e'
 
+        status_str = "Paid"
+        status_bg = "#f0fdf4"
+        status_color = "#16a34a"
+        status_border = "#bbf7d0"
+
+        if b.status == 'pending_payment':
+            status_str = "Pending payment"
+            status_bg = "#fffbeb"
+            status_color = "#d97706"
+            status_border = "#fef08a"
+        elif b.status in ['failed_payment', 'expired', 'cancelled']:
+            status_str = "Failed payment"
+            status_bg = "#fef2f2"
+            status_color = "#dc2626"
+            status_border = "#fecaca"
+
         payments_list.append({
             'id': getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
             'category_code': 'booking',
@@ -1075,7 +1091,10 @@ def admin_dashboard(request):
             'amount': amount,
             'payment_method': b.payment_method or 'Mobile Money',
             'date': b.booked_at,
-            'status': b.get_status_display()
+            'status': status_str,
+            'status_bg': status_bg,
+            'status_color': status_color,
+            'status_border': status_border
         })
         
     # Process Rent Payments (2 Months & 3 Months)
@@ -1101,6 +1120,22 @@ def admin_dashboard(request):
             badge_bg = 'rgba(168, 85, 247, 0.15)'
             badge_color = '#6b21a8'
 
+        status_str = "Paid"
+        status_bg = "#f0fdf4"
+        status_color = "#16a34a"
+        status_border = "#bbf7d0"
+
+        if getattr(r, 'status', '') in ['pending', 'pending_payment']:
+            status_str = "Pending payment"
+            status_bg = "#fffbeb"
+            status_color = "#d97706"
+            status_border = "#fef08a"
+        elif getattr(r, 'status', '') in ['failed', 'cancelled', 'expired']:
+            status_str = "Failed payment"
+            status_bg = "#fef2f2"
+            status_color = "#dc2626"
+            status_border = "#fecaca"
+
         payments_list.append({
             'id': getattr(r, 'order_tracking_id', None) or f"RNT-{r.id:04d}",
             'category_code': r.payment_type or 'rent_2',
@@ -1115,7 +1150,10 @@ def admin_dashboard(request):
             'amount': amount,
             'payment_method': r.payment_method or 'Mobile Money',
             'date': r.created_at or r.start_date,
-            'status': 'Escrow Secured' if r.status == 'active' else 'Completed'
+            'status': status_str,
+            'status_bg': status_bg,
+            'status_color': status_color,
+            'status_border': status_border
         })
         
     # Prepare timeframe datasets (Annually, Monthly, Daily)
@@ -3295,6 +3333,12 @@ def download_payments_pdf(request):
             elif getattr(b.property, 'category', '') == 'land':
                 reason = "Land"
 
+        st_str = "Paid"
+        if b.status == 'pending_payment':
+            st_str = "Pending payment"
+        elif b.status in ['failed_payment', 'expired', 'cancelled']:
+            st_str = "Failed payment"
+
         dt_str = b.booked_at.strftime('%Y-%m-%d %H:%M') if b.booked_at else "-"
         payments_list.append([
             getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
@@ -3304,7 +3348,7 @@ def download_payments_pdf(request):
             b.payment_method or "Mobile Money",
             f"UGX {amount:,.0f}",
             dt_str,
-            b.get_status_display()
+            st_str
         ])
 
     for r in received_rentals:
@@ -3320,6 +3364,12 @@ def download_payments_pdf(request):
         if r.property and r.property.listing_type == 'sale':
             reason = "Buying a House"
 
+        st_str = "Paid"
+        if getattr(r, 'status', '') in ['pending', 'pending_payment']:
+            st_str = "Pending payment"
+        elif getattr(r, 'status', '') in ['failed', 'cancelled', 'expired']:
+            st_str = "Failed payment"
+
         r_date = r.created_at or r.start_date
         dt_str = r_date.strftime('%Y-%m-%d %H:%M') if r_date else "-"
         payments_list.append([
@@ -3330,7 +3380,7 @@ def download_payments_pdf(request):
             r.payment_method or "Mobile Money",
             f"UGX {amount:,.0f}",
             dt_str,
-            "Escrow Secured" if r.status == 'active' else "Completed"
+            st_str
         ])
 
     grand_total = total_booking_revenue + total_rent_2_revenue + total_rent_3_revenue
@@ -3734,7 +3784,7 @@ def pesapal_initiate_payment(request, property_id=None):
                 tenant=request.user,
                 property=prop,
                 booking_fee=fee,
-                status='reserved'
+                status='pending_payment'
             )
 
     if not booking_obj:
@@ -3851,6 +3901,9 @@ def pesapal_callback(request):
                 if tx:
                     tx.status = 'FAILED'
                     tx.save()
+                    if tx.booking:
+                        tx.booking.status = 'failed_payment'
+                        tx.booking.save()
                 messages.error(request, "Pesapal payment failed or was declined by user. Please try again.")
                 return redirect('/tenant/dashboard/?tab=payments')
 
@@ -3883,6 +3936,12 @@ def pesapal_ipn_listener(request):
                         prop = booking.property
                         prop.status = 'reserved'
                         prop.save()
+                elif st_code == 2 or 'failed' in desc:
+                    tx.status = 'FAILED'
+                    tx.save()
+                    if tx.booking:
+                        tx.booking.status = 'failed_payment'
+                        tx.booking.save()
 
     return JsonResponse({"orderNotificationType": "IPNChange", "orderTrackingId": order_tracking_id, "status": "200"})
 
