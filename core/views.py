@@ -294,8 +294,18 @@ def landlord_dashboard(request):
         'amenity_categories': amenity_categories,
     })
 
+def is_admin_user(user):
+    if not user or not user.is_authenticated:
+        return False
+    if user.is_superuser or user.is_staff:
+        return True
+    try:
+        return user.profile.role == 'admin'
+    except Exception:
+        return False
+
 def admin_dashboard(request):
-    if not request.user.is_authenticated or not request.user.is_superuser:
+    if not is_admin_user(request.user):
         messages.error(request, 'Access denied. Only system administrators can access this page.')
         return redirect('login')
         

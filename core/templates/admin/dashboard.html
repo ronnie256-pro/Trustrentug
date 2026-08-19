@@ -1,5 +1,6 @@
 {% extends "admin/base_admin.html" %}
 {% load humanize %}
+{% load static %}
 
 {% block title %}Admin Dashboard | TRUST{% endblock %}
 
@@ -241,8 +242,8 @@
 {% endblock %}
 
 {% block admin_content %}
-<!-- Chart.js CDN (Globally Loaded for All Dashboard Tabs) -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js (Loaded Locally) -->
+<script src="{% static 'js/chart.min.js' %}"></script>
 
 {% if not current_tab or current_tab == 'overview' %}
 
@@ -1900,8 +1901,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 {% elif current_tab == 'tenants' %}
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js -->
+<script src="{% static 'js/chart.min.js' %}"></script>
 
 <!-- Tab Header Title -->
 <div style="margin-bottom: 1.5rem;">
@@ -2176,8 +2177,7 @@ function filterTenantsByProgress(val) {
         </div>
     </div>
 
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/chart.min.js' %}"></script>
 
     <style>
         .admin-graphs-3col {
