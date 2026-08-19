@@ -375,9 +375,12 @@
                             <i class="fa-solid fa-shield-halved"></i> {{ site_settings.site_name|default:"TRUST" }}
                         {% endif %}
                     </h4>
-                    <p style="margin-top: 1rem; margin-bottom: 1.25rem;">Experience secure, verified, and premium rental transactions controlled
+                    <p style="margin-top: 1rem; margin-bottom: 0.75rem;">Experience secure, verified, and premium rental transactions controlled
                         through an automated pipeline.</p>
-                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <button type="button" onclick="openAdminAuthModal()" class="admin-discreet-btn" title="" style="background: transparent; border: none; padding: 4px 8px; cursor: pointer; color: #f59e0b; font-size: 1.2rem; transition: all 0.2s ease; display: inline-block; opacity: 0.85;">
+                        <i class="fa-solid fa-circle-dot"></i>
+                    </button>
+                    <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.75rem;">
                         <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" class="footer-social-link"><i class="fa-brands fa-x-twitter"></i></a>
                         <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="footer-social-link"><i class="fa-brands fa-tiktok"></i></a>
                         <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="footer-social-link"><i class="fa-brands fa-facebook-f"></i></a>
@@ -442,6 +445,59 @@
                 });
             }
         });
+    </script>
+
+    <!-- Admin 2FA Security Gate Modal -->
+    <div id="adminAuthModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 999999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: #ffffff; width: 100%; max-width: 400px; border-radius: 20px; padding: 2.25rem 2rem 1.75rem 2rem; box-shadow: 0 25px 50px rgba(0,0,0,0.3); border: 2px solid #047857; position: relative; margin: 1rem;">
+            <button type="button" onclick="closeAdminAuthModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: none; font-size: 1.2rem; color: #64748b; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+
+            <form action="{% url 'admin_login_api' %}" method="POST" style="margin-top: 1rem;">
+                {% csrf_token %}
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Username</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <i class="fa-solid fa-user-gear" style="position: absolute; left: 1rem; color: #94a3b8;"></i>
+                        <input type="text" name="admin_username" required style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; outline: none; background: #f8fafc;" placeholder="Username">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Password</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <i class="fa-solid fa-lock" style="position: absolute; left: 1rem; color: #94a3b8;"></i>
+                        <input type="password" name="admin_password" required style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; outline: none; background: #f8fafc;" placeholder="Password">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <input type="text" name="totp_code" minlength="6" maxlength="6" style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 1.05rem; font-weight: 800; letter-spacing: 0.15em; outline: none; background: #ffffff; color: #047857;" placeholder="Code" autocomplete="off">
+                </div>
+
+                <button type="submit" style="width: 100%; background: #047857; color: white; border: none; padding: 0.85rem; border-radius: 10px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);">
+                    Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .admin-discreet-btn {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <script>
+        function openAdminAuthModal() {
+            const modal = document.getElementById('adminAuthModal');
+            if (modal) modal.style.display = 'flex';
+        }
+        function closeAdminAuthModal() {
+            const modal = document.getElementById('adminAuthModal');
+            if (modal) modal.style.display = 'none';
+        }
     </script>
     {% block extra_js %}{% endblock %}
 </body>

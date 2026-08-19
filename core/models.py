@@ -135,6 +135,10 @@ class UserProfile(models.Model):
     doctor_contact = models.CharField(max_length=100, blank=True, null=True)
     national_id_or_passport = models.FileField(upload_to='documents/identity/', blank=True, null=True)
 
+    # 2FA Authenticator TOTP fields
+    totp_secret = models.CharField(max_length=64, blank=True, null=True)
+    is_2fa_enabled = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.user.username} ({self.role})"
 

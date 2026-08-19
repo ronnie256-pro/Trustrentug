@@ -1,0 +1,52 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Google Authenticator 2FA Setup | TRUST Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-container" style="max-width: 750px; margin: 2rem auto; padding: 0 1rem;">
+    <div style="background: #ffffff; border-radius: 20px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(4, 120, 87, 0.1); color: #047857; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 1rem;">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+            <h2 style="font-family: var(--font-heading); font-size: 1.8rem; color: #047857; margin: 0 0 0.5rem 0;">Google Authenticator 2FA Setup</h2>
+            <p style="color: #64748b; font-size: 1rem; margin: 0;">Scan the QR code below or enter the setup key into Google Authenticator on your smartphone.</p>
+        </div>
+
+        {% if is_enabled %}
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; padding: 1.25rem 1.5rem; text-align: center; margin-bottom: 1.5rem;">
+                <i class="fa-solid fa-circle-check" style="color: #16a34a; font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                <h4 style="margin: 0; color: #15803d; font-size: 1.1rem; font-weight: 700;">2FA Protection is ACTIVE</h4>
+                <p style="margin: 0.4rem 0 0 0; color: #166534; font-size: 0.9rem;">Your administrator account is secured with Google Authenticator.</p>
+            </div>
+        {% else %}
+            <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 2rem; font-size: 0.92rem; color: #854d0e; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.25rem; color: #ca8a04;"></i>
+                <div><strong>Setup Instructions:</strong> Open Google Authenticator on your phone, select <strong>Scan QR code</strong> (or <strong>Enter setup key</strong>), then type the live 6-digit code below.</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;">
+                <div style="padding: 1rem; background: #ffffff; border-radius: 16px; border: 2px solid #047857; box-shadow: 0 8px 20px rgba(4, 120, 87, 0.15); margin-bottom: 1rem;">
+                    <img src="data:image/png;base64,{{ qr_code_b64 }}" alt="2FA QR Code" style="width: 200px; height: 200px; display: block;">
+                </div>
+                <div style="text-align: center;">
+                    <span style="font-size: 0.82rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; display: block;">Manual Secret Key</span>
+                    <code style="font-size: 1.1rem; font-weight: 800; color: #047857; background: #f0fdf4; padding: 0.35rem 0.85rem; border-radius: 8px; border: 1px solid #bbf7d0; display: inline-block; margin-top: 0.3rem;">{{ secret }}</code>
+                </div>
+            </div>
+
+            <form action="{% url 'admin_2fa_setup' %}" method="POST">
+                {% csrf_token %}
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 700; color: #334155; margin-bottom: 0.4rem; font-size: 0.95rem;">Enter 6-Digit Code to Confirm</label>
+                    <input type="text" name="totp_code" minlength="6" maxlength="6" required style="width: 100%; padding: 0.85rem 1rem; border: 2px solid #cbd5e1; border-radius: 12px; font-size: 1.25rem; font-weight: 800; letter-spacing: 0.25em; text-align: center; outline: none;" placeholder="000000" autocomplete="off">
+                </div>
+
+                <button type="submit" style="width: 100%; background: #047857; color: #ffffff; border: none; padding: 1rem; border-radius: 12px; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.3); transition: all 0.2s ease;">
+                    Verify & Activate 2FA
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

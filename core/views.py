@@ -129,11 +129,15 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        role = request.POST.get('role')
         
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            # Check profile role for manual vetting and approval restriction
+            # Prevent administrators from logging in through the public main form
+            if is_admin_user(user):
+                messages.error(request, 'System Administrators must authenticate through the dedicated Admin Portal.')
+                return redirect('login')
+
+            # Check landlord profile vetting status
             try:
                 profile = user.profile
                 if profile.role == 'landlord' and not profile.is_approved:
@@ -144,27 +148,103 @@ def login_view(request):
                 
             auth_login(request, user)
             
-            # Check profile role for redirection
-            is_landlord = False
+            # Automatic role-based redirection (No dropdown required)
             try:
                 if user.profile.role == 'landlord':
-                    is_landlord = True
+                    return redirect('landlord_dashboard')
             except UserProfile.DoesNotExist:
                 pass
                 
-            # Redirect based on the dropdown selection, profile role, or fallback
-            if user.is_superuser or user.username == 'admin' or user.username == 'trustadmin':
-                return redirect('admin_dashboard')
-            elif role == 'owner' or user.username == 'owner' or is_landlord:
-                return redirect('landlord_dashboard')
-            else:
-                return redirect('search')
+            return redirect('search')
         else:
             messages.error(request, 'Invalid username or password.')
             return redirect('login')
             
     return render(request, 'auth/login.html', {
         'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
+    })
+
+def admin_login_api(request):
+    """Dedicated Admin Modal Login API with 2FA Authenticator TOTP Verification"""
+    if request.method == 'POST':
+        import pyotp
+        username = request.POST.get('username') or request.POST.get('admin_username')
+        password = request.POST.get('password') or request.POST.get('admin_password')
+        totp_code = request.POST.get('totp_code', '').strip()
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if not is_admin_user(user):
+                messages.error(request, 'Access Denied: You do not have administrator permissions.')
+                return redirect('login')
+
+            # Enforce 2FA strictly for admin users with active 2FA
+            profile, _ = UserProfile.objects.get_or_create(user=user, defaults={'role': 'admin'})
+            if not profile.totp_secret:
+                profile.totp_secret = pyotp.random_base32()
+                profile.save()
+
+            totp_clean = totp_code.replace(' ', '').replace('-', '').strip()
+
+            if profile.is_2fa_enabled or totp_clean:
+                if not totp_clean:
+                    messages.error(request, '6-digit Authenticator Code is required for System Administrators.')
+                    return redirect('login')
+
+                totp = pyotp.TOTP(profile.totp_secret)
+                # valid_window=2 allows +/- 60s time drift tolerance between server and smartphone
+                if not totp.verify(totp_clean, valid_window=2):
+                    messages.error(request, 'Invalid 6-digit Code. Please check Google Authenticator on your smartphone.')
+                    return redirect('login')
+
+            auth_login(request, user)
+            if not profile.is_2fa_enabled:
+                messages.warning(request, 'First-Time Admin Security Setup: Please scan the QR Code with Google Authenticator on your smartphone to complete 2FA activation.')
+                return redirect('admin_2fa_setup')
+
+            messages.success(request, 'Administrator authentication successful!')
+            return redirect('admin_dashboard')
+        else:
+            messages.error(request, 'Invalid username or password.')
+            return redirect('login')
+
+    return redirect('login')
+
+def admin_2fa_setup_view(request):
+    """Generates QR code URI and secret for Authenticator setup inside Admin Dashboard"""
+    if not is_admin_user(request.user):
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
+    
+    import pyotp, qrcode, io, base64
+    profile, _ = UserProfile.objects.get_or_create(user=request.user, defaults={'role': 'admin'})
+    if not profile.totp_secret:
+        profile.totp_secret = pyotp.random_base32()
+        profile.save()
+
+    totp = pyotp.TOTP(profile.totp_secret)
+    provisioning_uri = totp.provisioning_uri(name=request.user.username, issuer_name="TRUST Protocol")
+
+    # Generate QR Code image as base64 string
+    img = qrcode.make(provisioning_uri)
+    buf = io.BytesIO()
+    img.save(buf, format='PNG')
+    qr_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+    if request.method == 'POST':
+        verify_code = request.POST.get('totp_code', '').strip()
+        totp_clean = verify_code.replace(' ', '').replace('-', '').strip()
+        if totp.verify(totp_clean, valid_window=2):
+            profile.is_2fa_enabled = True
+            profile.save()
+            messages.success(request, 'Google Authenticator 2FA has been successfully activated for your account!')
+            return redirect('admin_dashboard')
+        else:
+            messages.error(request, 'Invalid 6-digit code. Please try scanning again.')
+
+    return render(request, 'admin/2fa_setup.html', {
+        'secret': profile.totp_secret,
+        'qr_code_b64': qr_b64,
+        'is_enabled': profile.is_2fa_enabled
     })
 
 def password_reset_view(request):
@@ -199,8 +279,8 @@ def register_view(request):
             messages.error(request, 'Passwords do not match.')
             return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'This username is already taken.')
+        if User.objects.filter(username__iexact=username).exists():
+            messages.error(request, 'This username is already taken. Please choose another username.')
             return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
 
         if email and User.objects.filter(email=email).exists():
