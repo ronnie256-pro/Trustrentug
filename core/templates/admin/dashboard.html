@@ -2268,20 +2268,32 @@ function filterTenantsByProgress(val) {
         style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
             <button onclick="filterPaymentCategory('all', this)" class="btn btn-sm btn-category-filter active"
-                style="background: var(--color-emerald-darkest); color: white; border-radius: 20px; padding: 0.4rem 1.1rem; font-size: 0.82rem; font-weight: 600;">
+                style="background: var(--color-emerald-darkest); color: white; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
                 All Payments
             </button>
-            <button onclick="filterPaymentCategory('rent_3', this)" class="btn btn-sm btn-category-filter"
-                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.4rem 1.1rem; font-size: 0.82rem; font-weight: 600;">
-                <i class="fa-solid fa-shield-halved" style="color: #059669;"></i> 3 Months Rent
+            <button onclick="filterPaymentCategory('for_rent_booking', this)" class="btn btn-sm btn-category-filter"
+                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
+                <i class="fa-solid fa-lock" style="color: #047857;"></i> For Rent Booking
             </button>
-            <button onclick="filterPaymentCategory('booking', this)" class="btn btn-sm btn-category-filter"
-                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.4rem 1.1rem; font-size: 0.82rem; font-weight: 600;">
-                <i class="fa-solid fa-lock" style="color: #ef4444;"></i> 24h Booking Fees
+            <button onclick="filterPaymentCategory('for_sale_booking', this)" class="btn btn-sm btn-category-filter"
+                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
+                <i class="fa-solid fa-tag" style="color: #b45309;"></i> For Sale Booking
             </button>
-            <button onclick="filterPaymentCategory('rent_2', this)" class="btn btn-sm btn-category-filter"
-                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.4rem 1.1rem; font-size: 0.82rem; font-weight: 600;">
-                <i class="fa-solid fa-calendar-check" style="color: #0284c7;"></i> 2 Months Rent
+            <button onclick="filterPaymentCategory('rent', this)" class="btn btn-sm btn-category-filter"
+                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
+                <i class="fa-solid fa-house" style="color: #1d4ed8;"></i> Rent
+            </button>
+            <button onclick="filterPaymentCategory('buying_house', this)" class="btn btn-sm btn-category-filter"
+                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
+                <i class="fa-solid fa-key" style="color: #6b21a8;"></i> Buying a House
+            </button>
+            <button onclick="filterPaymentCategory('construction', this)" class="btn btn-sm btn-category-filter"
+                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
+                <i class="fa-solid fa-helmet-safety" style="color: #0e7490;"></i> Construction
+            </button>
+            <button onclick="filterPaymentCategory('land', this)" class="btn btn-sm btn-category-filter"
+                style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
+                <i class="fa-solid fa-tree" style="color: #0f766e;"></i> Land
             </button>
         </div>
 
@@ -2368,109 +2380,89 @@ function filterTenantsByProgress(val) {
     </div>
 
     <!-- Payments Ledger Table -->
-    <div
-        style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
-        <div
-            style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 16px rgba(0,0,0,0.03); width: 100%; margin-bottom: 2rem;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: #ffffff; border-radius: 14px 14px 0 0;">
             <div>
-                <h4
-                    style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.1rem; font-weight: 600;">
-                    Received Transactions Log</h4>
-                <span style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Showing {{ payments_list|length }}
-                    transactions</span>
+                <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 700;">
+                    Received Transactions Log
+                </h4>
+                <span style="font-size: 0.82rem; color: #64748b; font-weight: 500;">Showing {{ payments_list|length }} verified transactions</span>
             </div>
             <a href="{% url 'download_payments_pdf' %}?filter_month={{ payment_stats.filter_month }}&filter_day={{ payment_stats.filter_day }}"
                 class="btn btn-gold"
-                style="padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none;">
+                style="padding: 0.5rem 1.25rem; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.45rem; text-decoration: none; box-shadow: 0 2px 8px rgba(180, 83, 9, 0.15);">
                 <i class="fa-solid fa-file-pdf"></i> Download PDF Report
             </a>
         </div>
 
-        <div class="table-responsive">
-            <table class="table align-middle" id="adminPaymentsTable" style="margin: 0;">
-                <thead style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+        <div style="width: 100%; overflow-x: auto;">
+            <table class="table align-middle" id="adminPaymentsTable" style="width: 100% !important; margin: 0; border-collapse: separate; border-spacing: 0;">
+                <thead style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
                     <tr>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
-                            Ref ID</th>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
-                            Tenant Details</th>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 14%;">
+                            Confirmation ID</th>
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 18%;">
+                            Client</th>
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 20%;">
                             Property Unit</th>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
-                            Payment Category</th>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
-                            Payment Gateway</th>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 15%;">
+                            Reason</th>
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 13%;">
+                            Payment Method</th>
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 14%;">
                             Amount Received</th>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 11%;">
                             Date & Time</th>
-                        <th
-                            style="padding: 1rem 1.5rem; font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 700;">
-                            Escrow Status</th>
+                        <th style="padding: 1.1rem 1.25rem; font-size: 0.85rem; text-transform: uppercase; color: #1e293b; font-weight: 800; letter-spacing: 0.05em; width: 10%;">
+                            Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="background: white;">
                     {% for p in payments_list %}
-                    <tr class="payment-row" data-category="{{ p.category_code }}">
-                        <td
-                            style="padding: 1.1rem 1.5rem; font-weight: 700; font-family: monospace; color: var(--color-emerald-darkest); font-size: 0.9rem;">
+                    <tr class="payment-row" data-category="{{ p.category_code }}" data-reason="{{ p.reason_code }}" style="background-color: {{ p.row_bg }}; border-bottom: 1px solid rgba(203, 213, 225, 0.8); transition: all 0.2s ease;">
+                        <td style="padding: 1.2rem 1.25rem; font-weight: 800; font-family: monospace; color: var(--color-emerald-darkest); font-size: 0.95rem; border-left: 5px solid {{ p.badge_color }};">
                             {{ p.id }}
                         </td>
-                        <td style="padding: 1.1rem 1.5rem;">
-                            <div style="font-weight: 700; color: #0f172a; font-size: 0.92rem;">
+                        <td style="padding: 1.2rem 1.25rem;">
+                            <div style="font-weight: 800; color: #0f172a; font-size: 1.0rem; margin-bottom: 0.2rem;">
                                 {{ p.tenant.first_name }} {{ p.tenant.last_name|default:p.tenant.username }}
                             </div>
-                            <small style="color: #64748b; font-size: 0.78rem;"><i class="fa-solid fa-envelope"
-                                    style="color: var(--color-gold);"></i> {{ p.tenant.email }}</small>
+                            <small style="color: #475569; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                <i class="fa-solid fa-envelope" style="color: var(--color-gold);"></i> {{ p.tenant.email }}
+                            </small>
                         </td>
-                        <td style="padding: 1.1rem 1.5rem;">
+                        <td style="padding: 1.2rem 1.25rem;">
+                            {% if p.property %}
                             <a href="{% url 'property_detail' p.property.id %}" target="_blank"
-                                style="font-weight: 600; color: var(--color-emerald-darkest); text-decoration: none;">
+                                style="font-weight: 800; color: var(--color-emerald-darkest); text-decoration: none; font-size: 0.98rem;">
                                 {{ p.property.title }}
                             </a>
-                            <small style="color: #64748b; font-size: 0.78rem; display: block;"><i
-                                    class="fa-solid fa-location-dot"></i> {{ p.property.location }}</small>
-                        </td>
-                        <td style="padding: 1.1rem 1.5rem;">
-                            {% if p.category_code == 'booking' %}
-                            <span class="badge"
-                                style="background: rgba(239,68,68,0.12); color: #dc2626; border: 1px solid rgba(239,68,68,0.25); padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 6px;">
-                                <i class="fa-solid fa-lock"></i> {{ p.category_label }}
-                            </span>
-                            {% elif p.category_code == 'rent_3' %}
-                            <span class="badge"
-                                style="background: rgba(5,150,105,0.12); color: #047857; border: 1px solid rgba(5,150,105,0.25); padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 6px;">
-                                <i class="fa-solid fa-shield-halved"></i> {{ p.category_label }}
-                            </span>
+                            <small style="color: #475569; font-size: 0.85rem; font-weight: 600; display: block; margin-top: 0.2rem;">
+                                <i class="fa-solid fa-location-dot" style="color: #047857;"></i> {{ p.property.location }}
+                            </small>
                             {% else %}
-                            <span class="badge"
-                                style="background: rgba(2,132,199,0.12); color: #0369a1; border: 1px solid rgba(2,132,199,0.25); padding: 0.4rem 0.75rem; font-size: 0.75rem; border-radius: 6px;">
-                                <i class="fa-solid fa-calendar-check"></i> {{ p.category_label }}
-                            </span>
+                            <span style="font-weight: 700; color: #475569; font-size: 0.95rem;">General Escrow</span>
                             {% endif %}
                         </td>
-                        <td style="padding: 1.1rem 1.5rem; font-weight: 600; color: #334155; font-size: 0.85rem;">
-                            <i class="fa-solid fa-building-columns"
-                                style="color: var(--color-gold); margin-right: 0.35rem;"></i>
-                            {{ p.payment_method|title }}
+                        <td style="padding: 1.2rem 1.25rem;">
+                            <span class="badge"
+                                style="background: {{ p.badge_bg }}; color: {{ p.badge_color }}; border: 1.5px solid {{ p.badge_color }}; padding: 0.5rem 0.95rem; font-size: 0.82rem; font-weight: 800; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.03em; display: inline-block;">
+                                {{ p.reason }}
+                            </span>
                         </td>
-                        <td
-                            style="padding: 1.1rem 1.5rem; font-weight: 800; color: var(--color-emerald); font-family: var(--font-heading); font-size: 1.05rem;">
+                        <td style="padding: 1.2rem 1.25rem; font-weight: 800; color: #1e293b; font-size: 0.92rem;">
+                            <i class="fa-solid fa-credit-card" style="color: var(--color-gold); margin-right: 0.4rem;"></i>
+                            {{ p.payment_method }}
+                        </td>
+                        <td style="padding: 1.2rem 1.25rem; font-weight: 900; color: #047857; font-family: var(--font-heading); font-size: 1.15rem;">
                             UGX {{ p.amount|floatformat:0|intcomma }}
                         </td>
-                        <td style="padding: 1.1rem 1.5rem; color: #64748b; font-size: 0.82rem;">
-                            {{ p.date|date:"M d, Y" }} <br>
-                            <small style="color: #94a3b8;">{{ p.date|date:"H:i A" }}</small>
+                        <td style="padding: 1.2rem 1.25rem; color: #1e293b; font-size: 0.92rem; font-weight: 700; white-space: nowrap;">
+                            {{ p.date|date:"Y-m-d" }} <br>
+                            <small style="color: #475569; font-weight: 800; font-size: 0.85rem;">{{ p.date|date:"H:i" }}</small>
                         </td>
-                        <td style="padding: 1.1rem 1.5rem;">
-                            <span class="status-pill pill-active" style="font-size: 0.75rem;">
+                        <td style="padding: 1.2rem 1.25rem;">
+                            <span class="status-pill pill-active" style="font-size: 0.82rem; font-weight: 800; padding: 0.4rem 0.8rem;">
                                 <i class="fa-solid fa-circle-check"></i> {{ p.status }}
                             </span>
                         </td>
@@ -2614,7 +2606,9 @@ function filterTenantsByProgress(val) {
 
         const rows = document.querySelectorAll('#adminPaymentsTable tbody .payment-row');
         rows.forEach(row => {
-            if (category === 'all' || row.getAttribute('data-category') === category) {
+            const cat = row.getAttribute('data-category');
+            const reason = row.getAttribute('data-reason');
+            if (category === 'all' || cat === category || reason === category) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';

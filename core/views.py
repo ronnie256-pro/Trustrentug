@@ -1040,10 +1040,36 @@ def admin_dashboard(request):
     for b in received_bookings:
         amount = float(b.booking_fee or 0)
         total_booking_revenue += amount
+
+        reason = 'For Rent Booking'
+        reason_code = 'for_rent_booking'
+        row_bg = '#f0fdf4' # Soft Emerald tint
+        badge_bg = 'rgba(16, 185, 129, 0.15)'
+        badge_color = '#047857'
+
+        if b.property:
+            if b.property.listing_type == 'sale':
+                reason = 'For Sale Booking'
+                reason_code = 'for_sale_booking'
+                row_bg = '#fffbeb' # Soft Amber tint
+                badge_bg = 'rgba(245, 158, 11, 0.15)'
+                badge_color = '#b45309'
+            elif getattr(b.property, 'category', '') == 'land':
+                reason = 'Land'
+                reason_code = 'land'
+                row_bg = '#f0fdf4' # Soft Teal tint
+                badge_bg = 'rgba(20, 184, 166, 0.15)'
+                badge_color = '#0f766e'
+
         payments_list.append({
-            'id': f"BKG-{b.id:04d}",
+            'id': getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
             'category_code': 'booking',
-            'category_label': '24h Booking Fee (5%)',
+            'category_label': reason,
+            'reason': reason,
+            'reason_code': reason_code,
+            'row_bg': row_bg,
+            'badge_bg': badge_bg,
+            'badge_color': badge_color,
             'tenant': b.tenant,
             'property': b.property,
             'amount': amount,
@@ -1058,16 +1084,32 @@ def admin_dashboard(request):
         if r.payment_type == 'rent_3':
             total_rent_3_revenue += amount
             rent_3_count += 1
-            cat_label = 'Pay 3 Months Rent'
         else:
             total_rent_2_revenue += amount
             rent_2_count += 1
-            cat_label = 'Pay 2 Months Rent'
-            
+
+        reason = 'Rent'
+        reason_code = 'rent'
+        row_bg = '#eff6ff' # Soft Blue tint
+        badge_bg = 'rgba(59, 130, 246, 0.15)'
+        badge_color = '#1d4ed8'
+
+        if r.property and r.property.listing_type == 'sale':
+            reason = 'Buying a House'
+            reason_code = 'buying_house'
+            row_bg = '#faf5ff' # Soft Purple tint
+            badge_bg = 'rgba(168, 85, 247, 0.15)'
+            badge_color = '#6b21a8'
+
         payments_list.append({
-            'id': f"RNT-{r.id:04d}",
+            'id': getattr(r, 'order_tracking_id', None) or f"RNT-{r.id:04d}",
             'category_code': r.payment_type or 'rent_2',
-            'category_label': cat_label,
+            'category_label': reason,
+            'reason': reason,
+            'reason_code': reason_code,
+            'row_bg': row_bg,
+            'badge_bg': badge_bg,
+            'badge_color': badge_color,
             'tenant': r.tenant,
             'property': r.property,
             'amount': amount,
@@ -3208,7 +3250,7 @@ def download_payments_pdf(request):
     elements = []
 
     # Title & Header
-    elements.append(Paragraph("TRUST Real Estate Portal - Received Payments & Escrow Ledger", title_style))
+    elements.append(Paragraph("TRUST PROTOCOL Received Payments.", title_style))
     elements.append(Paragraph(f"Official Financial Accountability Report | Generated: {timezone.now().strftime('%B %d, %Y - %H:%M')}", subtitle_style))
     elements.append(Spacer(1, 10))
 
@@ -3245,14 +3287,23 @@ def download_payments_pdf(request):
     for b in received_bookings:
         amount = float(b.booking_fee or 0)
         total_booking_revenue += amount
+
+        reason = "For Rent Booking"
+        if b.property:
+            if b.property.listing_type == 'sale':
+                reason = "For Sale Booking"
+            elif getattr(b.property, 'category', '') == 'land':
+                reason = "Land"
+
+        dt_str = b.booked_at.strftime('%Y-%m-%d %H:%M') if b.booked_at else "-"
         payments_list.append([
-            f"BKG-{b.id:04d}",
+            getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
             f"{b.tenant.first_name} {b.tenant.last_name or b.tenant.username}",
-            b.property.title[:22],
-            "24h Booking Fee (5%)",
+            b.property.title[:22] if b.property else "-",
+            reason,
             b.payment_method or "Mobile Money",
             f"UGX {amount:,.0f}",
-            b.booked_at.strftime('%Y-%m-%d') if b.booked_at else "-",
+            dt_str,
             b.get_status_display()
         ])
 
@@ -3261,21 +3312,24 @@ def download_payments_pdf(request):
         if r.payment_type == 'rent_3':
             total_rent_3_revenue += amount
             rent_3_count += 1
-            cat = "Pay 3 Months Rent"
         else:
             total_rent_2_revenue += amount
             rent_2_count += 1
-            cat = "Pay 2 Months Rent"
+
+        reason = "Rent"
+        if r.property and r.property.listing_type == 'sale':
+            reason = "Buying a House"
 
         r_date = r.created_at or r.start_date
+        dt_str = r_date.strftime('%Y-%m-%d %H:%M') if r_date else "-"
         payments_list.append([
-            f"RNT-{r.id:04d}",
+            getattr(r, 'order_tracking_id', None) or f"RNT-{r.id:04d}",
             f"{r.tenant.first_name} {r.tenant.last_name or r.tenant.username}",
-            r.property.title[:22],
-            cat,
+            r.property.title[:22] if r.property else "-",
+            reason,
             r.payment_method or "Mobile Money",
             f"UGX {amount:,.0f}",
-            r_date.strftime('%Y-%m-%d') if r_date else "-",
+            dt_str,
             "Escrow Secured" if r.status == 'active' else "Completed"
         ])
 
@@ -3287,7 +3341,7 @@ def download_payments_pdf(request):
         [Paragraph("24-Hour Booking Lock Fees", td_style), Paragraph(str(len(received_bookings)), td_style), Paragraph(f"UGX {total_booking_revenue:,.0f}", td_style)],
         [Paragraph("Pay 2 Months Rent Payments", td_style), Paragraph(str(rent_2_count), td_style), Paragraph(f"UGX {total_rent_2_revenue:,.0f}", td_style)],
         [Paragraph("Pay 3 Months Rent Payments", td_style), Paragraph(str(rent_3_count), td_style), Paragraph(f"UGX {total_rent_3_revenue:,.0f}", td_style)],
-        [Paragraph("GRAND TOTAL ESCROW REVENUE", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(str(len(payments_list)), ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(f"UGX {grand_total:,.0f}", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold', textColor=colors.HexColor('#0a5c36')))]
+        [Paragraph("TOTAL REVENUE", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(str(len(payments_list)), ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(f"UGX {grand_total:,.0f}", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold', textColor=colors.HexColor('#0a5c36')))]
     ]
 
     summary_table = Table(summary_data, colWidths=[220, 100, 200])
@@ -3307,13 +3361,13 @@ def download_payments_pdf(request):
     elements.append(Spacer(1, 6))
 
     table_data = [[
-        Paragraph("Ref ID", th_style),
-        Paragraph("Tenant", th_style),
+        Paragraph("Confirmation ID", th_style),
+        Paragraph("Client", th_style),
         Paragraph("Property Unit", th_style),
-        Paragraph("Category", th_style),
-        Paragraph("Gateway", th_style),
+        Paragraph("Reason", th_style),
+        Paragraph("Payment Method", th_style),
         Paragraph("Amount", th_style),
-        Paragraph("Date", th_style),
+        Paragraph("Date & Time", th_style),
         Paragraph("Status", th_style)
     ]]
 
