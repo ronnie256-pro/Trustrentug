@@ -3289,7 +3289,7 @@ def download_payments_pdf(request):
 
     # Title & Header
     elements.append(Paragraph("TRUST PROTOCOL Received Payments.", title_style))
-    elements.append(Paragraph(f"Official Financial Accountability Report | Generated: {timezone.now().strftime('%B %d, %Y - %H:%M')}", subtitle_style))
+    elements.append(Paragraph(f"Official Financial Accountability Report | Generated: {timezone.localtime(timezone.now()).strftime('%B %d, %Y - %H:%M')} EAT", subtitle_style))
     elements.append(Spacer(1, 10))
 
     # Fetch received payments data with month/day filter support
@@ -3339,7 +3339,7 @@ def download_payments_pdf(request):
         elif b.status in ['failed_payment', 'expired', 'cancelled']:
             st_str = "Failed payment"
 
-        dt_str = b.booked_at.strftime('%Y-%m-%d %H:%M') if b.booked_at else "-"
+        dt_str = timezone.localtime(b.booked_at).strftime('%Y-%m-%d %H:%M') if b.booked_at else "-"
         payments_list.append([
             getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
             f"{b.tenant.first_name} {b.tenant.last_name or b.tenant.username}",
@@ -3371,7 +3371,7 @@ def download_payments_pdf(request):
             st_str = "Failed payment"
 
         r_date = r.created_at or r.start_date
-        dt_str = r_date.strftime('%Y-%m-%d %H:%M') if r_date else "-"
+        dt_str = timezone.localtime(r_date).strftime('%Y-%m-%d %H:%M') if r_date else "-"
         payments_list.append([
             getattr(r, 'order_tracking_id', None) or f"RNT-{r.id:04d}",
             f"{r.tenant.first_name} {r.tenant.last_name or r.tenant.username}",
