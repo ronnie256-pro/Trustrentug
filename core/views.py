@@ -2217,9 +2217,9 @@ def api_nearby_properties(request):
         user_lat, user_lng = 0.3162, 32.5822
         
     try:
-        radius_km = float(request.GET.get('radius', 10.0))
+        radius_km = float(request.GET.get('radius', 2.0))
     except (ValueError, TypeError):
-        radius_km = 10.0
+        radius_km = 2.0
         
     q = request.GET.get('q', '').strip().lower()
     p_type = request.GET.get('type', '').strip().lower()
