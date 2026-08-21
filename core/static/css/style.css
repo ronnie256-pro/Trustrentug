@@ -52,13 +52,16 @@
   --glass-border: rgba(255, 255, 255, 0.3);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
   font-family: var(--font-body);
   background-color: var(--color-bg-base);
   color: var(--color-text-dark);

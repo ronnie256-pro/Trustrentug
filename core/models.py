@@ -18,7 +18,12 @@ class Property(models.Model):
         ('condo_block', 'Condominium Block'),
         ('flat', 'Flat (Multi-Floor Building)'),
     ]
-    CATEGORY_CHOICES = SINGLE_UNIT_CHOICES + MULTI_UNIT_CHOICES
+    OFFICE_CHOICES = [
+        ('private_office', 'Private Office'),
+        ('shared_office', 'Shared Office'),
+        ('office_building', 'Office Building / Complex'),
+    ]
+    CATEGORY_CHOICES = SINGLE_UNIT_CHOICES + MULTI_UNIT_CHOICES + OFFICE_CHOICES
 
     STATUS_CHOICES = [
         ('available', 'Available'),
@@ -57,6 +62,15 @@ class Property(models.Model):
         if any(k in t_lower for k in ['sale', 'land', 'plot', 'estate', 'villa']):
             return True
         if self.price and float(self.price) >= 50000000:
+            return True
+        return False
+
+    @property
+    def is_office(self):
+        if self.category in ['private_office', 'shared_office', 'office_building']:
+            return True
+        t_lower = (self.title or '').lower()
+        if any(k in t_lower for k in ['office', 'co-working', 'desk workspace', 'work space']):
             return True
         return False
     

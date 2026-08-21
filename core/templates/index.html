@@ -1199,12 +1199,9 @@
   /* Full-Width Seamless Marquee CSS */
   .marquee-container {
     overflow: hidden;
-    width: 100vw;
+    width: 100%;
+    max-width: 100%;
     position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
     display: flex;
     padding: 1.5rem 0;
   }
@@ -1426,7 +1423,8 @@
   /* Testimonial Marquee Styles */
   .testimonial-marquee-container {
     overflow: hidden;
-    width: 100vw;
+    width: 100%;
+    max-width: 100%;
     position: relative;
     display: flex;
     padding: 1.5rem 0;
@@ -1883,7 +1881,7 @@
 </div>
 
 <section class="testimonials-section"
-  style="padding: 0.5rem 0 1.25rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #eef5f1 100%); overflow: hidden; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; border-bottom: 1px solid rgba(0,0,0,0.03);">
+  style="padding: 0.5rem 0 1.25rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #eef5f1 100%); overflow: hidden; width: 100%; max-width: 100%; position: relative; border-bottom: 1px solid rgba(0,0,0,0.03);">
 
   <!-- Premium City Skyline Image Watermark -->
   <div

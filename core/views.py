@@ -1765,8 +1765,13 @@ def disputes_view(request):
 
 
 def search_view(request):
-    # Only show available properties that are parent listings or individual standalone properties
-    properties = Property.objects.filter(status='available', parent=None)
+    # Only show available properties that are houses (strictly exclude offices)
+    office_categories = ['private_office', 'shared_office', 'office_building']
+    properties = Property.objects.filter(status='available', parent=None).exclude(
+        category__in=office_categories
+    ).exclude(
+        Q(title__icontains='office') | Q(title__icontains='desk space') | Q(title__icontains='co-working')
+    )
     
     # 1. Location search
     q = request.GET.get('q', '').strip()
@@ -1849,6 +1854,60 @@ def search_view(request):
         'active_popup': active_popup
     })
 
+
+def offices_view(request):
+    """
+    Public discovery page for Private Offices & Shared Offices.
+    Displays office listings using the same display cards as search.html.
+    """
+    properties = Property.objects.filter(status='available', parent=None)
+    
+    office_query = (
+        Q(category__in=['private_office', 'shared_office', 'office_building']) |
+        Q(title__icontains='office') |
+        Q(title__icontains='desk') |
+        Q(title__icontains='workspace') |
+        Q(description__icontains='office')
+    )
+    properties = properties.filter(office_query)
+
+    office_type = request.GET.get('office_type', 'all').strip().lower()
+    if office_type == 'private':
+        properties = properties.filter(
+            Q(category='private_office') | Q(title__icontains='private') | Q(description__icontains='private')
+        )
+    elif office_type == 'shared':
+        properties = properties.filter(
+            Q(category='shared_office') | Q(title__icontains='shared') | Q(title__icontains='co-working') | Q(description__icontains='shared')
+        )
+
+    q = request.GET.get('q', '').strip()
+    if q:
+        properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
+
+    min_price = request.GET.get('min_price', '').strip()
+    if min_price and min_price.isdigit():
+        properties = properties.filter(price__gte=int(min_price))
+        
+    max_price = request.GET.get('max_price', '').strip()
+    if max_price and max_price.isdigit():
+        properties = properties.filter(price__lte=int(max_price))
+
+    properties = properties.distinct().order_by('-created_at')
+    total_count = properties.count()
+
+    active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+
+    return render(request, 'tenant/offices.html', {
+        'properties': properties,
+        'total_count': total_count,
+        'office_type': office_type,
+        'q': q,
+        'min_price': min_price,
+        'max_price': max_price,
+        'active_popup': active_popup
+    })
+
 def property_detail_view(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id)
     
@@ -1874,8 +1933,23 @@ def property_detail_view(request, property_id):
     panoramas = list(property_obj.panoramas.all())
     has_tour = len(panoramas) > 0
 
+    # Check if property is an office
+    office_categories = ['private_office', 'shared_office', 'office_building']
+    is_office = property_obj.category in office_categories or getattr(property_obj, 'is_office', False)
+
     # Fetch Similar Properties (prioritizing same location, same category, and same listing_type [sale/rent])
-    base_qs = Property.objects.exclude(id=property_obj.id)
+    base_qs = Property.objects.exclude(id=property_obj.id).filter(status='available', parent=None)
+    if is_office:
+        # Offices in the same area MUST display only offices
+        base_qs = base_qs.filter(
+            Q(category__in=office_categories) | Q(title__icontains='office') | Q(title__icontains='desk') | Q(title__icontains='workspace')
+        )
+    else:
+        # Houses in the same area MUST display only houses (exclude offices)
+        base_qs = base_qs.exclude(category__in=office_categories).exclude(
+            Q(title__icontains='office') | Q(title__icontains='desk space') | Q(title__icontains='co-working')
+        )
+
     cat_items = list(base_qs.filter(category=property_obj.category))
     type_items = list(base_qs.filter(listing_type=property_obj.listing_type))
 
@@ -1900,6 +1974,7 @@ def property_detail_view(request, property_id):
         'reports': reports,
         'panoramas': panoramas,
         'has_tour': has_tour,
+        'is_office': is_office,
         'similar_properties': similar_properties,
     })
 

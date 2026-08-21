@@ -27,6 +27,12 @@
     {% block extra_css %}{% endblock %}
 
     <style>
+        html, body {
+            overflow-x: hidden !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
         .navbar {
             background-color: #03543f !important;
             border-bottom: 2px solid var(--color-gold);
@@ -187,9 +193,10 @@
 
             <ul class="nav-links" id="nav-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="/search/">Find a Home</a></li>
-                <li><a href="/nearby/">Nearby Map</a></li>
-                <li><a href="{% url 'projects_list' %}">Projects</a></li>
+                <li><a href="/search/">Houses</a></li>
+                <li><a href="{% url 'offices' %}">Offices</a></li>
+                <li><a href="/nearby/">Use a Map</a></li>
+                <li><a href="{% url 'projects_list' %}">Construction</a></li>
                 <li><a href="/about-us/">About Us</a></li>
                 <li class="mobile-only-auth" style="padding-top: 1rem; border-top: 1px solid rgba(203, 163, 88, 0.3); margin-top: 0.5rem;">
                     {% if user.is_authenticated %}

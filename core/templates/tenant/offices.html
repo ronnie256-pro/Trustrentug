@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Offices - Private & Shared Workspaces | {{ site_settings.site_name|default:'TRUST' }}{% endblock %}
+
+{% block extra_css %}
+<style>
+body {
+    background-color: #e5dccb !important;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    max-width: 1650px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.filters {
+    background: #fbf7f0;
+    padding: 0.85rem 1.1rem;
+    border-radius: 16px;
+    border: 2px solid rgba(10, 92, 54, 0.94);
+    box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06);
+    margin-bottom: 1rem;
+}
+.filters input[type="text"],
+.filters input[type="number"],
+.filters select {
+    background: #f4eee2 !important;
+    border: 1px solid rgba(203, 163, 88, 0.4) !important;
+    border-radius: 10px !important;
+    color: #1e1b18 !important;
+    font-weight: 600;
+}
+.filters input[type="text"]:focus,
+.filters input[type="number"]:focus,
+.filters select:focus {
+    background: #ffffff !important;
+    border-color: var(--color-gold) !important;
+    box-shadow: 0 0 0 3px rgba(203, 163, 88, 0.2) !important;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.15rem;
+    width: 100%;
+}
+
+.property-card {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: 100%;
+}
+.property-card:hover {
+    transform: translateY(-5px);
+}
+.card-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    background: #e2e8f0;
+}
+.card-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+.property-card:hover .card-img {
+    transform: scale(1.06);
+}
+
+.blue-sale-ribbon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.7rem;
+    border-radius: 20px;
+    padding: 0.28rem 0.75rem;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    letter-spacing: 0.4px;
+    z-index: 6;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 1500px) {
+    .results-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 1150px) {
+    .results-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+    .results-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.65rem !important;
+    }
+    .property-card {
+        border-radius: 14px !important;
+    }
+    .card-img-wrapper {
+        height: 135px !important;
+    }
+    .blue-sale-ribbon {
+        top: 6px !important;
+        right: 6px !important;
+        padding: 0.18rem 0.5rem !important;
+        font-size: 0.6rem !important;
+    }
+    .card-title-text {
+        font-size: 0.88rem !important;
+    }
+    .card-price-text {
+        font-size: 0.8rem !important;
+    }
+    .layout {
+        padding: 1rem 0.5rem !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="layout">
+
+    <!-- CATEGORY FILTER PILLS & SEARCH BAR -->
+    <form id="topFilterForm" method="GET" action="{% url 'offices' %}" style="max-width: 1100px; width: 100%; margin: 0 auto 1.25rem auto;">
+        
+        <!-- Category Filter Pills -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: center; justify-content: center; margin-bottom: 1rem;">
+            <a href="{% url 'offices' %}" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'all' or not office_type %}background: var(--color-emerald-darkest); color: white; border: 1.5px solid var(--color-emerald-darkest);{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
+                All Offices
+            </a>
+            <a href="{% url 'offices' %}?office_type=private{% if q %}&q={{ q }}{% endif %}" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'private' %}background: #1d4ed8; color: white; border: 1.5px solid #1d4ed8;{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
+                Private Offices
+            </a>
+            <a href="{% url 'offices' %}?office_type=shared{% if q %}&q={{ q }}{% endif %}" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'shared' %}background: #047857; color: white; border: 1.5px solid #047857;{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
+                Shared Offices
+            </a>
+        </div>
+
+        <!-- Filter Input Bar -->
+        <div class="filters" style="display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; justify-content: space-between;">
+            <input type="hidden" name="office_type" value="{{ office_type|default:'all' }}">
+            
+            <div style="flex: 3; min-width: 200px;">
+                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Location / Building name or area..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
+            </div>
+
+            <div style="flex: 2; min-width: 180px; display: flex; gap: 0.4rem; align-items: center;">
+                <input type="number" name="min_price" value="{{ min_price|default:'' }}" placeholder="Min UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
+                <span style="color: var(--color-text-muted); font-size: 0.85rem;">-</span>
+                <input type="number" name="max_price" value="{{ max_price|default:'' }}" placeholder="Max UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.35rem; font-weight: 700; border-radius: 10px;">
+                    Filter
+                </button>
+                {% if q or min_price or max_price or office_type != 'all' %}
+                <a href="{% url 'offices' %}" class="btn btn-outline" style="padding: 0.65rem 0.85rem; text-decoration: none; border-radius: 10px;">Clear</a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+    <!-- CARDS GRID -->
+    <main style="width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+            <p style="color: var(--color-text-muted); margin: 0;">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> office workspaces</p>
+        </div>
+
+        <div class="results-grid">
+            {% for property in properties %}
+            <a href="/property/{{ property.id }}/" class="property-card">
+                <!-- Image Box with Rounded Corners -->
+                <div class="card-img-wrapper">
+                    {% if property.hero_image %}
+                    <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="card-img">
+                    {% elif property.category == 'shared_office' or 'shared' in property.title|lower %}
+                    <img src="https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="card-img">
+                    {% endif %}
+                    
+                    {% if property.category == 'shared_office' or 'shared' in property.title|lower or 'desk' in property.title|lower %}
+                    <div class="blue-sale-ribbon" style="background: #047857 !important;">
+                        Shared Office
+                    </div>
+                    {% else %}
+                    <div class="blue-sale-ribbon">
+                        Private Office
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Centered Title, Price & Location -->
+                <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
+                    <h4 class="card-title-text" style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
+                        {{ property.title }}
+                    </h4>
+                    <div class="card-price-text" style="font-size: 0.92rem; color: #57534e; font-weight: 700; text-align: center;">
+                        {% if property.price %}
+                        UGX {{ property.price|floatformat:0|intcomma }} / mo
+                        {% else %}
+                        Custom Pricing
+                        {% endif %}
+                    </div>
+                    <div class="card-location-text" style="font-size: 0.82rem; color: #78716c; font-weight: 600; text-align: center; margin-top: 0.2rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ property.location|default:'Uganda' }}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+{% endblock %}

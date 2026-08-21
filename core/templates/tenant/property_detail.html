@@ -575,7 +575,11 @@
         <div class="property-gallery-split">
             <!-- Left Container: Display Section (Shows Hero Image on Page Load) -->
             <div class="gallery-main-container" style="position: relative;">
-                {% if property.listing_type == 'sale' or property.price >= 50000000 or 'sale' in property.title|lower or 'estate' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower %}
+                {% if is_office or property.is_office %}
+                <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #047857; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center;">
+                    Office
+                </span>
+                {% elif property.listing_type == 'sale' or property.price >= 50000000 or 'sale' in property.title|lower or 'estate' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower %}
                 <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #2563eb; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 0.35rem;">
                     <i class="fa-solid fa-tags"></i> For Sale
                 </span>
@@ -646,7 +650,8 @@
                     </div>
                 </div>
 
-                <!-- Right Below Mosaic: Tour Property & View on Map Buttons -->
+                {% if not is_office and not property.is_office %}
+                <!-- Right Below Mosaic: Tour Property & View on Map Buttons (Houses Only) -->
                 <div class="mosaic-action-buttons">
                     <a href="{% url 'property_tour' property.id %}" class="mosaic-action-btn-tour">
                         Tour Property
@@ -656,6 +661,7 @@
                         View on Map
                     </a>
                 </div>
+                {% endif %}
             </div>
         </div>
 
@@ -737,7 +743,8 @@
                     </div>
                 </div>
 
-                <!-- Proximity to Local Services directly below Booking Card -->
+                {% if not is_office and not property.is_office %}
+                <!-- Proximity to Local Services directly below Booking Card (Houses Only) -->
                 <div class="proximity-section" style="margin-top: 1.25rem; border-top: none; padding-top: 0;">
                     <h3 style="font-family: var(--font-heading); margin-bottom: 0.75rem; font-size: 1.05rem; color: var(--color-emerald-darkest); font-weight: 700;">
                         Proximity to Local Services
@@ -758,22 +765,27 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endif %}
             </aside>
         </div>
 
-        <!-- Properties in the Same Area / Price Range (Full Width Screen Left to Right) -->
+        <!-- Properties in the Same Area / Price Range -->
         {% if similar_properties %}
-        <div style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; padding: 1.25rem 2rem 0 2rem; border-top: 2px dashed rgba(203, 163, 88, 0.35); box-sizing: border-box; background: #ffffff;">
+        <div style="width: 100%; max-width: 100%; position: relative; margin-top: 2rem; padding: 1.25rem 0 0 0; border-top: 2px dashed rgba(203, 163, 88, 0.35); box-sizing: border-box;">
             <div style="width: min(94vw, 1400px); margin: 0 auto 1rem auto;">
                 <h3 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--color-emerald-darkest); margin: 0; font-weight: 700;">
-                    Properties in the Same Area
+                    {% if is_office or property.is_office %}Offices in the Same Area{% else %}Properties in the Same Area{% endif %}
                 </h3>
             </div>
             <div class="similar-scroll-row" style="padding: 0 1rem 0 1rem;">
                 {% for sim in similar_properties %}
                 <a href="/property/{{ sim.id }}/" class="property-card" style="flex: 0 0 280px; width: 280px; min-width: 280px; max-width: 280px; scroll-snap-align: start; color: inherit; text-decoration: none; border-radius: 14px; overflow: hidden; background: #ffffff; border: 1px solid rgba(203, 163, 88, 0.25); box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; transition: all 0.3s ease;">
                     <div style="position: relative; height: 140px; overflow: hidden;">
-                        {% if sim.is_for_sale or sim.listing_type == 'sale' %}
+                        {% if sim.category == 'shared_office' or 'shared' in sim.title|lower or 'desk' in sim.title|lower %}
+                        <span style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.18rem 0.55rem; background: #047857; color: #ffffff; border-radius: 6px; font-weight: 800;">Shared Office</span>
+                        {% elif sim.category == 'private_office' or 'office' in sim.title|lower %}
+                        <span style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.18rem 0.55rem; background: #0284c7; color: #ffffff; border-radius: 6px; font-weight: 800;">Private Office</span>
+                        {% elif sim.is_for_sale or sim.listing_type == 'sale' %}
                         <span style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.18rem 0.55rem; background: #0284c7; color: #ffffff; border-radius: 6px; font-weight: 800;">For Sale</span>
                         {% else %}
                         <span style="position: absolute; top: 8px; right: 8px; z-index: 5; font-size: 0.65rem; padding: 0.18rem 0.55rem; background: #047857; color: #ffffff; border-radius: 6px; font-weight: 800;">For Rent</span>

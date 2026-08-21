@@ -35,6 +35,7 @@ urlpatterns = [
     path('landlord/dashboard/', views.landlord_dashboard),
     path('landlord/property/add/', views.add_property, name='add_property'),
     path('search/', views.search_view, name='search'),
+    path('offices/', views.offices_view, name='offices'),
     path('nearby/', views.nearby_properties_view, name='nearby_properties'),
     path('projects/', views.projects_list_view, name='projects_list'),
     path('projects/<int:project_id>/', views.project_detail_view, name='project_detail'),
