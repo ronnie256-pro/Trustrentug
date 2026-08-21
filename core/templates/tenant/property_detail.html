@@ -525,9 +525,29 @@
     }
 
     @media (max-width: 768px) {
+        .gallery-main-container {
+            height: 270px !important;
+            border-radius: 16px !important;
+        }
+
+        .gallery-mosaic-container {
+            margin-top: 0.75rem !important;
+        }
+
+        /* Smaller, compact 7-tile mosaic thumbnails on mobile */
+        .mosaic-grid-7 {
+            height: auto !important;
+            grid-template-rows: repeat(3, 58px) !important;
+            gap: 0.35rem !important;
+        }
+
+        .mosaic-tile {
+            border-radius: 8px !important;
+        }
+
         .proximity-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            gap: 0.75rem;
         }
     }
 
