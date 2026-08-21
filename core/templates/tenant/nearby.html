@@ -223,21 +223,21 @@
         top: 15px;
         left: 15px;
         z-index: 1500;
-        background: var(--color-emerald-darkest);
-        color: var(--color-gold);
-        border: 2px solid var(--color-gold);
+        background: #047857;
+        color: white;
+        border: 1px solid #03543f;
         padding: 0.45rem 1rem;
         border-radius: 25px;
         font-size: 0.85rem;
         font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         transition: all 0.25s ease;
     }
 
     .mobile-sidebar-trigger:hover {
-        background: var(--color-gold);
-        color: var(--color-emerald-darkest);
+        background: #03543f;
+        color: var(--color-gold);
     }
 
     /* Live GPS Locate Me Button */
@@ -282,10 +282,10 @@
         100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0), 0 4px 14px rgba(0,0,0,0.4); }
     }
 
-    @keyframes pulseBeacon {
-        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-        70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    @keyframes gpsProgress {
+        0% { transform: translateX(-100%); }
+        50% { transform: translateX(100%); }
+        100% { transform: translateX(200%); }
     }
 
     /* Responsive Breakpoints (Tablet & Mobile <= 1100px) */
@@ -394,20 +394,16 @@
         </div>
     </div>
 
-    <!-- Satellite GPS Calibration Loading Modal Overlay -->
-    <div id="gps-loading-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 10000; align-items: center; justify-content: center; padding: 1.5rem;">
-        <div style="background: #ffffff; border-radius: 20px; padding: 2.25rem 2rem; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 2px solid var(--color-gold);">
-            <div style="width: 70px; height: 70px; margin: 0 auto 1.25rem auto; border-radius: 50%; background: #e6f4ea; display: flex; align-items: center; justify-content: center; border: 2px solid #047857;">
-                <i class="fa-solid fa-satellite-dish fa-spin" style="font-size: 2rem; color: #047857;"></i>
+    <!-- Satellite GPS Loading Overlay (Minimalist: Icon + Solid Green Progress Bar) -->
+    <div id="gps-loading-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.85rem;">
+            <!-- Rotating Satellite Icon -->
+            <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(255, 255, 255, 0.95); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.25);">
+                <i class="fa-solid fa-satellite-dish fa-spin" style="font-size: 1.65rem; color: #047857;"></i>
             </div>
-            <h3 style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: #072a1c;">
-                Calibrating Satellite GPS...
-            </h3>
-            <p style="margin: 0 0 1.25rem 0; font-size: 0.92rem; color: #475569; line-height: 1.5;">
-                Locking onto your exact physical position. Please wait a moment.
-            </p>
-            <div style="width: 100%; background: #e2e8f0; height: 6px; border-radius: 10px; overflow: hidden; position: relative;">
-                <div style="width: 45%; height: 100%; background: linear-gradient(90deg, #047857, var(--color-gold)); border-radius: 10px; animation: gpsProgress 1.6s infinite ease-in-out;"></div>
+            <!-- Small Solid Green Progress Bar -->
+            <div style="width: 130px; background: rgba(255, 255, 255, 0.4); height: 5px; border-radius: 10px; overflow: hidden; position: relative;">
+                <div style="width: 50%; height: 100%; background: #047857; border-radius: 10px; animation: gpsProgress 1.4s infinite ease-in-out;"></div>
             </div>
         </div>
     </div>
