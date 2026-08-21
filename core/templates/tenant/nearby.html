@@ -237,6 +237,32 @@
         color: var(--color-emerald-darkest);
     }
 
+    /* Live GPS Locate Me Button */
+    .map-gps-locate-btn {
+        position: absolute;
+        top: 70px;
+        right: 12px;
+        z-index: 1000;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: var(--color-emerald-darkest);
+        color: var(--color-gold);
+        border: 2px solid var(--color-gold);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+    .map-gps-locate-btn:hover {
+        background: var(--color-gold);
+        color: var(--color-emerald-darkest);
+        transform: scale(1.08);
+    }
+
     /* Pulse User Beacon */
     .user-beacon {
         width: 18px;
@@ -397,6 +423,11 @@
                     <text x="50" y="28" font-size="12" font-weight="900" fill="#ffffff" text-anchor="middle">N</text>
                 </svg>
             </div>
+
+            <!-- Live GPS Locate Button -->
+            <button type="button" class="map-gps-locate-btn" onclick="autoDetectUserGPS(true)" title="Center map on my live GPS location">
+                <i class="fa-solid fa-crosshairs"></i>
+            </button>
         </div>
     </div>
 </div>
@@ -424,8 +455,48 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         initLeafletMap();
-        fetchNearbyProperties();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramLat = urlParams.get('lat');
+        const paramLng = urlParams.get('lng');
+
+        if (paramLat && paramLng && !isNaN(parseFloat(paramLat)) && !isNaN(parseFloat(paramLng))) {
+            currentLat = parseFloat(paramLat);
+            currentLng = parseFloat(paramLng);
+            fetchNearbyProperties();
+        } else {
+            autoDetectUserGPS(false);
+        }
     });
+
+    function autoDetectUserGPS(isManualClick = false) {
+        const gpsBtnIcon = document.querySelector('.map-gps-locate-btn i');
+        if (gpsBtnIcon) gpsBtnIcon.classList.add('fa-spin');
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    if (gpsBtnIcon) gpsBtnIcon.classList.remove('fa-spin');
+                    currentLat = position.coords.latitude;
+                    currentLng = position.coords.longitude;
+                    fetchNearbyProperties();
+                },
+                function(error) {
+                    if (gpsBtnIcon) gpsBtnIcon.classList.remove('fa-spin');
+                    console.log("GPS Location unavailable or denied. Gracefully using fallback coordinates:", error.message);
+                    fetchNearbyProperties();
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 8000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            if (gpsBtnIcon) gpsBtnIcon.classList.remove('fa-spin');
+            fetchNearbyProperties();
+        }
+    }
 
     function initLeafletMap() {
         map = L.map('nearby-map', {
