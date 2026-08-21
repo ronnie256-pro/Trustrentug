@@ -1251,15 +1251,200 @@
             and list verified properties.</p>
     </div>
     <div style="display: flex; align-items: center; gap: 0.85rem;">
-        <a href="{% url 'admin_add_sale_property' %}" class="btn btn-gold"
-            style="padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">
-            <i class="fa-solid fa-plus-circle"></i> Add for Sale
-        </a>
+        <button type="button" onclick="openAddSaleModal()" class="btn btn-gold"
+            style="padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">
+            Add for Sale
+        </button>
+        <button type="button" onclick="openAddOfficeModal()" class="btn btn-gold"
+            style="background: #047857 !important; border-color: #03543f !important; color: white !important; padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.35);">
+            Add Office
+        </button>
         <div
             style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
-            <i class="fa-solid fa-house-shield" style="margin-right: 0.5rem;"></i> {{ properties.count }} Total
-            Submission{{ properties.count|pluralize }}
+            {{ properties.count }} Total Submission{{ properties.count|pluralize }}
         </div>
+    </div>
+</div>
+
+<!-- ADD OFFICE POP-UP MODAL -->
+<div id="add-office-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 850px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); padding: 2rem; position: relative; margin: auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #0f172a; font-weight: 800;">Add Office Listing</h2>
+                <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.88rem;">Fill in office space details, pricing, utilities, and amenities.</p>
+            </div>
+            <button type="button" onclick="closeAddOfficeModal()" style="background: none; border: none; font-size: 1.8rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 0 0.5rem;">&times;</button>
+        </div>
+
+        <form action="{% url 'admin_add_office_property' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.88rem; margin-bottom: 0.4rem;">Office Category *</label>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 2px solid #047857; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: #0f172a;" id="modal-label-shared">
+                        <input type="radio" name="office_category" value="shared_office" checked onchange="toggleModalOfficeCategory(this.value)"> Shared Office Space
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 2px solid #cbd5e1; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: #0f172a;" id="modal-label-private">
+                        <input type="radio" name="office_category" value="private_office" onchange="toggleModalOfficeCategory(this.value)"> Private Office Room
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Building / Office Name *</label>
+                    <input type="text" name="title" required placeholder="e.g. Workers House - Suite 4" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location *</label>
+                    <input type="text" name="location" required placeholder="e.g. Nakasero, Kampala CBD" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Floor Level / Unit</label>
+                    <input type="text" name="floor" placeholder="e.g. 3rd Floor, Suite 302" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Price Per Month (UGX) *</label>
+                    <input type="text" name="price" required placeholder="e.g. 850000" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+            </div>
+
+            <div id="modal-shared-office-fields" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1.1rem; margin-bottom: 1.25rem;">
+                <h4 style="margin: 0 0 0.75rem 0; font-size: 0.92rem; font-weight: 800; color: #166534;">Shared Office Costs & Utility Breakdown</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Pricing Basis Unit</label>
+                        <select name="office_pricing_unit" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                            <option value="per_table">Per Dedicated Table / Desk</option>
+                            <option value="per_sqm">Per Square Meter (SQM)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Electricity Cost</label>
+                        <input type="text" name="electricity_cost" placeholder="e.g. Included OR 50,000 UGX" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Water Cost</label>
+                        <input type="text" name="water_cost" placeholder="e.g. Included OR 20,000 UGX" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">WiFi Cost</label>
+                        <input type="text" name="wifi_cost" placeholder="e.g. Free WiFi OR 30,000 UGX" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.5rem;">Office Amenities & Utilities</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6rem;">
+                    {% for amenity in office_amenities %}
+                        <label style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 1px solid #cbd5e1; padding: 0.45rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #334155;">
+                            <input type="checkbox" name="amenities" value="{{ amenity.id }}" style="accent-color: #047857;">
+                            <span>{{ amenity.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem;">
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Primary Cover / Hero Image</label>
+                    <input type="file" name="hero_image" accept="image/*" style="width: 100%; font-size: 0.82rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Upload 7 Gallery Photos at Once</label>
+                    <input type="file" name="gallery_images" multiple accept="image/*" style="width: 100%; font-size: 0.82rem;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Description</label>
+                <textarea name="description" rows="3" placeholder="Enter building security, operating hours, parking details..." style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                <button type="button" onclick="closeAddOfficeModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">Cancel</button>
+                <button type="submit" style="background: #047857; border: none; color: white; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);">Publish Office</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- ADD FOR SALE POP-UP MODAL -->
+<div id="add-sale-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 850px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); padding: 2rem; position: relative; margin: auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #0f172a; font-weight: 800;">Add Property for Sale</h2>
+                <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.88rem;">Specify listing details, 7 gallery photos, and amenities.</p>
+            </div>
+            <button type="button" onclick="closeAddSaleModal()" style="background: none; border: none; font-size: 1.8rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 0 0.5rem;">&times;</button>
+        </div>
+
+        <form action="{% url 'admin_add_sale_property' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div style="grid-column: span 2;">
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Property Title / Name *</label>
+                    <input type="text" name="title" required placeholder="e.g. Royal Palms Executive Villa - Naalya" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Category *</label>
+                    <select name="category" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: white;">
+                        <option value="standalone">Standalone House / Villa</option>
+                        <option value="bungalow">Bungalow / Estate</option>
+                        <option value="studio">Studio Apartment</option>
+                        <option value="1_bed">1 Bedroom Apartment</option>
+                        <option value="2_bed">2 Bedroom Apartment</option>
+                        <option value="3_plus_bed">3+ Bedroom Luxury Residence</option>
+                        <option value="apartment_block">Apartment Block / Commercial Complex</option>
+                        <option value="condo_block">Condominium Block</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Purchase Price (UGX) *</label>
+                    <input type="number" name="price" required placeholder="e.g. 650000000" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location *</label>
+                    <input type="text" name="location" required placeholder="e.g. Naalya, Wakiso" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Bedrooms</label>
+                    <input type="number" name="bedrooms" placeholder="e.g. 5" min="0" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem;">
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Cover / Hero Image *</label>
+                    <input type="file" name="hero_image" required accept="image/*" style="width: 100%; font-size: 0.82rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Upload 7 Gallery Photos at Once</label>
+                    <input type="file" name="gallery_images" multiple accept="image/*" style="width: 100%; font-size: 0.82rem;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Description</label>
+                <textarea name="description" rows="3" placeholder="Provide full details about land title, plot size, architectural finish..." style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                <button type="button" onclick="closeAddSaleModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">Cancel</button>
+                <button type="submit" style="background: var(--color-gold); border: none; color: #000; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 800; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">Publish for Sale</button>
+            </div>
+        </form>
+
+    </div>
+</div>
     </div>
 </div>
 
@@ -4411,4 +4596,41 @@
     // Tenants Directory routing handles view details redirections to dedicated ten_details.html
 </script>
 {% endif %}
+
+<script>
+    function openAddOfficeModal() {
+        const modal = document.getElementById('add-office-modal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeAddOfficeModal() {
+        const modal = document.getElementById('add-office-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function openAddSaleModal() {
+        const modal = document.getElementById('add-sale-modal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeAddSaleModal() {
+        const modal = document.getElementById('add-sale-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function toggleModalOfficeCategory(categoryVal) {
+        const fields = document.getElementById('modal-shared-office-fields');
+        const labelShared = document.getElementById('modal-label-shared');
+        const labelPrivate = document.getElementById('modal-label-private');
+        if (categoryVal === 'shared_office') {
+            if (fields) fields.style.display = 'block';
+            if (labelShared) { labelShared.style.borderColor = '#047857'; labelShared.style.background = '#f0fdf4'; }
+            if (labelPrivate) { labelPrivate.style.borderColor = '#cbd5e1'; labelPrivate.style.background = '#f8fafc'; }
+        } else {
+            if (fields) fields.style.display = 'none';
+            if (labelPrivate) { labelPrivate.style.borderColor = '#cb9b58'; labelPrivate.style.background = '#fefce8'; }
+            if (labelShared) { labelShared.style.borderColor = '#cbd5e1'; labelShared.style.background = '#f8fafc'; }
+        }
+    }
+</script>
 {% endblock %}

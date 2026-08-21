@@ -64,6 +64,7 @@ urlpatterns = [
     path('admin-dashboard/landlord/approve/<int:user_id>/', views.approve_landlord, name='approve_landlord'),
     path('admin-dashboard/property/approve/<int:property_id>/', views.approve_property, name='approve_property'),
     path('admin-dashboard/property/add-sale/', views.admin_add_sale_property, name='admin_add_sale_property'),
+    path('admin-dashboard/property/add-office/', views.admin_add_office_property, name='admin_add_office_property'),
     path('admin-dashboard/property/view/<int:property_id>/', views.admin_property_detail, name='admin_property_detail'),
     path('admin-dashboard/property/inspect/<int:property_id>/', views.submit_property_inspection, name='submit_property_inspection'),
     path('property/delete/<int:property_id>/', views.delete_property, name='delete_property'),

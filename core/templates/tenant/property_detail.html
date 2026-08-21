@@ -701,21 +701,48 @@
                 <h3 style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 700; color: var(--color-emerald-darkest); text-decoration: underline; text-underline-offset: 6px; text-decoration-color: var(--color-gold); text-decoration-thickness: 2.5px; margin-bottom: 1.25rem; margin-top: 2.5rem;">Property Amenities</h3>
 
                 <div class="amenities-grid">
+                    {% if property.bedrooms and property.bedrooms > 0 and not is_office and not property.is_office %}
                     <div class="amenity-item">
                         <div class="amenity-icon"><i class="fa-solid fa-bed"></i></div>
-                        {{ property.bedrooms|default:1 }} Bedroom{% if property.bedrooms > 1 %}s{% endif %}
+                        {{ property.bedrooms }} Bedroom{% if property.bedrooms > 1 %}s{% endif %}
                     </div>
+                    {% endif %}
                     {% for amenity in property_amenities %}
                     <div class="amenity-item">
                         <div class="amenity-icon"><i class="fa-solid {{ amenity.icon_class }}"></i></div>
                         {{ amenity.name }}
                     </div>
                     {% empty %}
-                    {% if not property.bedrooms %}
+                    {% if not property.bedrooms or is_office or property.is_office %}
                     <p style="color: var(--color-text-muted);">No recorded amenities available.</p>
                     {% endif %}
                     {% endfor %}
                 </div>
+
+                {% if property.category == 'shared_office' %}
+                <!-- Other Shared Costs Section (Shared Office Only) -->
+                <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 1.5rem; margin-top: 2rem; box-shadow: 0 4px 15px rgba(4, 120, 87, 0.06);">
+                    <h3 style="margin: 0 0 1.25rem 0; font-family: var(--font-heading); font-size: 1.2rem; font-weight: 800; color: #166534; border-bottom: 1px dashed #a7f3d0; padding-bottom: 0.6rem;">
+                        Other Shared Costs
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem;">
+                        <div>
+                            <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #15803d; display: block; margin-bottom: 0.25rem;">Electricity Cost</span>
+                            <span style="font-size: 0.98rem; font-weight: 800; color: #064e3b;">{{ property.electricity_cost|default:"Included in Rent" }}</span>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #15803d; display: block; margin-bottom: 0.25rem;">Water Cost</span>
+                            <span style="font-size: 0.98rem; font-weight: 800; color: #064e3b;">{{ property.water_cost|default:"Included in Rent" }}</span>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #15803d; display: block; margin-bottom: 0.25rem;">WiFi Internet Cost</span>
+                            <span style="font-size: 0.98rem; font-weight: 800; color: #064e3b;">{{ property.wifi_cost|default:"Free High-Speed WiFi" }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
             </div>
 

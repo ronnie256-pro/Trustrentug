@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add Verified Office Listing | Admin Dashboard{% endblock %}
+
+{% block content %}
+<div style="background: #f8fafc; min-height: 100vh; padding: 2.5rem 1rem;">
+    <div style="max-width: 900px; margin: 0 auto;">
+        
+        <!-- Header Nav & Title -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+            <div>
+                <a href="/admin-dashboard/?tab=properties" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <h1 style="margin: 0; font-family: var(--font-heading); font-size: 1.8rem; color: #0f172a; font-weight: 800;">
+                    Publish New Office Listing
+                </h1>
+                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.95rem;">
+                    Add verified Shared or Private office space details, monthly pricing, utility costs, and amenities.
+                </p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.06); padding: 2.5rem;">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; {% if message.tags == 'error' %}background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5;{% else %}background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7;{% endif %} font-weight: 600;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form action="{% url 'admin_add_office_property' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Section 1: Office Category & Building Details -->
+                <div style="margin-bottom: 2.25rem;">
+                    <h3 style="margin: 0 0 1.25rem 0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); border-bottom: 2px solid #f1f5f9; padding-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-building" style="color: var(--color-gold);"></i> 1. Office Category & Building Info
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                        
+                        <!-- Office Category -->
+                        <div style="grid-column: 1 / -1;">
+                            <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                Office Category <span style="color: #ef4444;">*</span>
+                            </label>
+                            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 0.6rem; background: #f8fafc; border: 2px solid #cbd5e1; padding: 0.75rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 700; color: #0f172a; transition: all 0.2s;" id="label-shared">
+                                    <input type="radio" name="office_category" value="shared_office" checked onchange="toggleOfficeCategory(this.value)">
+                                    <i class="fa-solid fa-people-roof" style="color: var(--color-emerald);"></i> Shared Office Space
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.6rem; background: #f8fafc; border: 2px solid #cbd5e1; padding: 0.75rem 1.25rem; border-radius: 10px; cursor: pointer; font-weight: 700; color: #0f172a; transition: all 0.2s;" id="label-private">
+                                    <input type="radio" name="office_category" value="private_office" onchange="toggleOfficeCategory(this.value)">
+                                    <i class="fa-solid fa-door-closed" style="color: var(--color-gold);"></i> Private Office Room
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Building Name -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                Building / Office Name <span style="color: #ef4444;">*</span>
+                            </label>
+                            <input type="text" name="title" required placeholder="e.g. Workers House - Executive Suite 4" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;">
+                        </div>
+
+                        <!-- Location -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                Location / Area <span style="color: #ef4444;">*</span>
+                            </label>
+                            <input type="text" name="location" required placeholder="e.g. Nakasero, Kampala CBD" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;">
+                        </div>
+
+                        <!-- Floor Level -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                Floor Level / Office Unit
+                            </label>
+                            <input type="text" name="floor" placeholder="e.g. 3rd Floor, Wing B, Suite 302" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;">
+                        </div>
+
+                        <!-- Price Per Month -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                Price Per Month (UGX) <span style="color: #ef4444;">*</span>
+                            </label>
+                            <input type="text" name="price" required placeholder="e.g. 850,000" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Section 2: Shared Office Pricing & Utility Costs (Dynamic Section) -->
+                <div id="shared-office-section" style="margin-bottom: 2.25rem; background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 1.5rem;">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.05rem; font-family: var(--font-heading); color: #166534; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-calculator"></i> Shared Office Costs & Utility Breakdown
+                    </h3>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+                        
+                        <!-- Pricing Unit -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #166534; font-size: 0.88rem; margin-bottom: 0.4rem;">
+                                Pricing Basis Unit
+                            </label>
+                            <select name="office_pricing_unit" style="width: 100%; padding: 0.7rem; border: 1px solid #86efac; border-radius: 8px; font-size: 0.9rem; background: white;">
+                                <option value="per_table">Per Dedicated Table / Desk</option>
+                                <option value="per_sqm">Per Square Meter (SQM)</option>
+                            </select>
+                        </div>
+
+                        <!-- Electricity Cost -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #166534; font-size: 0.88rem; margin-bottom: 0.4rem;">
+                                Electricity Cost
+                            </label>
+                            <input type="text" name="electricity_cost" placeholder="e.g. Included in rent OR 50,000 UGX/mo" style="width: 100%; padding: 0.7rem; border: 1px solid #86efac; border-radius: 8px; font-size: 0.9rem; background: white;">
+                        </div>
+
+                        <!-- Water Cost -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #166534; font-size: 0.88rem; margin-bottom: 0.4rem;">
+                                Water Cost
+                            </label>
+                            <input type="text" name="water_cost" placeholder="e.g. Included in rent OR 20,000 UGX/mo" style="width: 100%; padding: 0.7rem; border: 1px solid #86efac; border-radius: 8px; font-size: 0.9rem; background: white;">
+                        </div>
+
+                        <!-- WiFi Cost -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #166534; font-size: 0.88rem; margin-bottom: 0.4rem;">
+                                High-Speed WiFi Cost
+                            </label>
+                            <input type="text" name="wifi_cost" placeholder="e.g. Free High-Speed WiFi OR 30,000 UGX/mo" style="width: 100%; padding: 0.7rem; border: 1px solid #86efac; border-radius: 8px; font-size: 0.9rem; background: white;">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Section 3: Office Amenities Checklist -->
+                <div style="margin-bottom: 2.25rem;">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); border-bottom: 2px solid #f1f5f9; padding-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-sliders" style="color: var(--color-gold);"></i> 2. Office Amenities & Utilities Checklist
+                    </h3>
+                    <p style="margin: 0 0 1rem 0; font-size: 0.88rem; color: #64748b;">
+                        Select all amenities available at this office location:
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.85rem;">
+                        {% for amenity in amenities %}
+                            <label style="display: flex; align-items: center; gap: 0.6rem; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.6rem 0.85rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: #334155;">
+                                <input type="checkbox" name="amenities" value="{{ amenity.id }}" style="width: 17px; height: 17px; accent-color: #047857;">
+                                <span>{{ amenity.name }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Section 4: Media Uploads (Hero + Gallery) -->
+                <div style="margin-bottom: 2.25rem;">
+                    <h3 style="margin: 0 0 1.25rem 0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); border-bottom: 2px solid #f1f5f9; padding-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-images" style="color: var(--color-gold);"></i> 3. Office Photos & Gallery
+                    </h3>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                        <!-- Primary Hero Image -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                Primary Hero Image (1 Main Cover Photo)
+                            </label>
+                            <input type="file" name="hero_image" accept="image/*" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: #f8fafc;">
+                        </div>
+
+                        <!-- Secondary Gallery Photos -->
+                        <div>
+                            <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                                Gallery Supporting Photos (Up to 7 Images)
+                            </label>
+                            <input type="file" name="gallery_images" multiple accept="image/*" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: #f8fafc;">
+                            <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.3rem;">Hold Ctrl/Cmd to select multiple images at once.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Description -->
+                <div style="margin-bottom: 2.25rem;">
+                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        Detailed Description / Additional Terms
+                    </label>
+                    <textarea name="description" rows="4" placeholder="Enter full details about building accessibility, security, parking, operating hours, etc..." style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;"></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div style="text-align: right; border-top: 2px solid #f1f5f9; padding-top: 1.5rem;">
+                    <button type="submit" class="btn btn-gold" style="background: #047857; border-color: #03543f; color: white; padding: 0.85rem 2.25rem; font-weight: 800; font-size: 1rem; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 15px rgba(4, 120, 87, 0.35); transition: all 0.2s;">
+                        <i class="fa-solid fa-paper-plane" style="margin-right: 0.5rem;"></i> Publish Verified Office Listing
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function toggleOfficeCategory(categoryVal) {
+        const sharedSection = document.getElementById('shared-office-section');
+        const sharedLabel = document.getElementById('label-shared');
+        const privateLabel = document.getElementById('label-private');
+
+        if (categoryVal === 'shared_office') {
+            if (sharedSection) sharedSection.style.display = 'block';
+            if (sharedLabel) {
+                sharedLabel.style.borderColor = '#047857';
+                sharedLabel.style.background = '#f0fdf4';
+            }
+            if (privateLabel) {
+                privateLabel.style.borderColor = '#cbd5e1';
+                privateLabel.style.background = '#f8fafc';
+            }
+        } else {
+            if (sharedSection) sharedSection.style.display = 'none';
+            if (privateLabel) {
+                privateLabel.style.borderColor = '#cb9b58';
+                privateLabel.style.background = '#fefce8';
+            }
+            if (sharedLabel) {
+                sharedLabel.style.borderColor = '#cbd5e1';
+                sharedLabel.style.background = '#f8fafc';
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleOfficeCategory('shared_office');
+    });
+</script>
+{% endblock %}

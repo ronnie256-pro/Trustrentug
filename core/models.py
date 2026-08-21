@@ -80,6 +80,13 @@ class Property(models.Model):
     is_multi_unit = models.BooleanField(default=False)
     bedrooms = models.IntegerField(null=True, blank=True)
     
+    # Office specific fields
+    floor = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. 3rd Floor, Suite 3B")
+    office_pricing_unit = models.CharField(max_length=50, blank=True, null=True, choices=[('per_table', 'Per Table'), ('per_sqm', 'Per Square Meter')])
+    electricity_cost = models.CharField(max_length=100, blank=True, null=True)
+    water_cost = models.CharField(max_length=100, blank=True, null=True)
+    wifi_cost = models.CharField(max_length=100, blank=True, null=True)
+    
     # Images (Hero + 7 Gallery supporting photos)
     hero_image = models.FileField(upload_to='properties/hero/', null=True, blank=True)
     image_1 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)

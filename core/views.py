@@ -899,6 +899,17 @@ def admin_dashboard(request):
         key = a.name.strip().lower()
         a.icon_class = AMENITY_ICONS.get(key, 'fa-circle-check')
 
+    office_amenity_names = [
+        'Electricity', 'Water', 'Toilet', 'Lift', 'AC', 'Printer', 'Scanner', 'TV', 'Wifi', 'Table', 'Chairs'
+    ]
+    office_amenities = []
+    for a_name in office_amenity_names:
+        a_obj, _ = PropertyAmenity.objects.get_or_create(
+            name=a_name,
+            defaults={'category': 'Office', 'layer': 'utilities', 'is_active': True}
+        )
+        office_amenities.append(a_obj)
+
     proximity_categories = list(ProximityCategory.objects.prefetch_related('items').all().order_by('name'))
     for cat in proximity_categories:
         for item in cat.items.all():
@@ -1383,6 +1394,7 @@ def admin_dashboard(request):
         'construction_applications': construction_applications,
         'construction_projects': construction_projects,
         'slider_images': slider_images,
+        'office_amenities': office_amenities,
         'current_tab': tab
     })
 
@@ -2896,6 +2908,101 @@ def admin_add_sale_property(request):
     return render(request, 'admin/add_sale_property.html', {
         'amenities': amenities,
         'proximity_items': proximity_items,
+        'current_tab': 'properties'
+    })
+
+
+def admin_add_office_property(request):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        office_category = request.POST.get('office_category', 'shared_office')
+        title = request.POST.get('title', '').strip()
+        location = request.POST.get('location', '').strip()
+        floor = request.POST.get('floor', '').strip()
+        price = request.POST.get('price', '').strip()
+        description = request.POST.get('description', '').strip()
+
+        office_pricing_unit = request.POST.get('office_pricing_unit', '') if office_category == 'shared_office' else ''
+        electricity_cost = request.POST.get('electricity_cost', '').strip() if office_category == 'shared_office' else ''
+        water_cost = request.POST.get('water_cost', '').strip() if office_category == 'shared_office' else ''
+        wifi_cost = request.POST.get('wifi_cost', '').strip() if office_category == 'shared_office' else ''
+
+        hero_image = request.FILES.get('hero_image')
+        gallery_files = request.FILES.getlist('gallery_images')
+
+        image_1 = gallery_files[0] if len(gallery_files) > 0 else request.FILES.get('image_1')
+        image_2 = gallery_files[1] if len(gallery_files) > 1 else request.FILES.get('image_2')
+        image_3 = gallery_files[2] if len(gallery_files) > 2 else request.FILES.get('image_3')
+        image_4 = gallery_files[3] if len(gallery_files) > 3 else request.FILES.get('image_4')
+        image_5 = gallery_files[4] if len(gallery_files) > 4 else request.FILES.get('image_5')
+        image_6 = gallery_files[5] if len(gallery_files) > 5 else request.FILES.get('image_6')
+        image_7 = gallery_files[6] if len(gallery_files) > 6 else request.FILES.get('image_7')
+
+        if not title or not location or not price:
+            messages.error(request, "Please fill in all required fields (Building Name, Location, and Price per month).")
+        else:
+            try:
+                price_val = float(price.replace(',', ''))
+            except ValueError:
+                price_val = 0.0
+
+            prop = Property.objects.create(
+                owner=request.user,
+                title=title,
+                category=office_category if office_category in ['shared_office', 'private_office'] else 'shared_office',
+                listing_type='rent',
+                status='available',
+                price=price_val,
+                price_per_month=price_val,
+                location=location,
+                floor=floor,
+                office_pricing_unit=office_pricing_unit if office_pricing_unit in ['per_table', 'per_sqm'] else None,
+                electricity_cost=electricity_cost,
+                water_cost=water_cost,
+                wifi_cost=wifi_cost,
+                description=description,
+                hero_image=hero_image,
+                image_1=image_1,
+                image_2=image_2,
+                image_3=image_3,
+                image_4=image_4,
+                image_5=image_5,
+                image_6=image_6,
+                image_7=image_7,
+            )
+
+            office_amenities_list = [
+                'Electricity', 'Water', 'Toilet', 'Lift', 'AC', 'Printer', 'Scanner', 'TV', 'Wifi', 'Table', 'Chairs'
+            ]
+            for a_name in office_amenities_list:
+                PropertyAmenity.objects.get_or_create(
+                    name=a_name,
+                    defaults={'category': 'Office', 'layer': 'utilities', 'is_active': True}
+                )
+
+            selected_amenity_ids = request.POST.getlist('amenities')
+            if selected_amenity_ids:
+                prop.amenities.set(selected_amenity_ids)
+
+            messages.success(request, f"Office '{prop.title}' created and published successfully!")
+            return redirect('/admin-dashboard/?tab=properties')
+
+    office_amenity_names = [
+        'Electricity', 'Water', 'Toilet', 'Lift', 'AC', 'Printer', 'Scanner', 'TV', 'Wifi', 'Table', 'Chairs'
+    ]
+    amenities = []
+    for a_name in office_amenity_names:
+        a_obj, _ = PropertyAmenity.objects.get_or_create(
+            name=a_name,
+            defaults={'category': 'Office', 'layer': 'utilities', 'is_active': True}
+        )
+        amenities.append(a_obj)
+
+    return render(request, 'admin/add_office_property.html', {
+        'amenities': amenities,
         'current_tab': 'properties'
     })
 
