@@ -8,12 +8,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 
 <style>
-    /* Increased Navbar Height */
+    /* Increased Navbar Height & Stacking Priority */
     .navbar {
         padding-top: 0.65rem !important;
         padding-bottom: 0.65rem !important;
         min-height: 64px !important;
         background-color: var(--color-emerald-darkest) !important;
+        position: relative !important;
+        z-index: 99999 !important;
     }
 
     body {
