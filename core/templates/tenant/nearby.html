@@ -4,8 +4,8 @@
 {% block title %}Nearby Properties Map | TRUST Rent Ug{% endblock %}
 
 {% block extra_css %}
-<!-- Leaflet.js CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet.js CSS (using cdnjs allowed by CSP) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 
 <style>
     /* Increased Navbar Height */
@@ -403,8 +403,8 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Leaflet.js JavaScript -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet.js JavaScript (using cdnjs allowed by CSP) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
 <script>
     let map = null;
