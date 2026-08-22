@@ -652,9 +652,9 @@
                 labels: ['3 Months', 'Booking Fee', '2 Months'],
                 datasets: [{
                     data: [
-                        {{ payment_stats.rent_3_revenue|floatformat:0 }},
-                        {{ payment_stats.booking_revenue|floatformat:0 }},
-                        {{ payment_stats.rent_2_revenue|floatformat:0 }}
+                        {{ payment_stats.rent_3_revenue|default:0|floatformat:0 }},
+                        {{ payment_stats.booking_revenue|default:0|floatformat:0 }},
+                        {{ payment_stats.rent_2_revenue|default:0|floatformat:0 }}
                     ],
     backgroundColor: ['#064e3b', '#b91c1c', '#0369a1'],
         borderRadius: 6
@@ -728,7 +728,8 @@
                         <div class="progress-fill"
                             style="width: {% if property.is_multi_unit %}85{% else %}100{% endif %}%;"></div>
                     </div>
-                    <span style="font-size: 0.8rem; font-weight: 500;">{% if property.is_multi_unit %}85%{% else %}100%{% endif %}</span>
+                    <span style="font-size: 0.8rem; font-weight: 500;">{% if property.is_multi_unit %}85%{% else
+                        %}100%{% endif %}</span>
                 </td>
                 <td style="font-weight: 600;">UGX {% if property.price %}{{ property.price|floatformat:0 }}M{% else %}
                     -- {% endif %}</td>
@@ -1267,107 +1268,165 @@
 </div>
 
 <!-- ADD OFFICE POP-UP MODAL -->
-<div id="add-office-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 850px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); padding: 2rem; position: relative; margin: auto;">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+<div id="add-office-modal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 1rem;">
+    <div
+        style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 850px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); padding: 2rem; position: relative; margin: auto;">
+
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
             <div>
-                <h2 style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #0f172a; font-weight: 800;">Add Office Listing</h2>
-                <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.88rem;">Fill in office space details, pricing, utilities, and amenities.</p>
+                <h2
+                    style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #0f172a; font-weight: 800;">
+                    Add Office Listing</h2>
+                <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.88rem;">Fill in office space details,
+                    pricing, utilities, and amenities.</p>
             </div>
-            <button type="button" onclick="closeAddOfficeModal()" style="background: none; border: none; font-size: 1.8rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 0 0.5rem;">&times;</button>
+            <button type="button" onclick="closeAddOfficeModal()"
+                style="background: none; border: none; font-size: 1.8rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 0 0.5rem;">&times;</button>
         </div>
 
         <form action="{% url 'admin_add_office_property' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
             <div style="margin-bottom: 1.25rem;">
-                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.88rem; margin-bottom: 0.4rem;">Office Category *</label>
+                <label
+                    style="display: block; font-weight: 700; color: #1e293b; font-size: 0.88rem; margin-bottom: 0.4rem;">Office
+                    Category *</label>
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                    <label style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 2px solid #047857; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: #0f172a;" id="modal-label-shared">
-                        <input type="radio" name="office_category" value="shared_office" checked onchange="toggleModalOfficeCategory(this.value)"> Shared Office Space
+                    <label
+                        style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 2px solid #047857; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: #0f172a;"
+                        id="modal-label-shared">
+                        <input type="radio" name="office_category" value="shared_office" checked
+                            onchange="toggleModalOfficeCategory(this.value)"> Shared Office Space
                     </label>
-                    <label style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 2px solid #cbd5e1; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: #0f172a;" id="modal-label-private">
-                        <input type="radio" name="office_category" value="private_office" onchange="toggleModalOfficeCategory(this.value)"> Private Office Room
+                    <label
+                        style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 2px solid #cbd5e1; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.88rem; color: #0f172a;"
+                        id="modal-label-private">
+                        <input type="radio" name="office_category" value="private_office"
+                            onchange="toggleModalOfficeCategory(this.value)"> Private Office Room
                     </label>
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Building / Office Name *</label>
-                    <input type="text" name="title" required placeholder="e.g. Workers House - Suite 4" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Building
+                        / Office Name *</label>
+                    <input type="text" name="title" required placeholder="e.g. Workers House - Suite 4"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location *</label>
-                    <input type="text" name="location" required placeholder="e.g. Nakasero, Kampala CBD" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location
+                        *</label>
+                    <input type="text" name="location" required placeholder="e.g. Nakasero, Kampala CBD"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Floor Level / Unit</label>
-                    <input type="text" name="floor" placeholder="e.g. 3rd Floor, Suite 302" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Floor
+                        Level / Unit</label>
+                    <input type="text" name="floor" placeholder="e.g. 3rd Floor, Suite 302"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Price Per Month (UGX) *</label>
-                    <input type="text" name="price" required placeholder="e.g. 850000" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Price
+                        Per Month (UGX) *</label>
+                    <input type="text" name="price" required placeholder="e.g. 850000"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
             </div>
 
-            <div id="modal-shared-office-fields" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1.1rem; margin-bottom: 1.25rem;">
-                <h4 style="margin: 0 0 0.75rem 0; font-size: 0.92rem; font-weight: 800; color: #166534;">Shared Office Costs & Utility Breakdown</h4>
+            <div id="modal-shared-office-fields"
+                style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1.1rem; margin-bottom: 1.25rem;">
+                <h4 style="margin: 0 0 0.75rem 0; font-size: 0.92rem; font-weight: 800; color: #166534;">Shared Office
+                    Costs & Utility Breakdown</h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem;">
                     <div>
-                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Pricing Basis Unit</label>
-                        <select name="office_pricing_unit" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                        <label
+                            style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Pricing
+                            Basis Unit</label>
+                        <select name="office_pricing_unit"
+                            style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
                             <option value="per_table">Per Dedicated Table / Desk</option>
                             <option value="per_sqm">Per Square Meter (SQM)</option>
                         </select>
                     </div>
                     <div>
-                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Electricity Cost</label>
-                        <input type="text" name="electricity_cost" placeholder="e.g. Included OR 50,000 UGX" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                        <label
+                            style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Electricity
+                            Cost</label>
+                        <input type="text" name="electricity_cost" placeholder="e.g. Included OR 50,000 UGX"
+                            style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
                     </div>
                     <div>
-                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Water Cost</label>
-                        <input type="text" name="water_cost" placeholder="e.g. Included OR 20,000 UGX" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                        <label
+                            style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">Water
+                            Cost</label>
+                        <input type="text" name="water_cost" placeholder="e.g. Included OR 20,000 UGX"
+                            style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
                     </div>
                     <div>
-                        <label style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">WiFi Cost</label>
-                        <input type="text" name="wifi_cost" placeholder="e.g. Free WiFi OR 30,000 UGX" style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
+                        <label
+                            style="display: block; font-weight: 700; color: #166534; font-size: 0.8rem; margin-bottom: 0.3rem;">WiFi
+                            Cost</label>
+                        <input type="text" name="wifi_cost" placeholder="e.g. Free WiFi OR 30,000 UGX"
+                            style="width: 100%; padding: 0.55rem; border: 1px solid #86efac; border-radius: 6px; font-size: 0.85rem; background: white;">
                     </div>
                 </div>
             </div>
 
             <div style="margin-bottom: 1.25rem;">
-                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.5rem;">Office Amenities & Utilities</label>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6rem;">
+                <label
+                    style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.5rem;">Office
+                    Amenities & Utilities</label>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem;">
                     {% for amenity in office_amenities %}
-                        <label style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 1px solid #cbd5e1; padding: 0.45rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #334155;">
-                            <input type="checkbox" name="amenities" value="{{ amenity.id }}" style="accent-color: #047857;">
-                            <span>{{ amenity.name }}</span>
-                        </label>
+                    <label
+                        style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 1px solid #cbd5e1; padding: 0.45rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #334155;">
+                        <input type="checkbox" name="amenities" value="{{ amenity.id }}" style="accent-color: #047857;">
+                        <span>{{ amenity.name }}</span>
+                    </label>
                     {% endfor %}
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem;">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem;">
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Primary Cover / Hero Image</label>
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Primary
+                        Cover / Hero Image</label>
                     <input type="file" name="hero_image" accept="image/*" style="width: 100%; font-size: 0.82rem;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Upload 7 Gallery Photos at Once</label>
-                    <input type="file" name="gallery_images" multiple accept="image/*" style="width: 100%; font-size: 0.82rem;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Upload
+                        7 Gallery Photos at Once</label>
+                    <input type="file" name="gallery_images" multiple accept="image/*"
+                        style="width: 100%; font-size: 0.82rem;">
                 </div>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Description</label>
-                <textarea name="description" rows="3" placeholder="Enter building security, operating hours, parking details..." style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;"></textarea>
+                <label
+                    style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Description</label>
+                <textarea name="description" rows="3"
+                    placeholder="Enter building security, operating hours, parking details..."
+                    style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;"></textarea>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
-                <button type="button" onclick="closeAddOfficeModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">Cancel</button>
-                <button type="submit" style="background: #047857; border: none; color: white; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);">Publish Office</button>
+            <div
+                style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                <button type="button" onclick="closeAddOfficeModal()"
+                    style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">Cancel</button>
+                <button type="submit"
+                    style="background: #047857; border: none; color: white; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);">Publish
+                    Office</button>
             </div>
         </form>
 
@@ -1375,28 +1434,42 @@
 </div>
 
 <!-- ADD FOR SALE POP-UP MODAL -->
-<div id="add-sale-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 850px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); padding: 2rem; position: relative; margin: auto;">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+<div id="add-sale-modal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 999999; align-items: center; justify-content: center; padding: 1rem;">
+    <div
+        style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 850px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); padding: 2rem; position: relative; margin: auto;">
+
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
             <div>
-                <h2 style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #0f172a; font-weight: 800;">Add Property for Sale</h2>
-                <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.88rem;">Specify listing details, 7 gallery photos, and amenities.</p>
+                <h2
+                    style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #0f172a; font-weight: 800;">
+                    Add Property for Sale</h2>
+                <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.88rem;">Specify listing details, 7 gallery
+                    photos, and amenities.</p>
             </div>
-            <button type="button" onclick="closeAddSaleModal()" style="background: none; border: none; font-size: 1.8rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 0 0.5rem;">&times;</button>
+            <button type="button" onclick="closeAddSaleModal()"
+                style="background: none; border: none; font-size: 1.8rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 0 0.5rem;">&times;</button>
         </div>
 
         <form action="{% url 'admin_add_sale_property' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
                 <div style="grid-column: span 2;">
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Property Title / Name *</label>
-                    <input type="text" name="title" required placeholder="e.g. Royal Palms Executive Villa - Naalya" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Property
+                        Title / Name *</label>
+                    <input type="text" name="title" required placeholder="e.g. Royal Palms Executive Villa - Naalya"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Category *</label>
-                    <select name="category" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: white;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Category
+                        *</label>
+                    <select name="category"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: white;">
                         <option value="standalone">Standalone House / Villa</option>
                         <option value="bungalow">Bungalow / Estate</option>
                         <option value="studio">Studio Apartment</option>
@@ -1408,44 +1481,66 @@
                     </select>
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Purchase Price (UGX) *</label>
-                    <input type="number" name="price" required placeholder="e.g. 650000000" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Purchase
+                        Price (UGX) *</label>
+                    <input type="number" name="price" required placeholder="e.g. 650000000"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location *</label>
-                    <input type="text" name="location" required placeholder="e.g. Naalya, Wakiso" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location
+                        *</label>
+                    <input type="text" name="location" required placeholder="e.g. Naalya, Wakiso"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Bedrooms</label>
-                    <input type="number" name="bedrooms" placeholder="e.g. 5" min="0" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Bedrooms</label>
+                    <input type="number" name="bedrooms" placeholder="e.g. 5" min="0"
+                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem;">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem;">
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Cover / Hero Image *</label>
-                    <input type="file" name="hero_image" required accept="image/*" style="width: 100%; font-size: 0.82rem;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Cover
+                        / Hero Image *</label>
+                    <input type="file" name="hero_image" required accept="image/*"
+                        style="width: 100%; font-size: 0.82rem;">
                 </div>
                 <div>
-                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Upload 7 Gallery Photos at Once</label>
-                    <input type="file" name="gallery_images" multiple accept="image/*" style="width: 100%; font-size: 0.82rem;">
+                    <label
+                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.82rem; margin-bottom: 0.35rem;">Upload
+                        7 Gallery Photos at Once</label>
+                    <input type="file" name="gallery_images" multiple accept="image/*"
+                        style="width: 100%; font-size: 0.82rem;">
                 </div>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Description</label>
-                <textarea name="description" rows="3" placeholder="Provide full details about land title, plot size, architectural finish..." style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;"></textarea>
+                <label
+                    style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Description</label>
+                <textarea name="description" rows="3"
+                    placeholder="Provide full details about land title, plot size, architectural finish..."
+                    style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;"></textarea>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
-                <button type="button" onclick="closeAddSaleModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">Cancel</button>
-                <button type="submit" style="background: var(--color-gold); border: none; color: #000; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 800; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">Publish for Sale</button>
+            <div
+                style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                <button type="button" onclick="closeAddSaleModal()"
+                    style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; cursor: pointer;">Cancel</button>
+                <button type="submit"
+                    style="background: var(--color-gold); border: none; color: #000; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 800; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">Publish
+                    for Sale</button>
             </div>
         </form>
 
     </div>
 </div>
-    </div>
+</div>
 </div>
 
 <!-- Properties Table Card -->
@@ -2915,23 +3010,23 @@
 <script>
     const timeframeData = {
         annual: {
-            labels: {{ payment_stats.annual_labels|safe }},
-            booking: {{ payment_stats.booking_annual_counts|safe }},
-            rent2: {{ payment_stats.rent_2_annual_counts|safe }},
-            rent3: {{ payment_stats.rent_3_annual_counts|safe }}
+            labels: {{ payment_stats.annual_labels| safe }},
+    booking: { { payment_stats.booking_annual_counts | safe } },
+    rent2: { { payment_stats.rent_2_annual_counts | safe } },
+    rent3: { { payment_stats.rent_3_annual_counts | safe } }
         },
-        monthly: {
-            labels: {{ payment_stats.monthly_labels|safe }},
-            booking: {{ payment_stats.booking_monthly_counts|safe }},
-            rent2: {{ payment_stats.rent_2_monthly_counts|safe }},
-            rent3: {{ payment_stats.rent_3_monthly_counts|safe }}
-        },
-        daily: {
-            labels: {{ payment_stats.daily_labels|safe }},
-            booking: {{ payment_stats.booking_daily_counts|safe }},
-            rent2: {{ payment_stats.rent_2_daily_counts|safe }},
-            rent3: {{ payment_stats.rent_3_daily_counts|safe }}
-        }
+    monthly: {
+        labels: { { payment_stats.monthly_labels | safe } },
+        booking: { { payment_stats.booking_monthly_counts | safe } },
+        rent2: { { payment_stats.rent_2_monthly_counts | safe } },
+        rent3: { { payment_stats.rent_3_monthly_counts | safe } }
+    },
+    daily: {
+        labels: { { payment_stats.daily_labels | safe } },
+        booking: { { payment_stats.booking_daily_counts | safe } },
+        rent2: { { payment_stats.rent_2_daily_counts | safe } },
+        rent3: { { payment_stats.rent_3_daily_counts | safe } }
+    }
     };
 
     let bookingChartInstance = null;
@@ -3599,15 +3694,24 @@
 <div id="settings-section-coverage" class="settings-section-content" style="display: none;">
     <div class="row animate__animated animate__fadeIn" style="margin-top: 2rem;">
         <div class="col-12" style="margin-bottom: 1.5rem;">
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem;">
-                <h3
-                    style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-map-location-dot" style="color: var(--color-gold);"></i> TRUST Service Area
-                    Expansion Manager
-                </h3>
-                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Manage the multi-layered
-                    geographic coverage (District &rarr; Division &rarr; Village) where trust services are active.</p>
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-map-location-dot" style="color: var(--color-gold);"></i> TRUST Service Area Expansion Manager
+                    </h3>
+                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">
+                        Manage multi-layered geographic coverage (District &rarr; Division &rarr; Village) or bulk upload Excel/CSV files.
+                    </p>
+                </div>
+                
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <a href="{% url 'admin_dashboard' %}?action=download_area_template" class="btn" style="padding: 0.65rem 1.15rem; font-size: 0.85rem; border-radius: 8px; background: rgba(203, 163, 88, 0.12); color: var(--color-gold-dark, #b48328); border: 1px solid rgba(203, 163, 88, 0.3); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-solid fa-file-csv"></i> Download Template
+                    </a>
+                    <button type="button" onclick="openUploadAreasModal()" class="btn btn-emerald" style="padding: 0.65rem 1.25rem; font-size: 0.85rem; border-radius: 8px; background: var(--color-emerald-darkest); color: white; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem; box-shadow: 0 4px 12px rgba(4, 61, 44, 0.2);">
+                        <i class="fa-solid fa-file-excel"></i> Upload Areas (Excel / CSV)
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -3843,7 +3947,57 @@
                     </div>
 
                 </div>
+    <!-- Upload Geographic Areas Modal -->
+    <div id="upload-areas-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 10000; justify-content: center; align-items: center; padding: 1.5rem;">
+        <div class="animate__animated animate__zoomIn" style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 540px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); overflow: hidden;">
+            <!-- Modal Header -->
+            <div style="background: linear-gradient(135deg, #043d2c, #064e3b); padding: 1.25rem 1.75rem; color: white; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; color: white;">
+                    <i class="fa-solid fa-file-excel" style="color: #f59e0b;"></i> Bulk Upload Geographic Areas
+                </h3>
+                <button type="button" onclick="closeUploadAreasModal()" style="background: none; border: none; color: #a7f3d0; font-size: 1.25rem; cursor: pointer; padding: 0;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
+
+            <!-- Modal Body Form -->
+            <form method="POST" enctype="multipart/form-data" action="{% url 'admin_dashboard' %}" style="padding: 1.75rem; margin: 0; display: flex; flex-direction: column; gap: 1.25rem;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="upload_service_areas">
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem 1.25rem;">
+                    <h5 style="margin: 0 0 0.5rem 0; font-size: 0.85rem; font-weight: 700; color: #1e293b;">
+                        Required Excel / CSV Columns
+                    </h5>
+                    <p style="margin: 0 0 0.65rem 0; font-size: 0.8rem; color: #64748b;">
+                        Your uploaded file must contain the following 3 column headers in position:
+                    </p>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <span style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 6px;">1. District</span>
+                        <span style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 6px;">2. Division</span>
+                        <span style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 6px;">3. Village</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">Select Excel (.xlsx, .xls) or CSV (.csv) File *</label>
+                    <input type="file" name="areas_file" accept=".csv, .xlsx, .xls" required style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; background: white;">
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 1.25rem; margin-top: 0.5rem;">
+                    <a href="{% url 'admin_dashboard' %}?action=download_area_template" style="font-size: 0.82rem; font-weight: 700; color: var(--color-emerald-darkest); text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <i class="fa-solid fa-download"></i> Download Template File
+                    </a>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" onclick="closeUploadAreasModal()" class="btn" style="padding: 0.6rem 1.1rem; border-radius: 8px; background: #f1f5f9; color: #475569; font-weight: 600; font-size: 0.85rem; border: none; cursor: pointer;">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-emerald" style="padding: 0.6rem 1.25rem; border-radius: 8px; background: var(--color-emerald-darkest); color: white; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(4, 61, 44, 0.2);">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Process
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div><!-- End Geographic Coverage section -->
@@ -4598,6 +4752,16 @@
 {% endif %}
 
 <script>
+    function openUploadAreasModal() {
+        const modal = document.getElementById('upload-areas-modal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeUploadAreasModal() {
+        const modal = document.getElementById('upload-areas-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
     function openAddOfficeModal() {
         const modal = document.getElementById('add-office-modal');
         if (modal) modal.style.display = 'flex';

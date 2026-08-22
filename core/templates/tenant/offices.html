@@ -193,14 +193,31 @@ body {
         </div>
 
         <!-- Filter Input Bar -->
-        <div class="filters" style="display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; justify-content: space-between;">
+        <div class="filters" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
             <input type="hidden" name="office_type" value="{{ office_type|default:'all' }}">
             
-            <div style="flex: 3; min-width: 200px;">
-                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Location / Building name or area..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
+            <div style="flex: 1.5; min-width: 150px;">
+                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Keyword or Building..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
             </div>
 
-            <div style="flex: 2; min-width: 180px; display: flex; gap: 0.4rem; align-items: center;">
+            <!-- Cascading Location Controls (District -> Division -> Village) -->
+            <div style="flex: 1.2; min-width: 130px;">
+                <select name="district" id="office-district-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;">
+                    <option value="">District</option>
+                </select>
+            </div>
+            <div style="flex: 1.2; min-width: 130px;">
+                <select name="division" id="office-division-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;" disabled>
+                    <option value="">Division</option>
+                </select>
+            </div>
+            <div style="flex: 1.2; min-width: 130px;">
+                <select name="village" id="office-village-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;" disabled>
+                    <option value="">Village</option>
+                </select>
+            </div>
+
+            <div style="flex: 1.5; min-width: 170px; display: flex; gap: 0.35rem; align-items: center;">
                 <input type="number" name="min_price" value="{{ min_price|default:'' }}" placeholder="Min UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
                 <span style="color: var(--color-text-muted); font-size: 0.85rem;">-</span>
                 <input type="number" name="max_price" value="{{ max_price|default:'' }}" placeholder="Max UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
@@ -210,7 +227,7 @@ body {
                 <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.35rem; font-weight: 700; border-radius: 10px;">
                     Filter
                 </button>
-                {% if q or min_price or max_price or office_type != 'all' %}
+                {% if q or district or division or village or min_price or max_price or office_type != 'all' %}
                 <a href="{% url 'offices' %}" class="btn btn-outline" style="padding: 0.65rem 0.85rem; text-decoration: none; border-radius: 10px;">Clear</a>
                 {% endif %}
             </div>
@@ -285,5 +302,16 @@ function toggleMobileOfficeFilter() {
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    initCascadingLocationFilters(
+        document.getElementById('office-district-select'),
+        document.getElementById('office-division-select'),
+        document.getElementById('office-village-select'),
+        "{{ district|escapejs }}",
+        "{{ division|escapejs }}",
+        "{{ village|escapejs }}"
+    );
+});
 </script>
 {% endblock %}

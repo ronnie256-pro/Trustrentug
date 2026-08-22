@@ -365,7 +365,24 @@
         <!-- Centered Filter Items Wrapper -->
         <div class="filter-items-wrapper" id="filter-items-wrapper">
             <div class="nearby-filter-item">
-                <input type="text" id="filter-search-input" placeholder="Search location or title..." style="width: 240px; color: #1e1b18;" oninput="fetchNearbyProperties()" onkeydown="if(event.key==='Enter') fetchNearbyProperties();">
+                <input type="text" id="filter-search-input" placeholder="Search location or title..." style="width: 200px; color: #1e1b18;" oninput="fetchNearbyProperties()" onkeydown="if(event.key==='Enter') fetchNearbyProperties();">
+            </div>
+
+            <!-- Cascading Location Controls (District -> Division -> Village) -->
+            <div class="nearby-filter-item">
+                <select id="nearby-district-select" style="color: #1e1b18; font-weight: 700; cursor: pointer;">
+                    <option value="">District</option>
+                </select>
+            </div>
+            <div class="nearby-filter-item">
+                <select id="nearby-division-select" style="color: #1e1b18; font-weight: 700; cursor: pointer;" disabled>
+                    <option value="">Division</option>
+                </select>
+            </div>
+            <div class="nearby-filter-item">
+                <select id="nearby-village-select" style="color: #1e1b18; font-weight: 700; cursor: pointer;" disabled>
+                    <option value="">Village</option>
+                </select>
             </div>
 
             <div class="nearby-filter-item">
@@ -485,6 +502,16 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         initLeafletMap();
+
+        initCascadingLocationFilters(
+            document.getElementById('nearby-district-select'),
+            document.getElementById('nearby-division-select'),
+            document.getElementById('nearby-village-select'),
+            "", "", "",
+            function () {
+                fetchNearbyProperties();
+            }
+        );
 
         const urlParams = new URLSearchParams(window.location.search);
         const paramLat = urlParams.get('lat');
@@ -620,7 +647,15 @@
         const query = document.getElementById('filter-search-input').value.trim();
         const propType = document.getElementById('filter-type').value;
 
-        const url = `/api/properties/nearby/?lat=${currentLat}&lng=${currentLng}&radius=${radius}&q=${encodeURIComponent(query)}&type=${encodeURIComponent(propType)}`;
+        const distEl = document.getElementById('nearby-district-select');
+        const divEl = document.getElementById('nearby-division-select');
+        const villEl = document.getElementById('nearby-village-select');
+
+        const districtVal = distEl ? distEl.value : '';
+        const divisionVal = divEl ? divEl.value : '';
+        const villageVal = villEl ? villEl.value : '';
+
+        const url = `/api/properties/nearby/?lat=${currentLat}&lng=${currentLng}&radius=${radius}&q=${encodeURIComponent(query)}&type=${encodeURIComponent(propType)}&district=${encodeURIComponent(districtVal)}&division=${encodeURIComponent(divisionVal)}&village=${encodeURIComponent(villageVal)}`;
 
         fetch(url)
             .then(res => res.json())

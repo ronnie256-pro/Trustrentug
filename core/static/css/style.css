@@ -291,7 +291,7 @@ footer {
   background-color: var(--color-emerald-darkest);
   color: rgba(255, 255, 255, 0.7);
   padding: 4rem 0 2rem;
-  margin-top: 4rem;
+  margin-top: auto;
 }
 
 footer h4 {

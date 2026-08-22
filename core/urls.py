@@ -43,6 +43,7 @@ urlpatterns = [
     path('projects/construction-dashboard/', views.client_construction_dashboard, name='client_construction_dashboard'),
     path('projects/construction-dashboard/<int:app_id>/', views.client_construction_dashboard, name='client_construction_dashboard_detail'),
     path('api/properties/nearby/', views.api_nearby_properties, name='api_nearby_properties'),
+    path('api/location-cascade/', views.api_location_cascade, name='api_location_cascade'),
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
     path('property/<int:property_id>/tour/', views.property_tour_view, name='property_tour'),
     path('checkout/<int:property_id>/', views.checkout_view, name='checkout'),

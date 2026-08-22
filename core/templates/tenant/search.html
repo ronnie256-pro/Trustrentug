@@ -282,14 +282,31 @@ body {
         </div>
 
         <!-- 2. HORIZONTAL FILTER BAR CONTAINER -->
-        <div style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06); display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; justify-content: space-between;">
-            <!-- Location Filter -->
-            <div style="flex: 2; min-width: 180px;">
-                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Location / Area or title..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
+        <div style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06); display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
+            <!-- Keyword / Address Input -->
+            <div style="flex: 1.5; min-width: 150px;">
+                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Keyword or Address..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
+            </div>
+
+            <!-- Cascading Location Controls (District -> Division -> Village) -->
+            <div style="flex: 1.2; min-width: 130px;">
+                <select name="district" id="search-district-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;">
+                    <option value="">District</option>
+                </select>
+            </div>
+            <div style="flex: 1.2; min-width: 130px;">
+                <select name="division" id="search-division-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;" disabled>
+                    <option value="">Division</option>
+                </select>
+            </div>
+            <div style="flex: 1.2; min-width: 130px;">
+                <select name="village" id="search-village-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;" disabled>
+                    <option value="">Village</option>
+                </select>
             </div>
 
             <!-- Property Type Filter -->
-            <div style="flex: 1.5; min-width: 160px;">
+            <div style="flex: 1.2; min-width: 140px;">
                 <select name="type" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;">
                     <option value="" {% if not type %}selected{% endif %}>All Property Types</option>
                     <option value="apartment" {% if type == 'apartment' %}selected{% endif %}>Apartment</option>
@@ -300,7 +317,7 @@ body {
             </div>
 
             <!-- Price Range Filter -->
-            <div style="flex: 2; min-width: 200px; display: flex; gap: 0.4rem; align-items: center;">
+            <div style="flex: 1.5; min-width: 170px; display: flex; gap: 0.35rem; align-items: center;">
                 <input type="number" name="min_price" value="{{ min_price|default:'' }}" placeholder="Min UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
                 <span style="color: var(--color-text-muted); font-size: 0.85rem;">-</span>
                 <input type="number" name="max_price" value="{{ max_price|default:'' }}" placeholder="Max UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
@@ -308,13 +325,13 @@ body {
 
             <!-- Filter Buttons -->
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 700; border-radius: 10px; display: flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-magnifying-glass"></i> Filter
+                <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 700; border-radius: 10px;">
+                    Filter
                 </button>
-                <a href="{% url 'nearby_properties' %}" class="btn btn-gold" style="padding: 0.65rem 1rem; text-decoration: none; font-weight: 700; border-radius: 10px; white-space: nowrap; display: flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-map-location-dot"></i> Map
+                <a href="{% url 'nearby_properties' %}" class="btn btn-gold" style="padding: 0.65rem 1rem; text-decoration: none; font-weight: 700; border-radius: 10px; white-space: nowrap;">
+                    Map
                 </a>
-                {% if q or type or min_price or max_price or for_sale %}
+                {% if q or district or division or village or type or min_price or max_price or for_sale %}
                 <a href="{% url 'search' %}" class="btn btn-outline" style="padding: 0.65rem 0.85rem; text-decoration: none; border-radius: 10px;" title="Reset All Filters">Clear</a>
                 {% endif %}
             </div>
@@ -439,6 +456,16 @@ document.addEventListener('DOMContentLoaded', function() {
             filterForm.classList.remove('is-open');
         });
     }
+
+    // Initialize Cascading Location Filters
+    initCascadingLocationFilters(
+        document.getElementById('search-district-select'),
+        document.getElementById('search-division-select'),
+        document.getElementById('search-village-select'),
+        "{{ district|escapejs }}",
+        "{{ division|escapejs }}",
+        "{{ village|escapejs }}"
+    );
 });
 </script>
 {% endblock %}

@@ -31,6 +31,24 @@
             overflow-x: hidden !important;
             width: 100% !important;
             max-width: 100% !important;
+            min-height: 100vh;
+        }
+
+        body {
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+        }
+
+        main {
+            flex: 1 0 auto !important;
+            width: 100%;
+        }
+
+        footer {
+            flex-shrink: 0 !important;
+            margin-top: auto !important;
         }
 
         .navbar {
@@ -506,6 +524,120 @@
         function closeAdminAuthModal() {
             const modal = document.getElementById('adminAuthModal');
             if (modal) modal.style.display = 'none';
+        }
+
+        // Shared Cascading Location Filters Helper (District -> Division -> Village)
+        window.locationHierarchyCache = null;
+
+        function initCascadingLocationFilters(districtEl, divisionEl, villageEl, selectedDistrict = '', selectedDivision = '', selectedVillage = '', onLocationChange = null) {
+            if (!districtEl || !divisionEl || !villageEl) return;
+
+            function populateDistricts(districts) {
+                districtEl.innerHTML = '<option value="">District</option>';
+                districts.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.name;
+                    opt.dataset.id = d.id;
+                    opt.textContent = d.name;
+                    if (selectedDistrict && d.name.toLowerCase() === selectedDistrict.toLowerCase()) {
+                        opt.selected = true;
+                    }
+                    districtEl.appendChild(opt);
+                });
+                updateDivisions();
+            }
+
+            function updateDivisions() {
+                const selectedOpt = districtEl.options[districtEl.selectedIndex];
+                const districtId = selectedOpt ? selectedOpt.dataset.id : null;
+                const districtName = districtEl.value;
+
+                divisionEl.innerHTML = '<option value="">Division</option>';
+                villageEl.innerHTML = '<option value="">Village</option>';
+                divisionEl.disabled = !districtName;
+                villageEl.disabled = true;
+
+                if (!districtName || !window.locationHierarchyCache) return;
+
+                const filteredDivisions = window.locationHierarchyCache.divisions.filter(d => {
+                    if (districtId) return String(d.district_id) === String(districtId);
+                    return true;
+                });
+
+                filteredDivisions.forEach(div => {
+                    const opt = document.createElement('option');
+                    opt.value = div.name;
+                    opt.dataset.id = div.id;
+                    opt.textContent = div.name;
+                    if (selectedDivision && div.name.toLowerCase() === selectedDivision.toLowerCase()) {
+                        opt.selected = true;
+                    }
+                    divisionEl.appendChild(opt);
+                });
+
+                if (divisionEl.value) {
+                    updateVillages();
+                }
+            }
+
+            function updateVillages() {
+                const selectedOpt = divisionEl.options[divisionEl.selectedIndex];
+                const divisionId = selectedOpt ? selectedOpt.dataset.id : null;
+                const divisionName = divisionEl.value;
+
+                villageEl.innerHTML = '<option value="">Village</option>';
+                villageEl.disabled = !divisionName;
+
+                if (!divisionName || !window.locationHierarchyCache) return;
+
+                const filteredVillages = window.locationHierarchyCache.villages.filter(v => {
+                    if (divisionId) return String(v.division_id) === String(divisionId);
+                    return true;
+                });
+
+                filteredVillages.forEach(v => {
+                    const opt = document.createElement('option');
+                    opt.value = v.name;
+                    opt.dataset.id = v.id;
+                    opt.textContent = v.name;
+                    if (selectedVillage && v.name.toLowerCase() === selectedVillage.toLowerCase()) {
+                        opt.selected = true;
+                    }
+                    villageEl.appendChild(opt);
+                });
+            }
+
+            districtEl.addEventListener('change', function () {
+                selectedDistrict = districtEl.value;
+                selectedDivision = '';
+                selectedVillage = '';
+                updateDivisions();
+                if (typeof onLocationChange === 'function') onLocationChange();
+            });
+
+            divisionEl.addEventListener('change', function () {
+                selectedDivision = divisionEl.value;
+                selectedVillage = '';
+                updateVillages();
+                if (typeof onLocationChange === 'function') onLocationChange();
+            });
+
+            villageEl.addEventListener('change', function () {
+                selectedVillage = villageEl.value;
+                if (typeof onLocationChange === 'function') onLocationChange();
+            });
+
+            if (window.locationHierarchyCache) {
+                populateDistricts(window.locationHierarchyCache.districts);
+            } else {
+                fetch('/api/location-cascade/')
+                    .then(res => res.json())
+                    .then(data => {
+                        window.locationHierarchyCache = data;
+                        populateDistricts(data.districts);
+                    })
+                    .catch(err => console.error('Error fetching location cascade data:', err));
+            }
         }
     </script>
     {% block extra_js %}{% endblock %}

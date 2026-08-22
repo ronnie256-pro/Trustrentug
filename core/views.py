@@ -391,10 +391,107 @@ def admin_dashboard(request):
         
     tab = request.GET.get('tab', 'overview')
     
+    if request.GET.get('action') == 'download_area_template':
+        import csv
+        from django.http import HttpResponse
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="geographic_areas_template.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['District', 'Division', 'Village'])
+        writer.writerow(['Kampala (City)', 'Central Division', 'Nakasero I'])
+        writer.writerow(['Kampala (City)', 'Central Division', 'Nakasero II'])
+        writer.writerow(['Kampala (City)', 'Central Division', 'Kololo I'])
+        writer.writerow(['Entebbe (Municipality)', 'Division A', 'Airport Zone'])
+        writer.writerow(['Wakiso', 'Kira Municipality', 'Kyaliwajjala'])
+        writer.writerow(['Mukono', 'Goma Division', 'Seeta'])
+        return response
+
     # Handle form submissions for agents & roles
     if request.method == 'POST':
         action = request.POST.get('action')
-        if action == 'add_role':
+        if action == 'upload_service_areas':
+            uploaded_file = request.FILES.get('areas_file')
+            if not uploaded_file:
+                messages.error(request, "Please select a valid CSV or Excel file to upload.")
+                return redirect('/admin-dashboard/?tab=settings')
+
+            filename = uploaded_file.name.lower()
+            districts_created = 0
+            divisions_created = 0
+            villages_created = 0
+            total_rows = 0
+
+            try:
+                rows_data = []
+
+                if filename.endswith('.csv'):
+                    import csv
+                    decoded_file = uploaded_file.read().decode('utf-8-sig', errors='ignore').splitlines()
+                    reader = csv.reader(decoded_file)
+                    for row in reader:
+                        if row and any(row):
+                            rows_data.append(row)
+
+                elif filename.endswith(('.xlsx', '.xls')):
+                    import openpyxl
+                    wb = openpyxl.load_workbook(uploaded_file, data_only=True)
+                    sheet = wb.active
+                    for row in sheet.iter_rows(values_only=True):
+                        if row and any(row):
+                            rows_data.append([str(c).strip() if c is not None else '' for c in row])
+
+                if not rows_data:
+                    messages.error(request, "The uploaded file is empty.")
+                    return redirect('/admin-dashboard/?tab=settings')
+
+                header = [str(c).strip().lower() for c in rows_data[0]]
+                dist_idx = 0
+                div_idx = 1
+                vill_idx = 2
+
+                for i, col in enumerate(header):
+                    if 'district' in col:
+                        dist_idx = i
+                    elif 'division' in col or 'municipality' in col:
+                        div_idx = i
+                    elif 'village' in col or 'cell' in col or 'zone' in col:
+                        vill_idx = i
+
+                data_rows = rows_data[1:]
+                for row in data_rows:
+                    if len(row) <= max(dist_idx, div_idx, vill_idx):
+                        continue
+                    district_val = str(row[dist_idx]).strip()
+                    division_val = str(row[div_idx]).strip()
+                    village_val = str(row[vill_idx]).strip()
+
+                    if not district_val or not division_val or not village_val:
+                        continue
+                    if district_val.lower() == 'district' and division_val.lower() == 'division':
+                        continue
+
+                    d_obj, d_created = ServiceDistrict.objects.get_or_create(name=district_val)
+                    if d_created:
+                        districts_created += 1
+
+                    div_obj, div_created = ServiceDivision.objects.get_or_create(district=d_obj, name=division_val)
+                    if div_created:
+                        divisions_created += 1
+
+                    v_obj, v_created = ServiceVillage.objects.get_or_create(division=div_obj, name=village_val)
+                    if v_created:
+                        villages_created += 1
+
+                    total_rows += 1
+
+                messages.success(request, f"Successfully uploaded geographic areas! Processed {total_rows} entries ({districts_created} new district(s), {divisions_created} new division(s), {villages_created} new village(s)).")
+
+            except Exception as e:
+                messages.error(request, f"Error processing file upload: {str(e)}")
+
+            return redirect('/admin-dashboard/?tab=settings')
+
+        elif action == 'add_role':
             role_name = request.POST.get('role_name', '').strip()
             role_description = request.POST.get('role_description', '').strip()
             if role_name:
@@ -1785,8 +1882,25 @@ def search_view(request):
         Q(title__icontains='office') | Q(title__icontains='desk space') | Q(title__icontains='co-working')
     )
     
-    # 1. Location search
+    # 1. Location search (q, district, division, village)
     q = request.GET.get('q', '').strip()
+    district_param = request.GET.get('district', '').strip()
+    division_param = request.GET.get('division', '').strip()
+    village_param = request.GET.get('village', '').strip()
+
+    if village_param:
+        properties = properties.filter(
+            Q(location__icontains=village_param) | Q(title__icontains=village_param) | Q(description__icontains=village_param)
+        )
+    elif division_param:
+        properties = properties.filter(
+            Q(location__icontains=division_param) | Q(title__icontains=division_param) | Q(description__icontains=division_param)
+        )
+    elif district_param:
+        properties = properties.filter(
+            Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
+        )
+
     if q:
         properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
         
@@ -1857,6 +1971,9 @@ def search_view(request):
         'properties': properties,
         'total_count': total_count,
         'q': q,
+        'district': district_param,
+        'division': division_param,
+        'village': village_param,
         'type': p_type,
         'min_price': min_price,
         'max_price': max_price,
@@ -1893,6 +2010,23 @@ def offices_view(request):
             Q(category='shared_office') | Q(title__icontains='shared') | Q(title__icontains='co-working') | Q(description__icontains='shared')
         )
 
+    district_param = request.GET.get('district', '').strip()
+    division_param = request.GET.get('division', '').strip()
+    village_param = request.GET.get('village', '').strip()
+
+    if village_param:
+        properties = properties.filter(
+            Q(location__icontains=village_param) | Q(title__icontains=village_param) | Q(description__icontains=village_param)
+        )
+    elif division_param:
+        properties = properties.filter(
+            Q(location__icontains=division_param) | Q(title__icontains=division_param) | Q(description__icontains=division_param)
+        )
+    elif district_param:
+        properties = properties.filter(
+            Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
+        )
+
     q = request.GET.get('q', '').strip()
     if q:
         properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
@@ -1915,6 +2049,9 @@ def offices_view(request):
         'total_count': total_count,
         'office_type': office_type,
         'q': q,
+        'district': district_param,
+        'division': division_param,
+        'village': village_param,
         'min_price': min_price,
         'max_price': max_price,
         'active_popup': active_popup
@@ -2234,10 +2371,26 @@ def api_nearby_properties(request):
         radius_km = 2.0
         
     q = request.GET.get('q', '').strip().lower()
+    district_param = request.GET.get('district', '').strip()
+    division_param = request.GET.get('division', '').strip()
+    village_param = request.GET.get('village', '').strip()
     p_type = request.GET.get('type', '').strip().lower()
     
     properties = Property.objects.filter(status='available', parent=None).exclude(latitude=None).exclude(longitude=None)
     
+    if village_param:
+        properties = properties.filter(
+            Q(location__icontains=village_param) | Q(title__icontains=village_param) | Q(description__icontains=village_param)
+        )
+    elif division_param:
+        properties = properties.filter(
+            Q(location__icontains=division_param) | Q(title__icontains=division_param) | Q(description__icontains=division_param)
+        )
+    elif district_param:
+        properties = properties.filter(
+            Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
+        )
+
     if q:
         properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
         
@@ -2287,6 +2440,32 @@ def api_nearby_properties(request):
         'radius_km': radius_km,
         'count': len(results),
         'properties': results
+    })
+
+
+def api_location_cascade(request):
+    """
+    API returning Districts, Divisions, and Villages for dynamic cascading dropdowns.
+    """
+    district_id = request.GET.get('district_id')
+    division_id = request.GET.get('division_id')
+
+    if district_id and district_id.isdigit():
+        divisions = ServiceDivision.objects.filter(district_id=int(district_id)).order_by('name')
+        return JsonResponse({'divisions': [{'id': d.id, 'name': d.name} for d in divisions]})
+
+    if division_id and division_id.isdigit():
+        villages = ServiceVillage.objects.filter(division_id=int(division_id)).order_by('name')
+        return JsonResponse({'villages': [{'id': v.id, 'name': v.name} for v in villages]})
+
+    districts = ServiceDistrict.objects.all().order_by('name')
+    divisions = ServiceDivision.objects.all().select_related('district').order_by('name')
+    villages = ServiceVillage.objects.all().select_related('division').order_by('name')
+
+    return JsonResponse({
+        'districts': [{'id': d.id, 'name': d.name} for d in districts],
+        'divisions': [{'id': d.id, 'district_id': d.district_id, 'name': d.name} for d in divisions],
+        'villages': [{'id': v.id, 'division_id': v.division_id, 'name': v.name} for v in villages],
     })
 
 # --- TENANT DASHBOARD VIEWS ---
