@@ -780,7 +780,7 @@ def admin_dashboard(request):
                 messages.success(request, "Site branding updated successfully!")
             except Exception as e:
                 messages.error(request, f"Error updating site branding: {str(e)}")
-            return redirect('/admin-dashboard/?tab=settings')
+            return redirect('/admin-dashboard/?tab=settings&section=branding')
 
         elif action == 'upload_hero_video':
             video_title = request.POST.get('video_title', '').strip() or 'Estate Hero Video'
@@ -794,7 +794,7 @@ def admin_dashboard(request):
                 messages.success(request, f"Hero video '{video_title}' uploaded successfully!")
             else:
                 messages.error(request, "Please select a valid video file (MP4/WebM).")
-            return redirect('/admin-dashboard/?tab=settings')
+            return redirect('/admin-dashboard/?tab=settings&section=popups')
 
         elif action == 'approve_tenant':
             tenant_id = request.POST.get('tenant_id')
@@ -1494,6 +1494,7 @@ def admin_dashboard(request):
         'slider_images': slider_images,
         'office_amenities': office_amenities,
         'property_categories': PropertyCategory.objects.all().order_by('group', 'name'),
+        'active_section': request.GET.get('section', 'categories') or 'categories',
         'current_tab': tab
     })
 
@@ -1522,7 +1523,7 @@ def admin_add_property_category(request):
             else:
                 messages.success(request, f"House Category '{name}' added successfully.")
 
-    return redirect('/admin-dashboard/?tab=settings')
+    return redirect('/admin-dashboard/?tab=settings&section=categories')
 
 
 def admin_delete_property_category(request, category_id):
@@ -1534,7 +1535,7 @@ def admin_delete_property_category(request, category_id):
     cat_name = cat.name
     cat.delete()
     messages.success(request, f"House Category '{cat_name}' removed successfully.")
-    return redirect('/admin-dashboard/?tab=settings')
+    return redirect('/admin-dashboard/?tab=settings&section=categories')
 
 
 def admin_toggle_property_category(request, category_id):
@@ -1547,7 +1548,7 @@ def admin_toggle_property_category(request, category_id):
     cat.save()
     status_str = "activated" if cat.is_active else "deactivated"
     messages.success(request, f"House Category '{cat.name}' {status_str}.")
-    return redirect('/admin-dashboard/?tab=settings')
+    return redirect('/admin-dashboard/?tab=settings&section=categories')
 
 
 

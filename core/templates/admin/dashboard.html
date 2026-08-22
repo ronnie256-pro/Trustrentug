@@ -3267,481 +3267,148 @@
 
 {% elif current_tab == 'settings' %}
 
-<!-- Premium Settings Sub-Navigation Menu -->
-<div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+<!-- Settings Sub-Navigation Header -->
+<div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
     <div class="col-12">
-        <div
-            style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <span
-                    style="background: rgba(203, 163, 88, 0.08); color: var(--color-gold); width: 42px; height: 42px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 1px solid rgba(203, 163, 88, 0.2);">
-                    <i class="fa-solid fa-gears"></i>
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.25rem 1.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+                <span style="background: rgba(203, 163, 88, 0.1); color: var(--color-gold); width: 44px; height: 44px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.35rem; border: 1px solid rgba(203, 163, 88, 0.25);">
+                    <i class="fa-solid fa-sliders"></i>
                 </span>
                 <div>
-                    <h3
-                        style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; font-weight: 600;">
-                        System Settings Control Center</h3>
-                    <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">Configure global parameters,
-                        executive teams, active service areas, and marketing logic.</p>
+                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.2rem; font-weight: 700;">
+                        System Settings Control Center
+                    </h3>
+                    <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.82rem;">
+                        Manage global parameters, house categories, amenities, executive board, service regions, popup campaigns, and site branding.
+                    </p>
                 </div>
             </div>
 
-            <div style="display: flex; background: #e2e8f0; border-radius: 8px; padding: 0.25rem; gap: 0.25rem; flex-wrap: wrap;"
-                id="settings-nav-tabs">
-                <button onclick="switchSettingsSection('amenities', this)" class="settings-nav-btn active"
-                    style="background: white; color: var(--color-emerald-darkest); border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <!-- Navigation Buttons -->
+            <div style="display: flex; background: #f1f5f9; border-radius: 10px; padding: 0.35rem; gap: 0.35rem; flex-wrap: wrap; border: 1px solid #cbd5e1;" id="settings-nav-tabs">
+                <a href="/admin-dashboard/?tab=settings&section=categories" onclick="switchSettingsSection('categories', event); return false;" id="tab-btn-categories" class="settings-nav-btn {% if active_section == 'categories' or not active_section %}active{% endif %}" style="text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.45rem; {% if active_section == 'categories' or not active_section %}background: white; color: var(--color-emerald-darkest); box-shadow: 0 2px 5px rgba(0,0,0,0.08);{% else %}background: transparent; color: #475569;{% endif %}">
+                    <i class="fa-solid fa-house-chimney" style="color: var(--color-gold);"></i> House Types & Categories
+                </a>
+                <a href="/admin-dashboard/?tab=settings&section=amenities" onclick="switchSettingsSection('amenities', event); return false;" id="tab-btn-amenities" class="settings-nav-btn {% if active_section == 'amenities' %}active{% endif %}" style="text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.45rem; {% if active_section == 'amenities' %}background: white; color: var(--color-emerald-darkest); box-shadow: 0 2px 5px rgba(0,0,0,0.08);{% else %}background: transparent; color: #475569;{% endif %}">
                     <i class="fa-solid fa-hotel" style="color: var(--color-gold);"></i> Amenities & Services
-                </button>
-                <button onclick="switchSettingsSection('committee', this)" class="settings-nav-btn"
-                    style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-users-rectangle"></i> Committee Board
-                </button>
-                <button onclick="switchSettingsSection('categories', this)" class="settings-nav-btn"
-                    style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-house-chimney"></i> House Types & Categories
-                </button>
-                <button onclick="switchSettingsSection('coverage', this)" class="settings-nav-btn"
-                    style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-map-location-dot"></i> Geographic Coverage
-                </button>
-                <button onclick="switchSettingsSection('popups', this)" class="settings-nav-btn"
-                    style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-rectangle-ad"></i> Popup Campaigns
-                </button>
-                <button onclick="switchSettingsSection('branding', this)" class="settings-nav-btn"
-                    style="background: transparent; color: #475569; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-palette"></i> Site Branding
-                </button>
+                </a>
+                <a href="/admin-dashboard/?tab=settings&section=committee" onclick="switchSettingsSection('committee', event); return false;" id="tab-btn-committee" class="settings-nav-btn {% if active_section == 'committee' %}active{% endif %}" style="text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.45rem; {% if active_section == 'committee' %}background: white; color: var(--color-emerald-darkest); box-shadow: 0 2px 5px rgba(0,0,0,0.08);{% else %}background: transparent; color: #475569;{% endif %}">
+                    <i class="fa-solid fa-users-rectangle" style="color: var(--color-gold);"></i> Committee Board
+                </a>
+                <a href="/admin-dashboard/?tab=settings&section=coverage" onclick="switchSettingsSection('coverage', event); return false;" id="tab-btn-coverage" class="settings-nav-btn {% if active_section == 'coverage' %}active{% endif %}" style="text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.45rem; {% if active_section == 'coverage' %}background: white; color: var(--color-emerald-darkest); box-shadow: 0 2px 5px rgba(0,0,0,0.08);{% else %}background: transparent; color: #475569;{% endif %}">
+                    <i class="fa-solid fa-map-location-dot" style="color: var(--color-gold);"></i> Geographic Coverage
+                </a>
+                <a href="/admin-dashboard/?tab=settings&section=popups" onclick="switchSettingsSection('popups', event); return false;" id="tab-btn-popups" class="settings-nav-btn {% if active_section == 'popups' %}active{% endif %}" style="text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.45rem; {% if active_section == 'popups' %}background: white; color: var(--color-emerald-darkest); box-shadow: 0 2px 5px rgba(0,0,0,0.08);{% else %}background: transparent; color: #475569;{% endif %}">
+                    <i class="fa-solid fa-rectangle-ad" style="color: var(--color-gold);"></i> Popup Campaigns
+                </a>
+                <a href="/admin-dashboard/?tab=settings&section=branding" onclick="switchSettingsSection('branding', event); return false;" id="tab-btn-branding" class="settings-nav-btn {% if active_section == 'branding' %}active{% endif %}" style="text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 0.45rem; {% if active_section == 'branding' %}background: white; color: var(--color-emerald-darkest); box-shadow: 0 2px 5px rgba(0,0,0,0.08);{% else %}background: transparent; color: #475569;{% endif %}">
+                    <i class="fa-solid fa-palette" style="color: var(--color-gold);"></i> Site Branding
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<div id="settings-section-amenities" class="settings-section-content" style="display: block;">
-    <div class="row animate__animated animate__fadeIn" style="margin-top: 1rem;">
-        <!-- LEFT PANEL: Property Amenities & Layers Manager -->
-        <div class="col-lg-7" style="margin-bottom: 2rem;">
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
-                <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <h3
-                        style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-hotel" style="color: var(--color-gold);"></i> TRUST Property Amenities &
-                        Detail Layers
-                    </h3>
-                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Manage Core, Verification, and
-                        Luxury/Optional features across the TRUST property registry</p>
-                </div>
+<!-- ========================================== -->
+<!-- 1. HOUSE TYPES & CATEGORIES MANAGER SECTION -->
+<!-- ========================================== -->
+<div id="settings-section-categories" class="settings-section-content" style="display: {% if active_section == 'categories' or not active_section %}block{% else %}none{% endif %};">
+    <div class="row animate__animated animate__fadeIn">
+        <!-- LEFT: Add Category Form -->
+        <div class="col-lg-4" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem;">
+                <h4 style="margin: 0 0 0.4rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-plus-circle" style="color: var(--color-gold);"></i> Add House Category
+                </h4>
+                <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.82rem;">
+                    Define custom house categories (e.g. Single Room, Double Room, Luxury Studio) that auto-propagate to landlord forms and search filters.
+                </p>
 
-                <div style="padding: 2rem; display: flex; flex-direction: column; gap: 2rem;">
-                    <!-- 3 Primary Scaling Layers -->
-                    <div>
-                        <h4
-                            style="margin: 0 0 1rem 0; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-emerald-dark); font-weight: 700; display: flex; align-items: center; gap: 0.35rem;">
-                            <i class="fa-solid fa-layer-group"></i> Primary Detail Layers
-                        </h4>
-
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
-                            <!-- Core Details -->
-                            <div
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-top: 3px solid var(--color-emerald);">
-                                <h5
-                                    style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #1e293b;">
-                                    1. Core Details</h5>
-                                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-                                    {% for a in amenities %}
-                                    {% if a.layer == 'core' %}
-                                    <span
-                                        style="font-size: 0.75rem; background: white; border: 1px solid #cbd5e1; color: #334155; padding: 0.2rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                        <i class="fa-solid {{ a.icon_class }}"
-                                            style="color: var(--color-emerald); font-size: 0.75rem;"></i>
-                                        {{ a.name }}
-                                        <form action="{% url 'admin_dashboard' %}" method="POST"
-                                            style="margin: 0; display: inline;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="action" value="delete_amenity">
-                                            <input type="hidden" name="amenity_id" value="{{ a.id }}">
-                                            <button type="submit"
-                                                style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i
-                                                    class="fa-solid fa-xmark"></i></button>
-                                        </form>
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-
-                            <!-- Luxury Amenities -->
-                            <div
-                                style="background: #fdfefe; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; border-top: 3px solid #0284c7;">
-                                <h5
-                                    style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #0284c7;">
-                                    2. Luxury Extras</h5>
-                                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-                                    {% for a in amenities %}
-                                    {% if a.layer == 'luxury' %}
-                                    <span
-                                        style="font-size: 0.75rem; background: white; border: 1px solid #cbd5e1; color: #334155; padding: 0.2rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                        <i class="fa-solid {{ a.icon_class }}"
-                                            style="color: #0284c7; font-size: 0.75rem;"></i>
-                                        {{ a.name }}
-                                        <form action="{% url 'admin_dashboard' %}" method="POST"
-                                            style="margin: 0; display: inline;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="action" value="delete_amenity">
-                                            <input type="hidden" name="amenity_id" value="{{ a.id }}">
-                                            <button type="submit"
-                                                style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i
-                                                    class="fa-solid fa-xmark"></i></button>
-                                        </form>
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 0;">
-
-                    <!-- Detailed Categories list -->
-                    <div>
-                        <h4
-                            style="margin: 0 0 1.25rem 0; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-emerald-dark); font-weight: 700;">
-                            <i class="fa-solid fa-sliders"></i> Features By Discipline Categories
-                        </h4>
-
-                        <div style="display: flex; flex-direction: column; gap: 1rem;">
-                            {% for cat in amenity_categories %}
-                            <div
-                                style="border: 1px solid #f1f5f9; border-radius: 8px; padding: 1rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.015);">
-                                <h5
-                                    style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; display: flex; align-items: center; justify-content: space-between;">
-                                    <span>
-                                        <i class="fa-solid {{ cat.icon }}"></i> {{ cat.name }}
-                                    </span>
-                                </h5>
-
-                                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-                                    {% for a in amenities %}
-                                    {% if a.layer == cat.id %}
-                                    <span
-                                        style="font-size: 0.75rem; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; padding: 0.2rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                        <i class="fa-solid {{ a.icon_class }}"
-                                            style="color: #64748b; font-size: 0.75rem;"></i>
-                                        {{ a.name }}
-                                        <form action="{% url 'admin_dashboard' %}" method="POST"
-                                            style="margin: 0; display: inline;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="action" value="delete_amenity">
-                                            <input type="hidden" name="amenity_id" value="{{ a.id }}">
-                                            <button type="submit"
-                                                style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i
-                                                    class="fa-solid fa-xmark"></i></button>
-                                        </form>
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FORM: Register New Amenity Option -->
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <h3
-                        style="margin: 0; font-size: 1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-square-plus"></i> Add Custom Amenity to Registry
-                    </h3>
-                </div>
-
-                <form method="POST"
-                    style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; margin: 0;">
+                <form action="{% url 'admin_add_property_category' %}" method="POST">
                     {% csrf_token %}
-                    <input type="hidden" name="action" value="add_amenity">
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                        <div>
-                            <label
-                                style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Amenity
-                                / Detail Name</label>
-                            <input type="text" name="name" required placeholder="e.g. Fiber Internet"
-                                style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
-                        </div>
-
-                        <div>
-                            <label
-                                style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Assigned
-                                Layer</label>
-                            <select name="layer"
-                                style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; background: white; font-size: 0.85rem;">
-                                <option value="core">Core Details (Layer 1)</option>
-                                <option value="luxury">Luxury Amenities (Layer 2)</option>
-                                <option value="indoor">Indoor Amenities</option>
-                                <option value="utilities">Utilities & Infrastructure</option>
-                                <option value="security">Security Features</option>
-                                <option value="outdoor">Outdoor Amenities</option>
-                                <option value="building">Building Features</option>
-                            </select>
-                        </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">
+                            Category Name *
+                        </label>
+                        <input type="text" name="name" required placeholder="e.g. Double Room, Studio Apartment" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
                     </div>
 
-                    <div>
-                        <label
-                            style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Category
-                            Tag</label>
-                        <input type="text" name="category" required placeholder="e.g. Technology"
-                            style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
-                    </div>
-
-                    <button type="submit" class="btn btn-gold"
-                        style="width: 100%; padding: 0.75rem; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-save"></i> Save Amenity to System
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- RIGHT PANEL: Proximity to Services Configuration -->
-        <div class="col-lg-5" style="margin-bottom: 2rem;">
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
-                <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <h3
-                        style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-map-pin" style="color: var(--color-gold);"></i> Proximity to Services
-                        Reference
-                    </h3>
-                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Manage proximity listings for
-                        Ugandan urban regions (Kampala, Entebbe, Wakiso)</p>
-                </div>
-
-                <div style="padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
-                    {% for category in proximity_categories %}
-                    <div style="border-bottom: 1px dashed #f1f5f9; padding-bottom: 1.25rem;">
-                        <h4
-                            style="margin: 0 0 0.5rem 0; font-size: 0.85rem; font-weight: 700; color: var(--color-emerald-dark); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
-                            <span>
-                                {% if category.name == 'Healthcare' %}<i class="fa-solid fa-user-doctor"></i>
-                                {% elif category.name == 'Shopping & Daily Needs' %}<i
-                                    class="fa-solid fa-cart-shopping"></i>
-                                {% elif category.name == 'Education' %}<i class="fa-solid fa-graduation-cap"></i>
-                                {% elif category.name == 'Transportation' %}<i class="fa-solid fa-bus"></i>
-                                {% elif category.name == 'Recreation & Lifestyle' %}<i class="fa-solid fa-dumbbell"></i>
-                                {% elif category.name == 'Government & Security' %}<i
-                                    class="fa-solid fa-building-shield"></i>
-                                {% elif category.name == 'Religious Centers' %}<i class="fa-solid fa-church"></i>
-                                {% elif category.name == 'Financial Services' %}<i class="fa-solid fa-wallet"></i>
-                                {% elif category.name == 'Business & Work' %}<i class="fa-solid fa-briefcase"></i>
-                                {% endif %}
-                                {{ category.name }}
-                            </span>
-                        </h4>
-
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-                            {% for item in category.items.all %}
-                            <span
-                                style="font-size: 0.75rem; background: #ecfdf5; border: 1px solid rgba(16, 61, 40, 0.1); color: var(--color-emerald-dark); padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                <i class="fa-solid {{ item.icon_class }}"
-                                    style="color: var(--color-emerald); font-size: 0.75rem;"></i>
-                                {{ item.name }}
-                                <form action="{% url 'admin_dashboard' %}" method="POST"
-                                    style="margin: 0; display: inline;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="delete_proximity_item">
-                                    <input type="hidden" name="item_id" value="{{ item.id }}">
-                                    <button type="submit"
-                                        style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0; font-size: 0.65rem;"><i
-                                            class="fa-solid fa-xmark"></i></button>
-                                </form>
-                            </span>
-                            {% empty %}
-                            <span style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No specific service
-                                tags recorded.</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- FORM 1: Add Proximity Category -->
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <h4
-                        style="margin: 0; font-size: 0.9rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.35rem;">
-                        <i class="fa-solid fa-circle-plus"></i> Add Proximity Category
-                    </h4>
-                </div>
-                <form method="POST"
-                    style="padding: 1.25rem; display: flex; gap: 0.75rem; margin: 0; align-items: flex-end;">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="add_proximity_category">
-                    <div style="flex: 1;">
-                        <label
-                            style="display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">Category
-                            Name</label>
-                        <input type="text" name="name" required placeholder="e.g. Nature & Parks"
-                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.8rem;">
-                    </div>
-                    <button type="submit" class="btn"
-                        style="padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.15); cursor: pointer; height: 35px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem;">
-                        <i class="fa-solid fa-plus" style="margin-right: 0.25rem;"></i> Save
-                    </button>
-                </form>
-            </div>
-
-            <!-- FORM 2: Add Proximity Service Item -->
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <h4
-                        style="margin: 0; font-size: 0.9rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.35rem;">
-                        <i class="fa-solid fa-circle-plus"></i> Add Proximity Service Name
-                    </h4>
-                </div>
-                <form method="POST"
-                    style="padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; margin: 0;">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="add_proximity_item">
-
-                    <div>
-                        <label
-                            style="display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">Select
-                            Proximity Category</label>
-                        <select name="category_id" required
-                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; background: white; font-size: 0.8rem;">
-                            {% for category in proximity_categories %}
-                            <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">
+                            Structural Group *
+                        </label>
+                        <select name="group" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;">
+                            <option value="single_unit">Single Unit Residential</option>
+                            <option value="multi_unit">Multi-Unit Residential (Building / Estate)</option>
+                            <option value="multi_floor">Multi-Floor Building (Flat)</option>
+                            <option value="office">Commercial / Office</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label
-                            style="display: block; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.25rem;">Service
-                            / Facility Name</label>
-                        <input type="text" name="name" required placeholder="e.g. Pharmacy, Boda Stage"
-                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.8rem;">
-                    </div>
-
-                    <button type="submit" class="btn btn-gold"
-                        style="width: 100%; padding: 0.6rem; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.35rem; font-size: 0.8rem;">
-                        <i class="fa-solid fa-save"></i> Add Facility Item
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; padding: 0.75rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
+                        <i class="fa-solid fa-check-circle" style="margin-right: 0.35rem;"></i> Save House Category
                     </button>
                 </form>
             </div>
         </div>
-    </div>
-</div><!-- End Amenities section -->
 
-<!-- Committee Section -->
-<div id="settings-section-committee" class="settings-section-content" style="display: none;">
-    <div class="row animate__animated animate__fadeIn" style="margin-top: 2rem;">
-        <!-- LEFT PANEL: Committee Executives Directory -->
-        <div class="col-lg-8" style="margin-bottom: 2rem;">
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-                <div
-                    style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+        <!-- RIGHT: Categories Directory Table -->
+        <div class="col-lg-8" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <h3
-                            style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fa-solid fa-users-rectangle" style="color: var(--color-gold);"></i> TRUST
-                            Committee Executive Board
-                        </h3>
-                        <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Manage executive team
-                            members who set rules, verify properties, and govern the TRUST protocol</p>
+                        <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem;">
+                            Active System House Categories
+                        </h4>
+                        <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">
+                            Currently available house types across the TRUST platform
+                        </p>
                     </div>
-                    <div
-                        style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
-                        <i class="fa-solid fa-shield-halved"></i> {{ committee_executives|length }} Member{{ committee_executives|length|pluralize }}
-                    </div>
+                    <span style="background: rgba(4, 120, 87, 0.1); color: var(--color-emerald-darkest); font-weight: 800; font-size: 0.85rem; padding: 0.3rem 0.75rem; border-radius: 20px;">
+                        {{ property_categories.count }} Categories
+                    </span>
                 </div>
 
-                <div style="overflow-x: auto;">
-                    <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #f8fafc;">
-                                <th
-                                    style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
-                                    Executive Member</th>
-                                <th
-                                    style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
-                                    Governing Role / Title</th>
-                                <th
-                                    style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
-                                    Date Added</th>
-                                <th
-                                    style="padding: 1.25rem 2rem; text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 100px;">
-                                    Actions</th>
+                <div class="table-responsive">
+                    <table class="table" style="margin: 0; vertical-align: middle;">
+                        <thead style="background: #f8fafc; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #475569;">
+                            <tr>
+                                <th style="padding: 1rem 1.5rem;">Category Name</th>
+                                <th style="padding: 1rem 1.5rem;">Structural Group</th>
+                                <th style="padding: 1rem 1.5rem; text-align: center;">Status</th>
+                                <th style="padding: 1rem 1.5rem; text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for exec in committee_executives %}
-                            <tr style="transition: background-color 0.2s;"
-                                onmouseover="this.style.backgroundColor='#f8fafc'"
-                                onmouseout="this.style.backgroundColor='transparent'">
-                                <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                                    <div
-                                        style="font-weight: 600; color: #1e293b; font-size: 0.95rem; display: flex; align-items: center; gap: 0.75rem;">
-                                        {% if exec.image %}
-                                        <img src="{{ exec.image.url }}" alt="{{ exec.name }}"
-                                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(203, 163, 88, 0.25);">
-                                        {% else %}
-                                        <div
-                                            style="width: 40px; height: 40px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; border: 2px solid rgba(16, 61, 40, 0.1);">
-                                            {{ exec.name|slice:":2"|upper }}
-                                        </div>
-                                        {% endif %}
-                                        <div>
-                                            <span style="color: #1e293b; font-weight: 600;">{{ exec.name }}</span>
-                                        </div>
-                                    </div>
+                            {% for cat in property_categories %}
+                            <tr>
+                                <td style="padding: 1rem 1.5rem; font-weight: 700; color: #0f172a;">
+                                    {{ cat.name }}
                                 </td>
-                                <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                                    <span
-                                        style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203, 163, 88, 0.1); color: var(--color-gold); padding: 0.3rem 0.65rem; border-radius: 4px; font-weight: 700; border: 1px solid rgba(203, 163, 88, 0.2);">
-                                        {{ exec.role }}
-                                    </span>
+                                <td style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #475569;">
+                                    {{ cat.get_group_display }}
                                 </td>
-                                <td
-                                    style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: #64748b;">
-                                    {{ exec.created_at|date:"M d, Y" }}
+                                <td style="padding: 1rem 1.5rem; text-align: center;">
+                                    {% if cat.is_active %}
+                                    <span style="background: #ecfdf5; color: #047857; font-weight: 700; font-size: 0.78rem; padding: 0.25rem 0.65rem; border-radius: 12px; border: 1px solid rgba(4,120,87,0.2);">Active</span>
+                                    {% else %}
+                                    <span style="background: #fef2f2; color: #b91c1c; font-weight: 700; font-size: 0.78rem; padding: 0.25rem 0.65rem; border-radius: 12px; border: 1px solid rgba(185,28,28,0.2);">Disabled</span>
+                                    {% endif %}
                                 </td>
-                                <td
-                                    style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
-                                    <form action="{% url 'admin_dashboard' %}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to permanently remove {{ exec.name }} from the Committee?');"
-                                        style="margin: 0; display: inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="delete_committee_executive">
-                                        <input type="hidden" name="executive_id" value="{{ exec.id }}">
-                                        <button type="submit"
-                                            style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.35rem 0.6rem; font-size: 1rem; border-radius: 4px; transition: all 0.2s;"
-                                            onmouseover="this.style.backgroundColor='rgba(239, 68, 68, 0.08)'"
-                                            onmouseout="this.style.backgroundColor='transparent'">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </button>
-                                    </form>
+                                <td style="padding: 1rem 1.5rem; text-align: right;">
+                                    <a href="{% url 'admin_toggle_property_category' cat.id %}" style="font-size: 0.82rem; font-weight: 600; text-decoration: none; margin-right: 0.75rem; color: {% if cat.is_active %}#d97706{% else %}#047857{% endif %};">
+                                        {% if cat.is_active %}Disable{% else %}Enable{% endif %}
+                                    </a>
+                                    <a href="{% url 'admin_delete_property_category' cat.id %}" onclick="return confirm('Delete this category?');" style="font-size: 0.82rem; font-weight: 600; color: #ef4444; text-decoration: none;">
+                                        Delete
+                                    </a>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
-                                    <div style="font-size: 2.25rem; margin-bottom: 1.25rem; color: #cbd5e1;"><i
-                                            class="fa-solid fa-users-slash"></i></div>
-                                    <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No committee executives
-                                        listed in the database.</p>
-                                    <small style="color: #94a3b8; display: block; margin-top: 0.25rem;">The "About Us"
-                                        page will gracefully fall back to the default executive board.</small>
+                                <td colspan="4" style="text-align: center; padding: 2.5rem; color: #64748b;">
+                                    No house categories defined yet. Use the form on the left to add your first category.
                                 </td>
                             </tr>
                             {% endfor %}
@@ -3750,1328 +3417,513 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- RIGHT PANEL: Add Committee Executive Form -->
-        <div class="col-lg-4" style="margin-bottom: 2rem;">
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                    <h3
-                        style="margin: 0; font-size: 1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-user-plus"></i> Add Executive Member
-                    </h3>
+<!-- ========================================== -->
+<!-- 2. AMENITIES & SERVICES MANAGER SECTION    -->
+<!-- ========================================== -->
+<div id="settings-section-amenities" class="settings-section-content" style="display: {% if active_section == 'amenities' %}block{% else %}none{% endif %};">
+    <div class="row animate__animated animate__fadeIn">
+        <!-- LEFT: Add Amenity Form -->
+        <div class="col-lg-5" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem;">
+                <h4 style="margin: 0 0 0.4rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-plus-circle" style="color: var(--color-gold);"></i> Add Amenity / Detail Layer
+                </h4>
+                <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.82rem;">
+                    Add new property features (e.g. Swimming Pool, 24/7 Security, Standby Generator).
+                </p>
+
+                <form action="{% url 'admin_dashboard' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_amenity">
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Amenity Name *</label>
+                        <input type="text" name="name" required placeholder="e.g. Swimming Pool, Generator" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Amenity Layer *</label>
+                        <select name="layer" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;">
+                            <option value="utilities">Core Utilities (Water, Power, Solar)</option>
+                            <option value="comfort">Comfort & Interior (AC, Wifi, Lift)</option>
+                            <option value="security">Security & Protection (CCTV, Guards)</option>
+                            <option value="shared">Shared Facilities (Pool, Gym, Parking)</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Property Category Scope</label>
+                        <select name="category" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;">
+                            <option value="Both">Applies to Both House & Office</option>
+                            <option value="House">Residential House Only</option>
+                            <option value="Office">Commercial Office Only</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; padding: 0.75rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
+                        <i class="fa-solid fa-plus-circle" style="margin-right: 0.35rem;"></i> Add Amenity
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- RIGHT: Amenities Grid -->
+        <div class="col-lg-7" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem;">
+                            Configured Amenities Directory
+                        </h4>
+                        <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">
+                            Property amenities available for listings
+                        </p>
+                    </div>
+                    <span style="background: rgba(4, 120, 87, 0.1); color: var(--color-emerald-darkest); font-weight: 800; font-size: 0.85rem; padding: 0.3rem 0.75rem; border-radius: 20px;">
+                        {{ amenities.count }} Amenities
+                    </span>
                 </div>
 
-                <form method="POST" enctype="multipart/form-data"
-                    style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; margin: 0;">
+                <div style="padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.85rem;">
+                        {% for a in amenities %}
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">{{ a.name }}</div>
+                                <div style="font-size: 0.75rem; color: #64748b;">{{ a.layer|title }} &bull; {{ a.category }}</div>
+                            </div>
+                            <form action="{% url 'admin_dashboard' %}" method="POST" style="margin: 0;" onsubmit="return confirm('Delete this amenity?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_amenity">
+                                <input type="hidden" name="amenity_id" value="{{ a.id }}">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.9rem; padding: 0.2rem;">
+                                    &times;
+                                </button>
+                            </form>
+                        </div>
+                        {% empty %}
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #64748b;">
+                            No amenities created yet.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 3. COMMITTEE EXECUTIVE BOARD SECTION       -->
+<!-- ========================================== -->
+<div id="settings-section-committee" class="settings-section-content" style="display: {% if active_section == 'committee' %}block{% else %}none{% endif %};">
+    <div class="row animate__animated animate__fadeIn">
+        <!-- LEFT: Add Executive Form -->
+        <div class="col-lg-4" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem;">
+                <h4 style="margin: 0 0 0.4rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-user-plus" style="color: var(--color-gold);"></i> Add Executive Member
+                </h4>
+                <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.82rem;">
+                    Add members to the public TRUST Committee Board.
+                </p>
+
+                <form action="{% url 'admin_dashboard' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="hidden" name="action" value="add_committee_executive">
+                    <input type="hidden" name="action" value="add_executive">
 
-                    <div>
-                        <label
-                            style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Full
-                            Name</label>
-                        <input type="text" name="name" required placeholder="e.g. Hon. Rebecca Alitwala"
-                            style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;"
-                            onfocus="this.style.borderColor='var(--color-emerald)'"
-                            onblur="this.style.borderColor='#cbd5e1'">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Full Name *</label>
+                        <input type="text" name="exec_name" required placeholder="e.g. Dr. Arthur Mukasa" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
                     </div>
 
-                    <div>
-                        <label
-                            style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Governing
-                            Role / Title</label>
-                        <input type="text" name="role" required placeholder="e.g. Chief Escrow Arbiter"
-                            style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; transition: border-color 0.2s;"
-                            onfocus="this.style.borderColor='var(--color-emerald)'"
-                            onblur="this.style.borderColor='#cbd5e1'">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Role / Title *</label>
+                        <input type="text" name="exec_position" required placeholder="e.g. Chief Legal Counsel" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
                     </div>
 
-                    <div>
-                        <label
-                            style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Executive
-                            Portrait</label>
-                        <input type="file" name="image" accept="image/*"
-                            style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Email Address</label>
+                        <input type="email" name="exec_email" placeholder="e.g. arthur@trustrentug.com" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
                     </div>
 
-                    <button type="submit" class="btn btn-gold"
-                        style="width: 100%; padding: 0.75rem; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-user-check"></i> Add Executive
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Profile Photo</label>
+                        <input type="file" name="exec_image" accept="image/*" style="width: 100%; font-size: 0.85rem;">
+                    </div>
+
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; padding: 0.75rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
+                        <i class="fa-solid fa-user-check" style="margin-right: 0.35rem;"></i> Add Executive Member
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- RIGHT: Executive Board Directory -->
+        <div class="col-lg-8" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem;">
+                            TRUST Executive Board Directory
+                        </h4>
+                        <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">
+                            Public committee executives displayed on the About Us page
+                        </p>
+                    </div>
+                    <span style="background: rgba(4, 120, 87, 0.1); color: var(--color-emerald-darkest); font-weight: 800; font-size: 0.85rem; padding: 0.3rem 0.75rem; border-radius: 20px;">
+                        {{ committee_executives.count }} Members
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table" style="margin: 0; vertical-align: middle;">
+                        <thead style="background: #f8fafc; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #475569;">
+                            <tr>
+                                <th style="padding: 1rem 1.5rem;">Executive</th>
+                                <th style="padding: 1rem 1.5rem;">Role / Title</th>
+                                <th style="padding: 1rem 1.5rem;">Contact</th>
+                                <th style="padding: 1rem 1.5rem; text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ex in committee_executives %}
+                            <tr>
+                                <td style="padding: 1rem 1.5rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        {% if ex.image %}
+                                        <img src="{{ ex.image.url }}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
+                                        {% else %}
+                                        <div style="width: 42px; height: 42px; border-radius: 50%; background: #e2e8f0; color: #475569; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+                                            {{ ex.name|first }}
+                                        </div>
+                                        {% endif %}
+                                        <div style="font-weight: 700; color: #0f172a;">{{ ex.name }}</div>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem 1.5rem; font-size: 0.88rem; color: #475569; font-weight: 600;">
+                                    {{ ex.position }}
+                                </td>
+                                <td style="padding: 1rem 1.5rem; font-size: 0.82rem; color: #64748b;">
+                                    {{ ex.email|default:"N/A" }}
+                                </td>
+                                <td style="padding: 1rem 1.5rem; text-align: right;">
+                                    <form action="{% url 'admin_dashboard' %}" method="POST" style="margin: 0; display: inline;" onsubmit="return confirm('Delete this executive member?');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete_executive">
+                                        <input type="hidden" name="exec_id" value="{{ ex.id }}">
+                                        <button type="submit" style="background: none; border: none; color: #ef4444; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 2.5rem; color: #64748b;">
+                                    No board members added yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 4. GEOGRAPHIC COVERAGE MANAGER SECTION     -->
+<!-- ========================================== -->
+<div id="settings-section-coverage" class="settings-section-content" style="display: {% if active_section == 'coverage' %}block{% else %}none{% endif %};">
+    <div class="row animate__animated animate__fadeIn">
+        <!-- Overview Stats Bar -->
+        <div class="col-12" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.25rem 1.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-map-location-dot" style="color: var(--color-gold);"></i> Regional Geographic Coverage Manager
+                    </h4>
+                    <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">
+                        Bulk import service area records into the TRUST Protocol database
+                    </p>
+                </div>
+                <div style="display: flex; gap: 1.5rem; align-items: center;">
+                    <div style="text-align: center;">
+                        <span style="display: block; font-weight: 900; font-size: 1.25rem; color: var(--color-emerald-darkest);">{{ service_districts.count }}</span>
+                        <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Districts</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="display: block; font-weight: 900; font-size: 1.25rem; color: var(--color-gold);">{{ service_divisions.count }}</span>
+                        <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Divisions</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="display: block; font-weight: 900; font-size: 1.25rem; color: #0369a1;">{{ service_villages.count }}</span>
+                        <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Villages</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Excel / CSV Upload Card (Centered) -->
+        <div class="col-lg-7 mx-auto" style="margin-bottom: 2rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 2rem;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: #ecfdf5; color: #10b981; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 0.75rem;">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </div>
+                    <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem;">
+                        Bulk Import Geographic Service Areas
+                    </h4>
+                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">
+                        Upload an Excel (.xlsx, .xls) or CSV file containing your official regional data.
+                    </p>
+                </div>
+
+                <!-- Guidance Info Box -->
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #166534;">
+                    <div style="font-weight: 700; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="fa-solid fa-circle-info" style="color: #047857;"></i> Required File Column Headers:
+                    </div>
+                    Your spreadsheet file MUST include the exact column headers below:
+                    <div style="margin-top: 0.5rem; background: white; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1.5px solid #cbd5e1; font-family: monospace; font-weight: 800; color: #047857; font-size: 0.95rem; text-align: center;">
+                        District | Division | Village
+                    </div>
+                </div>
+
+                <form action="{% url 'admin_dashboard' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="upload_service_areas">
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.88rem; margin-bottom: 0.5rem;">
+                            Select File (.csv, .xlsx, .xls) *
+                        </label>
+                        <input type="file" name="areas_file" accept=".csv, .xlsx, .xls" required style="width: 100%; padding: 0.75rem; border: 1.5px dashed #cbd5e1; border-radius: 10px; font-size: 0.88rem; background: #f8fafc;">
+                    </div>
+
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; padding: 0.85rem; border-radius: 10px; font-weight: 800; font-size: 0.95rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(6,78,59,0.25);">
+                        <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 0.4rem;"></i> Upload & Process Service Areas
                     </button>
                 </form>
             </div>
         </div>
     </div>
-</div><!-- End Committee section -->
+</div>
 
-<!-- Service Area Expansion Manager -->
-<div id="settings-section-coverage" class="settings-section-content" style="display: none;">
-    <div class="row animate__animated animate__fadeIn" style="margin-top: 2rem;">
-        <div class="col-12" style="margin-bottom: 1.5rem;">
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <h3
-                        style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-map-location-dot" style="color: var(--color-gold);"></i> TRUST Service
-                        Area Expansion Manager
-                    </h3>
-                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">
-                        Manage multi-layered geographic coverage (District &rarr; Division &rarr; Village) or bulk
-                        upload Excel/CSV files.
-                    </p>
-                </div>
+<!-- ========================================== -->
+<!-- 5. POPUP MARKETING CAMPAIGNS SECTION      -->
+<!-- ========================================== -->
+<div id="settings-section-popups" class="settings-section-content" style="display: {% if active_section == 'popups' %}block{% else %}none{% endif %};">
+    <div class="row animate__animated animate__fadeIn">
+        <!-- LEFT: Upload Hero Video Form -->
+        <div class="col-lg-5" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem;">
+                <h4 style="margin: 0 0 0.4rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-video" style="color: var(--color-gold);"></i> Upload Hero Video / Campaign
+                </h4>
+                <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.82rem;">
+                    Upload marketing background videos displayed on the homepage hero section.
+                </p>
 
-                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                    <a href="{% url 'admin_dashboard' %}?action=download_area_template" class="btn"
-                        style="padding: 0.65rem 1.15rem; font-size: 0.85rem; border-radius: 8px; background: rgba(203, 163, 88, 0.12); color: var(--color-gold-dark, #b48328); border: 1px solid rgba(203, 163, 88, 0.3); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
-                        <i class="fa-solid fa-file-csv"></i> Download Template
-                    </a>
-                    <button type="button" onclick="openUploadAreasModal()" class="btn btn-emerald"
-                        style="padding: 0.65rem 1.25rem; font-size: 0.85rem; border-radius: 8px; background: var(--color-emerald-darkest); color: white; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem; box-shadow: 0 4px 12px rgba(4, 61, 44, 0.2);">
-                        <i class="fa-solid fa-file-excel"></i> Upload Areas (Excel / CSV)
+                <form action="{% url 'admin_dashboard' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="upload_hero_video">
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Video Title / Campaign Name *</label>
+                        <input type="text" name="video_title" required placeholder="e.g. TRUST Kampalan Estate Spotlight" style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Video File (MP4 / WebM) *</label>
+                        <input type="file" name="hero_video_file" accept="video/*" required style="width: 100%; font-size: 0.85rem;">
+                    </div>
+
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; padding: 0.75rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
+                        <i class="fa-solid fa-cloud-arrow-up" style="margin-right: 0.35rem;"></i> Upload Hero Video
                     </button>
-                </div>
+                </form>
             </div>
         </div>
-    </div>
 
-    <div class="row animate__animated animate__fadeIn"
-        style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; padding: 0 15px;">
-        <!-- FORM 1: DISTRICT -->
-        <div
-            style="background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
-            <h4
-                style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-                <span
-                    style="background: var(--color-gold-muted); color: var(--color-gold); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">1</span>
-                Add District
-            </h4>
-            <form method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="add_service_district">
-                <div>
-                    <label
-                        style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">District
-                        Name</label>
-                    <input type="text" name="name" required placeholder="e.g. Kampala"
-                        style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
-                </div>
-                <button type="submit" class="btn btn-gold"
-                    style="padding: 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; color: white; width: 100%;">
-                    <i class="fa-solid fa-plus"></i> Add District
-                </button>
-            </form>
-        </div>
-
-        <!-- FORM 2: DIVISION -->
-        <div
-            style="background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
-            <h4
-                style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-                <span
-                    style="background: var(--color-gold-muted); color: var(--color-gold); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">2</span>
-                Add Division
-            </h4>
-            <form method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="add_service_division">
-                <div>
-                    <label
-                        style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Parent
-                        District</label>
-                    <select name="district_id" required
-                        style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem; background: white;">
-                        <option value="" disabled selected>Select District...</option>
-                        {% for d in service_districts %}
-                        <option value="{{ d.id }}">{{ d.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label
-                        style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Division
-                        / Sub-County Name</label>
-                    <input type="text" name="name" required placeholder="e.g. Nakawa"
-                        style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
-                </div>
-                <button type="submit" class="btn btn-gold"
-                    style="padding: 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; color: white; width: 100%;">
-                    <i class="fa-solid fa-plus"></i> Add Division
-                </button>
-            </form>
-        </div>
-
-        <!-- FORM 3: VILLAGE -->
-        <div
-            style="background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; box-shadow: 0 2px 4px rgba(0,0,0,0.01);">
-            <h4
-                style="margin: 0 0 1rem 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-                <span
-                    style="background: var(--color-gold-muted); color: var(--color-gold); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">3</span>
-                Add Village
-            </h4>
-            <form method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 0.85rem;">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="add_service_village">
-                <div>
-                    <label
-                        style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Parent
-                        Division</label>
-                    <select name="division_id" required
-                        style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem; background: white;">
-                        <option value="" disabled selected>Select Division...</option>
-                        {% for v in service_divisions %}
-                        <option value="{{ v.id }}">{{ v.name }} ({{ v.district.name }})</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label
-                        style="display: block; font-size: 0.75rem; font-weight: 600; color: #64748b; margin-bottom: 0.25rem;">Village
-                        / Zone Name</label>
-                    <input type="text" name="name" required placeholder="e.g. Bugolobi"
-                        style="width: 100%; padding: 0.55rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
-                </div>
-                <button type="submit" class="btn btn-gold"
-                    style="padding: 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; border: none; cursor: pointer; color: white; width: 100%;">
-                    <i class="fa-solid fa-plus"></i> Add Village
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Coverage Directory -->
-    <div class="row animate__animated animate__fadeIn" style="margin-top: 2rem; margin-bottom: 3rem;">
-        <div class="col-12">
-            <div
-                style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-                <div
-                    style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                    <h3
-                        style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-map" style="color: var(--color-gold);"></i> Active Coverage Directory
-                    </h3>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="coverage-tabs">
-                        <button class="coverage-tab-btn active" onclick="switchCoverageTab('districts')"
-                            style="background: var(--color-gold); color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Districts
-                            ({{ service_districts|length }})</button>
-                        <button class="coverage-tab-btn" onclick="switchCoverageTab('divisions')"
-                            style="background: #e2e8f0; color: #475569; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Divisions
-                            ({{ service_divisions|length }})</button>
-                        <button class="coverage-tab-btn" onclick="switchCoverageTab('villages')"
-                            style="background: #e2e8f0; color: #475569; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Villages
-                            ({{ service_villages|length }})</button>
-                    </div>
-                </div>
-
-                <!-- Tab Contents -->
-                <div style="padding: 1.5rem 2rem;">
-
-                    <!-- Tab: Districts -->
-                    <div id="coverage-districts" class="coverage-tab-content">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
-                            {% for d in service_districts %}
-                            <div
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
-                                <span
-                                    style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.9rem;"><i
-                                        class="fa-solid fa-location-dot"
-                                        style="color: var(--color-gold); font-size: 0.85rem; margin-right: 0.35rem;"></i>
-                                    {{ d.name }}</span>
-                                <form action="{% url 'admin_dashboard' %}" method="POST"
-                                    onsubmit="return confirm('WARNING: Deleting this district will permanently delete all its divisions and villages! Proceed?');"
-                                    style="margin: 0;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="delete_service_area">
-                                    <input type="hidden" name="area_type" value="district">
-                                    <input type="hidden" name="area_id" value="{{ d.id }}">
-                                    <button type="submit"
-                                        style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.2rem; font-size: 0.85rem;"><i
-                                            class="fa-solid fa-trash-can"></i></button>
-                                </form>
-                            </div>
-                            {% empty %}
-                            <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 2rem 0;">No
-                                active Districts registered. Use the setup form above to extend services.</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Tab: Divisions -->
-                    <div id="coverage-divisions" class="coverage-tab-content" style="display: none;">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
-                            {% for div in service_divisions %}
-                            <div
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <span
-                                        style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.9rem;">{{ div.name }}</span>
-                                    <small style="display: block; color: #64748b; font-size: 0.75rem;"><i
-                                            class="fa-solid fa-location-dot"></i> District: {{ div.district.name }}</small>
-                                </div>
-                                <form action="{% url 'admin_dashboard' %}" method="POST"
-                                    onsubmit="return confirm('WARNING: Deleting this division will permanently delete all its associated villages! Proceed?');"
-                                    style="margin: 0;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="delete_service_area">
-                                    <input type="hidden" name="area_type" value="division">
-                                    <input type="hidden" name="area_id" value="{{ div.id }}">
-                                    <button type="submit"
-                                        style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.2rem; font-size: 0.85rem;"><i
-                                            class="fa-solid fa-trash-can"></i></button>
-                                </form>
-                            </div>
-                            {% empty %}
-                            <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 2rem 0;">No
-                                active Divisions/Sub-Counties registered.</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <!-- Tab: Villages -->
-                    <div id="coverage-villages" class="coverage-tab-content" style="display: none;">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
-                            {% for v in service_villages %}
-                            <div
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <span
-                                        style="font-weight: 600; color: var(--color-emerald-darkest); font-size: 0.9rem;"><i
-                                            class="fa-solid fa-house-chimney"
-                                            style="color: var(--color-gold); font-size: 0.75rem; margin-right: 0.25rem;"></i>
-                                        {{ v.name }}</span>
-                                    <small style="display: block; color: #64748b; font-size: 0.75rem;"><i
-                                            class="fa-solid fa-circle-dot"></i> Div: {{ v.division.name }} | Dist: {{ v.division.district.name }}</small>
-                                </div>
-                                <form action="{% url 'admin_dashboard' %}" method="POST"
-                                    onsubmit="return confirm('Are you sure you want to permanently remove village {{ v.name }} from active service areas?');"
-                                    style="margin: 0;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="action" value="delete_service_area">
-                                    <input type="hidden" name="area_type" value="village">
-                                    <input type="hidden" name="area_id" value="{{ v.id }}">
-                                    <button type="submit"
-                                        style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.2rem; font-size: 0.85rem;"><i
-                                            class="fa-solid fa-trash-can"></i></button>
-                                </form>
-                            </div>
-                            {% empty %}
-                            <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 2rem 0;">No
-                                active Villages/Zones registered.</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                </div>
-                <!-- Upload Geographic Areas Modal -->
-                <div id="upload-areas-modal"
-                    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 10000; justify-content: center; align-items: center; padding: 1.5rem;">
-                    <div class="animate__animated animate__zoomIn"
-                        style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%; max-width: 540px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); overflow: hidden;">
-                        <!-- Modal Header -->
-                        <div
-                            style="background: linear-gradient(135deg, #043d2c, #064e3b); padding: 1.25rem 1.75rem; color: white; display: flex; justify-content: space-between; align-items: center;">
-                            <h3
-                                style="margin: 0; font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; color: white;">
-                                <i class="fa-solid fa-file-excel" style="color: #f59e0b;"></i> Bulk Upload Geographic
-                                Areas
-                            </h3>
-                            <button type="button" onclick="closeUploadAreasModal()"
-                                style="background: none; border: none; color: #a7f3d0; font-size: 1.25rem; cursor: pointer; padding: 0;">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-
-                        <!-- Modal Body Form -->
-                        <form method="POST" enctype="multipart/form-data" action="{% url 'admin_dashboard' %}"
-                            style="padding: 1.75rem; margin: 0; display: flex; flex-direction: column; gap: 1.25rem;">
-                            {% csrf_token %}
-                            <input type="hidden" name="action" value="upload_service_areas">
-
-                            <div
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem 1.25rem;">
-                                <h5 style="margin: 0 0 0.5rem 0; font-size: 0.85rem; font-weight: 700; color: #1e293b;">
-                                    Required Excel / CSV Columns
-                                </h5>
-                                <p style="margin: 0 0 0.65rem 0; font-size: 0.8rem; color: #64748b;">
-                                    Your uploaded file must contain the following 3 column headers in position:
-                                </p>
-                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                    <span
-                                        style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 6px;">1.
-                                        District</span>
-                                    <span
-                                        style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 6px;">2.
-                                        Division</span>
-                                    <span
-                                        style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; font-size: 0.78rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 6px;">3.
-                                        Village</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">Select
-                                    Excel (.xlsx, .xls) or CSV (.csv) File *</label>
-                                <input type="file" name="areas_file" accept=".csv, .xlsx, .xls" required
-                                    style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; background: white;">
-                            </div>
-
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 1.25rem; margin-top: 0.5rem;">
-                                <a href="{% url 'admin_dashboard' %}?action=download_area_template"
-                                    style="font-size: 0.82rem; font-weight: 700; color: var(--color-emerald-darkest); text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                    <i class="fa-solid fa-download"></i> Download Template File
-                                </a>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <button type="button" onclick="closeUploadAreasModal()" class="btn"
-                                        style="padding: 0.6rem 1.1rem; border-radius: 8px; background: #f1f5f9; color: #475569; font-weight: 600; font-size: 0.85rem; border: none; cursor: pointer;">
-                                        Cancel
-                                    </button>
-                                    <button type="submit" class="btn btn-emerald"
-                                        style="padding: 0.6rem 1.25rem; border-radius: 8px; background: var(--color-emerald-darkest); color: white; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(4, 61, 44, 0.2);">
-                                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Process
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-</div><!-- End Geographic Coverage section -->
-
-            <!-- House Types & Categories Manager -->
-            <div id="settings-section-categories" class="settings-section-content" style="display: none;">
-                <div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem;">
-
-                    <!-- LEFT PANEL: Add New House Type Form -->
-                    <div class="col-lg-4" style="margin-bottom: 2rem;">
-                        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem;">
-                            <h3 style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fa-solid fa-plus-circle" style="color: var(--color-gold);"></i> Add House Category
-                            </h3>
-                            <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.82rem;">
-                                Create dynamic house types (e.g. Single Room, Double Room, Luxury Studio) that will automatically propagate to landlords and search filters.
-                            </p>
-
-                            <form action="{% url 'admin_add_property_category' %}" method="POST">
-                                {% csrf_token %}
-
-                                <div style="margin-bottom: 1rem;">
-                                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">
-                                        House Type / Category Name *
-                                    </label>
-                                    <input type="text" name="name" required placeholder="e.g. Double Room, Luxury Studio"
-                                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
-                                </div>
-
-                                <div style="margin-bottom: 1.25rem;">
-                                    <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">
-                                        Category Structural Group *
-                                    </label>
-                                    <select name="group" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;">
-                                        <option value="single_unit">Single Unit Residential</option>
-                                        <option value="multi_unit">Multi-Unit Residential (Building / Estate)</option>
-                                        <option value="multi_floor">Multi-Floor Building (Flat)</option>
-                                        <option value="office">Commercial / Office Space</option>
-                                    </select>
-                                </div>
-
-                                <button type="submit" class="btn btn-emerald"
-                                    style="width: 100%; background: var(--color-emerald-darkest); color: white; border: none; padding: 0.65rem; border-radius: 8px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save House Category
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- RIGHT PANEL: Existing Registered Categories Table -->
-                    <div class="col-lg-8" style="margin-bottom: 2rem;">
-                        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-                            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.15rem;">
-                                        <i class="fa-solid fa-list-check" style="color: var(--color-gold);"></i> Admin Registered House Types
-                                    </h3>
-                                    <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.8rem;">
-                                        All active house types available across search filters, landlord forms, and admin modals.
-                                    </p>
-                                </div>
-                                <span style="background: rgba(4, 120, 87, 0.1); color: #047857; padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">
-                                    {{ property_categories.count }} Active Types
-                                </span>
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table" style="margin: 0; vertical-align: middle;">
-                                    <thead style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase;">
-                                        <tr>
-                                            <th style="padding: 0.85rem 1.25rem;">Category Name</th>
-                                            <th style="padding: 0.85rem 1rem;">Structural Group</th>
-                                            <th style="padding: 0.85rem 1rem;">Linked Listings</th>
-                                            <th style="padding: 0.85rem 1rem;">Status</th>
-                                            <th style="padding: 0.85rem 1.25rem; text-align: right;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style="font-size: 0.88rem; color: #1e293b;">
-                                        {% for cat in property_categories %}
-                                        <tr style="border-bottom: 1px solid #f1f5f9;">
-                                            <td style="padding: 0.85rem 1.25rem; font-weight: 700; color: #0f172a;">
-                                                <i class="fa-solid fa-house-chimney" style="color: var(--color-gold); margin-right: 0.4rem;"></i>
-                                                {{ cat.name }}
-                                            </td>
-                                            <td style="padding: 0.85rem 1rem;">
-                                                <span style="background: #f1f5f9; color: #334155; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600;">
-                                                    {{ cat.get_group_display }}
-                                                </span>
-                                            </td>
-                                            <td style="padding: 0.85rem 1rem; font-weight: 600; color: #0369a1;">
-                                                {{ cat.properties.count }} Listing{{ cat.properties.count|pluralize }}
-                                            </td>
-                                            <td style="padding: 0.85rem 1rem;">
-                                                {% if cat.is_active %}
-                                                <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">Active</span>
-                                                {% else %}
-                                                <span style="background: #fee2e2; color: #991b1b; padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">Disabled</span>
-                                                {% endif %}
-                                            </td>
-                                            <td style="padding: 0.85rem 1.25rem; text-align: right;">
-                                                <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
-                                                    <a href="{% url 'admin_toggle_property_category' cat.id %}" class="btn btn-sm"
-                                                        style="background: #f1f5f9; color: #334155; padding: 0.25rem 0.5rem; font-size: 0.78rem; border-radius: 6px; font-weight: 600; text-decoration: none;">
-                                                        {% if cat.is_active %}Disable{% else %}Enable{% endif %}
-                                                    </a>
-                                                    <a href="{% url 'admin_delete_property_category' cat.id %}" class="btn btn-sm"
-                                                        onclick="return confirm('Are you sure you want to remove this house category?');"
-                                                        style="background: #fee2e2; color: #991b1b; padding: 0.25rem 0.5rem; font-size: 0.78rem; border-radius: 6px; font-weight: 600; text-decoration: none;">
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {% empty %}
-                                        <tr>
-                                            <td colspan="5" style="padding: 2rem; text-align: center; color: #94a3b8; font-style: italic;">
-                                                No custom house categories registered yet. Fill in the form on the left to add categories (e.g. Single Room, Double Room, Luxury Studio).
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div><!-- End Categories section -->
-
-            <!-- Popup Marketing & Logistics Manager -->
-            <div id="settings-section-popups" class="settings-section-content" style="display: none;">
-                <div class="row animate__animated animate__fadeIn" style="margin-top: 3rem;">
-                    <div class="col-12" style="margin-bottom: 1.5rem;">
-                        <div
-                            style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem 2rem;">
-                            <h3
-                                style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fa-solid fa-rectangle-ad" style="color: var(--color-gold);"></i> TRUST Popup
-                                Marketing &
-                                Logistics Manager
-                            </h3>
-                            <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Create dynamic
-                                overlays for
-                                marketing campaigns or checkout guides, specifying target pages and trigger conditions.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row animate__animated animate__fadeIn"
-                    style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; padding: 0 15px; margin-bottom: 3rem;">
-                    <!-- Setup Form -->
-                    <div
-                        style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); height: fit-content;">
-                        <h4
-                            style="margin: 0 0 1.5rem 0; font-size: 1.05rem; color: var(--color-emerald-darkest); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
-                            <i class="fa-solid fa-square-plus" style="color: var(--color-gold);"></i> Add Popup Logic
+        <!-- RIGHT: Hero Videos List -->
+        <div class="col-lg-7" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem;">
+                            Active Hero Videos & Marketing Media
                         </h4>
-                        <form method="POST" enctype="multipart/form-data"
-                            style="margin: 0; display: flex; flex-direction: column; gap: 1.25rem;">
-                            {% csrf_token %}
-                            <input type="hidden" name="action" value="add_popup_logic">
-
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Popup
-                                    Title</label>
-                                <input type="text" name="title" required
-                                    placeholder="e.g. Hot Selling Nakawa Flat Apartments!"
-                                    style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.85rem;">
-                            </div>
-
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div>
-                                    <label
-                                        style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Popup
-                                        Category</label>
-                                    <select name="popup_type" required
-                                        style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: white;">
-                                        <option value="marketing">Marketing & Promotion</option>
-                                        <option value="logistics">Logistics / Booking Flow</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label
-                                        style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Display
-                                        Page</label>
-                                    <select name="display_page" required
-                                        style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: white;">
-                                        <option value="search">Find a Property (Search Page)</option>
-                                        <option value="tenant_dashboard">Tenant Dashboard</option>
-                                        <option value="all">All Pages</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
-                                <div>
-                                    <label
-                                        style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Trigger
-                                        Execution / Event</label>
-                                    <select name="trigger_event" required
-                                        style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: white;">
-                                        <option value="load">Instantly On Page Load</option>
-                                        <option value="payment_success">After Payment Completed (Redirect)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Hero
-                                    Graphic / Image (Optional)</label>
-                                <input type="file" name="image" accept="image/*"
-                                    style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                            </div>
-
-                            <div>
-                                <label
-                                    style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Modal
-                                    Body Description (HTML/Text)</label>
-                                <textarea name="content" required
-                                    placeholder="Write HTML tags or standard text detailing your promotion or logistical checklist..."
-                                    rows="5"
-                                    style="width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; outline: none; font-family: inherit; resize: vertical;"></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-gold"
-                                style="padding: 0.75rem; border-radius: 6px; font-weight: 600; font-size: 0.85rem; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;">
-                                <i class="fa-solid fa-plus"></i> Save Popup Logic
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Active Popups Registry -->
-                    <div
-                        style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; display: flex; flex-direction: column;">
-                        <div
-                            style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
-                            <h4
-                                style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fa-solid fa-folder-tree" style="color: var(--color-gold);"></i> Active Popup
-                                Registry
-                            </h4>
-                            <span
-                                style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 600; color: var(--color-gold); font-size: 0.8rem; white-space: nowrap;">
-                                {{ popups|length }} Rule{{ popups|length|pluralize }} Active
-                            </span>
-                        </div>
-
-                        <div style="padding: 1.5rem 2rem; flex: 1; overflow-y: auto;">
-                            {% for popup in popups %}
-                            <div
-                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; position: relative;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; gap: 1rem;">
-                                    <div>
-                                        <span class="badge"
-                                            style="background: {% if popup.popup_type == 'marketing' %}rgba(16, 185, 129, 0.1){% else %}rgba(59, 130, 246, 0.1){% endif %}; color: {% if popup.popup_type == 'marketing' %}#059669{% else %}#2563eb{% endif %}; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-block; margin-bottom: 0.35rem; border: 1px solid {% if popup.popup_type == 'marketing' %}rgba(16, 185, 129, 0.2){% else %}rgba(59, 130, 246, 0.2){% endif %};">
-                                            {{ popup.get_popup_type_display }}
-                                        </span>
-                                        <h5
-                                            style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--color-emerald-darkest);">
-                                            {{ popup.title }}</h5>
-                                    </div>
-                                    <form action="{% url 'admin_dashboard' %}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to permanently remove this popup logic?');"
-                                        style="margin: 0;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="delete_popup_logic">
-                                        <input type="hidden" name="popup_id" value="{{ popup.id }}">
-                                        <button type="submit"
-                                            style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.3rem; font-size: 0.95rem; transition: transform 0.2s;"
-                                            onmouseover="this.style.transform='scale(1.15)'"
-                                            onmouseout="this.style.transform='scale(1)'">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
-                                    <span
-                                        style="font-size: 0.75rem; background: #e2e8f0; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
-                                        <i class="fa-solid fa-file-lines"></i> Page: <strong>{{ popup.get_display_page_display }}</strong>
-                                    </span>
-                                    <span
-                                        style="font-size: 0.75rem; background: #e2e8f0; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem;">
-                                        <i class="fa-solid fa-bolt-lightning"></i> Trigger: <strong>{{ popup.get_trigger_event_display }}</strong>
-                                    </span>
-                                    {% if popup.image %}
-                                    <span
-                                        style="font-size: 0.75rem; background: rgba(203, 163, 88, 0.1); color: var(--color-gold); padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem; border: 1px solid rgba(203, 163, 88, 0.2)">
-                                        <i class="fa-solid fa-image"></i> Graphic Included
-                                    </span>
-                                    {% endif %}
-                                </div>
-
-                                <div
-                                    style="background: white; border: 1px solid #e2e8f0; padding: 0.75rem; border-radius: 6px; font-size: 0.8rem; color: #64748b; font-family: monospace; max-height: 100px; overflow-y: auto;">
-                                    {{ popup.content|linebreaks }}
-                                </div>
-                            </div>
-                            {% empty %}
-                            <div
-                                style="text-align: center; color: #94a3b8; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-                                <i class="fa-solid fa-rectangle-ad" style="font-size: 2.5rem; color: #cbd5e1;"></i>
-                                <div>
-                                    <h5 style="margin: 0 0 0.25rem 0; font-size: 0.9rem; color: #64748b;">No Popups
-                                        Active</h5>
-                                    <p style="margin: 0; font-size: 0.8rem; color: #94a3b8;">Use the manager form on the
-                                        left to
-                                        deploy your first popup logic.</p>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
+                        <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">
+                            Video assets played in hero background carousel
+                        </p>
                     </div>
                 </div>
-            </div><!-- End Popups section -->
 
-            <!-- Site Branding Section -->
-            <div id="settings-section-branding" class="settings-section-content" style="display: none;">
-                <div class="row animate__animated animate__fadeIn" style="margin-top: 1rem;">
-                    <!-- LEFT PANEL: Branding Config Form -->
-                    <div class="col-lg-6" style="margin-bottom: 2rem;">
-                        <div
-                            style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-                            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                                <h3
-                                    style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fa-solid fa-palette" style="color: var(--color-gold);"></i> Site Identity
-                                    & Assets
-                                    Manager
-                                </h3>
-                                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Modify the
-                                    public-facing
-                                    brand, icon, and logo representation across all platforms</p>
-                            </div>
-
-                            <form method="POST" enctype="multipart/form-data"
-                                style="padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; margin: 0;">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="update_site_branding">
-
-                                <div>
-                                    <label
-                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Site
-                                        Name</label>
-                                    <input type="text" name="site_name"
-                                        value="{{ site_settings.site_name|default:'TRUST' }}" required
-                                        placeholder="e.g. TRUST"
-                                        style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; font-size: 0.9rem; transition: border-color 0.2s;"
-                                        onfocus="this.style.borderColor='var(--color-emerald)'"
-                                        onblur="this.style.borderColor='#cbd5e1'">
-                                    <small style="color: #64748b; display: block; margin-top: 0.35rem;">Used as page
-                                        title suffixes
-                                        and fallback brand text when no logo image is available.</small>
-                                </div>
-
-                                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-                                    <label
-                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Site
-                                        Icon (Favicon / Tab Icon)</label>
-                                    <div style="display: flex; align-items: center; gap: 1.5rem;">
-                                        <div style="width: 60px; height: 60px; border-radius: 8px; border: 1px dashed #cbd5e1; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;"
-                                            id="site-icon-preview-box">
-                                            {% if site_settings.site_icon %}
-                                            <img src="{{ site_settings.site_icon.url }}"
-                                                style="max-width: 100%; max-height: 100%; object-fit: contain;"
-                                                id="site-icon-preview-img">
-                                            {% else %}
-                                            <i class="fa-solid fa-shield-halved"
-                                                style="font-size: 1.5rem; color: #94a3b8;"
-                                                id="site-icon-preview-placeholder"></i>
-                                            {% endif %}
-                                        </div>
-                                        <div style="flex: 1;">
-                                            <input type="file" name="site_icon" accept="image/*"
-                                                id="site-icon-file-input" style="display: none;"
-                                                onchange="previewImage(this, 'site-icon-preview-box', 'site-icon-preview-placeholder', 'site-icon-preview-img', 'tab-icon-mockup-img', 'tab-icon-mockup-placeholder')">
-                                            <button type="button" class="btn"
-                                                style="padding: 0.6rem 1.25rem; font-size: 0.85rem; border-radius: 6px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.15); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;"
-                                                onclick="document.getElementById('site-icon-file-input').click();">
-                                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Icon
-                                            </button>
-                                            <small style="color: #64748b; display: block; margin-top: 0.4rem;">Square
-                                                PNG, JPG, or
-                                                ICO format. Recommended size: 32x32px or 64x64px.</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-                                    <label
-                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Site
-                                        Logo (Navigation Bar Brand)</label>
-                                    <div style="display: flex; align-items: center; gap: 1.5rem;">
-                                        <div style="width: 120px; height: 60px; border-radius: 8px; border: 1px dashed #cbd5e1; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;"
-                                            id="site-logo-preview-box">
-                                            {% if site_settings.site_logo %}
-                                            <img src="{{ site_settings.site_logo.url }}"
-                                                style="max-width: 90%; max-height: 90%; object-fit: contain;"
-                                                id="site-logo-preview-img">
-                                            {% else %}
-                                            <div style="display: flex; align-items: center; gap: 0.25rem; color: #94a3b8; font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem;"
-                                                id="site-logo-preview-placeholder">
-                                                <i class="fa-solid fa-shield-halved" style="font-size: 1.1rem;"></i>
-                                                TRUST
-                                            </div>
-                                            {% endif %}
-                                        </div>
-                                        <div style="flex: 1;">
-                                            <input type="file" name="site_logo" accept="image/*"
-                                                id="site-logo-file-input" style="display: none;"
-                                                onchange="previewImage(this, 'site-logo-preview-box', 'site-logo-preview-placeholder', 'site-logo-preview-img', 'logo-mockup-img', 'logo-mockup-placeholder')">
-                                            <button type="button" class="btn"
-                                                style="padding: 0.6rem 1.25rem; font-size: 0.85rem; border-radius: 6px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border: 1px solid rgba(16, 61, 40, 0.15); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;"
-                                                onclick="document.getElementById('site-logo-file-input').click();">
-                                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Logo
-                                            </button>
-                                            <small style="color: #64748b; display: block; margin-top: 0.4rem;">High
-                                                quality PNG,
-                                                SVG, or JPG format. Recommended max height: 50px.</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-                                    <label
-                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Landing
-                                        Page Live Stats Counter</label>
-                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
-                                        <div>
-                                            <small
-                                                style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Properties</small>
-                                            <input type="number" name="stat_properties"
-                                                value="{{ site_settings.stat_properties|default:120 }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                        <div>
-                                            <small
-                                                style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Tenants</small>
-                                            <input type="number" name="stat_tenants"
-                                                value="{{ site_settings.stat_tenants|default:450 }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                        <div>
-                                            <small style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Moved
-                                                In</small>
-                                            <input type="number" name="stat_moved_in"
-                                                value="{{ site_settings.stat_moved_in|default:380 }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                        <div>
-                                            <small
-                                                style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Landlords</small>
-                                            <input type="number" name="stat_landlords"
-                                                value="{{ site_settings.stat_landlords|default:85 }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                        <div>
-                                            <small
-                                                style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Districts</small>
-                                            <input type="number" name="stat_districts"
-                                                value="{{ site_settings.stat_districts|default:14 }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                        <div>
-                                            <small
-                                                style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Agents</small>
-                                            <input type="number" name="stat_agents"
-                                                value="{{ site_settings.stat_agents|default:32 }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-                                    <label
-                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Featured
-                                        Top Selling Apartment Showcase</label>
-
-                                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                        <div>
-                                            <small
-                                                style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Title</small>
-                                            <input type="text" name="top_selling_title"
-                                                value="{{ site_settings.top_selling_title|default:'Penthouse Apartment in Kololo' }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                            <div>
-                                                <small
-                                                    style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Price</small>
-                                                <input type="text" name="top_selling_price"
-                                                    value="{{ site_settings.top_selling_price|default:'UGX 2,500,000 / mo' }}"
-                                                    style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                            </div>
-                                            <div>
-                                                <small
-                                                    style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Location</small>
-                                                <input type="text" name="top_selling_location"
-                                                    value="{{ site_settings.top_selling_location|default:'Kololo, Kampala' }}"
-                                                    style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <small style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Link
-                                                URL</small>
-                                            <input type="text" name="top_selling_link"
-                                                value="{{ site_settings.top_selling_link|default:'/search/' }}"
-                                                style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
-                                        </div>
-                                        <div>
-                                            <small
-                                                style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Featured
-                                                Property
-                                                Image</small>
-                                            <input type="file" name="top_selling_image" accept="image/*"
-                                                style="width: 100%; padding: 0.45rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.82rem; background: white;">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-                                    <label
-                                        style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Diagonal
-                                        Split Section Images (Left & Right)</label>
-
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                        <div>
-                                            <small style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Left
-                                                Section Image
-                                                (Green Background)</small>
-                                            <input type="file" name="pipeline_left_image" accept="image/*"
-                                                style="width: 100%; padding: 0.45rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.82rem; background: white;">
-                                            {% if site_settings.pipeline_left_image %}
-                                            <div
-                                                style="margin-top: 0.35rem; font-size: 0.75rem; color: #059669; font-weight: 600;">
-                                                Current: {{ site_settings.pipeline_left_image.name }}</div>
-                                            {% endif %}
-                                        </div>
-                                        <div>
-                                            <small style="color: #64748b; font-size: 0.78rem; font-weight: 600;">Right
-                                                Section Image
-                                                (White Background)</small>
-                                            <input type="file" name="pipeline_right_image" accept="image/*"
-                                                style="width: 100%; padding: 0.45rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.82rem; background: white;">
-                                            {% if site_settings.pipeline_right_image %}
-                                            <div
-                                                style="margin-top: 0.35rem; font-size: 0.75rem; color: #059669; font-weight: 600;">
-                                                Current: {{ site_settings.pipeline_right_image.name }}</div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
-                                    <button type="submit" class="btn btn-primary"
-                                        style="width: 100%; padding: 0.9rem; font-weight: 600; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                                        <i class="fa-solid fa-floppy-disk"></i> Save Branding Settings & Images
-                                    </button>
-                                </div>
-                            </form>
-
-                            <!-- Landing Page Hero Video Upload Manager -->
-                            <div style="border-top: 2px solid var(--color-gold); padding: 2rem; background: #f8fafc;">
-                                <h4
-                                    style="margin: 0 0 0.5rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fa-solid fa-film" style="color: var(--color-gold);"></i> Landing Page Hero
-                                    Video
-                                    Manager
-                                </h4>
-                                <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.85rem;">Upload MP4 video
-                                    files
-                                    directly to serve as the background video slider on the landing page</p>
-
-                                <form method="POST" enctype="multipart/form-data"
-                                    action="/admin-dashboard/?tab=settings"
-                                    style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+                        {% for vid in hero_videos %}
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;">
+                            <video src="{{ vid.video.url }}" controls style="width: 100%; height: 130px; object-fit: cover; background: #0f172a;"></video>
+                            <div style="padding: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+                                <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">{{ vid.title }}</div>
+                                <form action="{% url 'admin_dashboard' %}" method="POST" style="margin: 0;" onsubmit="return confirm('Delete this video?');">
                                     {% csrf_token %}
-                                    <input type="hidden" name="action" value="upload_hero_video">
-
-                                    <div>
-                                        <label
-                                            style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Video
-                                            Title / Label</label>
-                                        <input type="text" name="video_title" placeholder="e.g. Modern Estate Showcase"
-                                            style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 6px; border: 1px solid #cbd5e1; outline: none; font-size: 0.88rem;">
-                                    </div>
-
-                                    <div>
-                                        <label
-                                            style="display: block; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem;">Select
-                                            MP4 Video File</label>
-                                        <input type="file" name="hero_video_file" accept="video/mp4,video/webm" required
-                                            style="width: 100%; padding: 0.45rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; background: white;">
-                                    </div>
-
-                                    <button type="submit" class="btn btn-gold"
-                                        style="padding: 0.7rem 1.25rem; border-radius: 6px; font-weight: 700; align-self: flex-start; display: flex; align-items: center; gap: 0.5rem;">
-                                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Hero Video
-                                    </button>
+                                    <input type="hidden" name="action" value="delete_hero_video">
+                                    <input type="hidden" name="video_id" value="{{ vid.id }}">
+                                    <button type="submit" style="background: none; border: none; color: #ef4444; font-size: 0.82rem; font-weight: 600; cursor: pointer;">Delete</button>
                                 </form>
                             </div>
                         </div>
+                        {% empty %}
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 2.5rem; color: #64748b;">
+                            No marketing hero videos uploaded yet.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 6. SITE BRANDING & IDENTITY SECTION        -->
+<!-- ========================================== -->
+<div id="settings-section-branding" class="settings-section-content" style="display: {% if active_section == 'branding' %}block{% else %}none{% endif %};">
+    <div class="row animate__animated animate__fadeIn">
+        <!-- LEFT: Site Branding Config Form -->
+        <div class="col-lg-6" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); padding: 1.5rem;">
+                <h4 style="margin: 0 0 0.4rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-palette" style="color: var(--color-gold);"></i> Site Branding & Visual Identity
+                </h4>
+                <p style="margin: 0 0 1.25rem 0; color: #64748b; font-size: 0.82rem;">
+                    Upload brand assets to update logos and favicons across the site.
+                </p>
+
+                <form action="{% url 'admin_dashboard' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_site_branding">
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Platform Name</label>
+                        <input type="text" name="site_name" value="{{ site_settings.site_name|default:'TRUST' }}" required style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none;">
                     </div>
 
-                    <!-- RIGHT PANEL: Live Previews Mockup -->
-                    <div class="col-lg-6" style="margin-bottom: 2rem;">
-                        <div
-                            style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; height: 100%; display: flex; flex-direction: column;">
-                            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
-                                <h3
-                                    style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="fa-solid fa-laptop" style="color: var(--color-gold);"></i> Real-Time
-                                    Branding Previews
-                                </h3>
-                                <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">See how your
-                                    uploaded branding
-                                    renders inside browser layouts dynamically</p>
-                            </div>
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Browser Favicon / Site Icon</label>
+                        <input type="file" name="site_icon" accept="image/*" style="width: 100%; font-size: 0.85rem;">
+                    </div>
 
-                            <div
-                                style="padding: 2rem; flex: 1; display: flex; flex-direction: column; gap: 2rem; background: #f8fafc;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Primary Logo Image</label>
+                        <input type="file" name="site_logo" accept="image/*" style="width: 100%; font-size: 0.85rem;">
+                    </div>
 
-                                <!-- Mockup 1: Browser Tab Mockup -->
-                                <div>
-                                    <h5
-                                        style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        1. Browser Tab Representation</h5>
-                                    <div
-                                        style="background: #e2e8f0; border-radius: 8px 8px 0 0; padding: 0.5rem 0.75rem 0 0.75rem; border: 1px solid #cbd5e1; border-bottom: none; display: flex; align-items: flex-end; gap: 0.5rem; height: 42px;">
-                                        <!-- Browser actions -->
-                                        <div
-                                            style="display: flex; gap: 0.35rem; margin-bottom: 0.5rem; margin-right: 0.5rem;">
-                                            <div
-                                                style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444;">
-                                            </div>
-                                            <div
-                                                style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;">
-                                            </div>
-                                            <div
-                                                style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;">
-                                            </div>
-                                        </div>
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; padding: 0.75rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
+                        <i class="fa-solid fa-floppy-disk" style="margin-right: 0.35rem;"></i> Save Branding Settings
+                    </button>
+                </form>
+            </div>
+        </div>
 
-                                        <!-- Real Browser Tab Mock -->
-                                        <div
-                                            style="background: white; border-radius: 6px 6px 0 0; padding: 0.4rem 0.85rem; border: 1px solid #cbd5e1; border-bottom: none; display: flex; align-items: center; gap: 0.5rem; min-width: 180px; height: 32px; font-size: 0.75rem; font-weight: 500; color: #334155;">
-                                            <!-- Dynamic Tab Icon -->
-                                            <div style="width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;"
-                                                id="tab-icon-mockup-box">
-                                                {% if site_settings.site_icon %}
-                                                <img src="{{ site_settings.site_icon.url }}"
-                                                    style="max-width: 100%; max-height: 100%; object-fit: contain;"
-                                                    id="tab-icon-mockup-img">
-                                                {% else %}
-                                                <i class="fa-solid fa-shield-halved"
-                                                    style="font-size: 0.8rem; color: var(--color-emerald);"
-                                                    id="tab-icon-mockup-placeholder"></i>
-                                                {% endif %}
-                                            </div>
-                                            <!-- Dynamic Tab Text -->
-                                            <span id="tab-title-text"
-                                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">
-                                                Home | {{ site_settings.site_name|default:'TRUST' }}
-                                            </span>
-                                            <span
-                                                style="margin-left: auto; color: #94a3b8; font-size: 0.65rem; cursor: pointer;"><i
-                                                    class="fa-solid fa-xmark"></i></span>
-                                        </div>
-                                    </div>
-                                    <div
-                                        style="background: white; border: 1px solid #cbd5e1; border-top: none; height: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
-                                    </div>
-                                </div>
+        <!-- RIGHT: Live Branding Preview Card -->
+        <div class="col-lg-6" style="margin-bottom: 1.5rem;">
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.05rem;">
+                    Active Brand Assets Preview
+                </h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.85rem; color: #475569;">Site Icon / Favicon</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8;">Used for browser tab icon</div>
+                        </div>
+                        <div style="width: 48px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.site_icon %}
+                            <img src="{{ site_settings.site_icon.url }}" style="max-width: 32px; max-height: 32px; object-fit: contain;">
+                            {% else %}
+                            <i class="fa-solid fa-shield-halved" style="color: var(--color-emerald); font-size: 1.2rem;"></i>
+                            {% endif %}
+                        </div>
+                    </div>
 
-                                <!-- Mockup 2: Header Brand Representation -->
-                                <div>
-                                    <h5
-                                        style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        2. Navigation Header Branding</h5>
-                                    <div
-                                        style="background: var(--color-emerald-darkest); border-radius: 8px; border: 1px solid rgba(16, 61, 40, 0.2); padding: 0.85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 8px 24px rgba(10, 61, 40, 0.15);">
-                                        <!-- Branding Header Mockup -->
-                                        <div style="height: 38px; display: flex; align-items: center;"
-                                            id="logo-mockup-box">
-                                            {% if site_settings.site_logo %}
-                                            <img src="{{ site_settings.site_logo.url }}"
-                                                style="max-height: 34px; width: auto; object-fit: contain;"
-                                                id="logo-mockup-img">
-                                            {% else %}
-                                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--color-gold); font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem;"
-                                                id="logo-mockup-placeholder">
-                                                <i class="fa-solid fa-shield-halved" style="font-size: 1.2rem;"></i>
-                                                <span id="logo-text-preview">{{ site_settings.site_name|default:'TRUST' }}</span>
-                                            </div>
-                                            {% endif %}
-                                        </div>
-
-                                        <!-- Header nav links mockup -->
-                                        <div
-                                            style="display: flex; gap: 1rem; align-items: center; font-size: 0.8rem; color: rgba(255,255,255,0.7); font-weight: 500;">
-                                            <span>Home</span>
-                                            <span>Find a Home</span>
-                                            <span
-                                                style="background: var(--color-gold); color: white; padding: 0.4rem 0.85rem; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Dashboard</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Mockup 3: Admin Sidebar Mockup -->
-                                <div>
-                                    <h5
-                                        style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        3. Portal Sidebar Branding</h5>
-                                    <div
-                                        style="display: flex; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.02); height: 120px;">
-                                        <div
-                                            style="width: 140px; background: var(--color-emerald-darkest); padding: 1rem; display: flex; flex-direction: column; gap: 0.85rem; border-right: 1px solid rgba(255,255,255,0.05);">
-                                            <!-- Sidebar Brand logo -->
-                                            <div style="height: 28px; display: flex; align-items: center;"
-                                                id="sidebar-logo-mockup-box">
-                                                {% if site_settings.site_logo %}
-                                                <img src="{{ site_settings.site_logo.url }}"
-                                                    style="max-height: 24px; width: auto; object-fit: contain;"
-                                                    id="sidebar-logo-mockup-img">
-                                                {% else %}
-                                                <div style="display: flex; align-items: center; gap: 0.35rem; color: var(--color-gold); font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem;"
-                                                    id="sidebar-logo-mockup-placeholder">
-                                                    <i class="fa-solid fa-shield-halved" style="font-size: 0.9rem;"></i>
-                                                    <span id="sidebar-logo-text-preview">{{ site_settings.site_name|default:'TRUST' }}</span>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-
-                                            <!-- Dummy sidebar items -->
-                                            <div
-                                                style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.65rem; color: rgba(255,255,255,0.5);">
-                                                <span
-                                                    style="background: rgba(255,255,255,0.06); color: white; padding: 0.25rem 0.5rem; border-radius: 4px;"><i
-                                                        class="fa-solid fa-gauge" style="margin-right: 0.25rem;"></i>
-                                                    Dashboard</span>
-                                                <span style="padding: 0.25rem 0.5rem;"><i class="fa-solid fa-house"
-                                                        style="margin-right: 0.25rem;"></i> Properties</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            style="flex: 1; padding: 1rem; background: #fafafa; display: flex; flex-direction: column; gap: 0.5rem;">
-                                            <div
-                                                style="width: 40%; height: 8px; background: #cbd5e1; border-radius: 4px;">
-                                            </div>
-                                            <div
-                                                style="width: 80%; height: 6px; background: #e2e8f0; border-radius: 3px;">
-                                            </div>
-                                            <div
-                                                style="width: 60%; height: 6px; background: #e2e8f0; border-radius: 3px;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.85rem; color: #475569;">Primary Header Logo</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8;">Used in main header & footer navigation</div>
+                        </div>
+                        <div style="max-width: 140px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; padding: 0.4rem 0.8rem; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.site_logo %}
+                            <img src="{{ site_settings.site_logo.url }}" style="max-height: 34px; width: auto; object-fit: contain;">
+                            {% else %}
+                            <span style="font-weight: 900; color: var(--color-gold); font-size: 1rem;">TRUST</span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-            </div><!-- End Branding Section -->
+            </div>
+        </div>
+    </div>
+</div>
 
-            <script>
-                function previewImage(input, previewBoxId, placeholderId, imgId, mockupImgId, mockupPlaceholderId) {
-                    if (input.files && input.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            // Update primary preview box image
-                            let img = document.getElementById(imgId);
-                            if (!img) {
-                                img = document.createElement('img');
-                                img.id = imgId;
-                                img.style.maxWidth = '100%';
-                                img.style.maxHeight = '100%';
-                                img.style.objectFit = 'contain';
-                                const previewBox = document.getElementById(previewBoxId);
-                                previewBox.innerHTML = '';
-                                previewBox.appendChild(img);
-                            }
-                            img.src = e.target.result;
+<!-- ========================================== -->
+<!-- GLOBAL SETTINGS SECTION SWITCHER CONTROLLER-->
+<!-- ========================================== -->
+<script>
+    function switchSettingsSection(sectionId, evt) {
+        if (evt) {
+            evt.preventDefault();
+        }
 
-                            // Update browser mockup images (tab mockup & header mockup)
-                            let mockupImg = document.getElementById(mockupImgId);
-                            if (!mockupImg) {
-                                mockupImg = document.createElement('img');
-                                mockupImg.id = mockupImgId;
-                                mockupImg.style.maxHeight = mockupImgId.includes('tab') ? '100%' : '34px';
-                                mockupImg.style.width = 'auto';
-                                mockupImg.style.objectFit = 'contain';
+        // Hide all settings content sections
+        const sections = document.querySelectorAll('.settings-section-content');
+        sections.forEach(sec => {
+            sec.style.setProperty('display', 'none', 'important');
+        });
 
-                                // If it is logo mockup
-                                if (mockupImgId === 'logo-mockup-img') {
-                                    // Update header mockup
-                                    const headerBox = document.getElementById('logo-mockup-box');
-                                    headerBox.innerHTML = '';
-                                    headerBox.appendChild(mockupImg);
+        // Show target settings content section
+        const target = document.getElementById('settings-section-' + sectionId);
+        if (target) {
+            target.style.setProperty('display', 'block', 'important');
+        }
 
-                                    // Also update sidebar mockup
-                                    const sidebarImg = document.createElement('img');
-                                    sidebarImg.id = 'sidebar-logo-mockup-img';
-                                    sidebarImg.style.maxHeight = '24px';
-                                    sidebarImg.style.width = 'auto';
-                                    sidebarImg.style.objectFit = 'contain';
-                                    sidebarImg.src = e.target.result;
-                                    const sidebarBox = document.getElementById('sidebar-logo-mockup-box');
-                                    sidebarBox.innerHTML = '';
-                                    sidebarBox.appendChild(sidebarImg);
-                                } else {
-                                    const tabBox = document.getElementById('tab-icon-mockup-box');
-                                    tabBox.innerHTML = '';
-                                    tabBox.appendChild(mockupImg);
-                                }
-                            } else {
-                                mockupImg.src = e.target.result;
-                                if (mockupImgId === 'logo-mockup-img') {
-                                    const sidebarImg = document.getElementById('sidebar-logo-mockup-img');
-                                    if (sidebarImg) sidebarImg.src = e.target.result;
-                                }
-                            }
-                        };
-                        reader.readAsDataURL(input.files[0]);
-                    }
-                }
+        // Update active tab button styles
+        const btns = document.querySelectorAll('#settings-nav-tabs .settings-nav-btn');
+        btns.forEach(btn => {
+            btn.style.background = 'transparent';
+            btn.style.color = '#475569';
+            btn.style.boxShadow = 'none';
+            btn.classList.remove('active');
+        });
 
-                // Add real-time text input listeners for site name
-                document.addEventListener('DOMContentLoaded', function () {
-                    const siteNameInput = document.querySelector('input[name="site_name"]');
-                    if (siteNameInput) {
-                        siteNameInput.addEventListener('input', function () {
-                            const val = this.value.trim() || 'TRUST';
-                            // Update browser tab mockup title text
-                            const tabTitle = document.getElementById('tab-title-text');
-                            if (tabTitle) tabTitle.textContent = 'Home | ' + val;
+        const activeBtn = document.getElementById('tab-btn-' + sectionId);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            activeBtn.style.background = 'white';
+            activeBtn.style.color = 'var(--color-emerald-darkest)';
+            activeBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.08)';
+        }
 
-                            // Update fallback text brand previews if no image is uploaded
-                            const logoText = document.getElementById('logo-text-preview');
-                            if (logoText) logoText.textContent = val;
+        // Save active section in localStorage & update URL without page reload
+        try {
+            localStorage.setItem('active_settings_section', sectionId);
+            const url = new URL(window.location);
+            url.searchParams.set('tab', 'settings');
+            url.searchParams.set('section', sectionId);
+            window.history.replaceState({}, '', url);
+        } catch (e) {}
+    }
+</script>
 
-                            const sidebarText = document.getElementById('sidebar-logo-text-preview');
-                            if (sidebarText) sidebarText.textContent = val;
-                        });
-                    }
-                });
-            </script>
-
-            <script>
-                function switchSettingsSection(sectionId, element) {
-                    // 1. Toggle content visibility
-                    document.querySelectorAll('.settings-section-content').forEach(section => {
-                        section.style.display = 'none';
-                    });
-                    const targetSection = document.getElementById('settings-section-' + sectionId);
-                    if (targetSection) {
-                        targetSection.style.display = 'block';
-                    }
-
-                    // 2. Toggle active tab styling
-                    const btns = document.querySelectorAll('#settings-nav-tabs button');
-                    btns.forEach(btn => {
-                        btn.style.background = 'transparent';
-                        btn.style.color = '#475569';
-                        btn.style.boxShadow = 'none';
-                        btn.classList.remove('active');
-
-                        const icon = btn.querySelector('i');
-                        if (icon) {
-                            icon.style.color = '#475569';
-                        }
-                    });
-
-                    // Activate button
-                    const activeBtn = element || Array.from(btns).find(b => {
-                        const attr = b ? b.getAttribute('onclick') : null;
-                        return attr && attr.includes("'" + sectionId + "'");
-                    });
-                    if (activeBtn) {
-                        activeBtn.classList.add('active');
-                        activeBtn.style.background = 'white';
-                        activeBtn.style.color = 'var(--color-emerald-darkest)';
-                        activeBtn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
-                        const activeIcon = activeBtn.querySelector('i');
-                        if (activeIcon) {
-                            activeIcon.style.color = 'var(--color-gold)';
-                        }
-                    }
-
-                    // Store state in localStorage
-                    localStorage.setItem('active_settings_section', sectionId);
-                }
-
-                // Auto-restore active settings tab on page load
-                document.addEventListener("DOMContentLoaded", function () {
-                    const savedSection = localStorage.getItem('active_settings_section');
-                    if (savedSection && ['amenities', 'committee', 'categories', 'coverage', 'popups', 'branding'].includes(savedSection)) {
-                        switchSettingsSection(savedSection);
-                    } else {
-                        switchSettingsSection('amenities');
-                    }
-                });
-
-                function switchCoverageTab(tabId) {
-                    // Toggle tab contents
-                    document.querySelectorAll('.coverage-tab-content').forEach(content => {
-                        content.style.display = 'none';
-                    });
-                    document.getElementById('coverage-' + tabId).style.display = 'block';
-
-                    // Toggle button active states
-                    const btns = document.querySelectorAll('#coverage-tabs button');
-                    btns.forEach(btn => {
-                        btn.style.background = '#e2e8f0';
-                        btn.style.color = '#475569';
-                        btn.classList.remove('active');
-                    });
-
-                    // Find clicked button and activate
-                    event.currentTarget.style.background = 'var(--color-gold)';
-                    event.currentTarget.style.color = 'white';
-                    event.currentTarget.classList.add('active');
-                }
-
-                // Tenants Directory routing handles view details redirections to dedicated ten_details.html
-            </script>
-            {% endif %}
+{% endif %}
 
             <script>
                 function openUploadAreasModal() {
