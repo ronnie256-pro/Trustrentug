@@ -1,6 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class PropertyCategory(models.Model):
+    GROUP_CHOICES = [
+        ('single_unit', 'Single Unit Residential'),
+        ('multi_unit', 'Multi-Unit Residential (Building / Estate)'),
+        ('multi_floor', 'Multi-Floor Building (Flat)'),
+        ('office', 'Commercial / Office Space'),
+    ]
+    name = models.CharField(max_length=100, unique=True)
+    group = models.CharField(max_length=50, choices=GROUP_CHOICES, default='single_unit')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['group', 'name']
+        verbose_name_plural = 'Property Categories'
+
+    def __str__(self):
+        return f"{self.name} ({self.get_group_display()})"
+
+
 class Property(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='properties', null=True, blank=True)
     SINGLE_UNIT_CHOICES = [
@@ -40,7 +60,8 @@ class Property(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, blank=True, null=True)
+    category_ref = models.ForeignKey(PropertyCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='properties')
     listing_type = models.CharField(max_length=20, choices=LISTING_TYPE_CHOICES, default='rent')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending_verification')
     price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)

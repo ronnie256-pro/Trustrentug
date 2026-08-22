@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Property, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, PropertyProximity, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject, ConstructionSliderImage
+from core.models import Property, PropertyCategory, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, PropertyProximity, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject, ConstructionSliderImage
 from django.contrib.auth.models import User
 
 AMENITY_ICONS = {
@@ -372,6 +372,7 @@ def landlord_dashboard(request):
         'amenities': amenities,
         'proximity_categories': proximity_categories,
         'amenity_categories': amenity_categories,
+        'property_categories': PropertyCategory.objects.filter(is_active=True).order_by('group', 'name'),
     })
 
 def is_admin_user(user):
@@ -1492,8 +1493,61 @@ def admin_dashboard(request):
         'construction_projects': construction_projects,
         'slider_images': slider_images,
         'office_amenities': office_amenities,
+        'property_categories': PropertyCategory.objects.all().order_by('group', 'name'),
         'current_tab': tab
     })
+
+
+def admin_add_property_category(request):
+    if not request.user.is_authenticated or not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        group = request.POST.get('group', 'single_unit').strip()
+
+        if not name:
+            messages.error(request, "Please enter a valid House Type / Category Name.")
+        else:
+            cat, created = PropertyCategory.objects.get_or_create(
+                name=name,
+                defaults={'group': group, 'is_active': True}
+            )
+            if not created:
+                cat.group = group
+                cat.is_active = True
+                cat.save()
+                messages.success(request, f"House Category '{name}' updated successfully.")
+            else:
+                messages.success(request, f"House Category '{name}' added successfully.")
+
+    return redirect('/admin-dashboard/?tab=settings')
+
+
+def admin_delete_property_category(request, category_id):
+    if not request.user.is_authenticated or not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+
+    cat = get_object_or_404(PropertyCategory, id=category_id)
+    cat_name = cat.name
+    cat.delete()
+    messages.success(request, f"House Category '{cat_name}' removed successfully.")
+    return redirect('/admin-dashboard/?tab=settings')
+
+
+def admin_toggle_property_category(request, category_id):
+    if not request.user.is_authenticated or not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+
+    cat = get_object_or_404(PropertyCategory, id=category_id)
+    cat.is_active = not cat.is_active
+    cat.save()
+    status_str = "activated" if cat.is_active else "deactivated"
+    messages.success(request, f"House Category '{cat.name}' {status_str}.")
+    return redirect('/admin-dashboard/?tab=settings')
 
 
 
@@ -1905,16 +1959,19 @@ def search_view(request):
         properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
         
     # 2. Type search
-    p_type = request.GET.get('type', '').strip().lower()
-    if p_type and p_type != 'all types':
-        if p_type == 'apartment':
-            properties = properties.filter(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block'])
-        elif p_type == 'flat':
-            properties = properties.filter(category__in=['flat', 'single_room', 'self_contained'])
-        elif p_type == 'condo':
-            properties = properties.filter(category__in=['condo_block'])
-        elif p_type in ['bungalow', 'standalone', 'villa']:
-            properties = properties.filter(category__in=['bungalow', 'standalone'])
+    p_type = request.GET.get('type', '').strip()
+    if p_type and p_type.lower() != 'all types':
+        p_lower = p_type.lower()
+        if p_lower == 'apartment':
+            properties = properties.filter(Q(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block']) | Q(category_ref__name__icontains='apartment'))
+        elif p_lower == 'flat':
+            properties = properties.filter(Q(category__in=['flat', 'single_room', 'self_contained']) | Q(category_ref__name__icontains='flat'))
+        elif p_lower == 'condo':
+            properties = properties.filter(Q(category__in=['condo_block']) | Q(category_ref__name__icontains='condo'))
+        elif p_lower in ['bungalow', 'standalone', 'villa']:
+            properties = properties.filter(Q(category__in=['bungalow', 'standalone']) | Q(category_ref__name__icontains='bungalow') | Q(category_ref__name__icontains='standalone'))
+        else:
+            properties = properties.filter(Q(category__icontains=p_type) | Q(category_ref__name__icontains=p_type))
             
     # 3. Price filters (min_price, max_price)
     min_price = request.GET.get('min_price', '').strip()
@@ -1980,7 +2037,8 @@ def search_view(request):
         'for_sale': for_sale,
         'for_rent': for_rent,
         'selected_amenities': selected_amenities,
-        'active_popup': active_popup
+        'active_popup': active_popup,
+        'property_categories': PropertyCategory.objects.filter(is_active=True).order_by('group', 'name')
     })
 
 
@@ -3184,6 +3242,93 @@ def admin_add_office_property(request):
         'amenities': amenities,
         'current_tab': 'properties'
     })
+
+
+def admin_add_house_property(request):
+    if not request.user.is_authenticated or not is_admin_user(request.user):
+        messages.error(request, 'Access denied. Only system administrators can access this page.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        category_id = request.POST.get('category_id')
+        category_raw = request.POST.get('category', '1_bed')
+        listing_type = request.POST.get('listing_type', 'rent')
+        price = request.POST.get('price', '').strip()
+        location = request.POST.get('location', '').strip()
+        description = request.POST.get('description', '').strip()
+        bedrooms = request.POST.get('bedrooms', None)
+        owner_id = request.POST.get('owner_id')
+        
+        cat_obj = None
+        category_str = category_raw
+        if category_id and category_id.isdigit():
+            cat_obj = PropertyCategory.objects.filter(id=int(category_id)).first()
+            if cat_obj:
+                category_str = cat_obj.name
+
+        is_multi = False
+        if cat_obj:
+            is_multi = cat_obj.group in ['multi_unit', 'multi_floor']
+        else:
+            is_multi = category_raw in ['apartment_block', 'condo_block', 'flat']
+        
+        hero_image = request.FILES.get('hero_image')
+        gallery_files = request.FILES.getlist('gallery_images')
+        
+        image_1 = gallery_files[0] if len(gallery_files) > 0 else request.FILES.get('image_1')
+        image_2 = gallery_files[1] if len(gallery_files) > 1 else request.FILES.get('image_2')
+        image_3 = gallery_files[2] if len(gallery_files) > 2 else request.FILES.get('image_3')
+        image_4 = gallery_files[3] if len(gallery_files) > 3 else request.FILES.get('image_4')
+        image_5 = gallery_files[4] if len(gallery_files) > 5 else request.FILES.get('image_5')
+        image_6 = gallery_files[5] if len(gallery_files) > 5 else request.FILES.get('image_6')
+        image_7 = gallery_files[6] if len(gallery_files) > 6 else request.FILES.get('image_7')
+
+        if not title or not price or not location:
+            messages.error(request, "Please fill in all required fields (House Title, Price, and Location).")
+        else:
+            try:
+                price_val = float(price.replace(',', ''))
+            except ValueError:
+                price_val = 0.0
+
+            owner_user = None
+            if owner_id and owner_id.isdigit():
+                owner_user = User.objects.filter(id=int(owner_id)).first()
+            if not owner_user:
+                owner_user = request.user
+
+            prop = Property.objects.create(
+                owner=owner_user,
+                title=title,
+                category=category_str,
+                category_ref=cat_obj,
+                is_multi_unit=is_multi,
+                listing_type=listing_type,
+                status='available',
+                price=price_val,
+                price_per_month=price_val if listing_type == 'rent' else None,
+                location=location,
+                description=description,
+                bedrooms=int(bedrooms) if bedrooms and bedrooms.isdigit() else None,
+                hero_image=hero_image,
+                image_1=image_1,
+                image_2=image_2,
+                image_3=image_3,
+                image_4=image_4,
+                image_5=image_5,
+                image_6=image_6,
+                image_7=image_7,
+            )
+
+            selected_amenities = request.POST.getlist('amenities')
+            if selected_amenities:
+                prop.amenities.set(selected_amenities)
+
+            cat_display = cat_obj.name if cat_obj else (prop.get_category_display() or category_str)
+            messages.success(request, f"House Listing '{prop.title}' ({cat_display}) created and published successfully!")
+
+    return redirect('/admin-dashboard/?tab=properties')
 
 
 def admin_construction_progress(request, project_id):

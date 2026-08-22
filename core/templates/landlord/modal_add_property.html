@@ -29,6 +29,12 @@
                 <div class="form-group">
                     <label class="form-label" for="category" style="font-weight: 700; font-size: 0.88rem;">Property Category</label>
                     <select id="category" name="category" class="form-control" required style="padding: 0.65rem 0.85rem; border-radius: 8px;" onchange="toggleUnitLogicModal()">
+                        {% if property_categories %}
+                            <option value="">-- Choose Admin House Type --</option>
+                            {% for cat in property_categories %}
+                            <option value="{{ cat.name }}">{{ cat.name }} ({{ cat.get_group_display }})</option>
+                            {% endfor %}
+                        {% else %}
                         <optgroup label="Single-Unit Properties">
                             <option value="single_room">Single Room</option>
                             <option value="self_contained">Self-Contained Room</option>
@@ -44,6 +50,7 @@
                             <option value="condo_block">Condominium Block</option>
                             <option value="flat">Flat (Multi-Floor Building)</option>
                         </optgroup>
+                        {% endif %}
                     </select>
                 </div>
             </div>
