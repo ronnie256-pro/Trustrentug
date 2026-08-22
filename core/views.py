@@ -414,7 +414,7 @@ def admin_dashboard(request):
             uploaded_file = request.FILES.get('areas_file')
             if not uploaded_file:
                 messages.error(request, "Please select a valid CSV or Excel file to upload.")
-                return redirect('/admin-dashboard/?tab=settings')
+                return redirect('/admin-dashboard/?tab=settings&section=coverage')
 
             filename = uploaded_file.name.lower()
             districts_created = 0
@@ -443,7 +443,7 @@ def admin_dashboard(request):
 
                 if not rows_data:
                     messages.error(request, "The uploaded file is empty.")
-                    return redirect('/admin-dashboard/?tab=settings')
+                    return redirect('/admin-dashboard/?tab=settings&section=coverage')
 
                 header = [str(c).strip().lower() for c in rows_data[0]]
                 dist_idx = 0
@@ -490,7 +490,7 @@ def admin_dashboard(request):
             except Exception as e:
                 messages.error(request, f"Error processing file upload: {str(e)}")
 
-            return redirect('/admin-dashboard/?tab=settings')
+            return redirect('/admin-dashboard/?tab=settings&section=coverage')
 
         elif action == 'add_role':
             role_name = request.POST.get('role_name', '').strip()
