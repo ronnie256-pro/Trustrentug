@@ -434,7 +434,12 @@ def admin_dashboard(request):
                             rows_data.append(row)
 
                 elif filename.endswith(('.xlsx', '.xls')):
-                    import openpyxl
+                    try:
+                        import openpyxl
+                    except ImportError:
+                        messages.error(request, "Excel parsing library (openpyxl) is missing on the server. Please update requirements.txt (pip install openpyxl) or upload a CSV file.")
+                        return redirect('/admin-dashboard/?tab=settings&section=coverage')
+
                     wb = openpyxl.load_workbook(uploaded_file, data_only=True)
                     sheet = wb.active
                     for row in sheet.iter_rows(values_only=True):
