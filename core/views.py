@@ -1371,6 +1371,9 @@ def admin_dashboard(request):
             'status_border': status_border
         })
         
+    # Sort payments_list strictly by timestamp (latest transaction first - first come first serve)
+    payments_list.sort(key=lambda x: x['date'] if x.get('date') else timezone.now(), reverse=True)
+        
     # Prepare timeframe datasets (Annually, Monthly, Daily)
     today = timezone.now().date()
     current_year = today.year
@@ -4056,16 +4059,19 @@ def download_payments_pdf(request):
             st_str = "Pending payment"
 
         dt_str = timezone.localtime(b.booked_at).strftime('%Y-%m-%d %H:%M') if b.booked_at else "-"
-        payments_list.append([
-            getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
-            f"{b.tenant.first_name} {b.tenant.last_name or b.tenant.username}",
-            b.property.title[:22] if b.property else "-",
-            reason,
-            b.payment_method or "Mobile Money",
-            f"UGX {amount:,.0f}",
-            dt_str,
-            st_str
-        ])
+        payments_list.append((
+            b.booked_at or timezone.now(),
+            [
+                getattr(b, 'order_tracking_id', None) or f"BKG-{b.id:04d}",
+                f"{b.tenant.first_name} {b.tenant.last_name or b.tenant.username}",
+                b.property.title[:22] if b.property else "-",
+                reason,
+                b.payment_method or "Mobile Money",
+                f"UGX {amount:,.0f}",
+                dt_str,
+                st_str
+            ]
+        ))
 
     for r in received_rentals:
         amount = float(r.total_amount) if r.total_amount and float(r.total_amount) > 0 else (float(r.property.price or 0) * (3 if r.payment_type == 'rent_3' else 2) * 1.11)
@@ -4089,16 +4095,19 @@ def download_payments_pdf(request):
 
         r_date = r.created_at or r.start_date
         dt_str = timezone.localtime(r_date).strftime('%Y-%m-%d %H:%M') if r_date else "-"
-        payments_list.append([
-            getattr(r, 'order_tracking_id', None) or f"RNT-{r.id:04d}",
-            f"{r.tenant.first_name} {r.tenant.last_name or r.tenant.username}",
-            r.property.title[:22] if r.property else "-",
-            reason,
-            r.payment_method or "Mobile Money",
-            f"UGX {amount:,.0f}",
-            dt_str,
-            st_str
-        ])
+        payments_list.append((
+            r_date or timezone.now(),
+            [
+                getattr(r, 'order_tracking_id', None) or f"RNT-{r.id:04d}",
+                f"{r.tenant.first_name} {r.tenant.last_name or r.tenant.username}",
+                r.property.title[:22] if r.property else "-",
+                reason,
+                r.payment_method or "Mobile Money",
+                f"UGX {amount:,.0f}",
+                dt_str,
+                st_str
+            ]
+        ))
 
     # Office Applications for PDF report
     received_office_apps = OfficeApplication.objects.select_related('property', 'user').order_by('-created_at')
@@ -4122,16 +4131,23 @@ def download_payments_pdf(request):
         st_str = "Paid" if off_app.payment_status == 'paid' else "Pending payment"
         dt_str = timezone.localtime(off_app.created_at).strftime('%Y-%m-%d %H:%M') if off_app.created_at else "-"
         client_name = off_app.contact_person or off_app.company_name
-        payments_list.append([
-            f"OFF-{off_app.id:04d}",
-            client_name,
-            off_app.property.title[:22] if off_app.property else "-",
-            "Office Upgrade",
-            "Mobile Money / Card",
-            f"UGX {amount:,.0f}",
-            dt_str,
-            st_str
-        ])
+        payments_list.append((
+            off_app.created_at or timezone.now(),
+            [
+                f"OFF-{off_app.id:04d}",
+                client_name,
+                off_app.property.title[:22] if off_app.property else "-",
+                "Office Upgrade",
+                "Mobile Money / Card",
+                f"UGX {amount:,.0f}",
+                dt_str,
+                st_str
+            ]
+        ))
+
+    # Sort payments_list strictly by timestamp (latest transaction first - first come first serve)
+    payments_list.sort(key=lambda x: x[0], reverse=True)
+    sorted_payment_rows = [x[1] for x in payments_list]
 
     grand_total = total_booking_revenue + total_rent_2_revenue + total_rent_3_revenue + office_revenue
 
@@ -4172,7 +4188,7 @@ def download_payments_pdf(request):
         Paragraph("Status", th_style)
     ]]
 
-    for p in payments_list:
+    for p in sorted_payment_rows:
         table_data.append([
             Paragraph(p[0], td_style),
             Paragraph(p[1], td_style),
