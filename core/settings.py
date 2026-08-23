@@ -87,10 +87,14 @@ AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 0.5
 AXES_RESET_ON_SUCCESS = True
 
-# ReCAPTCHA Settings (Read from environment in production)
-RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeJ64stAAAAADYbJvZU1lakCejp8Sb8dsdzPU1w')
-RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '6LeJ64stAAAAACyHQ_YaJ2QW7jgsBy7DAKLoHWOy')
+# ReCAPTCHA Settings (Read strictly from environment variables)
+RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '')
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '')
 SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
+
+# Resend Transactional Email Settings (Read strictly from environment variables)
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'TRUST Protocol <onboarding@resend.dev>')
 
 ROOT_URLCONF = 'core.urls'
 

@@ -1,0 +1,22 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Landlord Account Approved{% endblock %}
+
+{% block content %}
+<h2>Congratulations, {{ user.first_name|default:user.username }}!</h2>
+
+<div class="badge-status">&check; Account Status: Verified & Approved</div>
+
+<p>Great news! Your identity and landlord account have been verified and officially approved by the TRUST Verification Team.</p>
+
+<p>You can now log in to your Landlord Portal and begin posting your property listings to reach thousands of verified tenants across Uganda.</p>
+
+<div class="card-box">
+    <div class="card-box-title">Next Step: Post Your First Property</div>
+    <p style="font-size: 13px; margin-bottom: 0;">Upload your property title, monthly rent, location, photos, and key amenities to activate tenant bookings.</p>
+</div>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a href="{{ site_url }}/landlord/add-property/" class="btn btn-gold">Post Your Property Listing</a>
+</div>
+{% endblock %}

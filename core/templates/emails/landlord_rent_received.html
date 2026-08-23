@@ -1,0 +1,43 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Rent Payment Received{% endblock %}
+
+{% block content %}
+<h2>Rent Payment Received!</h2>
+
+<div class="badge-status">&check; Financial Alert: Rent Collected</div>
+
+<p>Dear {{ landlord.first_name|default:landlord.username }},</p>
+
+<p>Rent payment has been successfully completed by tenant <strong>{{ tenant_name }}</strong> for your property listing <strong>{{ property.title }}</strong>.</p>
+
+<div class="card-box">
+    <div class="card-box-title">Rent Collection Summary</div>
+    <div class="data-row">
+        <span class="data-label">Property Title</span>
+        <span class="data-value">{{ property.title }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Tenant Name</span>
+        <span class="data-value">{{ tenant_name }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Total Amount Paid</span>
+        <span class="data-value" style="color: #047857;">UGX {{ amount }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Rental Term Covered</span>
+        <span class="data-value">{{ rental_term|default:"Rent Payment" }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Transaction Ref</span>
+        <span class="data-value">{{ tracking_id }}</span>
+    </div>
+</div>
+
+<p>Log in to your Landlord Portal to review financial statements and tenancy schedules:</p>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a href="{{ site_url }}/landlord/" class="btn btn-gold">View Landlord Financials</a>
+</div>
+{% endblock %}

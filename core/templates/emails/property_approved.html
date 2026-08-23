@@ -1,0 +1,35 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Property Listing Live{% endblock %}
+
+{% block content %}
+<h2>Your Property Listing is Live!</h2>
+
+<div class="badge-status">&check; Listing Status: Published & Active</div>
+
+<p>Your property submission has been reviewed, approved, and is now live on the TRUST platform.</p>
+
+<div class="card-box">
+    <div class="card-box-title">Property Details</div>
+    <div class="data-row">
+        <span class="data-label">Property Title</span>
+        <span class="data-value">{{ property.title }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Location</span>
+        <span class="data-value">{{ property.location }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Monthly Rent</span>
+        <span class="data-value">UGX {{ property.price }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Property ID</span>
+        <span class="data-value">#{{ property.id }}</span>
+    </div>
+</div>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a href="{{ site_url }}/property/{{ property.id }}/" class="btn">View Live Property</a>
+</div>
+{% endblock %}

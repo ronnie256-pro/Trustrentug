@@ -1,0 +1,24 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Welcome to TRUST{% endblock %}
+
+{% block content %}
+<h2>Welcome to TRUST Protocol, {{ user.first_name|default:user.username }}!</h2>
+
+<p>Your tenant account has been successfully created. We are excited to have you on board Uganda's premier verified property platform.</p>
+
+<div class="card-box">
+    <div class="card-box-title">Why TRUST Protocol?</div>
+    <p style="font-size: 13px; margin-bottom: 8px;">&bull; <strong>100% Verified Listings:</strong> Zero fake listings or duplicate agent scams.</p>
+    <p style="font-size: 13px; margin-bottom: 8px;">&bull; <strong>Direct Property Locks:</strong> Reserve your house directly through mobile money.</p>
+    <p style="font-size: 13px; margin-bottom: 0;">&bull; <strong>Digital Receipts:</strong> Complete payment tracking and verifiable lease records.</p>
+</div>
+
+<p>Start browsing verified residential single units, apartments, bungalows, and luxury studios today:</p>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a href="{{ site_url }}/tenant/properties/" class="btn">Browse Verified Properties</a>
+</div>
+
+<p style="font-size: 13px; color: #64748b;">If you did not sign up for this account, please disregard this email or contact support.</p>
+{% endblock %}

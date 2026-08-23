@@ -1,0 +1,24 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Property Revision Required{% endblock %}
+
+{% block content %}
+<h2>Action Required: Property Listing Revision</h2>
+
+<div class="badge-review">&bull; Revision Requested</div>
+
+<p>Our verification team reviewed your property submission <strong>{{ property.title }}</strong> and requires a few minor adjustments before it can be published.</p>
+
+<div class="card-box">
+    <div class="card-box-title">Verification Feedback / Requested Edits</div>
+    <p style="font-size: 14px; color: #854d0e; margin: 0; font-weight: 600;">
+        {{ revision_notes|default:"Please update property details or upload clearer photos." }}
+    </p>
+</div>
+
+<p>Please log in to your Landlord Portal to make the requested updates:</p>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a href="{{ site_url }}/landlord/" class="btn btn-gold">Update Property Listing</a>
+</div>
+{% endblock %}

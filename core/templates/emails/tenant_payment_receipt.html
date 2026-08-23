@@ -1,0 +1,53 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Official Payment Receipt{% endblock %}
+
+{% block content %}
+<h2>Payment Receipt Confirmed</h2>
+
+<div class="badge-status">&check; Payment Status: Paid & Completed</div>
+
+<p>Dear {{ user.first_name|default:user.username }},</p>
+
+<p>Your payment has been successfully processed and verified on the TRUST Protocol network. Below is your official receipt summary:</p>
+
+<div class="card-box">
+    <div class="card-box-title">Official Receipt Summary</div>
+    <div class="data-row">
+        <span class="data-label">Receipt / Track ID</span>
+        <span class="data-value">{{ tracking_id }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Payment Purpose</span>
+        <span class="data-value">{{ payment_purpose }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Amount Paid</span>
+        <span class="data-value" style="color: #047857;">UGX {{ amount }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Payment Method</span>
+        <span class="data-value">{{ payment_method|default:"Mobile Money / Card" }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Property</span>
+        <span class="data-value">{{ property.title }}</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">Location</span>
+        <span class="data-value">{{ property.location }}</span>
+    </div>
+</div>
+
+{% if landlord %}
+<div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+    <div style="font-weight: 700; color: #166534; font-size: 13px; margin-bottom: 5px;">VERIFIED LANDLORD CONTACT</div>
+    <div style="font-size: 14px; color: #043d2c;"><strong>Name:</strong> {{ landlord.first_name }} {{ landlord.last_name }}</div>
+    <div style="font-size: 14px; color: #043d2c;"><strong>Phone:</strong> {{ landlord.profile.phone_number|default:"Available in Portal" }}</div>
+</div>
+{% endif %}
+
+<div style="text-align: center; margin: 25px 0;">
+    <a href="{{ site_url }}/tenant/" class="btn">View My Rental Records</a>
+</div>
+{% endblock %}

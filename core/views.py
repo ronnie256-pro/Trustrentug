@@ -8,8 +8,16 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from core.models import Property, PropertyCategory, UserProfile, AgentRole, InspectionAgent, Inspection, InspectionReport, PropertyAmenity, ProximityCategory, ProximityItem, PropertyProximity, TenantBooking, TenantRental, ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive, ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic, SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama, DiasporaClientApplication, ConstructionProject, ConstructionSliderImage
 from django.contrib.auth.models import User
+from core.emails import (
+    send_tenant_welcome_email,
+    send_landlord_welcome_email,
+    send_landlord_approved_email,
+    send_property_approved_email,
+    send_property_revision_requested_email,
+    send_tenant_payment_receipt_email,
+    send_landlord_rent_received_email
+)
 
 AMENITY_ICONS = {
     # Core Details
@@ -312,6 +320,15 @@ def register_view(request):
             nin=nin if role == 'landlord' else '',
             image=request.FILES.get('image') if role == 'landlord' else None
         )
+
+        # Dispatch Resend Welcome Email
+        try:
+            if role == 'landlord':
+                send_landlord_welcome_email(user)
+            else:
+                send_tenant_welcome_email(user)
+        except Exception:
+            pass
 
         messages.success(request, 'Registration successful! You can now sign in.')
         return redirect('login')
@@ -1602,6 +1619,10 @@ def approve_landlord(request, user_id):
             if profile.role == 'landlord':
                 profile.is_approved = True
                 profile.save()
+                try:
+                    send_landlord_approved_email(landlord_user)
+                except Exception:
+                    pass
                 messages.success(request, f"Property owner account for {landlord_user.first_name} {landlord_user.last_name} has been successfully approved!")
             else:
                 messages.error(request, "Selected user is not registered as a property owner.")
@@ -1767,6 +1788,10 @@ def approve_property(request, property_id):
             property_obj = Property.objects.get(id=property_id)
             property_obj.status = 'available'
             property_obj.save()
+            try:
+                send_property_approved_email(property_obj)
+            except Exception:
+                pass
             messages.success(request, f"Property '{property_obj.title}' has been successfully approved and is now live on TRUST!")
         except Property.DoesNotExist:
             messages.error(request, "Property not found.")
@@ -4464,6 +4489,53 @@ def pesapal_ipn_listener(request):
                         prop = booking.property
                         prop.status = 'reserved'
                         prop.save()
+
+                        # Dispatch Tenant Payment Receipt (Tenant ONLY)
+                        try:
+                            send_tenant_payment_receipt_email(
+                                user=booking.tenant,
+                                property_obj=prop,
+                                amount=booking.booking_fee,
+                                tracking_id=tx.order_tracking_id,
+                                payment_purpose="Booking Commitment Fee",
+                                payment_method=tx.payment_method or "Mobile Money / Card"
+                            )
+                        except Exception:
+                            pass
+
+                    elif tx.rental:
+                        rental = tx.rental
+                        rental.status = 'active'
+                        rental.save()
+                        prop = rental.property
+                        prop.status = 'rented'
+                        prop.save()
+
+                        # Dispatch Tenant Payment Receipt (Tenant ONLY)
+                        try:
+                            send_tenant_payment_receipt_email(
+                                user=rental.tenant,
+                                property_obj=prop,
+                                amount=rental.total_amount,
+                                tracking_id=tx.order_tracking_id,
+                                payment_purpose=f"Rent Payment ({rental.payment_type})",
+                                payment_method=tx.payment_method or "Mobile Money / Card"
+                            )
+                        except Exception:
+                            pass
+
+                        # Dispatch Landlord Rent Payment Received Alert (Landlord ONLY)
+                        try:
+                            send_landlord_rent_received_email(
+                                landlord=prop.owner,
+                                property_obj=prop,
+                                tenant_name=rental.tenant.get_full_name() or rental.tenant.username,
+                                amount=rental.total_amount,
+                                tracking_id=tx.order_tracking_id,
+                                rental_term=rental.payment_type
+                            )
+                        except Exception:
+                            pass
                 elif st_code == 2 or 'failed' in desc:
                     tx.status = 'FAILED'
                     tx.save()
