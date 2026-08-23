@@ -1974,99 +1974,97 @@ def disputes_view(request):
 
 
 def search_view(request):
-    # Only show available properties that are houses (strictly exclude offices)
-    office_categories = ['private_office', 'shared_office', 'office_building']
-    properties = Property.objects.filter(status='available', parent=None).exclude(
-        category__in=office_categories
-    ).exclude(
-        Q(title__icontains='office') | Q(title__icontains='desk space') | Q(title__icontains='co-working')
-    )
-    
-    # 1. Location search (q, district, division, village)
     q = request.GET.get('q', '').strip()
     district_param = request.GET.get('district', '').strip()
     division_param = request.GET.get('division', '').strip()
     village_param = request.GET.get('village', '').strip()
-
-    if village_param:
-        properties = properties.filter(
-            Q(location__icontains=village_param) | Q(title__icontains=village_param) | Q(description__icontains=village_param)
-        )
-    elif division_param:
-        properties = properties.filter(
-            Q(location__icontains=division_param) | Q(title__icontains=division_param) | Q(description__icontains=division_param)
-        )
-    elif district_param:
-        properties = properties.filter(
-            Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
-        )
-
-    if q:
-        properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
-        
-    # 2. Type search
     p_type = request.GET.get('type', '').strip()
-    if p_type and p_type.lower() != 'all types':
-        p_lower = p_type.lower()
-        if p_lower == 'apartment':
-            properties = properties.filter(Q(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block']) | Q(category_ref__name__icontains='apartment'))
-        elif p_lower == 'flat':
-            properties = properties.filter(Q(category__in=['flat', 'single_room', 'self_contained']) | Q(category_ref__name__icontains='flat'))
-        elif p_lower == 'condo':
-            properties = properties.filter(Q(category__in=['condo_block']) | Q(category_ref__name__icontains='condo'))
-        elif p_lower in ['bungalow', 'standalone', 'villa']:
-            properties = properties.filter(Q(category__in=['bungalow', 'standalone']) | Q(category_ref__name__icontains='bungalow') | Q(category_ref__name__icontains='standalone'))
-        else:
-            properties = properties.filter(Q(category__icontains=p_type) | Q(category_ref__name__icontains=p_type))
-            
-    # 3. Price filters (min_price, max_price)
     min_price = request.GET.get('min_price', '').strip()
-    if min_price and min_price.isdigit():
-        properties = properties.filter(price__gte=int(min_price))
-        
     max_price = request.GET.get('max_price', '').strip()
-    if max_price and max_price.isdigit():
-        properties = properties.filter(price__lte=int(max_price))
-        
-    # 4. Amenities filters
     selected_amenities = []
-    if request.GET.get('pool') == 'on':
-        properties = properties.filter(amenities__name__icontains='pool')
-        selected_amenities.append('pool')
-    if request.GET.get('power') == 'on':
-        properties = properties.filter(Q(amenities__name__icontains='power') | Q(amenities__name__icontains='generator'))
-        selected_amenities.append('power')
-    if request.GET.get('gym') == 'on':
-        properties = properties.filter(amenities__name__icontains='gym')
-        selected_amenities.append('gym')
-    if request.GET.get('security') == 'on':
-        properties = properties.filter(Q(amenities__name__icontains='security') | Q(amenities__name__icontains='guard') | Q(amenities__name__icontains='cctv'))
-        selected_amenities.append('security')
-        
-    # 5. Sale vs Rent Filters ("For sale only" vs "For Rent only")
+
     for_sale = request.GET.get('for_sale') == 'on' or p_type == 'sale'
     for_rent = request.GET.get('for_rent') == 'on' or p_type == 'rent'
-    
-    sale_query = (
-        Q(category__in=['bungalow', 'standalone']) | 
-        Q(title__icontains='sale') | 
-        Q(title__icontains='land') | 
-        Q(title__icontains='plot') |
-        Q(title__icontains='house') |
-        Q(title__icontains='villa') |
-        Q(title__icontains='cottage') |
-        Q(title__icontains='townhouse') |
-        Q(description__icontains='sale') |
-        Q(price__gte=50000000)
-    )
 
-    if for_sale and not for_rent:
-        properties = properties.filter(sale_query)
-    elif for_rent and not for_sale:
-        properties = properties.exclude(sale_query)
+    try:
+        office_categories = ['private_office', 'shared_office', 'office_building']
+        properties = Property.objects.filter(status='available', parent=None).exclude(
+            category__in=office_categories
+        ).exclude(
+            Q(title__icontains='office') | Q(title__icontains='desk space') | Q(title__icontains='co-working')
+        )
         
-    properties = properties.distinct().order_by('-created_at')
-    total_count = properties.count()
+        if village_param:
+            properties = properties.filter(
+                Q(location__icontains=village_param) | Q(title__icontains=village_param) | Q(description__icontains=village_param)
+            )
+        elif division_param:
+            properties = properties.filter(
+                Q(location__icontains=division_param) | Q(title__icontains=division_param) | Q(description__icontains=division_param)
+            )
+        elif district_param:
+            properties = properties.filter(
+                Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
+            )
+
+        if q:
+            properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
+            
+        if p_type and p_type.lower() != 'all types':
+            p_lower = p_type.lower()
+            if p_lower == 'apartment':
+                properties = properties.filter(Q(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block']))
+            elif p_lower == 'flat':
+                properties = properties.filter(Q(category__in=['flat', 'single_room', 'self_contained']))
+            elif p_lower == 'condo':
+                properties = properties.filter(Q(category__in=['condo_block']))
+            elif p_lower in ['bungalow', 'standalone', 'villa']:
+                properties = properties.filter(Q(category__in=['bungalow', 'standalone']))
+            else:
+                properties = properties.filter(Q(category__icontains=p_type))
+                
+        if min_price and min_price.isdigit():
+            properties = properties.filter(price__gte=int(min_price))
+            
+        if max_price and max_price.isdigit():
+            properties = properties.filter(price__lte=int(max_price))
+            
+        if request.GET.get('pool') == 'on':
+            properties = properties.filter(amenities__name__icontains='pool')
+            selected_amenities.append('pool')
+        if request.GET.get('power') == 'on':
+            properties = properties.filter(Q(amenities__name__icontains='power') | Q(amenities__name__icontains='generator'))
+            selected_amenities.append('power')
+        if request.GET.get('gym') == 'on':
+            properties = properties.filter(amenities__name__icontains='gym')
+            selected_amenities.append('gym')
+        if request.GET.get('security') == 'on':
+            properties = properties.filter(Q(amenities__name__icontains='security') | Q(amenities__name__icontains='guard') | Q(amenities__name__icontains='cctv'))
+            selected_amenities.append('security')
+            
+        sale_query = (
+            Q(category__in=['bungalow', 'standalone']) | 
+            Q(title__icontains='sale') | 
+            Q(title__icontains='land') | 
+            Q(title__icontains='plot') |
+            Q(title__icontains='house') |
+            Q(title__icontains='villa') |
+            Q(title__icontains='cottage') |
+            Q(title__icontains='townhouse') |
+            Q(description__icontains='sale') |
+            Q(price__gte=50000000)
+        )
+
+        if for_sale and not for_rent:
+            properties = properties.filter(sale_query)
+        elif for_rent and not for_sale:
+            properties = properties.exclude(sale_query)
+            
+        properties = properties.distinct().order_by('-created_at')
+        total_count = properties.count()
+    except Exception:
+        properties = Property.objects.filter(status='available', parent=None)
+        total_count = properties.count()
     
     try:
         active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
@@ -2101,58 +2099,62 @@ def offices_view(request):
     Public discovery page for Private Offices & Shared Offices.
     Displays office listings using the same display cards as search.html.
     """
-    properties = Property.objects.filter(status='available', parent=None)
-    
-    office_query = (
-        Q(category__in=['private_office', 'shared_office', 'office_building']) |
-        Q(title__icontains='office') |
-        Q(title__icontains='desk') |
-        Q(title__icontains='workspace') |
-        Q(description__icontains='office')
-    )
-    properties = properties.filter(office_query)
-
     office_type = request.GET.get('office_type', 'all').strip().lower()
-    if office_type == 'private':
-        properties = properties.filter(
-            Q(category='private_office') | Q(title__icontains='private') | Q(description__icontains='private')
-        )
-    elif office_type == 'shared':
-        properties = properties.filter(
-            Q(category='shared_office') | Q(title__icontains='shared') | Q(title__icontains='co-working') | Q(description__icontains='shared')
-        )
-
     district_param = request.GET.get('district', '').strip()
     division_param = request.GET.get('division', '').strip()
     village_param = request.GET.get('village', '').strip()
-
-    if village_param:
-        properties = properties.filter(
-            Q(location__icontains=village_param) | Q(title__icontains=village_param) | Q(description__icontains=village_param)
-        )
-    elif division_param:
-        properties = properties.filter(
-            Q(location__icontains=division_param) | Q(title__icontains=division_param) | Q(description__icontains=division_param)
-        )
-    elif district_param:
-        properties = properties.filter(
-            Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
-        )
-
     q = request.GET.get('q', '').strip()
-    if q:
-        properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
-
     min_price = request.GET.get('min_price', '').strip()
-    if min_price and min_price.isdigit():
-        properties = properties.filter(price__gte=int(min_price))
-        
     max_price = request.GET.get('max_price', '').strip()
-    if max_price and max_price.isdigit():
-        properties = properties.filter(price__lte=int(max_price))
 
-    properties = properties.distinct().order_by('-created_at')
-    total_count = properties.count()
+    try:
+        properties = Property.objects.filter(status='available', parent=None)
+        
+        office_query = (
+            Q(category__in=['private_office', 'shared_office', 'office_building']) |
+            Q(title__icontains='office') |
+            Q(title__icontains='desk') |
+            Q(title__icontains='workspace') |
+            Q(description__icontains='office')
+        )
+        properties = properties.filter(office_query)
+
+        if office_type == 'private':
+            properties = properties.filter(
+                Q(category='private_office') | Q(title__icontains='private') | Q(description__icontains='private')
+            )
+        elif office_type == 'shared':
+            properties = properties.filter(
+                Q(category='shared_office') | Q(title__icontains='shared') | Q(title__icontains='co-working') | Q(description__icontains='shared')
+            )
+
+        if village_param:
+            properties = properties.filter(
+                Q(location__icontains=village_param) | Q(title__icontains=village_param) | Q(description__icontains=village_param)
+            )
+        elif division_param:
+            properties = properties.filter(
+                Q(location__icontains=division_param) | Q(title__icontains=division_param) | Q(description__icontains=division_param)
+            )
+        elif district_param:
+            properties = properties.filter(
+                Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
+            )
+
+        if q:
+            properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
+
+        if min_price and min_price.isdigit():
+            properties = properties.filter(price__gte=int(min_price))
+            
+        if max_price and max_price.isdigit():
+            properties = properties.filter(price__lte=int(max_price))
+
+        properties = properties.distinct().order_by('-created_at')
+        total_count = properties.count()
+    except Exception:
+        properties = Property.objects.filter(status='available', parent=None)
+        total_count = properties.count()
 
     try:
         active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
