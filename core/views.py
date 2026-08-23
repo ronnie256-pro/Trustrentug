@@ -1924,9 +1924,16 @@ def submit_property_inspection(request, property_id):
     return redirect(f'/admin-dashboard/property/view/{property_id}/')
 
 def home_view(request):
-    # Fetch parent (standalone or building) properties that are approved/available, newest first
-    properties = Property.objects.filter(parent=None, status='available').prefetch_related('units').order_by('-created_at')
-    hero_videos = HeroVideo.objects.filter(is_active=True).order_by('order', '-created_at')
+    try:
+        properties = Property.objects.filter(parent=None, status='available').prefetch_related('units').order_by('-created_at')
+    except Exception:
+        properties = []
+
+    try:
+        hero_videos = HeroVideo.objects.filter(is_active=True).order_by('order', '-created_at')
+    except Exception:
+        hero_videos = []
+
     return render(request, 'index.html', {
         'properties': properties,
         'hero_videos': hero_videos,
