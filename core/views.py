@@ -16,7 +16,8 @@ from core.models import (
     ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive,
     ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic,
     SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama,
-    DiasporaClientApplication, ConstructionProject, ConstructionSliderImage
+    DiasporaClientApplication, ConstructionProject, ConstructionSliderImage,
+    OfficeApplication
 )
 from core.emails import (
     send_tenant_welcome_email,
@@ -1494,6 +1495,7 @@ def admin_dashboard(request):
     construction_applications = DiasporaClientApplication.objects.all().order_by('-created_at')
     construction_projects = ConstructionProject.objects.all().order_by('-created_at')
     slider_images = ConstructionSliderImage.objects.all().order_by('-created_at')
+    office_applications = OfficeApplication.objects.all().select_related('property', 'user').order_by('-created_at')
 
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
@@ -1523,6 +1525,7 @@ def admin_dashboard(request):
         'construction_applications': construction_applications,
         'construction_projects': construction_projects,
         'slider_images': slider_images,
+        'office_applications': office_applications,
         'office_amenities': office_amenities,
         'property_categories': PropertyCategory.objects.all().order_by('group', 'name'),
         'active_section': request.GET.get('section', 'categories') or 'categories',
@@ -2123,7 +2126,12 @@ def offices_view(request):
     max_price = request.GET.get('max_price', '').strip()
 
     try:
-        properties = Property.objects.filter(status='available', parent=None)
+        active_locked_ids = OfficeApplication.objects.filter(
+            payment_status='paid',
+            expires_at__gt=timezone.now()
+        ).values_list('property_id', flat=True)
+
+        properties = Property.objects.filter(status='available', parent=None).exclude(id__in=active_locked_ids)
         
         office_query = (
             Q(category__in=['private_office', 'shared_office', 'office_building']) |
@@ -2258,6 +2266,52 @@ def property_detail_view(request, property_id):
         'is_office': is_office,
         'similar_properties': similar_properties,
     })
+
+
+def submit_office_application(request, property_id):
+    prop = get_object_or_404(Property, id=property_id)
+    if request.method == 'POST':
+        company_name = request.POST.get('company_name', '').strip()
+        brn = request.POST.get('brn', '').strip()
+        contact_person = request.POST.get('contact_person', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        industry = request.POST.get('industry', '').strip()
+        number_of_staff = request.POST.get('number_of_staff', '1').strip()
+        preferred_move_in = request.POST.get('preferred_move_in', '').strip() or None
+        description = request.POST.get('description', '').strip()
+
+        cert_doc = request.FILES.get('cert_doc')
+        company_logo = request.FILES.get('company_logo')
+
+        try:
+            staff_count = int(number_of_staff)
+        except (ValueError, TypeError):
+            staff_count = 1
+
+        app = OfficeApplication.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            property=prop,
+            company_name=company_name,
+            brn=brn,
+            contact_person=contact_person,
+            email=email,
+            phone=phone,
+            industry=industry,
+            number_of_staff=staff_count,
+            preferred_move_in=preferred_move_in,
+            description=description,
+            cert_doc=cert_doc,
+            company_logo=company_logo,
+            booking_fee=100000.00,
+            payment_status='pending_payment',
+            status='pending'
+        )
+
+        messages.success(request, f"Corporate application for '{company_name}' submitted successfully! Redirecting to UGX 100,000 office booking fee payment gateway.")
+        return redirect('pesapal_initiate_office_payment', app_id=app.id)
+
+    return redirect('property_detail', property_id=prop.id)
 
 
 def property_tour_view(request, property_id):
@@ -4465,6 +4519,68 @@ def pesapal_initiate_payment(request, property_id=None):
     return redirect(redirect_url)
 
 
+def pesapal_initiate_office_payment(request, app_id):
+    app = get_object_or_404(OfficeApplication, id=app_id)
+    property_obj = app.property
+    amount = float(app.booking_fee or 100000.00)
+
+    token, token_err = get_pesapal_bearer_token()
+    if not token:
+        messages.error(request, f"Pesapal Authentication Failed: {token_err}")
+        return redirect('property_detail', property_id=property_obj.id)
+
+    ipn_id, ipn_err = register_pesapal_ipn(token)
+    merchant_ref = f"TRUST-OFFICE-{app.id}-{int(timezone.now().timestamp())}"
+    callback_url = request.build_absolute_uri('/payments/pesapal/callback/')
+
+    redirect_url, order_tracking_id, order_err = submit_pesapal_order(
+        merchant_reference=merchant_ref,
+        amount=amount,
+        description=f"UGX 100,000 Corporate Office Booking Fee for {property_obj.title}",
+        customer_email=app.email or "office@trustrentug.com",
+        customer_phone=app.phone or "0700000000",
+        customer_first_name=app.contact_person or app.company_name,
+        customer_last_name="Corporate Client",
+        callback_url=callback_url,
+        token=token,
+        ipn_id=ipn_id
+    )
+
+    if not redirect_url:
+        messages.error(request, f"Failed to launch Pesapal payment window: {order_err}")
+        return redirect('property_detail', property_id=property_obj.id)
+
+    PesapalTransaction.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        booking=None,
+        merchant_reference=merchant_ref,
+        order_tracking_id=order_tracking_id,
+        amount=amount,
+        currency='UGX',
+        payment_type='office_booking',
+        status='PENDING',
+        ipn_id=ipn_id,
+        redirect_url=redirect_url
+    )
+
+    return redirect(redirect_url)
+
+
+def admin_update_office_app_status(request, app_id):
+    if not is_admin_user(request.user):
+        messages.error(request, "Access denied. Only system administrators can perform this action.")
+        return redirect('login')
+    
+    app = get_object_or_404(OfficeApplication, id=app_id)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in ['pending', 'approved', 'declined']:
+            app.status = new_status
+            app.save()
+            messages.success(request, f"Office Application for '{app.company_name}' updated to {new_status.title()}.")
+    return redirect('/admin-dashboard/?tab=offices')
+
+
 def pesapal_callback(request):
     """
     Pesapal Callback Target URL after tenant completes payment.
@@ -4500,6 +4616,24 @@ def pesapal_callback(request):
                 if tx:
                     tx.status = 'COMPLETED'
                     tx.save()
+
+                    if tx.merchant_reference and tx.merchant_reference.startswith('TRUST-OFFICE-'):
+                        try:
+                            app_id = int(tx.merchant_reference.split('-')[2])
+                            office_app = OfficeApplication.objects.filter(id=app_id).first()
+                            if office_app:
+                                office_app.payment_status = 'paid'
+                                office_app.expires_at = timezone.now() + timedelta(days=2)
+                                office_app.save()
+
+                                prop = office_app.property
+                                prop.status = 'reserved'
+                                prop.save()
+
+                                messages.success(request, f"UGX 100,000 Corporate Office Booking Fee for '{office_app.company_name}' received! Property unlisted and locked for 2 days.")
+                                return redirect(f'/property/{prop.id}/?payment_success=1')
+                        except Exception:
+                            pass
 
                     if tx.booking:
                         booking = tx.booking
@@ -4547,7 +4681,23 @@ def pesapal_ipn_listener(request):
                 if st_code == 1 or 'completed' in desc:
                     tx.status = 'COMPLETED'
                     tx.save()
-                    if tx.booking:
+
+                    if tx.merchant_reference and tx.merchant_reference.startswith('TRUST-OFFICE-'):
+                        try:
+                            app_id = int(tx.merchant_reference.split('-')[2])
+                            office_app = OfficeApplication.objects.filter(id=app_id).first()
+                            if office_app:
+                                office_app.payment_status = 'paid'
+                                office_app.expires_at = timezone.now() + timedelta(days=2)
+                                office_app.save()
+
+                                prop = office_app.property
+                                prop.status = 'reserved'
+                                prop.save()
+                        except Exception:
+                            pass
+
+                    elif tx.booking:
                         booking = tx.booking
                         booking.status = 'active'
                         booking.save()

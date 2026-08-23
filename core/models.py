@@ -710,3 +710,39 @@ class PesapalTransaction(models.Model):
     def __str__(self):
         return f"{self.merchant_reference} - UGX {self.amount:,.0f} ({self.status})"
 
+
+class OfficeApplication(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='office_applications')
+    company_name = models.CharField(max_length=255)
+    brn = models.CharField(max_length=100)
+    contact_person = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=50)
+    industry = models.CharField(max_length=150, blank=True, null=True)
+    number_of_staff = models.IntegerField(default=1)
+    preferred_move_in = models.DateField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    cert_doc = models.FileField(upload_to='office_certs/', blank=True, null=True)
+    company_logo = models.ImageField(upload_to='office_logos/', blank=True, null=True)
+    booking_fee = models.DecimalField(max_digits=12, decimal_places=2, default=100000.00)
+    payment_status = models.CharField(
+        max_length=20,
+        choices=[('pending_payment', 'Pending Payment'), ('paid', 'Paid')],
+        default='pending_payment'
+    )
+    expires_at = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('pending', 'Pending Review'), ('approved', 'Approved'), ('declined', 'Declined')],
+        default='pending'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Office Application for {self.company_name} ({self.property.title})"
+
+

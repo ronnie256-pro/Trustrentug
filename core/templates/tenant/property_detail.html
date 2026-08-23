@@ -998,6 +998,12 @@
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        {% if is_office or property.is_office %}
+                        <button type="button" onclick="openOfficeUpgradeModal()" class="btn"
+                            style="width: 100%; font-size: 1.05rem; font-weight: 800; padding: 1rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; border-radius: 10px; background: #0284c7; color: #ffffff; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);">
+                            Upgrade Your Business Now
+                        </button>
+                        {% else %}
                         <form id="book-property-form" action="{% url 'tenant_create_booking' property.id %}"
                             method="POST">
                             {% csrf_token %}
@@ -1014,6 +1020,7 @@
                                 Add to Favorite
                             </button>
                         </form>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -1522,4 +1529,130 @@
             }
         });
     </script>
+
+    {% if is_office or property.is_office %}
+    <!-- Office Upgrade Application Modal -->
+    <div id="officeUpgradeModal" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); z-index: 99999; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto;">
+        <div style="background: #ffffff; border-radius: 16px; width: 100%; max-width: 650px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1); margin: auto;">
+            <div style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; padding: 1.5rem 1.75rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #ffffff;">Upgrade Your Business Now</h3>
+                    <p style="margin: 0; font-size: 0.82rem; opacity: 0.9;">Corporate Space Application for {{ property.title }}</p>
+                </div>
+                <button type="button" onclick="closeOfficeUpgradeModal()" style="background: rgba(255,255,255,0.15); border: none; color: white; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;">
+                    &times;
+                </button>
+            </div>
+
+            <form action="{% url 'submit_office_application' property.id %}" method="POST" enctype="multipart/form-data" style="padding: 1.75rem;">
+                {% csrf_token %}
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Company / Business Name *
+                        </label>
+                        <input type="text" name="company_name" required class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Business Registration Number (BRN) *
+                        </label>
+                        <input type="text" name="brn" required class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Contact Person Name *
+                        </label>
+                        <input type="text" name="contact_person" value="{% if user.is_authenticated %}{{ user.first_name }} {{ user.last_name }}{% endif %}" required class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Work Email Address *
+                        </label>
+                        <input type="email" name="email" value="{% if user.is_authenticated %}{{ user.email }}{% endif %}" required class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Phone Number *
+                        </label>
+                        <input type="text" name="phone" value="{% if user.is_authenticated %}{{ user.profile.phone }}{% endif %}" required class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Industry / Business Sector
+                        </label>
+                        <input type="text" name="industry" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Number of Staff / Desks
+                        </label>
+                        <input type="number" name="number_of_staff" min="1" max="1000" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Target Move-In Date
+                        </label>
+                        <input type="date" name="preferred_move_in" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                        Company Description
+                    </label>
+                    <textarea name="description" rows="2" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem;"></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Certificate of Registration (PDF)
+                        </label>
+                        <input type="file" name="cert_doc" accept=".pdf" class="form-control" style="width: 100%; padding: 0.45rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.82rem;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.82rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            Company Logo (Image)
+                        </label>
+                        <input type="file" name="company_logo" accept="image/*" class="form-control" style="width: 100%; padding: 0.45rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.82rem;">
+                    </div>
+                </div>
+
+                <div style="background: rgba(2, 132, 199, 0.06); padding: 0.85rem 1rem; border-radius: 8px; border-left: 4px solid #0284c7; font-size: 0.82rem; color: #0369a1; margin-bottom: 1.5rem;">
+                    Submitting this application will redirect you to the <strong>UGX 100,000 Office Booking Fee</strong> payment gateway. Once paid, this property will be reserved and unlisted for 2 days.
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeOfficeUpgradeModal()" class="btn btn-outline" style="padding: 0.75rem 1.5rem; font-weight: 700; border-radius: 8px;">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn" style="padding: 0.75rem 1.75rem; font-weight: 800; background: #0284c7; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+                        Pay UGX 100,000 & Reserve
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openOfficeUpgradeModal() {
+            const modal = document.getElementById("officeUpgradeModal");
+            if (modal) modal.style.display = "flex";
+        }
+        function closeOfficeUpgradeModal() {
+            const modal = document.getElementById("officeUpgradeModal");
+            if (modal) modal.style.display = "none";
+        }
+    </script>
+    {% endif %}
     {% endblock %}

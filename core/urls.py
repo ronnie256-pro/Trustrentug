@@ -46,6 +46,8 @@ urlpatterns = [
     path('api/location-cascade/', views.api_location_cascade, name='api_location_cascade'),
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
     path('property/<int:property_id>/tour/', views.property_tour_view, name='property_tour'),
+    path('property/<int:property_id>/upgrade-business/', views.submit_office_application, name='submit_office_application'),
+    path('offices/pay-booking/<int:app_id>/', views.pesapal_initiate_office_payment, name='pesapal_initiate_office_payment'),
     path('checkout/<int:property_id>/', views.checkout_view, name='checkout'),
 
     # Pesapal Payment Gateway Routes
@@ -79,6 +81,7 @@ urlpatterns = [
     path('admin-dashboard/viewing/status/<int:viewing_id>/', views.admin_viewing_status_update, name='admin_viewing_status_update'),
     path('admin-dashboard/tenant/<int:tenant_id>/', views.admin_tenant_detail, name='admin_tenant_detail'),
     path('admin-dashboard/application/<int:app_id>/', views.admin_application_detail, name='admin_application_detail'),
+    path('admin-dashboard/office-applications/<int:app_id>/update-status/', views.admin_update_office_app_status, name='admin_update_office_app_status'),
     path('admin-dashboard/construction-progress/<int:project_id>/', views.admin_construction_progress, name='admin_construction_progress'),
     path('admin-dashboard/construction-slider/upload/', views.admin_upload_construction_slider, name='admin_upload_construction_slider'),
     path('admin-dashboard/construction-slider/delete/<int:image_id>/', views.admin_delete_construction_slider, name='admin_delete_construction_slider'),
