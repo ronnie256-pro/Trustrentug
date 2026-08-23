@@ -1771,11 +1771,15 @@
           <!-- Property Type Filter -->
           <div style="flex: 1.2; min-width: 140px;">
             <select name="type" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
-              <option value="">All Property Types</option>
+              <option value="">All Types</option>
+              {% for cat in property_categories %}
+              <option value="{{ cat.name }}">{{ cat.name }}</option>
+              {% empty %}
               <option value="apartment">Apartment</option>
               <option value="flat">Flat</option>
               <option value="condo">Condo</option>
               <option value="bungalow">Bungalow / Standalone</option>
+              {% endfor %}
             </select>
           </div>
 

@@ -1943,9 +1943,15 @@ def home_view(request):
     except Exception:
         hero_videos = []
 
+    try:
+        property_categories = PropertyCategory.objects.filter(is_active=True).order_by('group', 'name')
+    except Exception:
+        property_categories = []
+
     return render(request, 'index.html', {
         'properties': properties,
         'hero_videos': hero_videos,
+        'property_categories': property_categories,
     })
 
 def about_us_view(request):

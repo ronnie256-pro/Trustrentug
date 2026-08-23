@@ -308,7 +308,7 @@ body {
             <!-- Property Type Filter -->
             <div style="flex: 1.2; min-width: 140px;">
                 <select name="type" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;">
-                    <option value="" {% if not type %}selected{% endif %}>All Property Types</option>
+                    <option value="" {% if not type %}selected{% endif %}>All Types</option>
                     {% for cat in property_categories %}
                     <option value="{{ cat.name }}" {% if type == cat.name %}selected{% endif %}>{{ cat.name }}</option>
                     {% empty %}
