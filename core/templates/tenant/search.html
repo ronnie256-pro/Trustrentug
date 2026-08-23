@@ -332,9 +332,6 @@ body {
                 <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 700; border-radius: 10px;">
                     Filter
                 </button>
-                <a href="{% url 'nearby_properties' %}" class="btn btn-gold" style="padding: 0.65rem 1rem; text-decoration: none; font-weight: 700; border-radius: 10px; white-space: nowrap;">
-                    Map
-                </a>
                 {% if q or district or division or village or type or min_price or max_price or for_sale %}
                 <a href="{% url 'search' %}" class="btn btn-outline" style="padding: 0.65rem 0.85rem; text-decoration: none; border-radius: 10px;" title="Reset All Filters">Clear</a>
                 {% endif %}

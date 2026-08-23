@@ -252,6 +252,219 @@
         transform: scale(1.08);
     }
 
+    /* Lightbox Fullscreen Modal Styling */
+    .lightbox-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 100000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 15, 25, 0.96);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        animation: fadeInModal 0.25s ease-out;
+    }
+
+    @keyframes fadeInModal {
+        from { opacity: 0; transform: scale(0.98); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .lightbox-backdrop {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .lightbox-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2.5rem 1.5rem 1.25rem 1.5rem;
+        box-sizing: border-box;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .lightbox-content * {
+        pointer-events: auto;
+    }
+
+    .lightbox-img-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 92vw;
+        max-height: 75vh;
+        position: relative;
+        overflow: hidden;
+        margin: auto 0;
+    }
+
+    .lightbox-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        cursor: zoom-in;
+        user-select: none;
+    }
+
+    .lightbox-img.zoomed {
+        transform: scale(1.65);
+        cursor: zoom-out;
+    }
+
+    .lightbox-close-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 100010;
+    }
+
+    .lightbox-close-btn:hover {
+        background: #ef4444;
+        color: #ffffff;
+        transform: scale(1.1);
+        border-color: #f87171;
+    }
+
+    .lightbox-counter {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        background: rgba(0, 0, 0, 0.65);
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 1rem;
+        padding: 0.5rem 1.1rem;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.25);
+        z-index: 100010;
+        letter-spacing: 0.05em;
+    }
+
+    .lightbox-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        color: #ffffff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.25s ease;
+        z-index: 100010;
+    }
+
+    .lightbox-nav-btn:hover {
+        background: #047857;
+        color: #ffffff;
+        transform: translateY(-50%) scale(1.12);
+        border-color: #10b981;
+    }
+
+    .lightbox-nav-btn.prev {
+        left: 2rem;
+    }
+
+    .lightbox-nav-btn.next {
+        right: 2rem;
+    }
+
+    .lightbox-thumbs-bar {
+        display: flex;
+        gap: 0.65rem;
+        align-items: center;
+        justify-content: center;
+        max-width: 90vw;
+        overflow-x: auto;
+        padding: 0.6rem 0.85rem;
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        z-index: 100010;
+    }
+
+    .lightbox-thumb {
+        width: 64px;
+        height: 46px;
+        border-radius: 8px;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.45;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .lightbox-thumb.active,
+    .lightbox-thumb:hover {
+        opacity: 1;
+        border-color: #10b981;
+        transform: scale(1.08);
+    }
+
+    .hero-zoom-badge {
+        position: absolute;
+        top: 1.25rem;
+        left: 1.25rem;
+        background: rgba(15, 23, 42, 0.78);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.45rem 0.95rem;
+        border-radius: 20px;
+        z-index: 15;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.25);
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .hero-zoom-badge:hover {
+        background: #047857;
+        border-color: #10b981;
+        transform: scale(1.05);
+    }
+
     /* Top Back Button */
     .top-back-btn {
         display: inline-flex;
@@ -604,7 +817,11 @@
         <!-- Split Image Section Container -->
         <div class="property-gallery-split">
             <!-- Left Container: Display Section (Shows Hero Image on Page Load) -->
-            <div class="gallery-main-container" style="position: relative;">
+            <div class="gallery-main-container" style="position: relative; cursor: pointer;">
+                <div class="hero-zoom-badge" onclick="openLightboxModal(0)" title="Click to view full size">
+                    <i class="fa-solid fa-expand"></i> Zoom Fullsize
+                </div>
+
                 {% if is_office or property.is_office %}
                 <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #047857; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center;">
                     Office
@@ -621,11 +838,11 @@
 
                 {% if property.hero_image %}
                 <img id="mainGalleryImg" src="{{ property.hero_image.url }}" alt="{{ property.title }} - Featured View"
-                    class="gallery-main-img">
+                    class="gallery-main-img" onclick="openLightboxModal(0)" style="cursor: zoom-in;" title="Click to view full size">
                 {% else %}
                 <img id="mainGalleryImg"
                     src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
-                    alt="{{ property.title }} - Featured View" class="gallery-main-img">
+                    alt="{{ property.title }} - Featured View" class="gallery-main-img" onclick="openLightboxModal(0)" style="cursor: zoom-in;" title="Click to view full size">
                 {% endif %}
 
                 <!-- Title & Location Overlay Banner at Very Bottom of Hero Image Viewer -->
@@ -644,37 +861,37 @@
                 <!-- 7-Tile Mosaic Grid matching user layout -->
                 <div class="mosaic-grid-7">
                     <!-- Tile 1 -->
-                    <div class="mosaic-tile" title="Click to swap with main display">
-                        <img src="{% if property.image_1 %}{{ property.image_1.url }}{% else %}https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80{% endif %}"
+                    <div class="mosaic-tile" data-index="1" title="Click to swap display, double-click to view full size">
+                        <img src="{% if property.image_1 %}{{ property.image_1.url }}{% else %}https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 1">
                     </div>
-                    <!-- Tile 2 (Spans 2 rows tall) -->
-                    <div class="mosaic-tile" title="Click to swap with main display">
+                    <!-- Tile 2 -->
+                    <div class="mosaic-tile" data-index="2" title="Click to swap display, double-click to view full size">
                         <img src="{% if property.image_2 %}{{ property.image_2.url }}{% else %}https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 2">
                     </div>
-                    <!-- Tile 3 (Spans 2 rows tall) -->
-                    <div class="mosaic-tile" title="Click to swap with main display">
+                    <!-- Tile 3 -->
+                    <div class="mosaic-tile" data-index="3" title="Click to swap display, double-click to view full size">
                         <img src="{% if property.image_3 %}{{ property.image_3.url }}{% else %}https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 3">
                     </div>
                     <!-- Tile 4 -->
-                    <div class="mosaic-tile" title="Click to swap with main display">
+                    <div class="mosaic-tile" data-index="4" title="Click to swap display, double-click to view full size">
                         <img src="{% if property.image_4 %}{{ property.image_4.url }}{% else %}https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 4">
                     </div>
                     <!-- Tile 5 -->
-                    <div class="mosaic-tile" title="Click to swap with main display">
+                    <div class="mosaic-tile" data-index="5" title="Click to swap display, double-click to view full size">
                         <img src="{% if property.image_5 %}{{ property.image_5.url }}{% else %}https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 5">
                     </div>
                     <!-- Tile 6 -->
-                    <div class="mosaic-tile" title="Click to swap with main display">
+                    <div class="mosaic-tile" data-index="6" title="Click to swap display, double-click to view full size">
                         <img src="{% if property.image_6 %}{{ property.image_6.url }}{% else %}https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 6">
                     </div>
                     <!-- Tile 7 -->
-                    <div class="mosaic-tile" title="Click to swap with main display">
+                    <div class="mosaic-tile" data-index="7" title="Click to swap display, double-click to view full size">
                         <img src="{% if property.image_7 %}{{ property.image_7.url }}{% else %}https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80{% endif %}"
                             alt="Mosaic View 7">
                     </div>
@@ -1121,24 +1338,173 @@
             </form>
         </div>
     </div>
-    {% endblock %}
+</div>
+
+<!-- Property Fullscreen Gallery Lightbox Modal -->
+<div id="propertyLightboxModal" class="lightbox-modal" style="display: none;">
+    <div class="lightbox-backdrop" onclick="closeLightboxModal()"></div>
+    <div class="lightbox-content">
+        <button type="button" class="lightbox-close-btn" onclick="closeLightboxModal()" title="Close (Esc)">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        
+        <div class="lightbox-counter" id="lightboxCounter">1 / 8</div>
+
+        <button type="button" class="lightbox-nav-btn prev" onclick="prevLightboxImage(event)" title="Previous (Left Arrow)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <div class="lightbox-img-wrapper" onclick="toggleLightboxZoom(event)">
+            <img id="lightboxActiveImg" src="" alt="Property Image Full View" class="lightbox-img" title="Click to zoom in / out">
+        </div>
+
+        <button type="button" class="lightbox-nav-btn next" onclick="nextLightboxImage(event)" title="Next (Right Arrow)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Thumbnails Strip Bar -->
+        <div class="lightbox-thumbs-bar" id="lightboxThumbsBar">
+            <!-- Dynamically populated JS thumbnails -->
+        </div>
+    </div>
+</div>
+{% endblock %}
 
     {% block extra_js %}
     <script>
+        // Lightbox Modal & Image Gallery Zoom Navigation
+        const propertyGalleryImages = [
+            {% if property.hero_image %}"{{ property.hero_image.url }}"{% else %}"https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"{% endif %},
+            {% if property.image_1 %}"{{ property.image_1.url }}"{% else %}"https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=1200&q=80"{% endif %},
+            {% if property.image_2 %}"{{ property.image_2.url }}"{% else %}"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80"{% endif %},
+            {% if property.image_3 %}"{{ property.image_3.url }}"{% else %}"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"{% endif %},
+            {% if property.image_4 %}"{{ property.image_4.url }}"{% else %}"https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80"{% endif %},
+            {% if property.image_5 %}"{{ property.image_5.url }}"{% else %}"https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80"{% endif %},
+            {% if property.image_6 %}"{{ property.image_6.url }}"{% else %}"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"{% endif %},
+            {% if property.image_7 %}"{{ property.image_7.url }}"{% else %}"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80"{% endif %}
+        ];
+
+        let currentLightboxIndex = 0;
+
+        function openLightboxModal(index = 0) {
+            currentLightboxIndex = index;
+            const modal = document.getElementById('propertyLightboxModal');
+            if (!modal) return;
+            
+            renderLightboxThumbs();
+            showLightboxImage(currentLightboxIndex);
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightboxModal() {
+            const modal = document.getElementById('propertyLightboxModal');
+            if (!modal) return;
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            const activeImg = document.getElementById('lightboxActiveImg');
+            if (activeImg) activeImg.classList.remove('zoomed');
+        }
+
+        function showLightboxImage(index) {
+            if (index < 0) index = propertyGalleryImages.length - 1;
+            if (index >= propertyGalleryImages.length) index = 0;
+            currentLightboxIndex = index;
+
+            const activeImg = document.getElementById('lightboxActiveImg');
+            const counter = document.getElementById('lightboxCounter');
+
+            if (activeImg) {
+                activeImg.style.opacity = '0.3';
+                activeImg.classList.remove('zoomed');
+                setTimeout(() => {
+                    activeImg.src = propertyGalleryImages[currentLightboxIndex];
+                    activeImg.style.opacity = '1';
+                }, 90);
+            }
+
+            if (counter) {
+                counter.innerText = `${currentLightboxIndex + 1} / ${propertyGalleryImages.length}`;
+            }
+
+            // Highlight active thumbnail
+            const thumbs = document.querySelectorAll('.lightbox-thumb');
+            thumbs.forEach((t, i) => {
+                if (i === currentLightboxIndex) {
+                    t.classList.add('active');
+                    t.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                } else {
+                    t.classList.remove('active');
+                }
+            });
+        }
+
+        function nextLightboxImage(e) {
+            if (e) e.stopPropagation();
+            showLightboxImage(currentLightboxIndex + 1);
+        }
+
+        function prevLightboxImage(e) {
+            if (e) e.stopPropagation();
+            showLightboxImage(currentLightboxIndex - 1);
+        }
+
+        function toggleLightboxZoom(e) {
+            if (e) e.stopPropagation();
+            const activeImg = document.getElementById('lightboxActiveImg');
+            if (activeImg) {
+                activeImg.classList.toggle('zoomed');
+            }
+        }
+
+        function renderLightboxThumbs() {
+            const thumbsBar = document.getElementById('lightboxThumbsBar');
+            if (!thumbsBar) return;
+            thumbsBar.innerHTML = '';
+            propertyGalleryImages.forEach((src, idx) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = `lightbox-thumb ${idx === currentLightboxIndex ? 'active' : ''}`;
+                img.alt = `Thumbnail ${idx + 1}`;
+                img.onclick = (e) => {
+                    e.stopPropagation();
+                    showLightboxImage(idx);
+                };
+                thumbsBar.appendChild(img);
+            });
+        }
+
+        // Keyboard Shortcuts for Lightbox Navigation
+        document.addEventListener('keydown', function (e) {
+            const modal = document.getElementById('propertyLightboxModal');
+            if (modal && modal.style.display !== 'none') {
+                if (e.key === 'ArrowRight') {
+                    nextLightboxImage();
+                } else if (e.key === 'ArrowLeft') {
+                    prevLightboxImage();
+                } else if (e.key === 'Escape') {
+                    closeLightboxModal();
+                }
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             const mainImg = document.getElementById('mainGalleryImg');
             const mosaicTiles = document.querySelectorAll('.mosaic-tile');
 
             if (mainImg && mosaicTiles.length > 0) {
-                mosaicTiles.forEach(tile => {
-                    tile.addEventListener('click', function () {
+                mosaicTiles.forEach((tile, index) => {
+                    tile.addEventListener('click', function (e) {
                         const tileImg = this.querySelector('img');
                         if (!tileImg) return;
 
                         const currentMainSrc = mainImg.src;
                         const clickedTileSrc = tileImg.src;
 
-                        if (currentMainSrc === clickedTileSrc) return;
+                        if (currentMainSrc === clickedTileSrc) {
+                            openLightboxModal(index + 1);
+                            return;
+                        }
 
                         // 2-Way Image Swap Animation
                         mainImg.style.opacity = '0.25';

@@ -1698,7 +1698,7 @@
 </div>
 
 <!-- 3. RECENTLY ADDED LANDINGS SECTION (POSITION 3: IMMEDIATELY AFTER SERVICES, 6 CARDS PER ROW, CENTERED TITLE & PRICE) -->
-<section style="padding: 1.5rem 0 3.5rem 0; background: #ffffff; width: 100%; border-bottom: 1px solid rgba(0,0,0,0.04);">
+<section style="padding: 2rem 0 3.5rem 0; background: #ffffff; width: 100%; border-bottom: 1px solid rgba(0,0,0,0.04);">
   <style>
     .newly-added-grid-6col {
       display: grid;
@@ -1740,6 +1740,55 @@
 
   <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
     
+    <!-- LANDING PAGE PROPERTY SEARCH FILTER BAR (Submits GET data directly to /search/) -->
+    <div style="max-width: 1100px; width: 100%; margin: 0 auto 2.5rem auto; box-sizing: border-box;">
+      <form id="landingFilterForm" method="GET" action="{% url 'search' %}" class="filters" style="border: none; background: transparent; padding: 0; box-shadow: none;">
+        
+        <!-- HORIZONTAL FILTER BAR CONTAINER (Creamy #fbf7f0 background with warm #f4eee2 input controls) -->
+        <div style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06); display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
+          <!-- Keyword / Address Input -->
+          <div style="flex: 1.5; min-width: 160px;">
+            <input type="text" name="q" placeholder="Keyword or Address..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
+          </div>
+
+          <!-- Cascading Location Controls (District -> Division -> Village) -->
+          <div style="flex: 1.2; min-width: 130px;">
+            <select name="district" id="landing-district-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
+              <option value="">District</option>
+            </select>
+          </div>
+          <div style="flex: 1.2; min-width: 130px;">
+            <select name="division" id="landing-division-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;" disabled>
+              <option value="">Division</option>
+            </select>
+          </div>
+          <div style="flex: 1.2; min-width: 130px;">
+            <select name="village" id="landing-village-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;" disabled>
+              <option value="">Village</option>
+            </select>
+          </div>
+
+          <!-- Property Type Filter -->
+          <div style="flex: 1.2; min-width: 140px;">
+            <select name="type" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
+              <option value="">All Property Types</option>
+              <option value="apartment">Apartment</option>
+              <option value="flat">Flat</option>
+              <option value="condo">Condo</option>
+              <option value="bungalow">Bungalow / Standalone</option>
+            </select>
+          </div>
+
+          <!-- Filter Action Button -->
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.4rem; font-weight: 800; border-radius: 10px; background: #047857; color: white; border: none; cursor: pointer; white-space: nowrap;">
+              <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
     <!-- Static Centered Header (NO Typing Animation) -->
     <div style="text-align: center; margin-bottom: 2rem;">
       <h3 style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 800; color: #1e1b18; margin: 0; letter-spacing: -0.3px; display: inline-block; border-bottom: 2.5px solid var(--color-gold); padding-bottom: 0.4rem;">
@@ -2270,6 +2319,13 @@
       counterElements.forEach(el => animateCounter(el));
     }
 
+    if (typeof initCascadingLocationFilters === 'function') {
+      initCascadingLocationFilters(
+        document.getElementById('landing-district-select'),
+        document.getElementById('landing-division-select'),
+        document.getElementById('landing-village-select')
+      );
+    }
   });
 </script>
 
