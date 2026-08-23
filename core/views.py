@@ -1940,8 +1940,16 @@ def home_view(request):
     })
 
 def about_us_view(request):
-    executives = CommitteeExecutive.objects.all().order_by('created_at')
-    agents = InspectionAgent.objects.all().select_related('role').order_by('joined_at')
+    try:
+        executives = CommitteeExecutive.objects.all().order_by('created_at')
+    except Exception:
+        executives = []
+
+    try:
+        agents = InspectionAgent.objects.all().select_related('role').order_by('joined_at')
+    except Exception:
+        agents = []
+
     return render(request, 'about.html', {
         'executives': executives,
         'agents': agents,
@@ -2060,7 +2068,15 @@ def search_view(request):
     properties = properties.distinct().order_by('-created_at')
     total_count = properties.count()
     
-    active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+    try:
+        active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+    except Exception:
+        active_popup = None
+
+    try:
+        property_categories = PropertyCategory.objects.filter(is_active=True).order_by('group', 'name')
+    except Exception:
+        property_categories = []
 
     return render(request, 'tenant/search.html', {
         'properties': properties,
@@ -2076,7 +2092,7 @@ def search_view(request):
         'for_rent': for_rent,
         'selected_amenities': selected_amenities,
         'active_popup': active_popup,
-        'property_categories': PropertyCategory.objects.filter(is_active=True).order_by('group', 'name')
+        'property_categories': property_categories
     })
 
 
@@ -2138,7 +2154,10 @@ def offices_view(request):
     properties = properties.distinct().order_by('-created_at')
     total_count = properties.count()
 
-    active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+    try:
+        active_popup = PopupLogic.objects.filter(is_active=True, display_page__in=['search', 'all'], trigger_event='load').first()
+    except Exception:
+        active_popup = None
 
     return render(request, 'tenant/offices.html', {
         'properties': properties,
