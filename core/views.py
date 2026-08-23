@@ -1303,6 +1303,73 @@ def admin_dashboard(request):
             'status_color': status_color,
             'status_border': status_border
         })
+
+    # Process Office Upgrade Applications
+    received_office_apps = OfficeApplication.objects.select_related('property', 'user').order_by('-created_at')
+    if filter_month:
+        try:
+            m_val = int(filter_month)
+            received_office_apps = received_office_apps.filter(created_at__month=m_val)
+        except ValueError:
+            pass
+    if filter_day:
+        try:
+            d_val = int(filter_day)
+            received_office_apps = received_office_apps.filter(created_at__day=d_val)
+        except ValueError:
+            pass
+
+    for off_app in received_office_apps:
+        amount = float(off_app.booking_fee or 100000.00)
+        reason = 'Office Upgrade'
+        reason_code = 'office_upgrade'
+        row_bg = '#f0f9ff'
+        badge_bg = 'rgba(2, 132, 199, 0.15)'
+        badge_color = '#0369a1'
+
+        if off_app.payment_status == 'paid':
+            status_str = "Paid"
+            status_bg = "#f0fdf4"
+            status_color = "#16a34a"
+            status_border = "#bbf7d0"
+        else:
+            status_str = "Pending payment"
+            status_bg = "#fffbeb"
+            status_color = "#d97706"
+            status_border = "#fef08a"
+
+        tenant_obj = off_app.user
+        if not tenant_obj:
+            class CorporateUser:
+                def __init__(self, name, email):
+                    self.username = name
+                    self.email = email
+                    self.first_name = name
+                    self.last_name = ""
+                    self.profile = None
+                def get_full_name(self):
+                    return self.first_name
+            tenant_obj = CorporateUser(off_app.contact_person or off_app.company_name, off_app.email)
+
+        payments_list.append({
+            'id': f"OFF-{off_app.id:04d}",
+            'category_code': 'office_upgrade',
+            'category_label': reason,
+            'reason': reason,
+            'reason_code': reason_code,
+            'row_bg': row_bg,
+            'badge_bg': badge_bg,
+            'badge_color': badge_color,
+            'tenant': tenant_obj,
+            'property': off_app.property,
+            'amount': amount,
+            'payment_method': 'Pesapal Mobile Money / Card',
+            'date': off_app.created_at,
+            'status': status_str,
+            'status_bg': status_bg,
+            'status_color': status_color,
+            'status_border': status_border
+        })
         
     # Prepare timeframe datasets (Annually, Monthly, Daily)
     today = timezone.now().date()
@@ -4033,7 +4100,40 @@ def download_payments_pdf(request):
             st_str
         ])
 
-    grand_total = total_booking_revenue + total_rent_2_revenue + total_rent_3_revenue
+    # Office Applications for PDF report
+    received_office_apps = OfficeApplication.objects.select_related('property', 'user').order_by('-created_at')
+    if filter_month:
+        try:
+            m_val = int(filter_month)
+            received_office_apps = received_office_apps.filter(created_at__month=m_val)
+        except ValueError:
+            pass
+    if filter_day:
+        try:
+            d_val = int(filter_day)
+            received_office_apps = received_office_apps.filter(created_at__day=d_val)
+        except ValueError:
+            pass
+
+    office_revenue = 0
+    for off_app in received_office_apps:
+        amount = float(off_app.booking_fee or 100000.00)
+        office_revenue += amount
+        st_str = "Paid" if off_app.payment_status == 'paid' else "Pending payment"
+        dt_str = timezone.localtime(off_app.created_at).strftime('%Y-%m-%d %H:%M') if off_app.created_at else "-"
+        client_name = off_app.contact_person or off_app.company_name
+        payments_list.append([
+            f"OFF-{off_app.id:04d}",
+            client_name,
+            off_app.property.title[:22] if off_app.property else "-",
+            "Office Upgrade",
+            "Mobile Money / Card",
+            f"UGX {amount:,.0f}",
+            dt_str,
+            st_str
+        ])
+
+    grand_total = total_booking_revenue + total_rent_2_revenue + total_rent_3_revenue + office_revenue
 
     # Summary Table
     summary_data = [
@@ -4041,6 +4141,7 @@ def download_payments_pdf(request):
         [Paragraph("24-Hour Booking Lock Fees", td_style), Paragraph(str(len(received_bookings)), td_style), Paragraph(f"UGX {total_booking_revenue:,.0f}", td_style)],
         [Paragraph("Pay 2 Months Rent Payments", td_style), Paragraph(str(rent_2_count), td_style), Paragraph(f"UGX {total_rent_2_revenue:,.0f}", td_style)],
         [Paragraph("Pay 3 Months Rent Payments", td_style), Paragraph(str(rent_3_count), td_style), Paragraph(f"UGX {total_rent_3_revenue:,.0f}", td_style)],
+        [Paragraph("Corporate Office Upgrade Fees", td_style), Paragraph(str(len(received_office_apps)), td_style), Paragraph(f"UGX {office_revenue:,.0f}", td_style)],
         [Paragraph("TOTAL REVENUE", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(str(len(payments_list)), ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold')), Paragraph(f"UGX {grand_total:,.0f}", ParagraphStyle('B', parent=td_style, fontName='Helvetica-Bold', textColor=colors.HexColor('#0a5c36')))]
     ]
 
