@@ -4362,6 +4362,13 @@ def pesapal_initiate_payment(request, property_id=None):
 
     payment_type = request.POST.get('payment_type') or request.GET.get('payment_type') or 'booking'
     booking_id = request.POST.get('booking_id') or request.GET.get('booking_id')
+    months_to_pay_raw = request.POST.get('months_to_pay') or request.GET.get('months_to_pay') or '1'
+    try:
+        months_to_pay = int(months_to_pay_raw)
+        if months_to_pay < 1:
+            months_to_pay = 1
+    except (ValueError, TypeError):
+        months_to_pay = 1
     
     booking_obj = None
     if booking_id:
@@ -4388,9 +4395,24 @@ def pesapal_initiate_payment(request, property_id=None):
         return redirect('/tenant/dashboard/?tab=payments')
 
     property_obj = booking_obj.property
-    amount = float(booking_obj.booking_fee or 0)
-    if amount <= 0:
-        amount = float(property_obj.price or 0) * (0.01 if property_obj.is_for_sale else 0.05)
+    
+    if payment_type == 'rent':
+        base_rent = float(property_obj.price or 0)
+        total_rent = base_rent * months_to_pay
+        commission = total_rent * 0.10
+        amount = total_rent + commission
+    elif payment_type in ['rent_2', 'rent_3']:
+        months = 3 if payment_type == 'rent_3' else 2
+        base_rent = float(property_obj.price or 0)
+        total_rent = base_rent * months
+        commission = total_rent * 0.10
+        amount = total_rent + commission
+    elif payment_type == 'booking_sale':
+        amount = float(property_obj.price or 0) * 0.01
+    else:
+        amount = float(booking_obj.booking_fee or 0)
+        if amount <= 0:
+            amount = float(property_obj.price or 0) * 0.05
 
     # 1. Fetch Pesapal OAuth Bearer Token
     token, token_err = get_pesapal_bearer_token()

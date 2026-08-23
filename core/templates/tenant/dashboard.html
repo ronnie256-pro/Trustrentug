@@ -841,35 +841,11 @@
                     </div>
                 </div>
 
-                <!-- Vetting & Inspection Reports -->
-                <div style="margin-top: 3.5rem;">
-                    <h4 style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-emerald-darkest); margin: 0 0 1.5rem 0; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;"><i class="fa-solid fa-clipboard-check"></i> Verification Inspection Reports</h4>
-                    
-                    <div class="inspection-reports-grid">
-                        {% for report in inspection_reports %}
-                        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                                <div>
-                                    <h5 style="margin: 0; font-size: 0.95rem; color: var(--color-emerald-darkest); font-weight: 600;">{{ report.agent.name }}</h5>
-                                    <small style="color: var(--color-gold); font-weight: 500; font-size: 0.75rem;">{{ report.agent.role.name }}</small>
-                                </div>
-                                <span class="badge {% if report.status == 'approved' %}badge-verified{% else %}badge-verification{% endif %}" style="font-size: 0.65rem;">{{ report.get_status_display }}</span>
-                            </div>
-                            <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5; font-style: italic; flex: 1;">"{{ report.findings|truncatechars:180 }}"</p>
-                        </div>
-                        {% empty %}
-                        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--color-text-muted); background: #f8fafc; border-radius: 8px; border: 1px dashed var(--color-border);">
-                            <i class="fa-solid fa-shield-circle-exclamation" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: var(--color-gold);"></i>
-                            <p style="margin: 0; font-weight: 500;">Structural and legal inspections are complete but reports are archived by system administrators.</p>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
             </div>
         </div>
+        {% endif %}
 
-        {% elif active_bookings or reserved_bookings or favorite_properties %}
+        {% if active_bookings or reserved_bookings or favorite_properties %}
         
             {% for booking in active_bookings %}
             <!-- Active Reserved Booking Card (starts 24h timer) -->
@@ -1101,7 +1077,7 @@
                 });
             </script>
 
-        {% else %}
+        {% elif not active_rental %}
         <!-- Empty state dashboard for property tab -->
         <div style="text-align: center; padding: 4rem 2rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 1rem;">
             <i class="fa-regular fa-heart" style="font-size: 3rem; color: var(--color-gold); margin-bottom: 1.25rem;"></i>
@@ -1145,10 +1121,17 @@
                                 <option value="booking_sale">Pay 1% 7days booking fee (Non-refundable)</option>
                                 {% else %}
                                 <option value="booking">24 hours booking (Non-refundable)</option>
-                                <option value="rent_2">Pay 2 months rent</option>
-                                <option value="rent_3">Pay 3 months rent</option>
+                                <option value="rent">Pay Rent</option>
                                 {% endif %}
                             </select>
+                        </div>
+                        
+                        <!-- Dynamic Months Input container (shown when Pay Rent is selected) -->
+                        <div id="months-input-container" style="display: none; margin-top: 1rem;">
+                            <label style="font-size: 0.88rem; font-weight: 700; color: #7f1d1d; display: block; margin-bottom: 0.35rem;">
+                                <i class="fa-solid fa-calendar-days" style="color: #dc2626;"></i> Number of Months to Pay
+                            </label>
+                            <input type="number" name="months_to_pay" id="months-to-pay-input" value="1" min="1" max="60" oninput="calculateAmounts()" class="form-control" style="font-weight: 700; border-color: #fca5a5; background: white;">
                         </div>
                     </div>
 
@@ -1216,15 +1199,16 @@
                     <!-- Rent Fee breakdown -->
                     <div id="rent-invoice-display" style="display: none;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="color: var(--color-text-muted);" id="rent-duration-label">Total Rent (2 Months)</span>
+                            <span style="color: var(--color-text-muted);" id="rent-duration-label">Total Rent (1 Month)</span>
                             <strong id="invoice-rent-subtotal">UGX ...</strong>
                         </div>
-                        <div style="background: rgba(203, 163, 88, 0.08); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--color-gold); font-size: 0.82rem; color: var(--color-text-dark); line-height: 1.4; margin-top: 1rem;">
-                            <strong>Escrow Lock Terms:</strong> Your funds will reside securely inside the TRUST platform escrow vault. Funds are only released to the owner upon successful move-in, and full security clearance of legal vetting protocols.
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; background: rgba(203, 163, 88, 0.08); padding: 0.75rem 1rem; border-radius: 8px; border-left: 4px solid var(--color-gold); font-size: 0.9rem;">
+                            <span style="color: var(--color-text-dark); font-weight: 600;">Trust Protocol 10% commission</span>
+                            <strong id="invoice-commission-subtotal" style="color: var(--color-emerald-darkest);">UGX ...</strong>
                         </div>
                         <hr style="border: none; border-top: 1px dashed var(--color-border); margin: 1rem 0;">
                         <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-family: var(--font-heading); color: var(--color-emerald-darkest);">
-                            <span>Total Escrow Due</span>
+                            <span>Total Due Today</span>
                             <span style="color: var(--color-emerald); font-weight: 700;" id="invoice-total">UGX ...</span>
                         </div>
                     </div>
@@ -1249,25 +1233,36 @@
                 const selector = document.getElementById("payment-type-selector");
                 const bDisplay = document.getElementById("booking-invoice-display");
                 const rDisplay = document.getElementById("rent-invoice-display");
+                const monthsContainer = document.getElementById("months-input-container");
+                const monthsInput = document.getElementById("months-to-pay-input");
                 const rentLabel = document.getElementById("rent-duration-label");
                 const rentSubtotalEl = document.getElementById("invoice-rent-subtotal");
+                const commissionEl = document.getElementById("invoice-commission-subtotal");
+                const totalEl = document.getElementById("invoice-total");
                 
                 if (!selector) return;
 
                 if (selector.value === "booking" || selector.value === "booking_sale") {
                     bDisplay.style.display = "block";
                     rDisplay.style.display = "none";
+                    if (monthsContainer) monthsContainer.style.display = "none";
                 } else {
                     bDisplay.style.display = "none";
                     rDisplay.style.display = "block";
+                    if (monthsContainer) monthsContainer.style.display = "block";
                     
-                    const months = selector.value === "rent_3" ? 3 : 2;
-                    const total = basePrice * months;
+                    let months = parseInt(monthsInput ? monthsInput.value : 1) || 1;
+                    if (months < 1) months = 1;
+                    
+                    const totalRent = basePrice * months;
+                    const commission = totalRent * 0.10;
+                    const totalDue = totalRent + commission;
                     
                     const fmt = (val) => "UGX " + Math.round(val).toLocaleString();
-                    if (rentLabel) rentLabel.innerText = `Total Rent (${months} Months)`;
-                    if (rentSubtotalEl) rentSubtotalEl.innerText = fmt(total);
-                    if (document.getElementById("invoice-total")) document.getElementById("invoice-total").innerText = fmt(total);
+                    if (rentLabel) rentLabel.innerText = `Total Rent (${months} Month${months > 1 ? 's' : ''})`;
+                    if (rentSubtotalEl) rentSubtotalEl.innerText = fmt(totalRent);
+                    if (commissionEl) commissionEl.innerText = fmt(commission);
+                    if (totalEl) totalEl.innerText = fmt(totalDue);
                 }
             }
 
