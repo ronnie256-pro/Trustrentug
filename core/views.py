@@ -9,6 +9,15 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from core.models import (
+    Property, PropertyCategory, UserProfile, AgentRole, InspectionAgent,
+    Inspection, InspectionReport, PropertyAmenity, ProximityCategory,
+    ProximityItem, PropertyProximity, TenantBooking, TenantRental,
+    ViewingRequest, MaintenanceRequest, FavoriteProperty, CommitteeExecutive,
+    ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic,
+    SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama,
+    DiasporaClientApplication, ConstructionProject, ConstructionSliderImage
+)
 from core.emails import (
     send_tenant_welcome_email,
     send_landlord_welcome_email,
