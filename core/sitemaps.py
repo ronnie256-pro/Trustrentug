@@ -5,9 +5,13 @@ from core.models import Property
 class PropertySitemap(Sitemap):
     changefreq = "daily"
     priority = 0.9
+    protocol = 'https'
+
+    def get_domain(self, site=None):
+        return 'www.trustrentug.com'
 
     def items(self):
-        return Property.objects.filter(status='available', parent=None)
+        return Property.objects.filter(status='available', parent=None).order_by('-created_at')
 
     def lastmod(self, obj):
         return obj.updated_at
@@ -15,6 +19,10 @@ class PropertySitemap(Sitemap):
 class StaticViewSitemap(Sitemap):
     priority = 0.6
     changefreq = "weekly"
+    protocol = 'https'
+
+    def get_domain(self, site=None):
+        return 'www.trustrentug.com'
 
     def items(self):
         return ['home', 'offices', 'search', 'about_us', 'how_escrow_works', 'faq']
