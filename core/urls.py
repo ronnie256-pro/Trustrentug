@@ -22,7 +22,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from core import views
 
+from django.contrib.sitemaps.views import sitemap
+from core.sitemaps import PropertySitemap, StaticViewSitemap
+
+sitemaps = {
+    'properties': PropertySitemap,
+    'static': StaticViewSitemap,
+}
+
 urlpatterns = [
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain"), name='robots_txt'),
     path('admin/', admin.site.urls),
     path('', views.home_view, name='home'),
     path('login/', views.login_view, name='login'),
@@ -35,6 +45,7 @@ urlpatterns = [
     path('landlord/dashboard/', views.landlord_dashboard),
     path('landlord/property/add/', views.add_property, name='add_property'),
     path('search/', views.search_view, name='search'),
+    path('rentals/<slug:location_slug>/', views.location_hub_view, name='location_hub'),
     path('offices/', views.offices_view, name='offices'),
     path('nearby/', views.nearby_properties_view, name='nearby_properties'),
     path('projects/', views.projects_list_view, name='projects_list'),
@@ -45,6 +56,7 @@ urlpatterns = [
     path('api/properties/nearby/', views.api_nearby_properties, name='api_nearby_properties'),
     path('api/location-cascade/', views.api_location_cascade, name='api_location_cascade'),
     path('property/<int:property_id>/', views.property_detail_view, name='property_detail'),
+    path('property/<slug:slug>/', views.property_detail_view, name='property_detail_slug'),
     path('property/<int:property_id>/tour/', views.property_tour_view, name='property_tour'),
     path('property/<int:property_id>/upgrade-business/', views.submit_office_application, name='submit_office_application'),
     path('offices/pay-booking/<int:app_id>/', views.pesapal_initiate_office_payment, name='pesapal_initiate_office_payment'),

@@ -59,6 +59,7 @@ class Property(models.Model):
     ]
 
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=200, unique=True, blank=True, null=True)
     description = models.TextField(blank=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, blank=True, null=True)
     category_ref = models.ForeignKey(PropertyCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='properties')
@@ -141,6 +142,12 @@ class Property(models.Model):
             return f"{self.title} (Unit in {self.parent.title})"
         return self.title
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        if self.slug:
+            return reverse('property_detail_slug', kwargs={'slug': self.slug})
+        return reverse('property_detail', kwargs={'property_id': self.id})
+
     def save(self, *args, **kwargs):
         if not self.property_id:
             import random
@@ -149,6 +156,18 @@ class Property(models.Model):
                 if not Property.objects.filter(property_id=code).exists():
                     self.property_id = code
                     break
+        if not self.slug and self.title:
+            from django.utils.text import slugify
+            loc_str = self.location or "uganda"
+            base_slug = slugify(f"{self.title}-in-{loc_str}")
+            if not base_slug:
+                base_slug = slugify(self.title) or f"property-{self.property_id or 'item'}"
+            slug = base_slug
+            counter = 1
+            while Property.objects.filter(slug=slug).exclude(id=self.id).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
         super().save(*args, **kwargs)
 
     class Meta:

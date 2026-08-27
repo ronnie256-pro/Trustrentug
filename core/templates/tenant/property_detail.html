@@ -1,9 +1,40 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block title %}Property Details | TRUST{% endblock %}
+{% block title %}{{ property.title }} in {{ property.location }} | TRUST Protocol{% endblock %}
 
 {% block extra_css %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "RealEstateListing",
+  "name": "{{ property.title|escapejs }}",
+  "description": "{{ property.description|striptags|truncatewords:30|escapejs }}",
+  "url": "{{ request.build_absolute_uri }}",
+  "datePosted": "{{ property.created_at|date:'Y-m-d' }}",
+  "offers": {
+    "@type": "Offer",
+    "price": "{{ property.price|default:0 }}",
+    "priceCurrency": "UGX",
+    "priceSpecification": {
+      "@type": "PriceSpecification",
+      "price": "{{ property.price|default:0 }}",
+      "priceCurrency": "UGX",
+      "unitText": "MONTH"
+    },
+    "businessFunction": "http://purl.org/goodrelations/v1#LeaseOut"
+  },
+  "itemOffered": {
+    "@type": "{% if property.is_office %}OfficeSpace{% else %}SingleFamilyResidence{% endif %}",
+    "name": "{{ property.title|escapejs }}",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "{{ property.location|escapejs }}",
+      "addressCountry": "UG"
+    }
+  }
+}
+</script>
 <style>
     body {
         background-color: #ffffff !important;

@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ site_settings.site_name|default:"TRUST" }} | {% block title %}Premium Rental Management{% endblock %}</title>
+    <title>{% block title %}{{ meta_title|default:site_settings.site_name|default:"TRUST Protocol | Premium Verified Rental Properties & Apartments in Uganda" }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ meta_description|default:'Find verified apartments, houses, offices, and land for rent in Kampala, Wakiso, and Entebbe with TRUST Protocol escrow verification.' }}{% endblock %}">
+    <meta name="google-site-verification" content="vPox8OeRVeGKJaP9lILsqT5zMyQt4wvYsplGAq5c9ug" />
 
     {% if site_settings.site_icon %}
     <link rel="icon" type="image/png" href="{{ site_settings.site_icon.url }}">

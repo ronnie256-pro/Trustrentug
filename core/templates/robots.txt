@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /tenant/
+Disallow: /landlord/
+Disallow: /admin-dashboard/
+
+Sitemap: https://www.trustrentug.com/sitemap.xml

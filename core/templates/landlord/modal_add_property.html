@@ -24,7 +24,8 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
                 <div class="form-group">
                     <label class="form-label" for="property_name" style="font-weight: 700; font-size: 0.88rem;">Property Name</label>
-                    <input type="text" id="property_name" name="property_name" class="form-control" placeholder="e.g. Hilltop Luxury Apartments" required style="padding: 0.65rem 0.85rem; border-radius: 8px;">
+                    <input type="text" id="property_name" name="property_name" class="form-control" maxlength="60" placeholder="e.g. Hilltop Luxury Apartments" required style="padding: 0.65rem 0.85rem; border-radius: 8px;" oninput="updateCharCounter('property_name', 'title-counter-modal', 60)">
+                    <small id="title-counter-modal" style="font-size:0.75rem; color:#64748b; display:block; margin-top:0.25rem;">60 characters remaining</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="category" style="font-weight: 700; font-size: 0.88rem;">Property Category</label>
@@ -451,6 +452,16 @@
             } else {
                 parentSelection.style.display = 'none';
             }
+        }
+    }
+
+    function updateCharCounter(inputId, counterId, maxLen) {
+        const input = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        if (input && counter) {
+            const rem = maxLen - input.value.length;
+            counter.textContent = `${rem} characters remaining`;
+            counter.style.color = rem < 5 ? '#dc2626' : '#64748b';
         }
     }
 </script>

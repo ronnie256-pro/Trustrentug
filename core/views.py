@@ -2267,8 +2267,11 @@ def offices_view(request):
         'active_popup': active_popup
     })
 
-def property_detail_view(request, property_id):
-    property_obj = get_object_or_404(Property, id=property_id)
+def property_detail_view(request, property_id=None, slug=None):
+    if slug:
+        property_obj = get_object_or_404(Property, slug=slug)
+    else:
+        property_obj = get_object_or_404(Property, id=property_id)
     
     # Fetch dynamic amenities
     property_amenities = list(property_obj.amenities.all())
@@ -2288,25 +2291,14 @@ def property_detail_view(request, property_id):
     if inspection:
         reports = inspection.reports.all().select_related('agent', 'agent__role')
         
-    # Fetch 360/180 Panoramas
-    panoramas = list(property_obj.panoramas.all())
-    has_tour = len(panoramas) > 0
-
-    # Check if property is an office
-    office_categories = ['private_office', 'shared_office', 'office_building']
-    is_office = property_obj.category in office_categories or getattr(property_obj, 'is_office', False)
-
-    # Fetch Similar Properties (prioritizing same location, same category, and same listing_type [sale/rent])
-    base_qs = Property.objects.exclude(id=property_obj.id).filter(status='available', parent=None)
-    if is_office:
-        # Offices in the same area MUST display only offices
+    panoramas = property_obj.panoramas.all()
+    has_tour = panoramas.exists()
+    is_office = property_obj.is_office
+    
+    base_qs = Property.objects.filter(parent=None).exclude(id=property_obj.id)
+    if not is_office:
         base_qs = base_qs.filter(
-            Q(category__in=office_categories) | Q(title__icontains='office') | Q(title__icontains='desk') | Q(title__icontains='workspace')
-        )
-    else:
-        # Houses in the same area MUST display only houses (exclude offices)
-        base_qs = base_qs.exclude(category__in=office_categories).exclude(
-            Q(title__icontains='office') | Q(title__icontains='desk space') | Q(title__icontains='co-working')
+            category__in=['apartment', 'bungalow', 'standalone', 'condo', 'townhouse', 'studio']
         )
 
     cat_items = list(base_qs.filter(category=property_obj.category))
@@ -2325,6 +2317,9 @@ def property_detail_view(request, property_id):
 
     similar_properties = ordered_items[:6]
 
+    meta_title = f"{property_obj.title} in {property_obj.location} | TRUST Protocol Uganda"
+    meta_description = property_obj.description[:155] if property_obj.description else f"View verified photos, pricing in UGX, amenities, and escrow terms for {property_obj.title} in {property_obj.location}."
+
     return render(request, 'tenant/property_detail.html', {
         'property': property_obj,
         'property_amenities': property_amenities,
@@ -2335,6 +2330,26 @@ def property_detail_view(request, property_id):
         'has_tour': has_tour,
         'is_office': is_office,
         'similar_properties': similar_properties,
+        'meta_title': meta_title,
+        'meta_description': meta_description,
+    })
+
+
+def location_hub_view(request, location_slug):
+    loc_clean = location_slug.replace('-', ' ').strip()
+    properties = Property.objects.filter(location__icontains=loc_clean, parent=None, status='available').order_by('-created_at')
+    if not properties.exists():
+        properties = Property.objects.filter(parent=None, status='available').order_by('-created_at')
+    
+    loc_title = loc_clean.title()
+    meta_title = f"Verified Rental Properties & Apartments in {loc_title}, Uganda | TRUST Protocol"
+    meta_description = f"Browse fully verified apartments, houses, and commercial property listings for rent or sale in {loc_title}, Uganda with TRUST escrow protection."
+    
+    return render(request, 'tenant/search.html', {
+        'properties': properties,
+        'search_location': loc_title,
+        'meta_title': meta_title,
+        'meta_description': meta_description,
     })
 
 
