@@ -351,24 +351,27 @@
 <!-- Mobile Responsive Stylesheet -->
 <style>
     @media (max-width: 992px) {
+        /* Section 1: Premium Hero */
         .premium-hero {
             min-height: auto !important;
-            padding: 3.5rem 0 2.5rem 0 !important;
+            padding: 0 !important;
             flex-direction: column !important;
+            align-items: stretch !important;
         }
 
         .premium-hero .hero-grid {
             grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
+            gap: 0 !important;
         }
 
         .premium-hero .hero-text {
-            padding: 0 1.25rem !important;
+            padding: 3.5rem 1.5rem 2.5rem 1.5rem !important;
             max-width: 100% !important;
+            text-align: center !important;
         }
 
         .premium-hero .hero-title {
-            font-size: 2.5rem !important;
+            font-size: 2.35rem !important;
             margin-bottom: 1rem !important;
         }
 
@@ -378,49 +381,121 @@
 
         .premium-hero .hero-image-column {
             position: relative !important;
-            width: calc(100% - 2.5rem) !important;
-            height: 320px !important;
-            margin: 1.5rem auto 0 auto !important;
-            border-radius: 16px !important;
+            width: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 360px !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
             overflow: hidden !important;
         }
 
         .premium-hero .hero-image-column img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            display: block !important;
+            border-radius: 0 !important;
             -webkit-mask-image: none !important;
             mask-image: none !important;
-            border-radius: 16px !important;
         }
 
+        /* Section 2: Founder's Story */
         #founders-story {
-            padding: 4rem 0 !important;
+            padding: 0 0 3.5rem 0 !important;
+        }
+
+        #founders-story .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            max-width: 100% !important;
         }
 
         #founders-story .container > div {
             grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
+            gap: 2rem !important;
+        }
+
+        .founder-image-wrapper {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         .founder-image-wrapper div {
+            width: 100% !important;
             max-width: 100% !important;
         }
 
         .founder-image-wrapper img {
-            height: 380px !important;
+            width: 100% !important;
+            height: 440px !important;
+            border-radius: 0 !important;
+            display: block !important;
+            object-fit: cover !important;
+            object-position: top !important;
+        }
+
+        .founder-content {
+            padding: 0 1.5rem !important;
         }
 
         .founder-content h2 {
             font-size: 2.1rem !important;
         }
 
+        /* Section 3: The Five Pillars (2 per row on Mobile) */
+        .premium-pillars {
+            padding: 3.5rem 0 !important;
+        }
+
+        .pillars-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.85rem !important;
+            margin-top: 2rem !important;
+        }
+
+        .pillar-item {
+            padding: 1.65rem 0.9rem 1.25rem 0.9rem !important;
+            min-height: 190px !important;
+            border-radius: 10px !important;
+        }
+
+        .pillar-letter {
+            font-size: 4.2rem !important;
+            top: -0.2rem !important;
+            right: 0.2rem !important;
+        }
+
+        .pillar-content h3 {
+            font-size: 1.02rem !important;
+            margin-bottom: 0.4rem !important;
+        }
+
+        .pillar-content p {
+            font-size: 0.82rem !important;
+            line-height: 1.45 !important;
+        }
+
+        /* Section 4: Verification Hero (Full-Bleed Image like above) */
         .verification-hero {
             min-height: auto !important;
-            padding: 3.5rem 0 !important;
+            padding: 0 !important;
             flex-direction: column !important;
+            display: flex !important;
+            align-items: stretch !important;
+        }
+
+        .verification-hero .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
         }
 
         .verification-hero .container > div {
             grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
+            gap: 0 !important;
         }
 
         .verification-hero .desktop-only-spacer {
@@ -428,7 +503,7 @@
         }
 
         .verification-hero .reveal {
-            padding: 0 1.25rem !important;
+            padding: 3.5rem 1.5rem 2.5rem 1.5rem !important;
             max-width: 100% !important;
         }
 
@@ -442,21 +517,29 @@
 
         .verification-image-wrapper {
             position: relative !important;
-            width: calc(100% - 2.5rem) !important;
-            height: 300px !important;
-            margin: 1.5rem auto 0 auto !important;
-            border-radius: 16px !important;
+            width: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 360px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
             overflow: hidden !important;
         }
 
         .verification-image-wrapper img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            display: block !important;
+            border-radius: 0 !important;
             -webkit-mask-image: none !important;
             mask-image: none !important;
-            border-radius: 16px !important;
         }
 
+        /* Section 5: Contact Us */
         #contact-us {
-            padding: 4rem 0 !important;
+            padding: 3.5rem 0 !important;
         }
 
         #contact-us .container > div {
@@ -471,15 +554,37 @@
         }
 
         .premium-hero .hero-image-column {
-            height: 250px !important;
+            height: 280px !important;
         }
 
         .founder-image-wrapper img {
-            height: 320px !important;
+            height: 360px !important;
+        }
+
+        .pillars-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.65rem !important;
+        }
+
+        .pillar-item {
+            padding: 1.4rem 0.75rem 1.1rem 0.75rem !important;
+            min-height: 180px !important;
+        }
+
+        .pillar-letter {
+            font-size: 3.6rem !important;
+        }
+
+        .pillar-content h3 {
+            font-size: 0.95rem !important;
+        }
+
+        .pillar-content p {
+            font-size: 0.78rem !important;
         }
 
         .verification-image-wrapper {
-            height: 240px !important;
+            height: 280px !important;
         }
 
         .contact-form-wrapper form > div:first-child {
