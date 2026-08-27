@@ -766,6 +766,8 @@ def admin_dashboard(request):
             site_name = request.POST.get('site_name', 'TRUST').strip()
             site_icon = request.FILES.get('site_icon')
             site_logo = request.FILES.get('site_logo')
+            about_hero_image = request.FILES.get('about_hero_image')
+            about_founder_image = request.FILES.get('about_founder_image')
             
             try:
                 settings_obj = SiteSetting.objects.first()
@@ -778,6 +780,10 @@ def admin_dashboard(request):
                     settings_obj.site_icon = site_icon
                 if site_logo:
                     settings_obj.site_logo = site_logo
+                if about_hero_image:
+                    settings_obj.about_hero_image = about_hero_image
+                if about_founder_image:
+                    settings_obj.about_founder_image = about_founder_image
 
                 if request.POST.get('stat_properties'):
                     settings_obj.stat_properties = int(request.POST.get('stat_properties'))

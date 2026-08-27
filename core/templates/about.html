@@ -5,245 +5,112 @@
 {% block content %}
 
 <!-- 1. Premium Hero -->
-<section class="premium-hero">
-    <div class="container">
-        <div class="hero-grid">
-            <div class="hero-text reveal">
-                <span class="premium-kicker">The Standard of Security</span>
-                <h1 class="hero-title">Elevating the <span>Rental Experience</span></h1>
-                <p class="hero-subtitle">
-                    Verified properties. Protected families. A protocol designed for absolute peace of mind in the real estate ecosystem.
+<section class="premium-hero"
+    style="padding: 0; background: linear-gradient(135deg, #064e3b 0%, #022c22 100%); position: relative; overflow: hidden; width: 100%; min-height: 620px; display: flex; align-items: center;">
+    
+    <!-- Full-Height Hero Image stretching 100% from top to bottom (Right 50%) -->
+    <div class="hero-image-column reveal delay-1"
+        style="position: absolute; top: 0; bottom: 0; right: 0; width: 50%; height: 100%; z-index: 1;">
+        <img src="{% if site_settings.about_hero_image %}{{ site_settings.about_hero_image.url }}{% else %}/static/img/about_hero.png{% endif %}"
+            alt="TRUST Verified Luxury Property"
+            style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.85) 30%, black 100%); mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.85) 30%, black 100%);">
+    </div>
+
+    <div
+        style="width: 100%; max-width: 100%; padding-left: max(1.5rem, calc((100vw - 1380px) / 2)); padding-right: 0; position: relative; z-index: 2;">
+        <div class="hero-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
+            <div class="hero-text reveal"
+                style="padding-right: 1.5rem; padding-top: 6.5rem; padding-bottom: 6.5rem; max-width: 550px;">
+                <h1 class="hero-title"
+                    style="font-family: var(--font-heading); font-size: 4.1rem; color: white; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700;">
+                    Elevating the <span style="color: var(--color-gold); font-style: italic;">real estate Experience</span>
+                </h1>
+                <p class="hero-subtitle"
+                    style="font-size: 1.18rem; color: #cbd5e1; line-height: 1.75; max-width: 520px; margin-bottom: 0;">
+                    Verified properties. Protected families. A protocol designed for absolute peace of mind in the real
+                    estate ecosystem.
                 </p>
             </div>
-            <!-- We could put a minimalist graphic here if needed, or leave the grid space empty to let the typography breathe. -->
+
+            <!-- Empty grid cell to keep image strictly on right 50% -->
             <div></div>
         </div>
     </div>
 </section>
 
-<!-- 2. Stark Stats -->
-<section class="premium-stats">
+<!-- 2. Founder's Story Section -->
+<section id="founders-story"
+    style="padding: 6.5rem 0; background-color: #ffffff; border-bottom: 1px solid var(--color-border);">
     <div class="container">
-        <div class="stats-grid">
-            <div class="stat-item reveal">
-                <span class="stat-number">100<span>%</span></span>
-                <span class="stat-label">Physically Inspected</span>
-            </div>
-            <div class="stat-item reveal delay-1">
-                <span class="stat-number">24<span>/7</span></span>
-                <span class="stat-label">Verification Support</span>
-            </div>
-            <div class="stat-item reveal delay-2">
-                <span class="stat-number">0<span>%</span></span>
-                <span class="stat-label">Tolerance for Fraud</span>
-            </div>
-        </div>
-    </div>
-</section>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4.5rem; align-items: center;">
 
-<!-- 3. Editorial Mission -->
-<section class="premium-editorial">
-    <div class="container">
-        <div class="editorial-grid">
-            <div class="editorial-content reveal">
-                <span class="premium-kicker">Our Mission</span>
-                <h2 class="premium-heading">Why We Exist</h2>
-                <p class="premium-lead">
-                    Renting should not be a gamble. We built the TRUST Protocol to explicitly eliminate risk and uncertainty from the housing market.
+            <!-- Column 1: Founder's Picture -->
+            <div class="founder-image-wrapper reveal"
+                style="display: flex; justify-content: center; align-items: center;">
+                <div style="width: 100%; max-width: 500px; position: relative;">
+                    <img src="{% if site_settings.about_founder_image %}{{ site_settings.about_founder_image.url }}{% else %}/static/img/founder.png{% endif %}"
+                        alt="TRUST Protocol Founder"
+                        style="width: 100%; height: 520px; object-fit: cover; object-position: top; display: block; border-radius: 12px;">
+                </div>
+            </div>
+
+            <!-- Column 2: Founder's Story Content -->
+            <div class="founder-content reveal delay-1">
+                <h2 class="premium-heading"
+                    style="font-family: var(--font-heading); font-size: 2.85rem; color: var(--color-emerald-darkest); margin-bottom: 1.5rem; font-weight: 700; line-height: 1.15;">
+                    The Founder's Story
+                </h2>
+
+                <p style="font-size: 1.08rem; line-height: 1.85; color: #475569; margin-bottom: 1.5rem; font-weight: 400;">
+                    TRUST Protocol was created from a real experience — one that revealed how vulnerable families can be
+                    in Uganda’s property market. After relocating from Mozambique to Uganda, I set out to find a home
+                    for my family. A listing on a popular platform looked genuine. The agent seemed trustworthy. The
+                    house was real. The landlord appeared legitimate. The agreement was made, payment was sent and then
+                    both the agent and the landlord disappeared. The money was gone. The home was never mine to rent and
+                    there was no system in place to protect my family.
                 </p>
-                
-                <div class="editorial-points">
-                    <div class="editorial-point reveal delay-1">
-                        <h4>Zero Fraud Architecture</h4>
-                        <p>NIN-linked verification algorithms mapped meticulously for every landlord and authorized agent.</p>
-                    </div>
-                    <div class="editorial-point reveal delay-2">
-                        <h4>Absolute Physical Truth</h4>
-                        <p>Every listed property is explicitly inspected, geotagged, and validated by our urban inspection team.</p>
-                    </div>
+
+                <!-- Clean Callout Box WITHOUT Left Border -->
+                <div style="background: rgba(203, 163, 88, 0.08); padding: 1.35rem 1.65rem; border-radius: 8px; margin: 1.75rem 0;">
+                    <p style="margin: 0; font-size: 1.05rem; line-height: 1.7; color: #1e293b; font-weight: 600; font-style: italic;">
+                        Too many people lose money, time, and peace because the property market lacks verification,
+                        transparency, and secure payment processes.
+                    </p>
                 </div>
+
+                <p style="font-size: 1.35rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); margin-top: 1.75rem;">
+                    TRUST Protocol was built to change that.
+                </p>
             </div>
-            
-            <div class="editorial-image reveal delay-3">
-                <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=1200" alt="Premium Property Interior">
-            </div>
+
         </div>
     </div>
 </section>
 
-<!-- 3.5 Dynamic Field Agents Section -->
-<section class="premium-agents" style="padding: 8rem 0; background-color: var(--color-surface); border-bottom: 1px solid var(--color-border);">
-    <div class="container">
-        <div class="text-center reveal">
-            <span class="premium-kicker">Field Intelligence</span>
-            <h2 class="premium-heading" style="font-size: 2.85rem; margin-bottom: 1rem;">Urban Vetting Specialists</h2>
-            <p class="premium-lead" style="max-width: 700px; margin: 0 auto;">
-                Our boots-on-the-ground authorized field agents physically inspect, geotag, and secure the structural and legal authenticity of every listed property.
-            </p>
-        </div>
-        
-        <style>
-            .agents-grid {
-                display: grid;
-                grid-template-columns: repeat(6, 1fr);
-                gap: 2.5rem 1.5rem;
-                margin-top: 4.5rem;
-            }
-            .agent-card {
-                text-align: center;
-                transition: transform 0.4s ease;
-            }
-            .agent-avatar-container {
-                position: relative;
-                width: 130px;
-                height: 130px;
-                margin: 0 auto 1.25rem auto;
-            }
-            .agent-photo-circle {
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 3px solid rgba(203, 163, 88, 0.2);
-                box-shadow: var(--shadow-sm);
-                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(16, 61, 40, 0.05);
-                color: var(--color-emerald-dark);
-                font-weight: 700;
-                font-size: 1.5rem;
-            }
-            .agent-card:hover .agent-photo-circle {
-                transform: scale(1.08);
-                border-color: var(--color-gold);
-                box-shadow: var(--shadow-gold);
-            }
-            .agent-card-name {
-                font-size: 1rem;
-                font-weight: 600;
-                color: var(--color-emerald-darkest);
-                margin-bottom: 0.25rem;
-                font-family: var(--font-body);
-            }
-            .agent-card-role {
-                font-size: 0.7rem;
-                font-weight: 700;
-                text-transform: uppercase;
-                color: var(--color-gold);
-                letter-spacing: 0.5px;
-            }
-            @media (max-width: 1024px) {
-                .agents-grid {
-                    grid-template-columns: repeat(3, 1fr);
-                }
-            }
-            @media (max-width: 768px) {
-                .agents-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-            }
-            @media (max-width: 480px) {
-                .agents-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-        </style>
-        
-        <div class="agents-grid">
-            {% if agents %}
-                {% for agent in agents %}
-                <div class="agent-card reveal {% if forloop.counter0 > 0 %}delay-{{ forloop.counter0 }}{% endif %}">
-                    <div class="agent-avatar-container">
-                        {% if agent.image %}
-                        <img src="{{ agent.image.url }}" alt="{{ agent.name }}" class="agent-photo-circle">
-                        {% else %}
-                        <div class="agent-photo-circle">
-                            {{ agent.name|slice:":2"|upper }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <h4 class="agent-card-name">{{ agent.name }}</h4>
-                    <div class="agent-card-role">{{ agent.role.name|default:"Trust Agent" }}</div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <!-- Fallback Mock Agents (Perfect full row of 6) -->
-                <div class="agent-card reveal">
-                    <div class="agent-avatar-container">
-                        <div class="agent-photo-circle">SS</div>
-                    </div>
-                    <h4 class="agent-card-name">Eng. S. Ssewankambo</h4>
-                    <div class="agent-card-role">Structural Inspector</div>
-                </div>
-                
-                <div class="agent-card reveal delay-1">
-                    <div class="agent-avatar-container">
-                        <div class="agent-photo-circle">MN</div>
-                    </div>
-                    <h4 class="agent-card-name">Coun. M. Namubiru</h4>
-                    <div class="agent-card-role">Legal Title Counsel</div>
-                </div>
-                
-                <div class="agent-card reveal delay-2">
-                    <div class="agent-avatar-container">
-                        <div class="agent-photo-circle">RO</div>
-                    </div>
-                    <h4 class="agent-card-name">Chief R. Okello</h4>
-                    <div class="agent-card-role">Fire & Safety Officer</div>
-                </div>
-                
-                <div class="agent-card reveal delay-3">
-                    <div class="agent-avatar-container">
-                        <div class="agent-photo-circle">JN</div>
-                    </div>
-                    <h4 class="agent-card-name">Jane Nsubuga</h4>
-                    <div class="agent-card-role">Land Registrar</div>
-                </div>
-                
-                <div class="agent-card reveal delay-4">
-                    <div class="agent-avatar-container">
-                        <div class="agent-photo-circle">AM</div>
-                    </div>
-                    <h4 class="agent-card-name">Arthur Musoke</h4>
-                    <div class="agent-card-role">Security Auditor</div>
-                </div>
-                
-                <div class="agent-card reveal delay-5">
-                    <div class="agent-avatar-container">
-                        <div class="agent-photo-circle">GN</div>
-                    </div>
-                    <h4 class="agent-card-name">Grace Nakimera</h4>
-                    <div class="agent-card-role">Geographical Surveyor</div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
-<!-- 4. The Pillars -->
+<!-- 3. The Five Pillars of TRUST -->
 <section class="premium-pillars">
     <div class="container">
         <div class="text-center reveal">
-            <span class="premium-kicker">The Foundation</span>
             <h2 class="premium-heading">The Five Pillars of TRUST</h2>
         </div>
-        
+
         <style>
             .premium-pillars {
-                padding: 8rem 0;
+                padding: 6rem 0;
                 background: linear-gradient(180deg, #faf9f6 0%, #f4f2eb 100%);
+                border-bottom: 1px solid var(--color-border);
             }
+
             .pillars-grid {
                 display: grid;
                 grid-template-columns: repeat(5, 1fr);
                 gap: 1.5rem;
-                margin-top: 5rem;
+                margin-top: 3.5rem;
             }
+
             .pillar-item {
                 position: relative;
-                padding: 3.5rem 2rem 2.5rem;
+                padding: 3rem 1.75rem 2.25rem;
                 background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
@@ -254,17 +121,19 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                min-height: 285px;
+                min-height: 250px;
                 overflow: hidden;
             }
+
             .pillar-item:hover {
-                transform: translateY(-10px);
+                transform: translateY(-8px);
                 background: rgba(255, 255, 255, 0.95);
                 border-color: var(--color-gold);
                 box-shadow: 0 20px 40px rgba(10, 61, 40, 0.05), 0 1px 3px rgba(203, 163, 88, 0.1);
             }
+
             .pillar-letter {
-                font-size: 8rem;
+                font-size: 7.5rem;
                 font-family: var(--font-heading);
                 font-weight: 900;
                 color: rgba(10, 61, 40, 0.085);
@@ -275,119 +144,93 @@
                 user-select: none;
                 line-height: 1;
             }
+
             .pillar-item:hover .pillar-letter {
                 color: rgba(203, 163, 88, 0.35);
-                transform: scale(1.15) rotate(-5deg);
+                transform: scale(1.1) rotate(-5deg);
             }
+
             .pillar-content {
                 position: relative;
                 z-index: 2;
             }
+
             .pillar-content h3 {
                 font-family: var(--font-heading);
-                font-size: 1.2rem;
+                font-size: 1.25rem;
                 color: var(--color-emerald-darkest);
-                margin: 1.5rem 0 0.75rem;
+                margin: 0 0 0.75rem 0;
                 font-weight: 700;
                 line-height: 1.25;
             }
+
             .pillar-content p {
-                font-size: 0.88rem;
-                line-height: 1.55;
+                font-size: 0.9rem;
+                line-height: 1.6;
                 color: var(--color-text-muted);
                 margin: 0;
             }
-            .pillar-icon-container {
-                width: 50px;
-                height: 50px;
-                border-radius: 10px;
-                background: rgba(10, 61, 40, 0.06);
-                color: var(--color-emerald);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.4rem;
-                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            }
-            .pillar-item:hover .pillar-icon-container {
-                background: var(--color-gold);
-                color: white;
-                transform: scale(1.05);
-            }
-            
+
             @media (max-width: 1200px) {
                 .pillars-grid {
                     grid-template-columns: repeat(3, 1fr);
                 }
             }
+
             @media (max-width: 768px) {
                 .pillars-grid {
                     grid-template-columns: repeat(2, 1fr);
                 }
             }
+
             @media (max-width: 480px) {
                 .pillars-grid {
                     grid-template-columns: 1fr;
                 }
             }
         </style>
-        
+
         <div class="pillars-grid">
             <!-- T -->
             <div class="pillar-item reveal">
                 <div class="pillar-letter">T</div>
                 <div class="pillar-content">
-                    <div class="pillar-icon-container">
-                        <i class="fa-solid fa-file-shield"></i>
-                    </div>
                     <h3>Title Verification</h3>
                     <p>Ownership documents strictly verified against central land registries.</p>
                 </div>
             </div>
-            
+
             <!-- R -->
             <div class="pillar-item reveal delay-1">
                 <div class="pillar-letter">R</div>
                 <div class="pillar-content">
-                    <div class="pillar-icon-container">
-                        <i class="fa-solid fa-id-card"></i>
-                    </div>
                     <h3>Registered Landlord</h3>
                     <p>Identity-linked dynamic accountability systems protecting tenants.</p>
                 </div>
             </div>
-            
+
             <!-- U -->
             <div class="pillar-item reveal delay-2">
                 <div class="pillar-letter">U</div>
                 <div class="pillar-content">
-                    <div class="pillar-icon-container">
-                        <i class="fa-solid fa-magnifying-glass-location"></i>
-                    </div>
                     <h3>Urban Inspection</h3>
                     <p>On-site physical validation of actual property conditions.</p>
                 </div>
             </div>
-            
+
             <!-- S -->
             <div class="pillar-item reveal delay-3">
                 <div class="pillar-letter">S</div>
                 <div class="pillar-content">
-                    <div class="pillar-icon-container">
-                        <i class="fa-solid fa-vault"></i>
-                    </div>
                     <h3>Secure Escrow</h3>
                     <p>Rigorous financial protection framework ensuring safe transactions.</p>
                 </div>
             </div>
-            
+
             <!-- T -->
             <div class="pillar-item reveal delay-4">
                 <div class="pillar-letter">T</div>
                 <div class="pillar-content">
-                    <div class="pillar-icon-container">
-                        <i class="fa-solid fa-file-contract"></i>
-                    </div>
                     <h3>Transparent Contract</h3>
                     <p>Legally-binding, fully encrypted digital agreements.</p>
                 </div>
@@ -396,87 +239,258 @@
     </div>
 </section>
 
-<!-- 5. Team Directory -->
-<section class="premium-team">
+<!-- 4. Verification-Driven Section (Left Full-Height Image, Right Text Column strictly in pure white right area) -->
+<section class="verification-hero"
+    style="padding: 0; background: #ffffff; position: relative; overflow: hidden; width: 100%; min-height: 620px; display: flex; align-items: center; border-bottom: 1px solid var(--color-border);">
+    
+    <!-- Full-Height Left Image stretching 100% top to bottom (Fades out completely by 40% width) -->
+    <div class="verification-image-wrapper reveal delay-1"
+        style="position: absolute; top: 0; bottom: 0; left: 0; width: 40%; height: 100%; z-index: 1;">
+        <img src="{% if site_settings.about_hero_image %}{{ site_settings.about_hero_image.url }}{% else %}/static/img/about_hero.png{% endif %}"
+            alt="TRUST Verification Platform"
+            style="width: 100%; height: 100%; object-fit: cover; object-position: left center; display: block; -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%); mask-image: linear-gradient(to right, black 50%, transparent 100%);">
+    </div>
+
+    <div class="container" style="position: relative; z-index: 2; width: 100%;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+            
+            <!-- Empty left grid cell to leave room for the left image -->
+            <div class="desktop-only-spacer"></div>
+
+            <!-- Right Column: Mission Top -> Followed by Text (Positioned strictly in pure white right area) -->
+            <div class="reveal"
+                style="padding-top: 5.5rem; padding-bottom: 5.5rem; padding-left: 2rem; max-width: 620px;">
+                
+                <h3 style="font-family: var(--font-heading); font-size: 2.1rem; color: var(--color-emerald-darkest); font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2;">
+                    Our mission is simple:
+                </h3>
+                <p style="font-size: 1.25rem; font-weight: 700; color: var(--color-gold); line-height: 1.55; margin-bottom: 2rem;">
+                    To make property transactions safe, honest, and predictable for everyone.
+                </p>
+
+                <p style="font-size: 1.05rem; line-height: 1.85; color: #475569; margin-bottom: 1.5rem; font-weight: 400;">
+                    We are a verification‑driven property platform designed to protect buyers, sellers, tenants, and diaspora clients. Every listing is verified. Every seller is authenticated. Every document is checked. Payments are held securely and released only when agreed conditions are met. Digital contracts ensure clarity and accountability. And for clients abroad, TRUST Protocol supervises construction projects, verifies land, and provides transparent progress updates.
+                </p>
+
+                <p style="font-size: 1.08rem; line-height: 1.85; color: #1e293b; font-weight: 600; margin: 0;">
+                    TRUST Protocol exists so that no family whether in Uganda or abroad ever has to experience what I went through. We are building a future where trust is not assumed, but guaranteed.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 5. Contact Us & Physical Offices Section -->
+<section id="contact-us" style="padding: 6.5rem 0; background-color: #fafafa;">
     <div class="container">
-        <div class="text-center reveal">
-            <span class="premium-kicker">Leadership</span>
-            <h2 class="premium-heading">Executive Team</h2>
-        </div>
-        
-        <div class="team-directory">
-            {% if executives %}
-                {% for exec in executives %}
-                <div class="directory-member reveal {% if forloop.counter0 > 0 %}delay-{{ forloop.counter0 }}{% endif %}">
-                    {% if exec.image %}
-                    <img src="{{ exec.image.url }}" alt="{{ exec.name }}" class="member-photo">
-                    {% else %}
-                    <div class="member-photo" style="display: flex; align-items: center; justify-content: center; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); font-weight: 700; font-size: 1.85rem; border: 2px solid rgba(16, 61, 40, 0.1); filter: none; text-align: center;">
-                        {{ exec.name|slice:":2"|upper }}
+        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4.5rem; align-items: start;">
+
+            <!-- Left Column: Contact Us Form -->
+            <div class="contact-form-wrapper reveal"
+                style="background: white; border: 1px solid var(--color-border); border-radius: 16px; padding: 2.5rem 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+                <h2 class="premium-heading"
+                    style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--color-emerald-darkest); margin-bottom: 1.5rem; font-weight: 700;">
+                    Contact Us
+                </h2>
+
+                <form action="#" method="POST"
+                    onsubmit="event.preventDefault(); alert('Thank you for reaching out to TRUST Protocol. Our team will contact you shortly!');">
+                    {% csrf_token %}
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                        <div class="form-group">
+                            <label
+                                style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Full
+                                Name</label>
+                            <input type="text" name="name" required
+                                style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white;">
+                        </div>
+                        <div class="form-group">
+                            <label
+                                style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Email
+                                Address</label>
+                            <input type="email" name="email" required
+                                style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white;">
+                        </div>
                     </div>
-                    {% endif %}
-                    <h4 class="member-name">{{ exec.name }}</h4>
-                    <div class="member-role">{{ exec.role }}</div>
-                    <div class="member-location">Kampala, Uganda</div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="directory-member reveal">
-                    <img src="/static/img/ceo.png" alt="Brian Okello" class="member-photo">
-                    <h4 class="member-name">Brian Okello</h4>
-                    <div class="member-role">CEO & Founder</div>
-                    <div class="member-location">Kampala, Uganda</div>
-                </div>
-                
-                <div class="directory-member reveal delay-1">
-                    <img src="/static/img/ceo.png" alt="Sarah Namubiru" class="member-photo">
-                    <h4 class="member-name">Sarah Namubiru</h4>
-                    <div class="member-role">Chief Operating Officer</div>
-                    <div class="member-location">Kampala, Uganda</div>
-                </div>
-                
-                <div class="directory-member reveal delay-2">
-                    <img src="/static/img/ceo.png" alt="David Kato" class="member-photo">
-                    <h4 class="member-name">David Kato</h4>
-                    <div class="member-role">Head of Verification</div>
-                    <div class="member-location">Entebbe, Uganda</div>
-                </div>
-                
-                <div class="directory-member reveal delay-3">
-                    <img src="/static/img/ceo.png" alt="Aisha Nakato" class="member-photo">
-                    <h4 class="member-name">Aisha Nakato</h4>
-                    <div class="member-role">Chief Technology Officer</div>
-                    <div class="member-location">Kampala, Uganda</div>
-                </div>
-            {% endif %}
+
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label
+                            style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Subject</label>
+                        <input type="text" name="subject" required
+                            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.75rem;">
+                        <label
+                            style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Your
+                            Message</label>
+                        <textarea name="message" rows="5" required
+                            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white; resize: vertical;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-gold"
+                        style="width: 100%; padding: 0.95rem; font-weight: 700; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; background: var(--color-gold); color: #064e3b; box-shadow: 0 4px 14px rgba(203, 163, 88, 0.3);">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: Physical Offices -->
+            <div class="addresses-wrapper reveal delay-1" style="padding-top: 0.5rem;">
+                <h2 class="premium-heading"
+                    style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--color-emerald-darkest); margin-bottom: 1.5rem; font-weight: 700;">
+                    Physical offices
+                </h2>
+            </div>
+
         </div>
     </div>
 </section>
 
-<!-- 6. Quote -->
-<section class="premium-quote">
-    <div class="container reveal">
-        <p class="large-quote">
-            "TRUST brought structural reliability and landlord accountability to an industry that historically operated on chaos."
-        </p>
-        <div class="quote-author">Property Owner, Entebbe</div>
-    </div>
-</section>
+<!-- Mobile Responsive Stylesheet -->
+<style>
+    @media (max-width: 992px) {
+        .premium-hero {
+            min-height: auto !important;
+            padding: 3.5rem 0 2.5rem 0 !important;
+            flex-direction: column !important;
+        }
 
-<!-- 7. CTA -->
-<section class="premium-cta">
-    <div class="container reveal">
-        <h2 class="premium-heading">Experience True Security</h2>
-        <p class="premium-lead" style="max-width: 600px; margin: 0 auto;">
-            Join the verified ecosystem of families and property owners building a safer future for real estate.
-        </p>
-        
-        <div class="cta-actions">
-            <a href="/register/" class="btn btn-primary">Join as Tenant</a>
-            <a href="/landlord/" class="btn btn-outline-gold">List Property</a>
-        </div>
-    </div>
-</section>
+        .premium-hero .hero-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+
+        .premium-hero .hero-text {
+            padding: 0 1.25rem !important;
+            max-width: 100% !important;
+        }
+
+        .premium-hero .hero-title {
+            font-size: 2.5rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .premium-hero .hero-subtitle {
+            font-size: 1.05rem !important;
+        }
+
+        .premium-hero .hero-image-column {
+            position: relative !important;
+            width: calc(100% - 2.5rem) !important;
+            height: 320px !important;
+            margin: 1.5rem auto 0 auto !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+        }
+
+        .premium-hero .hero-image-column img {
+            -webkit-mask-image: none !important;
+            mask-image: none !important;
+            border-radius: 16px !important;
+        }
+
+        #founders-story {
+            padding: 4rem 0 !important;
+        }
+
+        #founders-story .container > div {
+            grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+        }
+
+        .founder-image-wrapper div {
+            max-width: 100% !important;
+        }
+
+        .founder-image-wrapper img {
+            height: 380px !important;
+        }
+
+        .founder-content h2 {
+            font-size: 2.1rem !important;
+        }
+
+        .verification-hero {
+            min-height: auto !important;
+            padding: 3.5rem 0 !important;
+            flex-direction: column !important;
+        }
+
+        .verification-hero .container > div {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+
+        .verification-hero .desktop-only-spacer {
+            display: none !important;
+        }
+
+        .verification-hero .reveal {
+            padding: 0 1.25rem !important;
+            max-width: 100% !important;
+        }
+
+        .verification-hero .reveal h3 {
+            font-size: 1.75rem !important;
+        }
+
+        .verification-hero .reveal p {
+            font-size: 1.02rem !important;
+        }
+
+        .verification-image-wrapper {
+            position: relative !important;
+            width: calc(100% - 2.5rem) !important;
+            height: 300px !important;
+            margin: 1.5rem auto 0 auto !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+        }
+
+        .verification-image-wrapper img {
+            -webkit-mask-image: none !important;
+            mask-image: none !important;
+            border-radius: 16px !important;
+        }
+
+        #contact-us {
+            padding: 4rem 0 !important;
+        }
+
+        #contact-us .container > div {
+            grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .premium-hero .hero-title {
+            font-size: 2.1rem !important;
+        }
+
+        .premium-hero .hero-image-column {
+            height: 250px !important;
+        }
+
+        .founder-image-wrapper img {
+            height: 320px !important;
+        }
+
+        .verification-image-wrapper {
+            height: 240px !important;
+        }
+
+        .contact-form-wrapper form > div:first-child {
+            grid-template-columns: 1fr !important;
+        }
+
+        .contact-form-wrapper {
+            padding: 1.75rem 1.25rem !important;
+        }
+    }
+</style>
 
 {% endblock %}
 

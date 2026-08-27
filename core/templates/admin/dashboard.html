@@ -3969,9 +3969,19 @@
                         <input type="file" name="site_icon" accept="image/*" style="width: 100%; font-size: 0.85rem;">
                     </div>
 
-                    <div style="margin-bottom: 1.5rem;">
+                    <div style="margin-bottom: 1.25rem;">
                         <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Primary Logo Image</label>
                         <input type="file" name="site_logo" accept="image/*" style="width: 100%; font-size: 0.85rem;">
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">About Us — Premium Hero Image</label>
+                        <input type="file" name="about_hero_image" accept="image/*" style="width: 100%; font-size: 0.85rem;">
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">About Us — Founder Story Photo</label>
+                        <input type="file" name="about_founder_image" accept="image/*" style="width: 100%; font-size: 0.85rem;">
                     </div>
 
                     <button type="submit" class="btn btn-emerald" style="width: 100%; padding: 0.75rem; border-radius: 8px; font-weight: 700; font-size: 0.88rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
@@ -4013,6 +4023,34 @@
                             <img src="{{ site_settings.site_logo.url }}" style="max-height: 34px; width: auto; object-fit: contain;">
                             {% else %}
                             <span style="font-weight: 900; color: var(--color-gold); font-size: 1rem;">TRUST</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.85rem; color: #475569;">About Us — Hero Image</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8;">Used in top About Us hero banner</div>
+                        </div>
+                        <div style="width: 64px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_hero_image %}
+                            <img src="{{ site_settings.about_hero_image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <img src="/static/img/about_hero.png" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.85rem; color: #475569;">About Us — Founder Photo</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8;">Used in Founder's Story section</div>
+                        </div>
+                        <div style="width: 48px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_founder_image %}
+                            <img src="{{ site_settings.about_founder_image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <img src="/static/img/founder.png" style="width: 100%; height: 100%; object-fit: cover;">
                             {% endif %}
                         </div>
                     </div>

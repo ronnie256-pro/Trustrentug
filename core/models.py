@@ -508,6 +508,10 @@ class SiteSetting(models.Model):
     pipeline_left_image = models.FileField(upload_to='pipeline/', null=True, blank=True, help_text="Left Section Image uploaded by Admin")
     pipeline_right_image = models.FileField(upload_to='pipeline/', null=True, blank=True, help_text="Right Section Image uploaded by Admin")
 
+    # About Us Images configured by Admin
+    about_hero_image = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Premium Hero Image uploaded by Admin")
+    about_founder_image = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Founder Story Image uploaded by Admin")
+
     def __str__(self):
         return "Site Settings"
 
