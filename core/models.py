@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFit
 
 class PropertyCategory(models.Model):
     GROUP_CHOICES = [
@@ -109,15 +111,15 @@ class Property(models.Model):
     water_cost = models.CharField(max_length=100, blank=True, null=True)
     wifi_cost = models.CharField(max_length=100, blank=True, null=True)
     
-    # Images (Hero + 7 Gallery supporting photos)
-    hero_image = models.FileField(upload_to='properties/hero/', null=True, blank=True)
-    image_1 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
-    image_2 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
-    image_3 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
-    image_4 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
-    image_5 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
-    image_6 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
-    image_7 = models.FileField(upload_to='properties/gallery/', null=True, blank=True)
+    # Images (Hero + 7 Gallery supporting photos - auto-converted to WebP format)
+    hero_image = ProcessedImageField(upload_to='properties/hero/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
+    image_1 = ProcessedImageField(upload_to='properties/gallery/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
+    image_2 = ProcessedImageField(upload_to='properties/gallery/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
+    image_3 = ProcessedImageField(upload_to='properties/gallery/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
+    image_4 = ProcessedImageField(upload_to='properties/gallery/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
+    image_5 = ProcessedImageField(upload_to='properties/gallery/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
+    image_6 = ProcessedImageField(upload_to='properties/gallery/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
+    image_7 = ProcessedImageField(upload_to='properties/gallery/', processors=[ResizeToFit(1200, 900, upscale=False)], format='WEBP', options={'quality': 80}, null=True, blank=True)
 
     # Documents
     building_plans = models.FileField(upload_to='properties/documents/', null=True, blank=True)
