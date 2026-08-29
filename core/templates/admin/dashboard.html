@@ -2762,57 +2762,52 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- Chart.js -->
 <script src="{% static 'js/chart.min.js' %}"></script>
 
-<!-- Tab Header Title -->
-<div style="margin-bottom: 1.5rem;">
-    <h2
-        style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; font-weight: 700; margin: 0;">
-        Tenants Data</h2>
-</div>
-
 <!-- Tenant Analytics Charts (2 Equal Columns Side-by-Side Grid Format) -->
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
-    <!-- Column 1: TENANT USAGE STAGES BREAKDOWN (Pie Chart) -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div
-            style="display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; position: relative;">
-            <span
-                style="font-size: 1.1rem; font-weight: 900; color: #0284c7; text-transform: uppercase; letter-spacing: 0.03em; text-align: center; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px;">
-                TENANT USAGE STAGES BREAKDOWN
+    <!-- Column 1: Tenants (Pie Chart) -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.03); height: 100%;">
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: #0f172a;">
+                Tenants
             </span>
-            <a href="{% url 'admin_dashboard' %}?tab=tenants"
-                style="position: absolute; right: 0; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #0284c7; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.35rem 0.95rem; text-decoration: none;">
-                View &rarr;
-            </a>
         </div>
-        <div style="height: 420px; position: relative;">
+        <div style="height: 380px; position: relative;">
             <canvas id="tenantProgressPieChart"></canvas>
         </div>
     </div>
 
-    <!-- Column 2: HIGHLY DEMANDED AREAS (Donut Chart) -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div
-            style="display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; position: relative;">
-            <span
-                style="font-size: 1.1rem; font-weight: 900; color: #059669; text-transform: uppercase; letter-spacing: 0.03em; text-align: center; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px;">
-                HIGHLY DEMANDED AREAS & HOTSPOTS
+    <!-- Column 2: Tenant Move-In Rate (Line Graph) -->
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.03); height: 100%;">
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: #0f172a;">
+                Tenant Move-In Rate
             </span>
-            <a href="{% url 'admin_dashboard' %}?tab=tenants"
-                style="position: absolute; right: 0; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #059669; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.35rem 0.95rem; text-decoration: none;">
-                View &rarr;
-            </a>
         </div>
-        <div style="height: 420px; position: relative;">
-            <canvas id="tenantDemandedAreasPieChart"></canvas>
+        <div style="height: 380px; position: relative;">
+            <canvas id="tenantMoveInLineChart"></canvas>
         </div>
     </div>
 </div>
 
+<style>
+    /* Custom Scrollbar for Tenant Table (Displaying 10 rows originally + internal scroll) */
+    .tenant-table-scroll::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .tenant-table-scroll::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+    .tenant-table-scroll::-webkit-scrollbar-thumb {
+        background: #10b981;
+        border-radius: 4px;
+    }
+</style>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Custom Chart.js Plugin to Draw Large Percentages Inside Slices
+        // Shared Slice Percentage Plugin for Pie Charts (Increased Font Size & Shadow for Visibility)
         const slicePercentagePlugin = {
             id: 'slicePercentageLabels',
             afterDatasetsDraw(chart) {
@@ -2827,10 +2822,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         const pct = Math.round((val / total) * 100) + '%';
                         const { x, y } = element.tooltipPosition();
                         ctx.save();
-                        ctx.fillStyle = '#ffffff';
                         ctx.font = 'bold 15px sans-serif';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+                        ctx.lineWidth = 3;
+                        ctx.strokeText(pct, x, y);
+                        ctx.fillStyle = '#ffffff';
                         ctx.fillText(pct, x, y);
                         ctx.restore();
                     });
@@ -2838,69 +2836,81 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
 
-        // Solid Darker Color Palette
-        const solidDarkColors = ['#064e3b', '#0369a1', '#b45309', '#b91c1c', '#581c87', '#0f766e', '#c2410c'];
+        // Emerald Green & Teal Theme Palette
+        const tenantGreenPalette = ['#10b981', '#059669', '#34d399', '#047857', '#065f46', '#6ee7b7', '#a7f3d0'];
 
-        // 1. Tenant Usage Stage Percentage Pie Chart
+        // 1. Tenants Usage Stage Percentage Pie Chart
         const ctxTenantPct = document.getElementById('tenantProgressPieChart')?.getContext('2d');
         if (ctxTenantPct) {
             new Chart(ctxTenantPct, {
                 type: 'pie',
                 data: {
                     labels: {{ tenant_analytics.pct_labels | safe }},
-        datasets: [{
-            data: {{ tenant_analytics.pct_counts | safe }},
-        backgroundColor: solidDarkColors
-                }]
-            },
-        plugins: [slicePercentagePlugin],
-        options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'right',
-                labels: {
-                    boxWidth: 16,
-                    padding: 18,
-                    font: { size: 14, weight: '700' }
+                    datasets: [{
+                        data: {{ tenant_analytics.pct_counts | safe }},
+                        backgroundColor: tenantGreenPalette
+                    }]
+                },
+                plugins: [slicePercentagePlugin],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 18,
+                                padding: 16,
+                                font: { size: 15, weight: '700' },
+                                color: '#334155'
+                            }
+                        }
+                    }
                 }
-            }
+            });
         }
-    }
-        });
-    }
 
-    // 2. Highly Demanded Areas Donut Chart
-    const ctxTenantAreas = document.getElementById('tenantDemandedAreasPieChart')?.getContext('2d');
-    if (ctxTenantAreas) {
-        new Chart(ctxTenantAreas, {
-            type: 'doughnut',
-            data: {
-                labels: {{ tenant_analytics.area_labels | safe }},
-    datasets: [{
-        data: {{ tenant_analytics.area_counts | safe }},
-        backgroundColor: solidDarkColors
-                }]
-            },
-    plugins: [slicePercentagePlugin],
-        options: {
-        responsive: true,
-            maintainAspectRatio: false,
-                plugins: {
-            legend: {
-                position: 'right',
-                    labels: {
-                    boxWidth: 16,
-                        padding: 18,
-                            font: { size: 14, weight: '700' }
+        // 2. Tenant Move-In Rate Line Chart (Featuring Sharp Drop Rate Fluctuations)
+        const ctxMoveIn = document.getElementById('tenantMoveInLineChart')?.getContext('2d');
+        if (ctxMoveIn) {
+            const gradMoveIn = ctxMoveIn.createLinearGradient(0, 0, 0, 300);
+            gradMoveIn.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+            gradMoveIn.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            new Chart(ctxMoveIn, {
+                type: 'line',
+                data: {
+                    labels: {{ tenant_analytics.monthly_labels_12 | safe }},
+                    datasets: [{
+                        label: 'Moved In Tenants',
+                        data: {{ tenant_analytics.move_in_monthly | safe }},
+                        borderColor: '#10b981',
+                        backgroundColor: gradMoveIn,
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#047857',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 14, weight: '700' }, color: '#334155' } },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { size: 14, weight: '700' }, color: '#334155', precision: 0 }
+                        }
+                    }
                 }
-            }
+            });
         }
-    }
-        });
-    }
-});
+    });
 
     function filterTenantsByProgress(val) {
         const rows = document.querySelectorAll('.tenant-row');
@@ -2919,79 +2929,84 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="row animate__animated animate__fadeIn" style="margin-top: 1rem;">
     <!-- Tenants Directory Table (Full Width) -->
     <div class="col-lg-12" style="margin-bottom: 2rem;">
-        <div
-            style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
-            <div
-                style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <h3
-                        style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.45rem; font-weight: 800;">
-                        TRUST Active Tenants Directory
+                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.45rem; font-weight: 800;">
+                        Tenants Directory
                     </h3>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                    <label for="tenantProgressFilter"
-                        style="font-size: 0.95rem; font-weight: 700; color: #334155; margin: 0;">Filter
-                        Progress:</label>
-                    <select id="tenantProgressFilter" onchange="filterTenantsByProgress(this.value)" class="form-select"
-                        style="border-radius: 8px; font-size: 0.95rem; font-weight: 700; border-color: #cbd5e1; padding: 0.45rem 1.0rem; width: auto; background: white; cursor: pointer;">
+                    <label for="tenantProgressFilter" style="font-size: 0.95rem; font-weight: 700; color: #334155; margin: 0;">Filter Progress:</label>
+                    <select id="tenantProgressFilter" onchange="filterTenantsByProgress(this.value)" class="form-select" style="border-radius: 8px; font-size: 0.95rem; font-weight: 700; border-color: #cbd5e1; padding: 0.45rem 1.0rem; width: auto; background: white; cursor: pointer;">
                         <option value="all">All Progress Levels</option>
-                        <option value="10">10% - Registered</option>
-                        <option value="20">20% - Verified Profile</option>
-                        <option value="40">40% - Property Reserved</option>
-                        <option value="60">60% - Booking Confirmed</option>
-                        <option value="70">70% - Rent Paid</option>
-                        <option value="80">80% - Agreement Signed</option>
-                        <option value="100">100% - Fully Moved In</option>
+                        <option value="10">Registered</option>
+                        <option value="20">Verified Profile</option>
+                        <option value="40">Property Reserved</option>
+                        <option value="60">Booking Confirmed</option>
+                        <option value="70">Rent Paid</option>
+                        <option value="80">Agreement Signed</option>
+                        <option value="100">Fully Moved In</option>
                     </select>
-                    <div
-                        style="background: rgba(16, 61, 40, 0.08); border: 1px solid rgba(16, 61, 40, 0.15); padding: 0.5rem 1.0rem; border-radius: 6px; font-weight: 700; color: var(--color-emerald-darkest); font-size: 0.9rem;">
+                    <div style="background: rgba(16, 61, 40, 0.08); border: 1px solid rgba(16, 61, 40, 0.15); padding: 0.5rem 1.0rem; border-radius: 6px; font-weight: 700; color: var(--color-emerald-darkest); font-size: 0.9rem;">
                         {{ tenants|length }} Tenant{{ tenants|length|pluralize }} Registered
                     </div>
                 </div>
             </div>
 
-            <div style="overflow-x: auto;">
+            <!-- Scrollable Table Container (Displays 10 rows originally + smooth scroll) -->
+            <div class="tenant-table-scroll" style="max-height: 540px; overflow-y: auto; overflow-x: auto;">
                 <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-                    <thead>
+                    <thead style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">
                         <tr style="background: #f8fafc;">
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
-                                Tenant Details</th>
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
-                                Rented Property</th>
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
-                                Renting Progress</th>
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: center; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
-                                Actions</th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
+                                Name
+                            </th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
+                                Status
+                            </th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
+                                Rented Property
+                            </th>
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
+                                Renting Progress
+                            </th>
+                            <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 2px solid #cbd5e1;">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for tenant in tenants %}
-                        <tr id="tenant-row-{{ tenant.id }}"
-                            onclick="window.location.href='/admin-dashboard/tenant/{{ tenant.id }}/'" class="tenant-row"
-                            style="transition: background-color 0.2s; cursor: pointer;"
-                            onmouseover="this.style.backgroundColor='#f8fafc'"
-                            onmouseout="this.style.backgroundColor='transparent'">
+                        <tr id="tenant-row-{{ tenant.id }}" onclick="window.location.href='/admin-dashboard/tenant/{{ tenant.id }}/'" class="tenant-row" style="transition: background-color 0.2s; cursor: pointer;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                                <div style="display: flex; align-items: center; gap: 0.85rem;">
-                                    {% if tenant.profile.image %}
-                                    <img src="{{ tenant.profile.image.url }}" alt="{{ tenant.username }}"
-                                        style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(203, 163, 88, 0.35);">
+                                <div style="font-weight: 700; color: #0f172a; font-size: 1.05rem;">
+                                    {% if tenant.first_name or tenant.last_name %}
+                                        {{ tenant.first_name }} {{ tenant.last_name }}
                                     {% else %}
-                                    <div
-                                        style="width: 46px; height: 46px; background: rgba(16, 61, 40, 0.1); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; border: 2px solid rgba(16, 61, 40, 0.15);">
-                                        {{ tenant.username|slice:":2"|upper }}
-                                    </div>
+                                        {{ tenant.username }}
                                     {% endif %}
-                                    <div>
-                                        <div style="font-weight: 700; color: #0f172a; font-size: 1.05rem;">{{ tenant.first_name }} {{ tenant.last_name }}</div>
-                                        <div style="font-size: 0.85rem; color: #475569; font-weight: 500;">@{{ tenant.username }} &bull; {{ tenant.email }}</div>
-                                    </div>
                                 </div>
+                            </td>
+                            <!-- Status Column -->
+                            <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                                {% if tenant.calculated_progress >= 70 %}
+                                <span style="font-size: 0.78rem; font-weight: 800; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.3rem 0.75rem; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.03em;">
+                                    Active
+                                </span>
+                                {% elif tenant.calculated_progress >= 40 %}
+                                <span style="font-size: 0.78rem; font-weight: 800; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 0.3rem 0.75rem; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.03em;">
+                                    Reserved
+                                </span>
+                                {% elif tenant.is_approved %}
+                                <span style="font-size: 0.78rem; font-weight: 800; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 0.3rem 0.75rem; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.03em;">
+                                    Verified
+                                </span>
+                                {% else %}
+                                <span style="font-size: 0.78rem; font-weight: 800; background: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 0.3rem 0.75rem; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.03em;">
+                                    Pending
+                                </span>
+                                {% endif %}
                             </td>
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
                                 {% if tenant.active_property %}
@@ -3000,38 +3015,29 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                                 <span style="font-size: 0.85rem; color: #64748b; font-weight: 500;">{{ tenant.active_property.location }}</span>
                                 {% else %}
-                                <span style="color: #94a3b8; font-size: 0.9rem; font-style: italic;">No active property
-                                    locks</span>
+                                <span style="color: #94a3b8; font-size: 0.9rem; font-style: italic;">No active property locks</span>
                                 {% endif %}
                             </td>
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
                                 <div style="display: flex; align-items: center; gap: 0.65rem; max-width: 200px;">
-                                    <div
-                                        style="flex: 1; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
-                                        <div
-                                            style="background: {% if tenant.calculated_progress == 100 %}#059669{% else %}var(--color-gold){% endif %}; width: {{ tenant.calculated_progress }}%; height: 100%;">
+                                    <div style="flex: 1; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                                        <div style="background: {% if tenant.calculated_progress == 100 %}#059669{% else %}#10b981{% endif %}; width: {{ tenant.calculated_progress }}%; height: 100%;">
                                         </div>
                                     </div>
-                                    <span class="tenant-pct-val"
-                                        style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">{{ tenant.calculated_progress }}%</span>
+                                    <span class="tenant-pct-val" style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">{{ tenant.calculated_progress }}%</span>
                                 </div>
-                                <span
-                                    style="font-size: 0.82rem; color: #334155; font-weight: 600; display: block; margin-top: 0.2rem;">{{ tenant.calculated_status }}</span>
+                                <span style="font-size: 0.82rem; color: #334155; font-weight: 600; display: block; margin-top: 0.2rem;">{{ tenant.calculated_status }}</span>
                             </td>
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
-                                <a href="/admin-dashboard/tenant/{{ tenant.id }}/" class="btn"
-                                    style="padding: 0.5rem 1.1rem; font-size: 0.88rem; border-radius: 6px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); font-weight: 700; text-decoration: none; border: 1px solid rgba(16, 61, 40, 0.15); transition: all 0.2s;"
-                                    onmouseover="this.style.backgroundColor='rgba(16,61,40,0.15)'"
-                                    onmouseout="this.style.backgroundColor='rgba(16,61,40,0.08)'">
+                                <a href="/admin-dashboard/tenant/{{ tenant.id }}/" class="btn" style="padding: 0.5rem 1.1rem; font-size: 0.88rem; border-radius: 6px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); font-weight: 700; text-decoration: none; border: 1px solid rgba(16, 61, 40, 0.15); transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(16,61,40,0.15)'" onmouseout="this.style.backgroundColor='rgba(16,61,40,0.08)'">
                                     View Records
                                 </a>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 4rem 2rem; color: #64748b;">
-                                <p style="margin: 0; font-size: 1.05rem; font-weight: 600;">No tenants registered on the
-                                    system yet.</p>
+                            <td colspan="5" style="text-align: center; padding: 4rem 2rem; color: #64748b;">
+                                <p style="margin: 0; font-size: 1.05rem; font-weight: 600;">No tenants registered on the system yet.</p>
                             </td>
                         </tr>
                         {% endfor %}
