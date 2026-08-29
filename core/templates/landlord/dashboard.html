@@ -124,6 +124,147 @@
 </div>
 {% endif %}
 
+{% if active_tab == 'rent' %}
+<!-- CONTINUOUS RENT COLLECTION TAB -->
+<div class="dashboard-header">
+    <div>
+        <h2>Rent Collection</h2>
+    </div>
+    {% if is_approved %}
+    <button type="button" onclick="openAddPropertyModal()" class="btn btn-gold" style="border: none; cursor: pointer; padding: 0.75rem 1.5rem; font-weight: 700;">
+        Submit New Property
+    </button>
+    {% endif %}
+</div>
+
+<!-- Category Filter Pills -->
+<div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+    <button onclick="filterRentUnits('all', this)" class="btn btn-sm rent-filter-pill active" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
+        All Units ({{ rent_collections|length }})
+    </button>
+    <button onclick="filterRentUnits('paid', this)" class="btn btn-sm rent-filter-pill" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; cursor: pointer;">
+        Paid
+    </button>
+    <button onclick="filterRentUnits('pending', this)" class="btn btn-sm rent-filter-pill" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: #fffbe6; color: #b45309; border: 1px solid #fde68a; cursor: pointer;">
+        Pending / Overdue
+    </button>
+    <button onclick="filterRentUnits('vacant', this)" class="btn btn-sm rent-filter-pill" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; cursor: pointer;">
+        Vacant Units
+    </button>
+</div>
+
+<!-- Property Units Blocks Display Grid -->
+<div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03); margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+        <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 700;">
+            <i class="fa-solid fa-cubes-stacked" style="color: var(--color-gold); margin-right: 0.4rem;"></i> Property Unit Blocks Display
+        </h3>
+        <span style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Numbered per Property Category</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem;">
+        {% for rc in rent_collections %}
+        <div class="rent-unit-card" data-status="{{ rc.status }}" style="background: #ffffff; border: 1.5px solid {% if rc.status == 'paid' %}#10b981{% elif rc.status == 'pending' or rc.status == 'overdue' %}#f59e0b{% else %}#cbd5e1{% endif %}; border-radius: 12px; padding: 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.2s ease; position: relative;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+            
+            <!-- Unit Card Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div>
+                    <div style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 900; color: #0f172a;">
+                        {{ rc.unit_number }}
+                    </div>
+                    <small style="font-size: 0.75rem; color: #64748b; font-weight: 600; display: block; margin-top: 0.1rem;">
+                        <i class="fa-solid fa-building" style="color: var(--color-gold);"></i> {{ rc.property.title }}
+                    </small>
+                </div>
+
+                <!-- Status Badge -->
+                {% if rc.status == 'paid' %}
+                <span class="badge" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
+                    <i class="fa-solid fa-circle-check"></i> Paid
+                </span>
+                {% elif rc.status == 'pending' %}
+                <span class="badge" style="background: #fffbe6; color: #b45309; border: 1px solid #fde68a; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
+                    <i class="fa-solid fa-clock"></i> Pending
+                </span>
+                {% elif rc.status == 'overdue' %}
+                <span class="badge" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Overdue
+                </span>
+                {% else %}
+                <span class="badge" style="background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
+                    Vacant
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Rent Amount -->
+            <div style="background: #f8fafc; border-radius: 8px; padding: 0.6rem 0.75rem; margin-bottom: 0.85rem; border: 1px solid #f1f5f9;">
+                <span style="font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; display: block; letter-spacing: 0.03em;">Monthly Rent Rate</span>
+                <span style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 900; color: #047857;">
+                    UGX {{ rc.monthly_rent|floatformat:0|intcomma }}
+                </span>
+            </div>
+
+            <!-- Occupant Details -->
+            <div style="font-size: 0.82rem; color: #334155; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.3rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-user-circle" style="color: #64748b; font-size: 0.95rem;"></i>
+                    {% if rc.tenant %}
+                    <span style="font-weight: 700; color: #0f172a;">{{ rc.tenant.get_full_name|default:rc.tenant.username }}</span>
+                    {% else %}
+                    <span style="color: #94a3b8; font-style: italic;">No Tenant Assigned</span>
+                    {% endif %}
+                </div>
+                {% if rc.due_date %}
+                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; padding-left: 1.35rem;">
+                    Due Date: <span style="color: #0f172a;">{{ rc.due_date|date:"d M Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Action Button -->
+            <button type="button" onclick="alert('TRUST Rent Collection request for {{ rc.unit_number }} sent to tenant!')" class="btn btn-gold" style="width: 100%; border: none; padding: 0.45rem 0.75rem; font-size: 0.8rem; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <i class="fa-solid fa-paper-plane"></i> Collect Rent
+            </button>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; color: #94a3b8;">
+            <div style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem;"><i class="fa-solid fa-coins"></i></div>
+            <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No continuous rent collection units found yet.</p>
+            <small style="display: block; margin-top: 0.35rem; color: #64748b;">Submit a property with property categories to generate automated unit blocks.</small>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function filterRentUnits(status, btn) {
+        const pills = document.querySelectorAll('.rent-filter-pill');
+        pills.forEach(p => {
+            p.classList.remove('active');
+            p.style.background = '#f8fafc';
+            p.style.color = '#475569';
+        });
+        if (btn) {
+            btn.classList.add('active');
+            btn.style.background = 'var(--color-emerald-darkest)';
+            btn.style.color = 'white';
+        }
+
+        const cards = document.querySelectorAll('.rent-unit-card');
+        cards.forEach(card => {
+            const cardStatus = card.getAttribute('data-status');
+            if (status === 'all' || cardStatus === status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+{% else %}
+<!-- OVERVIEW TAB -->
 <div class="dashboard-header">
     <div>
         <h2>Portfolio Overview</h2>
@@ -257,6 +398,7 @@
         </table>
     </div>
 </div>
+{% endif %}
 
 <!-- Add Property Pop-up Modal -->
 {% include "landlord/modal_add_property.html" %}

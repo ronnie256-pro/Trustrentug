@@ -7,7 +7,7 @@
         <div style="background: #ecfdf5; padding: 1.25rem 2rem; color: #064e3b; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-gold);">
             <div>
                 <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #064e3b; font-weight: 700;">
-                    Submit Property to TRUST Protocol
+                    Add Property
                 </h3>
             </div>
             <button type="button" onclick="closeAddPropertyModal()" style="background: rgba(6, 78, 59, 0.1); border: none; color: #064e3b; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(239,68,68,0.8)'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(6,78,59,0.1)'; this.style.color='#064e3b';">&times;</button>
@@ -17,91 +17,94 @@
         <form action="{% url 'add_property' %}" method="POST" enctype="multipart/form-data" style="padding: 2rem; max-height: 80vh; overflow-y: auto;">
             {% csrf_token %}
 
+            <!-- TRUST Protocol Rent Collection Banner with Sentence and YES Checkbox after -->
+            <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.85rem; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);">
+                <span style="font-weight: 800; font-size: 0.98rem; color: #064e3b; margin: 0;">
+                    Do you want TRUST PROTOCOL to collect Rent from your tenants?
+                </span>
+                <label for="collect_rent_by_trust" style="display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 800; font-size: 0.95rem; color: #064e3b; cursor: pointer; margin: 0;">
+                    <input type="checkbox" id="collect_rent_by_trust" name="collect_rent_by_trust" checked style="width: 20px; height: 20px; accent-color: #10b981; cursor: pointer;">
+                    YES
+                </label>
+            </div>
+
             <div class="section-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
                 <h4 style="margin: 0; color: var(--color-emerald-darkest); font-family: var(--font-heading); font-size: 1.15rem;">Core Property Details</h4>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
-                <div class="form-group">
+            <div style="margin-bottom: 1.5rem;">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
                     <label class="form-label" for="property_name" style="font-weight: 700; font-size: 0.88rem;">Property Name</label>
                     <input type="text" id="property_name" name="property_name" class="form-control" maxlength="60" placeholder="e.g. Hilltop Luxury Apartments" required style="padding: 0.65rem 0.85rem; border-radius: 8px;" oninput="updateCharCounter('property_name', 'title-counter-modal', 60)">
                     <small id="title-counter-modal" style="font-size:0.75rem; color:#64748b; display:block; margin-top:0.25rem;">60 characters remaining</small>
                 </div>
+
+                <!-- Property Category Selection -->
                 <div class="form-group">
-                    <label class="form-label" for="category" style="font-weight: 700; font-size: 0.88rem;">Property Category</label>
-                    <select id="category" name="category" class="form-control" required style="padding: 0.65rem 0.85rem; border-radius: 8px;" onchange="toggleUnitLogicModal()">
-                        {% if property_categories %}
-                            <option value="">-- Choose Admin House Type --</option>
+                    <label class="form-label" style="font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 0.4rem;">
+                        Select Property Categories
+                    </label>
+
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1rem 1.25rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem;">
                             {% for cat in property_categories %}
-                            <option value="{{ cat.name }}">{{ cat.name }} ({{ cat.get_group_display }})</option>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; font-weight: 600; color: #1e293b; background: white; padding: 0.6rem 0.85rem; border-radius: 8px; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.15s ease;">
+                                <input type="checkbox" name="selected_categories" value="{{ cat.name }}" id="cat_check_{{ forloop.counter }}" onchange="toggleCategoryUnitsCard('{{ forloop.counter }}', '{{ cat.name }}')" style="width: 18px; height: 18px; accent-color: var(--color-emerald);">
+                                {{ cat.name }}
+                            </label>
+                            {% empty %}
+                            <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">No active property categories configured by admin yet.</p>
                             {% endfor %}
-                        {% else %}
-                        <optgroup label="Single-Unit Properties">
-                            <option value="single_room">Single Room</option>
-                            <option value="self_contained">Self-Contained Room</option>
-                            <option value="studio">Studio Apartment</option>
-                            <option value="1_bed">1 Bedroom Apartment</option>
-                            <option value="2_bed" selected>2 Bedroom Apartment</option>
-                            <option value="3_plus_bed">3+ Bedroom Apartment</option>
-                            <option value="bungalow">Bungalow</option>
-                            <option value="standalone">Standalone House</option>
-                        </optgroup>
-                        <optgroup label="Multi-Unit Structures (Buildings)">
-                            <option value="apartment_block">Apartment Block</option>
-                            <option value="condo_block">Condominium Block</option>
-                            <option value="flat">Flat (Multi-Floor Building)</option>
-                        </optgroup>
-                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Quantity & Pricing Configuration Cards per Selected Category -->
+                <div id="category_units_container" style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- JS injects category quantity and pricing cards here -->
+                </div>
+            </div>
+
+            <!-- Geographic Coverage Location Section (Renamed to "Location") -->
+            <div class="section-header" style="margin-top: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
+                <h4 style="margin: 0; color: var(--color-emerald-darkest); font-family: var(--font-heading); font-size: 1.15rem;">Location</h4>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="form-group">
+                    <label class="form-label" for="district_select" style="font-weight: 700; font-size: 0.88rem;">District</label>
+                    <select id="district_select" name="district" class="form-control" required style="padding: 0.65rem 0.85rem; border-radius: 8px;" onchange="handleDistrictCascade(this.value)">
+                        <option value="">-- Select District --</option>
+                        {% for d in service_districts %}
+                        <option value="{{ d.id }}">{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="division_select" style="font-weight: 700; font-size: 0.88rem;">Division</label>
+                    <select id="division_select" name="division" class="form-control" required style="padding: 0.65rem 0.85rem; border-radius: 8px;" onchange="handleDivisionCascade(this.value)">
+                        <option value="">-- Select Division --</option>
+                        {% for div in service_divisions %}
+                        <option value="{{ div.id }}" data-district="{{ div.district_id }}">{{ div.name }} ({{ div.district.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="village_select" style="font-weight: 700; font-size: 0.88rem;">Village / Cell</label>
+                    <select id="village_select" name="village" class="form-control" required style="padding: 0.65rem 0.85rem; border-radius: 8px;">
+                        <option value="">-- Select Village --</option>
+                        {% for v in service_villages %}
+                        <option value="{{ v.id }}" data-division="{{ v.division_id }}">{{ v.name }} ({{ v.division.name }})</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
 
-            <div class="form-group" id="parent_selection_modal" style="display: none; background: #fdfaf0; padding: 1.25rem; border: 1px dashed var(--color-gold); border-radius: 8px; margin-bottom: 1.5rem;">
-                <label class="form-label" for="parent_property" style="font-weight: 700; font-size: 0.88rem;">Select Parent Building</label>
-                <select id="parent_property" name="parent_property" class="form-control">
-                    <option value="">-- Choose Building --</option>
-                    {% for building in buildings %}
-                    <option value="{{ building.id }}">{{ building.title }} ({{ building.location }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="section-header" style="margin-top: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
-                <h4 style="margin: 0; color: var(--color-emerald-darkest); font-family: var(--font-heading); font-size: 1.15rem;">Property Location</h4>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
-                <div class="form-group">
-                    <label class="form-label" for="neighborhood" style="font-weight: 700; font-size: 0.88rem;">Neighborhood</label>
-                    <select id="neighborhood" name="neighborhood" class="form-control" required style="padding: 0.65rem 0.85rem; border-radius: 8px;">
-                        <option value="">-- Select Neighborhood --</option>
-                        <option value="kololo">Kololo</option>
-                        <option value="ntinda">Ntinda</option>
-                        <option value="nakasero">Nakasero</option>
-                        <option value="bugolobi">Bugolobi</option>
-                        <option value="muyenga">Muyenga</option>
-                        <option value="naguru">Naguru</option>
-                        <option value="bukoto">Bukoto</option>
-                        <option value="kiwatule">Kiwatule</option>
-                        <option value="naalya">Naalya</option>
-                        <option value="kira">Kira</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="address" style="font-weight: 700; font-size: 0.88rem;">Street Address / Plot No.</label>
-                    <input type="text" id="address" name="address" class="form-control" placeholder="Plot 45, Acacia Avenue" required style="padding: 0.65rem 0.85rem; border-radius: 8px;">
-                </div>
-            </div>
-
-            <!-- Pricing Section -->
-            <div class="section-header" style="margin-top: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
-                <h4 style="margin: 0; color: var(--color-emerald-darkest); font-family: var(--font-heading); font-size: 1.15rem;">Pricing</h4>
-            </div>
-            <div style="margin-bottom: 1.5rem;">
-                <div class="form-group" style="max-width: 400px;">
-                    <label class="form-label" for="price_per_month" style="font-weight: 700; font-size: 0.88rem;">Monthly Rent (UGX / Month)</label>
-                    <input type="number" id="price_per_month" name="price_per_month" class="form-control" placeholder="e.g. 1500000" min="0" required style="padding: 0.65rem 0.85rem; border-radius: 8px;">
-                    <p style="font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.25rem;">Base rate per calendar month.</p>
-                </div>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label" for="address" style="font-weight: 700; font-size: 0.88rem;">Street Address / Plot No.</label>
+                <input type="text" id="address" name="address" class="form-control" placeholder="e.g. Plot 45, Acacia Avenue / Bukoto Street" required style="padding: 0.65rem 0.85rem; border-radius: 8px;">
             </div>
 
             <!-- Photos Section (Hero single image + Bulk Additional Photos) -->
@@ -111,14 +114,13 @@
 
             <div class="document-checklist" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
                 <!-- Hero Image (Primary) -->
-                <div class="document-slot" id="slot-hero_image" style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid var(--color-gold); border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                <div class="document-slot" id="slot-hero_image" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <h4 style="font-size: 0.92rem; margin: 0 0 0.15rem 0; font-weight: 700;">Hero Image (Primary Photo)</h4>
-                        <p style="font-size: 0.78rem; color: var(--color-text-muted); margin: 0;">Main cover picture displayed in searches and headers</p>
+                        <h4 style="font-size: 0.92rem; margin: 0; font-weight: 700;">Hero Image (Primary Photo)</h4>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
                         <input type="file" style="display: none;" id="hero_image" name="hero_image" accept="image/*" required onchange="updateDocStatus('hero_image')">
-                        <button type="button" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; border-radius: 6px;" onclick="document.getElementById('hero_image').click()">Upload Primary</button>
+                        <button type="button" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; border-radius: 6px;" onclick="document.getElementById('hero_image').click()">Upload</button>
                         <div class="doc-status" id="status-hero_image" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: transparent;">✓</div>
                     </div>
                 </div>
@@ -126,88 +128,58 @@
                 <!-- Bulk Additional Photos -->
                 <div class="document-slot" id="slot-additional_images" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <h4 style="font-size: 0.92rem; margin: 0 0 0.15rem 0; font-weight: 700;">Additional Gallery Photos (Bulk Upload)</h4>
-                        <p style="font-size: 0.78rem; color: var(--color-text-muted); margin: 0;">Select up to 7 photos in bulk from your computer or phone</p>
+                        <h4 style="font-size: 0.92rem; margin: 0; font-weight: 700;">Additional Gallery Photos (Bulk Upload)</h4>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
                         <input type="file" style="display: none;" id="additional_images" name="additional_images" accept="image/*" multiple onchange="updateBulkPhotosStatus('additional_images')">
-                        <button type="button" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; border-radius: 6px;" onclick="document.getElementById('additional_images').click()">Select Photos in Bulk</button>
+                        <button type="button" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; border-radius: 6px;" onclick="document.getElementById('additional_images').click()">Upload</button>
                         <div class="doc-status" id="status-additional_images" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: transparent;">✓</div>
                     </div>
                 </div>
                 <div id="bulk-photos-counter" style="display: none; font-size: 0.82rem; color: var(--color-emerald); font-weight: 700; text-align: right; padding-right: 0.5rem;"></div>
             </div>
 
-            <!-- All 5 Required/Optional Documents Section -->
+            <!-- Property Documents Section -->
             <div class="section-header" style="margin-top: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
-                <h4 style="margin: 0; color: var(--color-emerald-darkest); font-family: var(--font-heading); font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    Upload Property Documents <span style="font-size: 0.78rem; font-family: var(--font-body); font-weight: 600; color: #64748b; background: #f1f5f9; padding: 0.15rem 0.5rem; border-radius: 4px;">Optional</span>
+                <h4 style="margin: 0; color: var(--color-emerald-darkest); font-family: var(--font-heading); font-size: 1.15rem;">
+                    Upload Property Documents
                 </h4>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 2rem;">
-                <!-- Document 1: Building Plans -->
-                <div class="document-slot" id="slot-building_plans" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                <!-- Document 1: LC 1 Letter -->
+                <div class="document-slot" id="slot-lc1_letter" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">Approved Building Plans <small style="color: #94a3b8; font-weight: 400;">(Optional)</small></h4>
-                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0;">PDF or JPEG</p>
+                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">LC 1 Letter</h4>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
-                        <input type="file" style="display: none;" id="building_plans" name="building_plans" onchange="updateDocStatus('building_plans')">
-                        <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; border-radius: 6px;" onclick="document.getElementById('building_plans').click()">Upload</button>
-                        <div class="doc-status" id="status-building_plans" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: transparent;">✓</div>
-                    </div>
-                </div>
-
-                <!-- Document 2: Occupancy Permit -->
-                <div class="document-slot" id="slot-occupancy_permit" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">Occupancy Permit <small style="color: #94a3b8; font-weight: 400;">(Optional)</small></h4>
-                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0;">Official habitation certificate</p>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.85rem;">
-                        <input type="file" style="display: none;" id="occupancy_permit" name="occupancy_permit" onchange="updateDocStatus('occupancy_permit')">
-                        <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; border-radius: 6px;" onclick="document.getElementById('occupancy_permit').click()">Upload</button>
-                        <div class="doc-status" id="status-occupancy_permit" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: transparent;">✓</div>
-                    </div>
-                </div>
-
-                <!-- Document 3: LC 1 Letter -->
-                <div class="document-slot" id="slot-lc1_letter" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">LC 1 Letter <small style="color: #94a3b8; font-weight: 400;">(Optional)</small></h4>
-                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0;">Local Council chairperson endorsement</p>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.85rem;">
-                        <input type="file" style="display: none;" id="lc1_letter" name="lc1_letter" onchange="updateDocStatus('lc1_letter')">
+                        <input type="file" style="display: none;" id="lc1_letter" name="lc1_letter" required onchange="updateDocStatus('lc1_letter')">
                         <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; border-radius: 6px;" onclick="document.getElementById('lc1_letter').click()">Upload</button>
                         <div class="doc-status" id="status-lc1_letter" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: transparent;">✓</div>
                     </div>
                 </div>
 
-                <!-- Document 4: Tenancy Agreement -->
-                <div class="document-slot" id="slot-tenancy_agreement" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                <!-- Document 2: Tenancy Agreement -->
+                <div class="document-slot" id="slot-tenancy_agreement" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">Tenancy Agreement <small style="color: #94a3b8; font-weight: 400;">(Optional)</small></h4>
-                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0;">Standard lease terms template for units</p>
+                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">Tenancy Agreement</h4>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
-                        <input type="file" style="display: none;" id="tenancy_agreement" name="tenancy_agreement" onchange="updateDocStatus('tenancy_agreement')">
+                        <input type="file" style="display: none;" id="tenancy_agreement" name="tenancy_agreement" required onchange="updateDocStatus('tenancy_agreement')">
                         <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; border-radius: 6px;" onclick="document.getElementById('tenancy_agreement').click()">Upload</button>
                         <div class="doc-status" id="status-tenancy_agreement" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: transparent;">✓</div>
                     </div>
                 </div>
 
-                <!-- Document 5: Security Agreement -->
-                <div class="document-slot" id="slot-security_agreement" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                <!-- Document 3: Security Letter -->
+                <div class="document-slot" id="slot-security_letter" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">Security Letter & Agreement <small style="color: #94a3b8; font-weight: 400;">(Optional)</small></h4>
-                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin: 0;">Private security firm or local guard endorsement</p>
+                        <h4 style="font-size: 0.88rem; margin: 0; font-weight: 700;">Security Letter</h4>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.85rem;">
-                        <input type="file" style="display: none;" id="security_agreement" name="security_agreement" onchange="updateDocStatus('security_agreement')">
-                        <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; border-radius: 6px;" onclick="document.getElementById('security_agreement').click()">Upload</button>
-                        <div class="doc-status" id="status-security_agreement" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: transparent;">✓</div>
+                        <input type="file" style="display: none;" id="security_letter" name="security_letter" required onchange="updateDocStatus('security_letter')">
+                        <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; border-radius: 6px;" onclick="document.getElementById('security_letter').click()">Upload</button>
+                        <div class="doc-status" id="status-security_letter" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: transparent;">✓</div>
                     </div>
                 </div>
             </div>
@@ -215,7 +187,7 @@
             <!-- Amenities & Proximity Services Section -->
             <div style="margin-top: 2rem; margin-bottom: 2rem;">
                 <button type="button" onclick="toggleAmenitiesSectionModal()" id="amenities-modal-toggle-btn" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #ecfdf5; color: #064e3b; border: 1px solid #a7f3d0; border-radius: 8px; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background 0.2s ease;">
-                    <span>Configure Property Amenities & Proximity Services</span>
+                    <span>Amenities</span>
                     <span id="amenities-modal-chevron" style="transition: transform 0.2s ease;">▼</span>
                 </button>
 
@@ -291,60 +263,19 @@
                             {% endfor %}
                         </div>
                     </div>
-
-                    <!-- Proximity to Local Services -->
-                    <div>
-                        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--color-emerald-darkest); margin: 0 0 1rem 0; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.35rem;">
-                            Proximity to Local Services (Ugandan Context)
-                        </h4>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
-                            {% for category in proximity_categories %}
-                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem;">
-                                <h5 style="margin: 0 0 0.75rem 0; font-size: 0.88rem; font-weight: 700; color: var(--color-emerald-dark); border-bottom: 1px solid #f1f5f9; padding-bottom: 0.35rem;">
-                                    {{ category.name }}
-                                </h5>
-
-                                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                                    {% for item in category.items.all %}
-                                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
-                                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: #334155; cursor: pointer; flex: 1; margin: 0;">
-                                            <input type="checkbox" name="proximity_item_{{ item.id }}" id="px_modal_check_{{ item.id }}" onchange="toggleProximityInputModal('{{ item.id }}')" style="accent-color: var(--color-emerald); width: 15px; height: 15px;">
-                                            {{ item.name }}
-                                        </label>
-                                        <div style="display: flex; align-items: center; gap: 0.2rem;">
-                                            <input type="number" step="0.1" min="0.1" name="proximity_distance_{{ item.id }}" id="px_modal_dist_{{ item.id }}" disabled placeholder="Km" style="width: 65px; padding: 0.25rem 0.4rem; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.78rem; text-align: right; background: #f1f5f9;">
-                                            <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">KM</span>
-                                        </div>
-                                    </div>
-                                    {% empty %}
-                                    <span style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No items configured.</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <!-- Submit Controls -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 1.5rem; margin-top: 2rem;">
-                <button type="button" onclick="closeAddPropertyModal()" class="btn btn-outline" style="padding: 0.65rem 1.25rem; border-radius: 8px;">Cancel</button>
-                <button type="submit" class="btn btn-gold" style="padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 700;">
-                    Submit Property
+            <!-- Submit Buttons -->
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--color-border); padding-top: 1.5rem;">
+                <button type="button" class="btn btn-outline" onclick="closeAddPropertyModal()" style="padding: 0.65rem 1.5rem; font-size: 0.9rem; border-radius: 8px;">Cancel</button>
+                <button type="submit" class="btn btn-emerald" style="padding: 0.65rem 1.75rem; font-size: 0.9rem; font-weight: 700; border-radius: 8px; background: var(--color-emerald); color: white; border: none; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+                    Submit
                 </button>
             </div>
         </form>
     </div>
 </div>
-
-<style>
-    @keyframes modalSlideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
 
 <script>
     function openAddPropertyModal() {
@@ -361,6 +292,105 @@
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+    }
+
+    function slugifyText(text) {
+        return text.toString().toLowerCase().trim()
+            .replace(/\s+/g, '_')
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, '_');
+    }
+
+    function toggleCategoryUnitsCard(index, categoryName) {
+        const check = document.getElementById('cat_check_' + index);
+        const container = document.getElementById('category_units_container');
+        if (!container) return;
+
+        const cardId = 'cat_unit_card_' + index;
+        let card = document.getElementById(cardId);
+
+        if (check && check.checked) {
+            if (!card) {
+                const slug = slugifyText(categoryName);
+                card = document.createElement('div');
+                card.id = cardId;
+                card.style.cssText = 'background: white; border: 1.5px solid var(--color-gold); border-radius: 10px; padding: 1.1rem 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);';
+                card.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem;">
+                        <span style="font-weight: 800; font-size: 0.95rem; color: var(--color-emerald-darkest);">
+                            Category Setup: ${categoryName}
+                        </span>
+                        <span class="badge" style="background: #ecfdf5; color: #047857; font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 700;">Configuring Units</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                        <div>
+                            <label style="font-weight: 700; font-size: 0.82rem; color: #334155; display: block; margin-bottom: 0.35rem;">
+                                Quantity of Units (${categoryName})
+                            </label>
+                            <input type="number" name="qty_${slug}" min="1" max="500" value="1" required class="form-control" style="padding: 0.55rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="Number of units">
+                        </div>
+                        <div>
+                            <label style="font-weight: 700; font-size: 0.82rem; color: #334155; display: block; margin-bottom: 0.35rem;">
+                                Monthly Rent
+                            </label>
+                            <input type="number" name="price_${slug}" min="0" required class="form-control" style="padding: 0.55rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g. 350000">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        } else {
+            if (card) {
+                card.remove();
+            }
+        }
+    }
+
+    function handleDistrictCascade(districtId) {
+        const divisionSelect = document.getElementById('division_select');
+        const villageSelect = document.getElementById('village_select');
+        if (!divisionSelect) return;
+
+        divisionSelect.innerHTML = '<option value="">-- Select Division --</option>';
+        if (villageSelect) villageSelect.innerHTML = '<option value="">-- Select Village --</option>';
+
+        if (!districtId) return;
+
+        fetch(`/api/location-cascade/?district_id=${districtId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.divisions && data.divisions.length > 0) {
+                    data.divisions.forEach(div => {
+                        const opt = document.createElement('option');
+                        opt.value = div.id;
+                        opt.textContent = div.name;
+                        divisionSelect.appendChild(opt);
+                    });
+                }
+            })
+            .catch(err => console.error("Location cascade fetch error:", err));
+    }
+
+    function handleDivisionCascade(divisionId) {
+        const villageSelect = document.getElementById('village_select');
+        if (!villageSelect) return;
+
+        villageSelect.innerHTML = '<option value="">-- Select Village --</option>';
+        if (!divisionId) return;
+
+        fetch(`/api/location-cascade/?division_id=${divisionId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.villages && data.villages.length > 0) {
+                    data.villages.forEach(v => {
+                        const opt = document.createElement('option');
+                        opt.value = v.id;
+                        opt.textContent = v.name;
+                        villageSelect.appendChild(opt);
+                    });
+                }
+            })
+            .catch(err => console.error("Location cascade fetch error:", err));
     }
 
     function updateDocStatus(docId) {
@@ -407,24 +437,6 @@
         }
     }
 
-    function toggleProximityInputModal(itemId) {
-        const checkbox = document.getElementById('px_modal_check_' + itemId);
-        const input = document.getElementById('px_modal_dist_' + itemId);
-        if (checkbox && input) {
-            if (checkbox.checked) {
-                input.disabled = false;
-                input.style.background = 'white';
-                input.required = true;
-                input.focus();
-            } else {
-                input.disabled = true;
-                input.style.background = '#f1f5f9';
-                input.required = false;
-                input.value = '';
-            }
-        }
-    }
-
     function toggleBedroomsInputModal() {
         const checkbox = document.getElementById('bedrooms_modal_checkbox');
         const container = document.getElementById('bedrooms_modal_input_container');
@@ -438,19 +450,6 @@
                 container.style.display = 'none';
                 input.required = false;
                 input.value = '';
-            }
-        }
-    }
-
-    function toggleUnitLogicModal() {
-        const category = document.getElementById('category');
-        const parentSelection = document.getElementById('parent_selection_modal');
-        if (category && parentSelection) {
-            const multiUnitCats = ['single_room', 'self_contained', 'studio', '1_bed', '2_bed', '3_plus_bed'];
-            if (multiUnitCats.includes(category.value)) {
-                parentSelection.style.display = 'block';
-            } else {
-                parentSelection.style.display = 'none';
             }
         }
     }

@@ -694,20 +694,21 @@
 document.addEventListener("DOMContentLoaded", function () {
     const months = {{ overview_analytics.monthly_labels_12 | safe }};
 
-    // Shared Slice Percentage Plugin for Pie Charts (Increased Font Size & Shadow for Visibility)
+    // Shared Slice Percentage Plugin for Pie Charts
     const slicePercentagePlugin = {
         id: 'slicePercentageLabels',
         afterDatasetsDraw(chart) {
             const { ctx } = chart;
             chart.data.datasets.forEach((dataset, i) => {
                 const meta = chart.getDatasetMeta(i);
+                if (!meta || !meta.data) return;
                 const total = dataset.data.reduce((acc, val) => acc + val, 0);
                 if (total === 0) return;
                 meta.data.forEach((element, index) => {
                     const val = dataset.data[index];
-                    if (val === 0) return;
-                    if (element.outerRadius < 15) return;
+                    if (!val || val === 0) return;
                     const pct = Math.round((val / total) * 100) + '%';
+                    if (!element || typeof element.tooltipPosition !== 'function') return;
                     const { x, y } = element.tooltipPosition();
                     ctx.save();
                     ctx.font = 'bold 14px sans-serif';
@@ -724,20 +725,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Animation Presets for Dynamic Entrance Effects (Spring & Vertical Growth)
+    // Standard Clean Animation Presets
     const chartAnimLineBar = {
-        duration: 1000,
-        easing: 'easeOutQuart',
-        y: { from: 0 },
-        delay: function (context) {
-            return (context.type === 'data' && context.mode === 'default') ? context.dataIndex * 40 : 0;
-        }
+        duration: 1200,
+        easing: 'easeOutQuart'
     };
     const chartAnimPie = {
         animateRotate: true,
         animateScale: true,
-        duration: 1000,
-        easing: 'easeOutBack'
+        duration: 1200,
+        easing: 'easeOutQuart'
     };
 
     // Card 1: System Revenue Line Chart (Light Green Theme)
@@ -2781,8 +2778,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 {% elif current_tab == 'tenants' %}
-<!-- Chart.js -->
-<script src="{% static 'js/chart.min.js' %}"></script>
 
 <!-- Tenant Analytics Charts (2 Equal Columns Side-by-Side Grid Format) -->
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 2rem;">
@@ -2840,13 +2835,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     const { ctx } = chart;
                     chart.data.datasets.forEach((dataset, i) => {
                         const meta = chart.getDatasetMeta(i);
+                        if (!meta || !meta.data) return;
                         const total = dataset.data.reduce((acc, val) => acc + val, 0);
                         if (total === 0) return;
                         meta.data.forEach((element, index) => {
                             const val = dataset.data[index];
-                            if (val === 0) return;
-                            if (element.outerRadius < 15) return;
+                            if (!val || val === 0) return;
                             const pct = Math.round((val / total) * 100) + '%';
+                            if (!element || typeof element.tooltipPosition !== 'function') return;
                             const { x, y } = element.tooltipPosition();
                             ctx.save();
                             ctx.font = 'bold 15px sans-serif';
@@ -2863,20 +2859,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             };
 
-            // Animation Presets for Dynamic Entrance Effects (Spring & Vertical Growth)
+            // Standard Clean Animation Presets
             const tenantChartAnimLine = {
-                duration: 1100,
-                easing: 'easeOutQuart',
-                y: { from: 0 },
-                delay: function (context) {
-                    return (context.type === 'data' && context.mode === 'default') ? context.dataIndex * 40 : 0;
-                }
+                duration: 1200,
+                easing: 'easeOutQuart'
             };
             const tenantChartAnimPie = {
                 animateRotate: true,
                 animateScale: true,
-                duration: 1100,
-                easing: 'easeOutBack'
+                duration: 1200,
+                easing: 'easeOutQuart'
             };
 
             // Emerald Green & Teal Theme Palette
@@ -2959,15 +2951,20 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        function safeRenderTenantTabCharts() {
-            setTimeout(renderTenantTabCharts, 80);
+        function initTenantTab() {
+            if (typeof Chart !== 'undefined' && document.getElementById('tenantProgressPieChart')) {
+                renderTenantTabCharts();
+            } else {
+                setTimeout(initTenantTab, 50);
+            }
         }
 
-        safeRenderTenantTabCharts();
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', safeRenderTenantTabCharts);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initTenantTab();
+        } else {
+            document.addEventListener('DOMContentLoaded', initTenantTab);
         }
-        window.addEventListener('pageshow', safeRenderTenantTabCharts);
+        window.addEventListener('pageshow', initTenantTab);
     })();
 
     function filterTenantsByProgress(val) {
@@ -3139,8 +3136,6 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         </div>
     </div>
-
-    <script src="{% static 'js/chart.min.js' %}"></script>
 
     <style>
         .admin-graphs-3col {

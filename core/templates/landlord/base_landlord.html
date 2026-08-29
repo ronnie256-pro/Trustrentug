@@ -235,8 +235,11 @@
             </button>
         </div>
         <nav class="sidebar-nav">
-            <a href="/landlord/" class="nav-item active">
-                <i class="fa-solid fa-gauge-high"></i> Dashboard
+            <a href="/landlord/?tab=overview" class="nav-item {% if active_tab == 'overview' or not active_tab %}active{% endif %}">
+                <i class="fa-solid fa-gauge-high"></i> Overview
+            </a>
+            <a href="/landlord/?tab=rent" class="nav-item {% if active_tab == 'rent' %}active{% endif %}">
+                <i class="fa-solid fa-coins"></i> Rent Collections
             </a>
         </nav>
         <div class="sidebar-footer">

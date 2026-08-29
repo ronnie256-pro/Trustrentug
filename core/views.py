@@ -391,6 +391,31 @@ def landlord_dashboard(request):
         {'id': 'building', 'name': 'Building & Gym', 'icon': 'fa-building'},
     ]
     
+    active_tab = request.GET.get('tab', 'overview')
+    
+    # Rent Collection instances for logged in landlord
+    from core.models import RentCollection, ServiceDistrict, ServiceDivision, ServiceVillage
+    rent_collections = RentCollection.objects.filter(landlord=request.user).select_related('property', 'tenant')
+    
+    total_expected = sum(rc.monthly_rent for rc in rent_collections)
+    collected_rent = sum(rc.monthly_rent for rc in rent_collections if rc.status == 'paid')
+    pending_rent = sum(rc.monthly_rent for rc in rent_collections if rc.status in ['pending', 'overdue'])
+    total_units_count = rent_collections.count()
+    occupied_units_count = rent_collections.exclude(status='vacant').count()
+    
+    rent_stats = {
+        'total_expected': total_expected,
+        'collected': collected_rent,
+        'pending': pending_rent,
+        'total_units': total_units_count,
+        'occupied_units': occupied_units_count,
+        'occupancy_rate': round((occupied_units_count / total_units_count * 100), 1) if total_units_count > 0 else 0
+    }
+
+    service_districts = ServiceDistrict.objects.all().order_by('name')
+    service_divisions = ServiceDivision.objects.all().select_related('district').order_by('name')
+    service_villages = ServiceVillage.objects.all().select_related('division').order_by('name')
+    
     return render(request, 'landlord/dashboard.html', {
         'properties': owner_properties,
         'stats': stats,
@@ -400,6 +425,12 @@ def landlord_dashboard(request):
         'proximity_categories': proximity_categories,
         'amenity_categories': amenity_categories,
         'property_categories': PropertyCategory.objects.filter(is_active=True).order_by('group', 'name'),
+        'service_districts': service_districts,
+        'service_divisions': service_divisions,
+        'service_villages': service_villages,
+        'rent_collections': rent_collections,
+        'rent_stats': rent_stats,
+        'active_tab': active_tab,
     })
 
 def is_admin_user(user):
@@ -1892,14 +1923,30 @@ def add_property(request):
         title = request.POST.get('property_name')
         category = request.POST.get('category')
         parent_id = request.POST.get('parent_property')
-        neighborhood = request.POST.get('neighborhood', '')
-        address = request.POST.get('address', '')
+        address = request.POST.get('address', '').strip()
         
-        # Concatenate neighborhood and address to populate location field
-        location = f"{neighborhood.capitalize()}, {address}" if neighborhood else address
+        # Top Checkbox: TRUST Protocol continuous rent collection
+        collect_rent_by_trust = request.POST.get('collect_rent_by_trust') == 'on'
+        
+        # Geographic Location Dropdowns (District, Division, Village)
+        from core.models import ServiceDistrict, ServiceDivision, ServiceVillage, RentCollection, PropertyCategory
+        district_id = request.POST.get('district')
+        division_id = request.POST.get('division')
+        village_id = request.POST.get('village')
+        
+        district_obj = ServiceDistrict.objects.filter(id=district_id).first() if (district_id and district_id.isdigit()) else None
+        division_obj = ServiceDivision.objects.filter(id=division_id).first() if (division_id and division_id.isdigit()) else None
+        village_obj = ServiceVillage.objects.filter(id=village_id).first() if (village_id and village_id.isdigit()) else None
+
+        loc_parts = []
+        if address: loc_parts.append(address)
+        if village_obj: loc_parts.append(village_obj.name)
+        if division_obj: loc_parts.append(division_obj.name)
+        if district_obj: loc_parts.append(district_obj.name)
+        location = ", ".join(loc_parts) if loc_parts else (address or "Kampala, Uganda")
         
         # Determine structure class
-        is_multi_unit = category in ['apartment_block', 'condo_block', 'flat']
+        is_multi_unit = category in ['apartment_block', 'condo_block', 'flat'] or request.POST.getlist('selected_categories')
         
         parent = None
         if parent_id:
@@ -1929,10 +1976,14 @@ def add_property(request):
             category=category,
             parent=parent,
             location=location,
+            district=district_obj,
+            division=division_obj,
+            village=village_obj,
+            collect_rent_by_trust=collect_rent_by_trust,
             listing_type='rent',
-            is_multi_unit=is_multi_unit,
+            is_multi_unit=bool(is_multi_unit),
             bedrooms=int(bedrooms_count) if (bedrooms_count and bedrooms_count.isdigit()) else None,
-            status='pending_verification',  # Marked as pending until admin manually verifies files and approves
+            status='pending_verification',
             description=description_text,
             price_per_month=price_per_month if price_per_month else None,
             price_per_year=price_per_year if price_per_year else None,
@@ -1954,19 +2005,49 @@ def add_property(request):
             if key in request.FILES and not getattr(property_obj, key):
                 setattr(property_obj, key, request.FILES[key])
             
-        # Handle Optional Documents
-        if 'building_plans' in request.FILES:
-            property_obj.building_plans = request.FILES['building_plans']
-        if 'occupancy_permit' in request.FILES:
-            property_obj.occupancy_permit = request.FILES['occupancy_permit']
+        # Handle Required Property Documents
         if 'lc1_letter' in request.FILES:
             property_obj.lc1_letter = request.FILES['lc1_letter']
         if 'tenancy_agreement' in request.FILES:
             property_obj.tenancy_agreement = request.FILES['tenancy_agreement']
         if 'security_agreement' in request.FILES:
             property_obj.security_agreement = request.FILES['security_agreement']
+        if 'security_letter' in request.FILES:
+            property_obj.security_agreement = request.FILES['security_letter']
             
         property_obj.save()
+
+        # Generate RentCollection units from selected property categories
+        selected_cat_names = request.POST.getlist('selected_categories')
+        if not selected_cat_names and category:
+            selected_cat_names = [category]
+
+        from django.utils.text import slugify
+        for cat_name in selected_cat_names:
+            cat_slug = slugify(cat_name).replace('-', '_')
+            qty_val = request.POST.get(f'qty_{cat_slug}', '1')
+            price_val = request.POST.get(f'price_{cat_slug}', price_per_month or '0')
+            try:
+                unit_qty = int(qty_val) if (qty_val and qty_val.isdigit()) else 1
+            except ValueError:
+                unit_qty = 1
+            try:
+                unit_price = float(price_val) if price_val else float(price_per_month or 0)
+            except ValueError:
+                unit_price = float(price_per_month or 0)
+
+            for u_idx in range(1, unit_qty + 1):
+                unit_title = f"{cat_name} #{u_idx:02d}"
+                RentCollection.objects.create(
+                    landlord=request.user,
+                    property=property_obj,
+                    unit_number=unit_title,
+                    property_category=cat_name,
+                    monthly_rent=unit_price,
+                    due_date=timezone.now().date() + timedelta(days=30),
+                    status='vacant',
+                    trust_collects_rent=collect_rent_by_trust
+                )
 
         # Handle selected amenities
         amenity_ids = request.POST.getlist('selected_amenities')
@@ -1990,7 +2071,7 @@ def add_property(request):
                     except Exception:
                         pass
 
-        messages.success(request, f"Property '{title}' was submitted successfully and is now pending manual security vetting by the TRUST board!")
+        messages.success(request, f"Property '{title}' was submitted successfully with unit rent collections and is pending manual security vetting by the TRUST board!")
         return redirect('landlord_dashboard')
         
     buildings = Property.objects.filter(is_multi_unit=True)
@@ -2013,11 +2094,16 @@ def add_property(request):
         {'id': 'building', 'name': 'Building & Gym', 'icon': 'fa-building'},
     ]
 
+    from core.models import ServiceDistrict, ServiceDivision, ServiceVillage, PropertyCategory
     return render(request, 'landlord/add_property.html', {
         'buildings': buildings,
         'amenities': amenities,
         'proximity_categories': proximity_categories,
         'amenity_categories': amenity_categories,
+        'property_categories': PropertyCategory.objects.filter(is_active=True).order_by('group', 'name'),
+        'service_districts': ServiceDistrict.objects.all().order_by('name'),
+        'service_divisions': ServiceDivision.objects.all().select_related('district').order_by('name'),
+        'service_villages': ServiceVillage.objects.all().select_related('division').order_by('name'),
     })
 
 def approve_property(request, property_id):
@@ -2076,12 +2162,16 @@ def admin_property_detail(request, property_id):
         return redirect('login')
         
     try:
-        property_obj = Property.objects.select_related('owner', 'parent').get(id=property_id)
+        property_obj = Property.objects.select_related('owner', 'parent', 'district', 'division', 'village').get(id=property_id)
         # Fetch any inspection reports associated with this property
         inspection = Inspection.objects.filter(property=property_obj).first()
         reports = []
         if inspection:
             reports = inspection.reports.all().select_related('agent', 'agent__role')
+
+        # Fetch RentCollection units for this property
+        from core.models import RentCollection
+        rent_collections = RentCollection.objects.filter(property=property_obj).select_related('tenant')
             
         # Fetch dynamic amenities
         property_amenities = list(property_obj.amenities.all())
@@ -2101,6 +2191,7 @@ def admin_property_detail(request, property_id):
             'reports': reports,
             'property_amenities': property_amenities,
             'property_proximities': property_proximities,
+            'rent_collections': rent_collections,
         })
     except Property.DoesNotExist:
         messages.error(request, 'Property not found.')

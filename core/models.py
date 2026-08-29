@@ -128,6 +128,12 @@ class Property(models.Model):
     tenancy_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
     security_agreement = models.FileField(upload_to='properties/documents/', null=True, blank=True)
     
+    # Continuous Rent Collection & Location Cascade
+    collect_rent_by_trust = models.BooleanField(default=True, help_text="Do you want TRUST PROTOCOL to collect Rent from your Tenants")
+    district = models.ForeignKey('ServiceDistrict', on_delete=models.SET_NULL, null=True, blank=True, related_name='properties')
+    division = models.ForeignKey('ServiceDivision', on_delete=models.SET_NULL, null=True, blank=True, related_name='properties')
+    village = models.ForeignKey('ServiceVillage', on_delete=models.SET_NULL, null=True, blank=True, related_name='properties')
+    
     amenities = models.ManyToManyField('PropertyAmenity', blank=True, related_name='properties')
     property_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -769,5 +775,38 @@ class OfficeApplication(models.Model):
 
     def __str__(self):
         return f"Office Application for {self.company_name} ({self.property.title})"
+
+
+class RentCollection(models.Model):
+    STATUS_CHOICES = [
+        ('paid', 'Paid'),
+        ('pending', 'Pending'),
+        ('overdue', 'Overdue'),
+        ('grace_period', 'Grace Period'),
+        ('vacant', 'Vacant'),
+    ]
+
+    landlord = models.ForeignKey(User, on_delete=models.CASCADE, related_name='landlord_rent_collections')
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='rent_collections')
+    tenant = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='tenant_rent_collections')
+    unit_number = models.CharField(max_length=100, help_text="e.g. Single Room #01 or Unit 3B")
+    property_category = models.CharField(max_length=100, blank=True, null=True, help_text="Category name from PropertyCategory")
+    monthly_rent = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    due_date = models.DateField(null=True, blank=True)
+    last_payment_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='vacant')
+    trust_collects_rent = models.BooleanField(default=True, help_text="Whether TRUST Protocol handles rent collection for this unit")
+    notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['property_category', 'unit_number']
+        verbose_name = 'Rent Collection'
+        verbose_name_plural = 'Rent Collections'
+
+    def __str__(self):
+        return f"{self.unit_number} - {self.property.title} ({self.get_status_display()})"
+
 
 
