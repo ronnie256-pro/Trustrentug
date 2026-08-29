@@ -248,210 +248,267 @@
 {% if not current_tab or current_tab == 'overview' %}
 
 <style>
-    .overview-charts-3col {
+    .blueprint-top-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .blueprint-metric-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.1rem 0.85rem;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .blueprint-metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Block Numbers in Light Green */
+    .blueprint-metric-num {
+        font-family: var(--font-heading);
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #10b981 !important;
+        line-height: 1.1;
+        margin-top: 0.35rem;
+    }
+
+    .blueprint-metric-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        line-height: 1.25;
+    }
+
+    .blueprint-main-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr;
+        grid-template-rows: auto auto;
         gap: 1.25rem;
-        margin-bottom: 2.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .blueprint-chart-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.25rem 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .blueprint-card-title {
+        font-family: var(--font-heading);
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    .blueprint-progress-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .blueprint-progress-bar-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.85rem 1.25rem;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    /* Light Green Progress Bar Fill */
+    .blueprint-progress-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(90deg, #059669 0%, #10b981 100%) !important;
+        opacity: 0.95;
+        z-index: 1;
+        border-radius: 10px;
+        transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .blueprint-progress-text {
+        position: relative;
+        z-index: 2;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #ffffff;
+    }
+
+    .blueprint-progress-ratio {
+        position: relative;
+        z-index: 2;
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: #0f172a;
+    }
+
+    @media (max-width: 1200px) {
+        .blueprint-top-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .blueprint-main-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .blueprint-top-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .blueprint-main-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
-<!-- ROW 1: LINE GRAPHS CATEGORY (3 Equal Columns Side-by-Side) -->
-<div style="margin-bottom: 0.75rem;">
-    <h4
-        style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; margin: 0 0 0.25rem 0; text-decoration: underline; text-underline-offset: 4px;">
-        System Performance & Growth Trends (Line Graphs)
-    </h4>
-</div>
-<div class="overview-charts-3col">
-    <!-- Column 1: Escrow Revenue Trend Line Graph -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #064e3b; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Escrow Revenue Trend
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=payments"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: var(--color-emerald-darkest); border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 250px; position: relative;">
-            <canvas id="overviewLineRevenue"></canvas>
-        </div>
+<!-- TOP METRIC BLOCKS (1 to 7) -->
+<div class="blueprint-top-grid">
+    <!-- 1. Properties for Rent -->
+    <div class="blueprint-metric-card">
+        <div class="blueprint-metric-label">Properties for Rent</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.count_properties_rent }}</div>
     </div>
 
-    <!-- Column 2: Tenant Registrations Line Graph -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #0369a1; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Tenant Registrations
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=tenants"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #0369a1; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 250px; position: relative;">
-            <canvas id="overviewLineTenants"></canvas>
-        </div>
+    <!-- 2. Properties for Sale -->
+    <div class="blueprint-metric-card">
+        <div class="blueprint-metric-label">Properties for Sale</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.count_properties_sale }}</div>
     </div>
 
-    <!-- Column 3: Property Listings Growth Line Graph -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #b45309; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Property Growth
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=properties"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #b45309; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 250px; position: relative;">
-            <canvas id="overviewLineProperties"></canvas>
-        </div>
+    <!-- 3. Running Construction Projects -->
+    <div class="blueprint-metric-card">
+        <div class="blueprint-metric-label">Running Construction</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.count_construction_projects }}</div>
+    </div>
+
+    <!-- 4. Offices -->
+    <div class="blueprint-metric-card">
+        <div class="blueprint-metric-label">Offices</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.count_offices }}</div>
+    </div>
+
+    <!-- 5. Land on Sale -->
+    <div class="blueprint-metric-card">
+        <div class="blueprint-metric-label">Land on Sale</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.count_land_sale }}</div>
+    </div>
+
+    <!-- 6. Landlords -->
+    <div class="blueprint-metric-card">
+        <div class="blueprint-metric-label">Landlords</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.count_landlords }}</div>
+    </div>
+
+    <!-- 7. Tenants -->
+    <div class="blueprint-metric-card">
+        <div class="blueprint-metric-label">Tenants</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.count_tenants }}</div>
     </div>
 </div>
 
-<!-- ROW 2: PIE & DONUT CHARTS CATEGORY (3 Equal Columns Side-by-Side) -->
-<div style="margin-bottom: 0.75rem;">
-    <h4
-        style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; margin: 0 0 0.25rem 0; text-decoration: underline; text-underline-offset: 4px;">
-        System Distributions & Portfolio Share (Pie & Donut Charts)
-    </h4>
-</div>
-<div class="overview-charts-3col">
-    <!-- Column 1: Property Types Pie Chart -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #0369a1; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Property Categories Share
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=properties"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #0369a1; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 340px; position: relative;">
-            <canvas id="overviewPieCategory"></canvas>
+<!-- MAIN DASHBOARD GRID -->
+<div class="blueprint-main-grid">
+    <!-- Card 1 (Large Left): Line graph of system revenue -->
+    <div class="blueprint-chart-card" style="grid-row: span 2;">
+        <div class="blueprint-card-title">System Revenue Overview</div>
+        <div style="flex: 1; min-height: 480px; position: relative;">
+            <canvas id="chartRevenueLine"></canvas>
         </div>
     </div>
 
-    <!-- Column 2: Occupancy & Listing Status Donut Chart -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #064e3b; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Listing Occupancy Status
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=properties"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #064e3b; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 340px; position: relative;">
-            <canvas id="overviewDonutOccupancy"></canvas>
+    <!-- Card 2 (Upper Middle): Bar graph of revenue collections -->
+    <div class="blueprint-chart-card">
+        <div class="blueprint-card-title">Revenue Collections</div>
+        <div style="height: 230px; position: relative;">
+            <canvas id="chartRevenueCollectionsBar"></canvas>
         </div>
     </div>
 
-    <!-- Column 3: Landlords Verification Status Pie Chart -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #b45309; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Landlords Approval Status
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=landlords"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #b45309; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
+    <!-- Card 3 (Upper Right): Pie chart of property quantities -->
+    <div class="blueprint-chart-card">
+        <div class="blueprint-card-title">Property Quantities</div>
+        <div style="height: 230px; position: relative;">
+            <canvas id="chartPropertyQuantitiesPie"></canvas>
         </div>
-        <div style="height: 340px; position: relative;">
-            <canvas id="overviewPieLandlords"></canvas>
+    </div>
+
+    <!-- Card 4 (Lower Middle): Pie chart of geographical divisions -->
+    <div class="blueprint-chart-card">
+        <div class="blueprint-card-title">High Demand Divisions</div>
+        <div style="height: 230px; position: relative;">
+            <canvas id="chartDemandGeoPie"></canvas>
+        </div>
+    </div>
+
+    <!-- Card 5 (Lower Right): Line graph showing sales -->
+    <div class="blueprint-chart-card">
+        <div class="blueprint-card-title">Monthly Sales Trend</div>
+        <div style="height: 230px; position: relative;">
+            <canvas id="chartSalesTrendLine"></canvas>
         </div>
     </div>
 </div>
 
-<!-- ROW 3: BAR CHARTS CATEGORY (3 Equal Columns Side-by-Side) -->
-<div style="margin-bottom: 0.75rem;">
-    <h4
-        style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; margin: 0 0 0.25rem 0; text-decoration: underline; text-underline-offset: 4px;">
-        System Activity Metrics & Audits (Bar Charts)
-    </h4>
-</div>
-<div class="overview-charts-3col">
-    <!-- Column 1: Payments Revenue Bar Chart -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #b91c1c; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Revenue by Category
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=payments"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #b91c1c; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 250px; position: relative;">
-            <canvas id="overviewBarPayments"></canvas>
-        </div>
+<!-- BOTTOM ACTION & PROGRESS BARS -->
+<div class="blueprint-progress-list">
+    <!-- Progress Bar 1: Landlords Pending verification -->
+    <div class="blueprint-progress-bar-card">
+        <div class="blueprint-progress-fill" style="width: 28%;"></div>
+        <div class="blueprint-progress-text">Landlords Pending verification</div>
+        <div class="blueprint-progress-ratio">{{ overview_analytics.pending_landlords_val }}/{{ overview_analytics.total_landlords_val }}</div>
     </div>
 
-    <!-- Column 2: Field Inspection Audits Bar Chart -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #0369a1; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Field Inspection Audits
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=inspections"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #0369a1; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 250px; position: relative;">
-            <canvas id="overviewBarInspections"></canvas>
-        </div>
+    <!-- Progress Bar 2: Tenant & landlord contracts awaiting verification -->
+    <div class="blueprint-progress-bar-card">
+        <div class="blueprint-progress-fill" style="width: 50%;"></div>
+        <div class="blueprint-progress-text">Tenant & landlord contracts awaiting verification</div>
+        <div class="blueprint-progress-ratio">{{ overview_analytics.pending_contracts_val }}/{{ overview_analytics.total_contracts_val }}</div>
     </div>
 
-    <!-- Column 3: Viewing & Service Requests Bar Chart -->
-    <div
-        style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); height: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <span
-                style="font-size: 0.95rem; font-weight: 800; color: #064e3b; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px;">
-                Service & Viewing Requests
-            </span>
-            <a href="{% url 'admin_dashboard' %}?tab=inspections"
-                style="font-size: 0.8rem; font-weight: 700; background: #f8fafc; color: #064e3b; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.3rem 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease;">
-                View &rarr;
-            </a>
-        </div>
-        <div style="height: 250px; position: relative;">
-            <canvas id="overviewBarServices"></canvas>
-        </div>
+    <!-- Progress Bar 3: Construction applications awaiting settlement -->
+    <div class="blueprint-progress-bar-card">
+        <div class="blueprint-progress-fill" style="width: 35%;"></div>
+        <div class="blueprint-progress-text">Construction applications awaiting settlement</div>
+        <div class="blueprint-progress-ratio">{{ overview_analytics.pending_construction_val }}/{{ overview_analytics.total_construction_val }}</div>
+    </div>
+
+    <!-- Progress Bar 4: Have not paid rent -->
+    <div class="blueprint-progress-bar-card">
+        <div class="blueprint-progress-fill" style="width: 65%;"></div>
+        <div class="blueprint-progress-text">Have not paid rent</div>
+        <div class="blueprint-progress-ratio">{{ overview_analytics.unpaid_rent_val }}/{{ overview_analytics.total_rent_tenants_val }}</div>
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const months = {{ overview_analytics.monthly_labels_12| safe }};
+document.addEventListener("DOMContentLoaded", function () {
+    const months = {{ overview_analytics.monthly_labels_12 | safe }};
 
-    // Shared Plugin to Draw Percentages Inside Pie & Donut Slices
-    const overviewSlicePercentagePlugin = {
-        id: 'overviewSlicePercentageLabels',
+    // Shared Slice Percentage Plugin for Pie Charts
+    const slicePercentagePlugin = {
+        id: 'slicePercentageLabels',
         afterDatasetsDraw(chart) {
             const { ctx } = chart;
             chart.data.datasets.forEach((dataset, i) => {
@@ -465,7 +522,7 @@
                     const { x, y } = element.tooltipPosition();
                     ctx.save();
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 14px sans-serif';
+                    ctx.font = 'bold 12px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(pct, x, y);
@@ -475,276 +532,183 @@
         }
     };
 
-    // Shared Solid Dark Color Palette
-    const solidDarkColors = ['#064e3b', '#0369a1', '#b45309', '#b91c1c', '#581c87', '#0f766e', '#c2410c'];
+    // Card 1: System Revenue Line Chart (Light Green Theme)
+    const ctxRevenue = document.getElementById('chartRevenueLine')?.getContext('2d');
+    if (ctxRevenue) {
+        const gradRev = ctxRevenue.createLinearGradient(0, 0, 0, 400);
+        gradRev.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+        gradRev.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
 
-    // --- ROW 1: LINE GRAPHS ---
-    // 1. Line Revenue
-    const ctxL1 = document.getElementById('overviewLineRevenue')?.getContext('2d');
-    if (ctxL1) {
-        const grad = ctxL1.createLinearGradient(0, 0, 0, 250);
-        grad.addColorStop(0, 'rgba(6,78,59,0.3)');
-        grad.addColorStop(1, 'rgba(6,78,59,0.0)');
-        new Chart(ctxL1, {
+        new Chart(ctxRevenue, {
             type: 'line',
             data: {
                 labels: months,
                 datasets: [{
                     label: 'Revenue (UGX)',
                     data: {{ overview_analytics.monthly_revenue_data | safe }},
-            borderColor: '#064e3b',
-            backgroundColor: grad,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 3
-        }]
-            },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }, y: { beginAtZero: true, ticks: { font: { size: 11, weight: '600' }, callback: v => (v / 1000000).toFixed(0) + 'M' } } } }
-        });
-    }
-
-    // 2. Line Tenants
-    const ctxL2 = document.getElementById('overviewLineTenants')?.getContext('2d');
-    if (ctxL2) {
-        const grad = ctxL2.createLinearGradient(0, 0, 0, 250);
-        grad.addColorStop(0, 'rgba(3,105,161,0.3)');
-        grad.addColorStop(1, 'rgba(3,105,161,0.0)');
-        new Chart(ctxL2, {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [{
-                    label: 'Tenants Joined',
-                    data: {{ overview_analytics.monthly_tenant_reg | safe }},
-            borderColor: '#0369a1',
-            backgroundColor: grad,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 3
-        }]
-            },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 11, weight: '600' } } } } }
-        });
-    }
-
-    // 3. Line Property Growth
-    const ctxL3 = document.getElementById('overviewLineProperties')?.getContext('2d');
-    if (ctxL3) {
-        const grad = ctxL3.createLinearGradient(0, 0, 0, 250);
-        grad.addColorStop(0, 'rgba(180,83,9,0.3)');
-        grad.addColorStop(1, 'rgba(180,83,9,0.0)');
-        new Chart(ctxL3, {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [{
-                    label: 'Listings Added',
-                    data: {{ overview_analytics.monthly_prop_growth | safe }},
-            borderColor: '#b45309',
-            backgroundColor: grad,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 3
-        }]
-            },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 11, weight: '600' } } } } }
-        });
-    }
-
-    // --- ROW 2: PIE & DONUT CHARTS ---
-    // 1. Pie Property Categories
-    const ctxP1 = document.getElementById('overviewPieCategory')?.getContext('2d');
-    if (ctxP1) {
-        new Chart(ctxP1, {
-            type: 'pie',
-            data: {
-                labels: {{ overview_analytics.category_labels | safe }},
-    datasets: [{
-        data: {{ overview_analytics.category_counts | safe }},
-        backgroundColor: solidDarkColors
+                    borderColor: '#10b981',
+                    backgroundColor: gradRev,
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#10b981'
                 }]
             },
-    plugins: [overviewSlicePercentagePlugin],
-        options: {
-        responsive: true,
-            maintainAspectRatio: false,
-                plugins: {
-            legend: {
-                position: 'right',
-                    labels: {
-                    boxWidth: 14,
-                        padding: 16,
-                            font: { size: 13, weight: '700' }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11, weight: '600' } } },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            font: { size: 11, weight: '600' },
+                            callback: function(value) {
+                                return (value / 1000000).toFixed(0) + 'M UGX';
+                            }
+                        }
+                    }
                 }
             }
-        }
-    }
         });
     }
 
-    // 2. Donut Occupancy Status
-    const ctxD2 = document.getElementById('overviewDonutOccupancy')?.getContext('2d');
-    if (ctxD2) {
-        new Chart(ctxD2, {
+    // Card 2: Revenue Collections Bar Chart
+    const ctxRevCol = document.getElementById('chartRevenueCollectionsBar')?.getContext('2d');
+    if (ctxRevCol) {
+        new Chart(ctxRevCol, {
+            type: 'bar',
+            data: {
+                labels: {{ overview_analytics.rev_collections_labels | safe }},
+                datasets: [{
+                    label: 'UGX Collections',
+                    data: {{ overview_analytics.rev_collections_data | safe }},
+                    backgroundColor: ['#10b981', '#059669', '#34d399', '#047857', '#065f46', '#6ee7b7'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            font: { size: 10, weight: '600' },
+                            callback: function(val) { return (val / 1000000).toFixed(0) + 'M'; }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Card 3: Property Quantities Pie Chart
+    const ctxPropQty = document.getElementById('chartPropertyQuantitiesPie')?.getContext('2d');
+    if (ctxPropQty) {
+        new Chart(ctxPropQty, {
+            type: 'pie',
+            data: {
+                labels: {{ overview_analytics.prop_quantity_labels | safe }},
+                datasets: [{
+                    data: {{ overview_analytics.prop_quantity_counts | safe }},
+                    backgroundColor: ['#059669', '#10b981', '#34d399', '#047857', '#065f46']
+                }]
+            },
+            plugins: [slicePercentagePlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { boxWidth: 12, font: { size: 11, weight: '600' } }
+                    }
+                }
+            }
+        });
+    }
+
+    // Card 4: Demand Geographical Divisions Pie Chart
+    const ctxDemandGeo = document.getElementById('chartDemandGeoPie')?.getContext('2d');
+    if (ctxDemandGeo) {
+        new Chart(ctxDemandGeo, {
             type: 'doughnut',
             data: {
-                labels: ['Available', '24h Locked', 'Active Lease'],
+                labels: {{ overview_analytics.area_labels | safe }},
                 datasets: [{
-                    data: [{{ overview_analytics.status_available }}, {{ overview_analytics.status_locked }}, {{ overview_analytics.status_rented }}],
-    backgroundColor: ['#064e3b', '#b91c1c', '#0369a1']
+                    data: {{ overview_analytics.area_counts | safe }},
+                    backgroundColor: [
+                        '#10b981', '#059669', '#34d399', '#047857', '#065f46', 
+                        '#6ee7b7', '#a7f3d0', '#0284c7', '#0369a1', '#0891b2', 
+                        '#0e7490', '#14b8a6', '#0d9488', '#15803d', '#166534', 
+                        '#22c55e', '#16a34a', '#86efac', '#4ade80', '#2dd4bf'
+                    ]
                 }]
             },
-    plugins: [overviewSlicePercentagePlugin],
-        options: {
-        responsive: true,
-            maintainAspectRatio: false,
+            plugins: [slicePercentagePlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-            legend: {
-                position: 'right',
-                    labels: {
-                    boxWidth: 14,
-                        padding: 16,
-                            font: { size: 13, weight: '700' }
+                    legend: {
+                        position: 'right',
+                        labels: { boxWidth: 12, font: { size: 11, weight: '600' } }
+                    }
                 }
             }
-        }
-    }
         });
     }
 
-    // 3. Pie Landlords Approval
-    const ctxP3 = document.getElementById('overviewPieLandlords')?.getContext('2d');
-    if (ctxP3) {
-        new Chart(ctxP3, {
-            type: 'pie',
+    // Card 5: Monthly Sales Trend Line Chart (Green Theme)
+    const ctxSalesTrend = document.getElementById('chartSalesTrendLine')?.getContext('2d');
+    if (ctxSalesTrend) {
+        const gradSales = ctxSalesTrend.createLinearGradient(0, 0, 0, 200);
+        gradSales.addColorStop(0, 'rgba(5, 150, 105, 0.25)');
+        gradSales.addColorStop(1, 'rgba(5, 150, 105, 0.0)');
+
+        new Chart(ctxSalesTrend, {
+            type: 'line',
             data: {
-                labels: ['Verified Landlords', 'Pending Approvals'],
+                labels: months,
                 datasets: [{
-                    data: [{{ overview_analytics.verified_landlords }}, {{ overview_analytics.pending_landlords }}],
-            backgroundColor: ['#064e3b', '#b45309']
-        }]
+                    label: 'Monthly Sales',
+                    data: {{ overview_analytics.monthly_sales_trend | safe }},
+                    borderColor: '#059669',
+                    backgroundColor: gradSales,
+                    fill: true,
+                    tension: 0.35,
+                    borderWidth: 2.5,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#059669'
+                }]
             },
-    plugins: [overviewSlicePercentagePlugin],
-        options: {
-        responsive: true,
-            maintainAspectRatio: false,
-                plugins: {
-            legend: {
-                position: 'right',
-                    labels: {
-                    boxWidth: 14,
-                        padding: 16,
-                            font: { size: 13, weight: '700' }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            font: { size: 10, weight: '600' },
+                            callback: function(v) { return (v / 1000000).toFixed(0) + 'M'; }
+                        }
+                    }
                 }
             }
-        }
-    }
-        });
-    }
-
-    // --- ROW 3: BAR CHARTS ---
-    // 1. Bar Payments Category
-    const ctxB1 = document.getElementById('overviewBarPayments')?.getContext('2d');
-    if (ctxB1) {
-        new Chart(ctxB1, {
-            type: 'bar',
-            data: {
-                labels: ['3 Months', 'Booking Fee', '2 Months'],
-                datasets: [{
-                    data: [
-                        {{ payment_stats.rent_3_revenue|default:0|floatformat:0 }},
-                        {{ payment_stats.booking_revenue|default:0|floatformat:0 }},
-                        {{ payment_stats.rent_2_revenue|default:0|floatformat:0 }}
-                    ],
-    backgroundColor: ['#064e3b', '#b91c1c', '#0369a1'],
-        borderRadius: 6
-                }]
-            },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } }, y: { beginAtZero: true, ticks: { font: { size: 11, weight: '700' }, callback: v => (v / 1000000).toFixed(1) + 'M' } } } }
-        });
-    }
-
-    // 2. Bar Inspections
-    const ctxB2 = document.getElementById('overviewBarInspections')?.getContext('2d');
-    if (ctxB2) {
-        new Chart(ctxB2, {
-            type: 'bar',
-            data: {
-                labels: ['Completed', 'Scheduled', 'Pending'],
-                datasets: [{
-                    data: [{{ overview_analytics.insp_completed }}, {{ overview_analytics.insp_scheduled }}, {{ overview_analytics.insp_pending }}],
-    backgroundColor: ['#064e3b', '#0369a1', '#b45309'],
-        borderRadius: 6
-                }]
-            },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 11, weight: '700' } } } } }
-        });
-    }
-
-    // 3. Bar Viewing & Service Requests
-    const ctxB3 = document.getElementById('overviewBarServices')?.getContext('2d');
-    if (ctxB3) {
-        new Chart(ctxB3, {
-            type: 'bar',
-            data: {
-                labels: ['Approved Viewings', 'Pending Viewings', 'Maintenance Tasks'],
-                datasets: [{
-                    data: [{{ overview_analytics.viewings_approved }}, {{ overview_analytics.viewings_pending }}, {{ overview_analytics.maintenance_count }}],
-    backgroundColor: ['#064e3b', '#0369a1', '#b45309'],
-        borderRadius: 6
-                }]
-            },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' } } }, y: { beginAtZero: true, ticks: { precision: 0, font: { size: 11, weight: '700' } } } } }
         });
     }
 });
 </script>
-
-<!-- Properties Overview Table -->
-<div class="table-card">
-    <div class="table-header">
-        <h3 style="margin:0; font-size: 1.1rem;">Properties Overview</h3>
-    </div>
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Property</th>
-                <th>Location</th>
-                <th>Units</th>
-                <th>Occupancy</th>
-                <th>Revenue</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for property in properties %}
-            <tr>
-                <td style="font-weight: 600; color: #1e293b;">{{ property.title }}</td>
-                <td style="color: #64748b;">{{ property.location }}</td>
-                <td>{% if property.is_multi_unit %}{{ property.units.count }}{% else %}1{% endif %}</td>
-                <td>
-                    <div class="progress-bar-container">
-                        <div class="progress-fill"
-                            style="width: {% if property.is_multi_unit %}85{% else %}100{% endif %}%;"></div>
-                    </div>
-                    <span style="font-size: 0.8rem; font-weight: 500;">{% if property.is_multi_unit %}85%{% else
-                        %}100%{% endif %}</span>
-                </td>
-                <td style="font-weight: 600;">UGX {% if property.price %}{{ property.price|floatformat:0 }}M{% else %}
-                    -- {% endif %}</td>
-                <td>
-                    <span
-                        class="status-pill {% if property.status == 'available' %}pill-active{% else %}pill-maintenance{% endif %}">
-                        {{ property.get_status_display }}
-                    </span>
-                </td>
-                <td><i class="fa-solid fa-ellipsis-vertical" style="color: #94a3b8; cursor: pointer;"></i></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 {% elif current_tab == 'landlords' %}
 <div class="dashboard-header"
     style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
