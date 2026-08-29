@@ -314,9 +314,9 @@
 
     .blueprint-card-title {
         font-family: var(--font-heading);
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #1e293b;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #0f172a;
         margin-bottom: 1rem;
     }
 
@@ -694,7 +694,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const months = {{ overview_analytics.monthly_labels_12 | safe }};
 
-    // Shared Slice Percentage Plugin for Pie Charts
+    // Shared Slice Percentage Plugin for Pie Charts (Increased Font Size & Shadow for Visibility)
     const slicePercentagePlugin = {
         id: 'slicePercentageLabels',
         afterDatasetsDraw(chart) {
@@ -709,10 +709,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     const pct = Math.round((val / total) * 100) + '%';
                     const { x, y } = element.tooltipPosition();
                     ctx.save();
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 12px sans-serif';
+                    ctx.font = 'bold 14px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+                    ctx.lineWidth = 3;
+                    ctx.strokeText(pct, x, y);
+                    ctx.fillStyle = '#ffffff';
                     ctx.fillText(pct, x, y);
                     ctx.restore();
                 });
@@ -748,12 +751,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11, weight: '600' } } },
+                    x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 13, weight: '700' }, color: '#334155' } },
                     y: {
                         beginAtZero: true,
                         grid: { color: '#f1f5f9' },
                         ticks: {
-                            font: { size: 11, weight: '600' },
+                            font: { size: 13, weight: '700' },
+                            color: '#334155',
                             callback: function(value) {
                                 return (value / 1000000).toFixed(0) + 'M UGX';
                             }
@@ -783,12 +787,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } },
+                    x: { grid: { display: false }, ticks: { font: { size: 12, weight: '700' }, color: '#334155' } },
                     y: {
                         beginAtZero: true,
                         grid: { color: '#f1f5f9' },
                         ticks: {
-                            font: { size: 10, weight: '600' },
+                            font: { size: 12, weight: '700' },
+                            color: '#334155',
                             callback: function(val) { return (val / 1000000).toFixed(0) + 'M'; }
                         }
                     }
@@ -816,7 +821,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: { boxWidth: 12, font: { size: 11, weight: '600' } }
+                        labels: { boxWidth: 16, font: { size: 13, weight: '700' }, color: '#334155' }
                     }
                 }
             }
@@ -847,7 +852,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: { boxWidth: 12, font: { size: 11, weight: '600' } }
+                        labels: { boxWidth: 16, font: { size: 13, weight: '700' }, color: '#334155' }
                     }
                 }
             }
@@ -882,13 +887,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } },
+                    x: { grid: { display: false }, ticks: { font: { size: 12, weight: '700' }, color: '#334155' } },
                     y: {
                         beginAtZero: true,
                         grid: { color: '#f1f5f9' },
                         ticks: {
-                            font: { size: 10, weight: '600' },
-                            callback: function(v) { return (v / 1000000).toFixed(0) + 'M'; }
+                            font: { size: 12, weight: '700' },
+                            color: '#334155',
+                            callback: function(val) { return (val / 1000000).toFixed(0) + 'M'; }
                         }
                     }
                 }
