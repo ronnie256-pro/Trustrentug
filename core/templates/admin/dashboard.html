@@ -706,6 +706,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 meta.data.forEach((element, index) => {
                     const val = dataset.data[index];
                     if (val === 0) return;
+                    if (element.outerRadius < 15) return;
                     const pct = Math.round((val / total) * 100) + '%';
                     const { x, y } = element.tooltipPosition();
                     ctx.save();
@@ -721,6 +722,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
         }
+    };
+
+    // Animation Presets for Dynamic Entrance Effects (Spring & Vertical Growth)
+    const chartAnimLineBar = {
+        duration: 1000,
+        easing: 'easeOutQuart',
+        y: { from: 0 },
+        delay: function (context) {
+            return (context.type === 'data' && context.mode === 'default') ? context.dataIndex * 40 : 0;
+        }
+    };
+    const chartAnimPie = {
+        animateRotate: true,
+        animateScale: true,
+        duration: 1000,
+        easing: 'easeOutBack'
     };
 
     // Card 1: System Revenue Line Chart (Light Green Theme)
@@ -749,6 +766,7 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: chartAnimLineBar,
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 13, weight: '700' }, color: '#334155' } },
@@ -785,6 +803,7 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: chartAnimLineBar,
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { grid: { display: false }, ticks: { font: { size: 12, weight: '700' }, color: '#334155' } },
@@ -818,6 +837,7 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: chartAnimPie,
                 plugins: {
                     legend: {
                         position: 'right',
@@ -849,6 +869,7 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: chartAnimPie,
                 plugins: {
                     legend: {
                         position: 'right',
@@ -885,6 +906,7 @@ document.addEventListener("DOMContentLoaded", function () {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: chartAnimLineBar,
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { grid: { display: false }, ticks: { font: { size: 12, weight: '700' }, color: '#334155' } },
@@ -2806,111 +2828,147 @@ document.addEventListener("DOMContentLoaded", function () {
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Shared Slice Percentage Plugin for Pie Charts (Increased Font Size & Shadow for Visibility)
-        const slicePercentagePlugin = {
-            id: 'slicePercentageLabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    const total = dataset.data.reduce((acc, val) => acc + val, 0);
-                    if (total === 0) return;
-                    meta.data.forEach((element, index) => {
-                        const val = dataset.data[index];
-                        if (val === 0) return;
-                        const pct = Math.round((val / total) * 100) + '%';
-                        const { x, y } = element.tooltipPosition();
-                        ctx.save();
-                        ctx.font = 'bold 15px sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
-                        ctx.lineWidth = 3;
-                        ctx.strokeText(pct, x, y);
-                        ctx.fillStyle = '#ffffff';
-                        ctx.fillText(pct, x, y);
-                        ctx.restore();
+    (function () {
+        let tenantPctChartInstance = null;
+        let tenantMoveInChartInstance = null;
+
+        function renderTenantTabCharts() {
+            // Shared Slice Percentage Plugin for Pie Charts
+            const slicePercentagePlugin = {
+                id: 'slicePercentageLabels',
+                afterDatasetsDraw(chart) {
+                    const { ctx } = chart;
+                    chart.data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        const total = dataset.data.reduce((acc, val) => acc + val, 0);
+                        if (total === 0) return;
+                        meta.data.forEach((element, index) => {
+                            const val = dataset.data[index];
+                            if (val === 0) return;
+                            if (element.outerRadius < 15) return;
+                            const pct = Math.round((val / total) * 100) + '%';
+                            const { x, y } = element.tooltipPosition();
+                            ctx.save();
+                            ctx.font = 'bold 15px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+                            ctx.lineWidth = 3;
+                            ctx.strokeText(pct, x, y);
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillText(pct, x, y);
+                            ctx.restore();
+                        });
                     });
-                });
-            }
-        };
+                }
+            };
 
-        // Emerald Green & Teal Theme Palette
-        const tenantGreenPalette = ['#10b981', '#059669', '#34d399', '#047857', '#065f46', '#6ee7b7', '#a7f3d0'];
+            // Animation Presets for Dynamic Entrance Effects (Spring & Vertical Growth)
+            const tenantChartAnimLine = {
+                duration: 1100,
+                easing: 'easeOutQuart',
+                y: { from: 0 },
+                delay: function (context) {
+                    return (context.type === 'data' && context.mode === 'default') ? context.dataIndex * 40 : 0;
+                }
+            };
+            const tenantChartAnimPie = {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1100,
+                easing: 'easeOutBack'
+            };
 
-        // 1. Tenants Usage Stage Percentage Pie Chart
-        const ctxTenantPct = document.getElementById('tenantProgressPieChart')?.getContext('2d');
-        if (ctxTenantPct) {
-            new Chart(ctxTenantPct, {
-                type: 'pie',
-                data: {
-                    labels: {{ tenant_analytics.pct_labels | safe }},
-                    datasets: [{
-                        data: {{ tenant_analytics.pct_counts | safe }},
-                        backgroundColor: tenantGreenPalette
-                    }]
-                },
-                plugins: [slicePercentagePlugin],
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                boxWidth: 18,
-                                padding: 16,
-                                font: { size: 15, weight: '700' },
-                                color: '#334155'
+            // Emerald Green & Teal Theme Palette
+            const tenantGreenPalette = ['#10b981', '#059669', '#34d399', '#047857', '#065f46', '#6ee7b7', '#a7f3d0'];
+
+            // 1. Tenants Usage Stage Percentage Pie Chart
+            const ctxTenantPct = document.getElementById('tenantProgressPieChart')?.getContext('2d');
+            if (ctxTenantPct) {
+                if (tenantPctChartInstance) tenantPctChartInstance.destroy();
+                tenantPctChartInstance = new Chart(ctxTenantPct, {
+                    type: 'pie',
+                    data: {
+                        labels: {{ tenant_analytics.pct_labels | safe }},
+                        datasets: [{
+                            data: {{ tenant_analytics.pct_counts | safe }},
+                            backgroundColor: tenantGreenPalette
+                        }]
+                    },
+                    plugins: [slicePercentagePlugin],
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: tenantChartAnimPie,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 18,
+                                    padding: 16,
+                                    font: { size: 15, weight: '700' },
+                                    color: '#334155'
+                                }
                             }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // 2. Tenant Move-In Rate Line Chart (Featuring Sharp Drop Rate Fluctuations)
-        const ctxMoveIn = document.getElementById('tenantMoveInLineChart')?.getContext('2d');
-        if (ctxMoveIn) {
-            const gradMoveIn = ctxMoveIn.createLinearGradient(0, 0, 0, 300);
-            gradMoveIn.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
-            gradMoveIn.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+            // 2. Tenant Move-In Rate Line Chart (Featuring Sharp Drop Rate Fluctuations)
+            const ctxMoveIn = document.getElementById('tenantMoveInLineChart')?.getContext('2d');
+            if (ctxMoveIn) {
+                if (tenantMoveInChartInstance) tenantMoveInChartInstance.destroy();
+                const gradMoveIn = ctxMoveIn.createLinearGradient(0, 0, 0, 300);
+                gradMoveIn.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+                gradMoveIn.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
 
-            new Chart(ctxMoveIn, {
-                type: 'line',
-                data: {
-                    labels: {{ tenant_analytics.monthly_labels_12 | safe }},
-                    datasets: [{
-                        label: 'Moved In Tenants',
-                        data: {{ tenant_analytics.move_in_monthly | safe }},
-                        borderColor: '#10b981',
-                        backgroundColor: gradMoveIn,
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#047857',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 14, weight: '700' }, color: '#334155' } },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { size: 14, weight: '700' }, color: '#334155', precision: 0 }
+                tenantMoveInChartInstance = new Chart(ctxMoveIn, {
+                    type: 'line',
+                    data: {
+                        labels: {{ tenant_analytics.monthly_labels_12 | safe }},
+                        datasets: [{
+                            label: 'Moved In Tenants',
+                            data: {{ tenant_analytics.move_in_monthly | safe }},
+                            borderColor: '#10b981',
+                            backgroundColor: gradMoveIn,
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#047857',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: tenantChartAnimLine,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 14, weight: '700' }, color: '#334155' } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#f1f5f9' },
+                                ticks: { font: { size: 14, weight: '700' }, color: '#334155', precision: 0 }
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }
-    });
+
+        function safeRenderTenantTabCharts() {
+            setTimeout(renderTenantTabCharts, 80);
+        }
+
+        safeRenderTenantTabCharts();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', safeRenderTenantTabCharts);
+        }
+        window.addEventListener('pageshow', safeRenderTenantTabCharts);
+    })();
 
     function filterTenantsByProgress(val) {
         const rows = document.querySelectorAll('.tenant-row');
