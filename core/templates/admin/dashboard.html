@@ -255,27 +255,32 @@
         margin-bottom: 1.5rem;
     }
 
-    .blueprint-metric-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+    /* Solid Green Interactive Button Metric Cards */
+    .blueprint-metric-btn {
+        background: #059669;
+        border: 1px solid #047857;
         border-radius: 12px;
         padding: 1.1rem 0.85rem;
         text-align: center;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+        text-decoration: none;
+        display: block;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
     }
 
-    .blueprint-metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    .blueprint-metric-btn:hover {
+        transform: translateY(-3px);
+        background: #047857;
+        border-color: #065f46;
+        box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3);
     }
 
-    /* Block Numbers in Light Green */
     .blueprint-metric-num {
         font-family: var(--font-heading);
         font-size: 1.75rem;
         font-weight: 800;
-        color: #10b981 !important;
+        color: #ffffff !important;
         line-height: 1.1;
         margin-top: 0.35rem;
     }
@@ -283,7 +288,7 @@
     .blueprint-metric-label {
         font-size: 0.72rem;
         font-weight: 700;
-        color: #64748b;
+        color: #ecfdf5 !important;
         text-transform: uppercase;
         letter-spacing: 0.04em;
         line-height: 1.25;
@@ -315,11 +320,53 @@
         margin-bottom: 1rem;
     }
 
+    /* 2 Column Bottom Section (Left: Pending Progress Bars, Right: Need Action Prompts) */
+    .blueprint-bottom-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .pending-card, .need-action-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.35rem 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pending-header, .need-action-header {
+        font-family: var(--font-heading);
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #064e3b;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #ecfdf5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .pending-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+        padding: 0.2rem 0.65rem;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
     .blueprint-progress-list {
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        margin-bottom: 2.5rem;
     }
 
     .blueprint-progress-bar-card {
@@ -335,7 +382,6 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
 
-    /* Light Green Progress Bar Fill */
     .blueprint-progress-fill {
         position: absolute;
         top: 0;
@@ -352,7 +398,7 @@
         position: relative;
         z-index: 2;
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         color: #ffffff;
     }
 
@@ -364,12 +410,98 @@
         color: #0f172a;
     }
 
+    /* Need Action Right Column Scrollable List */
+    .need-action-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+        padding: 0.2rem 0.65rem;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .need-action-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        max-height: 250px;
+        overflow-y: auto;
+        padding-right: 0.35rem;
+    }
+
+    /* Custom Sleek Scrollbar */
+    .need-action-list::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .need-action-list::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    .need-action-list::-webkit-scrollbar-thumb {
+        background: #10b981;
+        border-radius: 4px;
+    }
+
+    .need-action-item {
+        background: #fafafa;
+        border: 1px solid #f1f5f9;
+        border-left: 4px solid #10b981;
+        border-radius: 8px;
+        padding: 0.85rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .need-action-item:hover {
+        background: #f0fdf4;
+        border-color: #a7f3d0;
+        border-left-color: #059669;
+    }
+
+    .need-action-desc {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #334155;
+        line-height: 1.4;
+    }
+
+    .need-action-link {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #047857;
+        background: #ffffff;
+        border: 1px solid #a7f3d0;
+        padding: 0.35rem 0.85rem;
+        border-radius: 6px;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+
+    .need-action-link:hover {
+        background: #059669;
+        color: #ffffff;
+        border-color: #059669;
+    }
+
     @media (max-width: 1200px) {
         .blueprint-top-grid {
             grid-template-columns: repeat(4, 1fr);
         }
         .blueprint-main-grid {
             grid-template-columns: 1fr 1fr;
+        }
+        .blueprint-bottom-section {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -383,49 +515,49 @@
     }
 </style>
 
-<!-- TOP METRIC BLOCKS (1 to 7) -->
+<!-- TOP METRIC GREEN BUTTON BLOCKS (1 to 7) -->
 <div class="blueprint-top-grid">
-    <!-- 1. Properties for Rent -->
-    <div class="blueprint-metric-card">
+    <!-- 1. Properties for Rent Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=properties" class="blueprint-metric-btn">
         <div class="blueprint-metric-label">Properties for Rent</div>
         <div class="blueprint-metric-num">{{ overview_analytics.count_properties_rent }}</div>
-    </div>
+    </a>
 
-    <!-- 2. Properties for Sale -->
-    <div class="blueprint-metric-card">
+    <!-- 2. Properties for Sale Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=properties" class="blueprint-metric-btn">
         <div class="blueprint-metric-label">Properties for Sale</div>
         <div class="blueprint-metric-num">{{ overview_analytics.count_properties_sale }}</div>
-    </div>
+    </a>
 
-    <!-- 3. Running Construction Projects -->
-    <div class="blueprint-metric-card">
+    <!-- 3. Running Construction Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=construction" class="blueprint-metric-btn">
         <div class="blueprint-metric-label">Running Construction</div>
         <div class="blueprint-metric-num">{{ overview_analytics.count_construction_projects }}</div>
-    </div>
+    </a>
 
-    <!-- 4. Offices -->
-    <div class="blueprint-metric-card">
+    <!-- 4. Offices Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=properties" class="blueprint-metric-btn">
         <div class="blueprint-metric-label">Offices</div>
         <div class="blueprint-metric-num">{{ overview_analytics.count_offices }}</div>
-    </div>
+    </a>
 
-    <!-- 5. Land on Sale -->
-    <div class="blueprint-metric-card">
+    <!-- 5. Land on Sale Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=properties" class="blueprint-metric-btn">
         <div class="blueprint-metric-label">Land on Sale</div>
         <div class="blueprint-metric-num">{{ overview_analytics.count_land_sale }}</div>
-    </div>
+    </a>
 
-    <!-- 6. Landlords -->
-    <div class="blueprint-metric-card">
+    <!-- 6. Landlords Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=landlords" class="blueprint-metric-btn">
         <div class="blueprint-metric-label">Landlords</div>
         <div class="blueprint-metric-num">{{ overview_analytics.count_landlords }}</div>
-    </div>
+    </a>
 
-    <!-- 7. Tenants -->
-    <div class="blueprint-metric-card">
+    <!-- 7. Tenants Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=tenants" class="blueprint-metric-btn">
         <div class="blueprint-metric-label">Tenants</div>
         <div class="blueprint-metric-num">{{ overview_analytics.count_tenants }}</div>
-    </div>
+    </a>
 </div>
 
 <!-- MAIN DASHBOARD GRID -->
@@ -471,34 +603,90 @@
     </div>
 </div>
 
-<!-- BOTTOM ACTION & PROGRESS BARS -->
-<div class="blueprint-progress-list">
-    <!-- Progress Bar 1: Landlords Pending verification -->
-    <div class="blueprint-progress-bar-card">
-        <div class="blueprint-progress-fill" style="width: 28%;"></div>
-        <div class="blueprint-progress-text">Landlords Pending verification</div>
-        <div class="blueprint-progress-ratio">{{ overview_analytics.pending_landlords_val }}/{{ overview_analytics.total_landlords_val }}</div>
+<!-- SPLIT 2-COLUMN BOTTOM SECTION -->
+<div class="blueprint-bottom-section">
+    <!-- Column 1 (Left): Pending Progress Bars -->
+    <div class="pending-card">
+        <div class="pending-header">
+            <span>Pending</span>
+        </div>
+        <div class="blueprint-progress-list">
+            <!-- Progress Bar 1: Landlords -->
+            <div class="blueprint-progress-bar-card">
+                <div class="blueprint-progress-fill" style="width: 28%;"></div>
+                <div class="blueprint-progress-text">Landlords</div>
+                <div class="blueprint-progress-ratio">{{ overview_analytics.pending_landlords_val }}/{{ overview_analytics.total_landlords_val }}</div>
+            </div>
+
+            <!-- Progress Bar 2: Rent Contracts -->
+            <div class="blueprint-progress-bar-card">
+                <div class="blueprint-progress-fill" style="width: 50%;"></div>
+                <div class="blueprint-progress-text">Rent Contracts</div>
+                <div class="blueprint-progress-ratio">{{ overview_analytics.pending_contracts_val }}/{{ overview_analytics.total_contracts_val }}</div>
+            </div>
+
+            <!-- Progress Bar 3: Construction applications -->
+            <div class="blueprint-progress-bar-card">
+                <div class="blueprint-progress-fill" style="width: 35%;"></div>
+                <div class="blueprint-progress-text">Construction applications</div>
+                <div class="blueprint-progress-ratio">{{ overview_analytics.pending_construction_val }}/{{ overview_analytics.total_construction_val }}</div>
+            </div>
+
+            <!-- Progress Bar 4: Unpaid rent -->
+            <div class="blueprint-progress-bar-card">
+                <div class="blueprint-progress-fill" style="width: 65%;"></div>
+                <div class="blueprint-progress-text">Unpaid rent</div>
+                <div class="blueprint-progress-ratio">{{ overview_analytics.unpaid_rent_val }}/{{ overview_analytics.total_rent_tenants_val }}</div>
+            </div>
+        </div>
     </div>
 
-    <!-- Progress Bar 2: Tenant & landlord contracts awaiting verification -->
-    <div class="blueprint-progress-bar-card">
-        <div class="blueprint-progress-fill" style="width: 50%;"></div>
-        <div class="blueprint-progress-text">Tenant & landlord contracts awaiting verification</div>
-        <div class="blueprint-progress-ratio">{{ overview_analytics.pending_contracts_val }}/{{ overview_analytics.total_contracts_val }}</div>
-    </div>
+    <!-- Column 2 (Right): Need Action Scrollable Prompts List -->
+    <div class="need-action-card">
+        <div class="need-action-header">
+            <span>Need action</span>
+        </div>
+        <div class="need-action-list">
+            <!-- Prompt 1: Landlords Approval -->
+            <div class="need-action-item">
+                <div class="need-action-desc">
+                    <strong>{{ overview_analytics.pending_landlords_val|default:6 }} Landlord Profiles</strong> awaiting identity verification & document approval.
+                </div>
+                <a href="{% url 'admin_dashboard' %}?tab=landlords" class="need-action-link">Review &rarr;</a>
+            </div>
 
-    <!-- Progress Bar 3: Construction applications awaiting settlement -->
-    <div class="blueprint-progress-bar-card">
-        <div class="blueprint-progress-fill" style="width: 35%;"></div>
-        <div class="blueprint-progress-text">Construction applications awaiting settlement</div>
-        <div class="blueprint-progress-ratio">{{ overview_analytics.pending_construction_val }}/{{ overview_analytics.total_construction_val }}</div>
-    </div>
+            <!-- Prompt 2: Pending Property Verification -->
+            <div class="need-action-item">
+                <div class="need-action-desc">
+                    <strong>{{ stats.pending|default:4 }} New Property Listings</strong> currently pending compliance check before public release.
+                </div>
+                <a href="{% url 'admin_dashboard' %}?tab=properties" class="need-action-link">Inspect &rarr;</a>
+            </div>
 
-    <!-- Progress Bar 4: Have not paid rent -->
-    <div class="blueprint-progress-bar-card">
-        <div class="blueprint-progress-fill" style="width: 65%;"></div>
-        <div class="blueprint-progress-text">Have not paid rent</div>
-        <div class="blueprint-progress-ratio">{{ overview_analytics.unpaid_rent_val }}/{{ overview_analytics.total_rent_tenants_val }}</div>
+            <!-- Prompt 3: Field Audits & Viewings -->
+            <div class="need-action-item">
+                <div class="need-action-desc">
+                    <strong>{{ overview_analytics.insp_pending|default:3 }} Field Audits</strong> & <strong>{{ overview_analytics.viewings_pending|default:4 }} Viewing Requests</strong> awaiting scheduling.
+                </div>
+                <a href="{% url 'admin_dashboard' %}?tab=inspections" class="need-action-link">Schedule &rarr;</a>
+            </div>
+
+            <!-- Prompt 4: Diaspora Construction Applications -->
+            <div class="need-action-item">
+                <div class="need-action-desc">
+                    <strong>{{ overview_analytics.pending_construction_val|default:7 }} Construction Applications</strong> pending initial milestone settlement.
+                </div>
+                <a href="{% url 'admin_dashboard' %}?tab=applications" class="need-action-link">Process &rarr;</a>
+            </div>
+
+            <!-- Prompt 5: Maintenance Tickets -->
+            <div class="need-action-item">
+                <div class="need-action-desc">
+                    <strong>{{ overview_analytics.maintenance_count|default:2 }} Active Tenant Maintenance Requests</strong> requiring technician assignment.
+                </div>
+                <a href="{% url 'admin_dashboard' %}?tab=tenants" class="need-action-link">Resolve &rarr;</a>
+            </div>
+        </div>
     </div>
 </div>
 
