@@ -3515,8 +3515,17 @@ def admin_add_sale_property(request):
         return redirect('login')
 
     if request.method == 'POST':
-        title = request.POST.get('title', '').strip()
-        category = request.POST.get('category', 'standalone')
+        category_raw = request.POST.get('category_id') or request.POST.get('category', 'standalone')
+        category_code = 'standalone'
+        category_ref_obj = None
+        if category_raw:
+            if str(category_raw).isdigit():
+                category_ref_obj = PropertyCategory.objects.filter(id=int(category_raw)).first()
+                if category_ref_obj:
+                    category_code = category_ref_obj.group or 'standalone'
+            else:
+                category_code = category_raw
+
         price = request.POST.get('price', '').strip()
         location = request.POST.get('location', '').strip()
         description = request.POST.get('description', '').strip()
@@ -3545,7 +3554,8 @@ def admin_add_sale_property(request):
             prop = Property.objects.create(
                 owner=request.user,
                 title=title,
-                category=category,
+                category=category_code,
+                category_ref=category_ref_obj,
                 listing_type='sale',
                 status='available',
                 price=price_val,

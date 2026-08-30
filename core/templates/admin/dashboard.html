@@ -1756,16 +1756,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     <label
                         style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Category
                         *</label>
-                    <select name="category"
+                    <select name="category_id" required
                         style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: white;">
+                        <option value="">-- Select Property Category / Type --</option>
+                        {% for cat in property_categories %}
+                        {% if cat.is_active %}
+                        <option value="{{ cat.id }}">{{ cat.name }} ({{ cat.get_group_display }})</option>
+                        {% endif %}
+                        {% empty %}
                         <option value="standalone">Standalone House / Villa</option>
                         <option value="bungalow">Bungalow / Estate</option>
                         <option value="studio">Studio Apartment</option>
                         <option value="1_bed">1 Bedroom Apartment</option>
                         <option value="2_bed">2 Bedroom Apartment</option>
-                        <option value="3_plus_bed">3+ Bedroom Luxury Residence</option>
-                        <option value="apartment_block">Apartment Block / Commercial Complex</option>
-                        <option value="condo_block">Condominium Block</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div>
