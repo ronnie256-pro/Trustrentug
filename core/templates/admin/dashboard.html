@@ -1437,10 +1437,6 @@ document.addEventListener("DOMContentLoaded", function () {
         </h2>
     </div>
     <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
-        <button type="button" onclick="openAddHouseModal()" class="btn btn-emerald"
-            style="background: var(--color-emerald-darkest) !important; color: white !important; padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(4, 61, 44, 0.35);">
-            Add House
-        </button>
         <button type="button" onclick="openAddSaleModal()" class="btn btn-gold"
             style="padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">
             Add for Sale
@@ -1833,101 +1829,121 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
 </div>
 
-<!-- Properties Filter Controls Bar -->
-<div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1rem 1.5rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; flex: 1;">
-        <input type="text" id="propSearchFilter" oninput="filterAndPaginateProperties()" placeholder="Filter by Name or Location..." style="padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; outline: none; min-width: 220px; flex: 1;">
-        <select id="propStatusFilter" onchange="filterAndPaginateProperties()" style="padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: white; outline: none;">
-            <option value="all">All Statuses</option>
-            <option value="available">Approved / Available</option>
-            <option value="rented">Rented</option>
-            <option value="pending">Pending Vetting</option>
-        </select>
-    </div>
-</div>
-
 <!-- Properties Table Card -->
-<div class="table-card"
-    style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
-    <div class="table-header"
-        style="padding: 1.25rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
-        <h3 style="margin:0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-dark); font-weight: 800;">
-            Properties
-        </h3>
-        <span style="font-size: 0.88rem; color: #475569; font-weight: 700;" id="propCountBadge">
-            {{ properties.count }} Properties Displayed
-        </span>
+<div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden; height: calc(100vh - 160px); display: flex; flex-direction: column;">
+    <div class="table-header" style="padding: 0.85rem 1.25rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: flex-end; align-items: center; background: #f8fafc; flex-wrap: wrap; gap: 0.75rem; flex-shrink: 0;">
+        <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="propSearchFilter" oninput="filterProperties()" placeholder="Filter by Name, Location, or Type..." style="padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600; outline: none; width: 250px;">
+            <select id="propStatusFilter" onchange="filterProperties()" style="padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600; background: white; outline: none;">
+                <option value="all">All Statuses</option>
+                <option value="available">Approved / Available</option>
+                <option value="rented">Rented</option>
+                <option value="pending">Pending Vetting</option>
+            </select>
+        </div>
     </div>
-    <div style="overflow-x: auto;">
+    <div style="flex: 1; overflow-y: auto; overflow-x: auto;">
         <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
+            <thead style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">
                 <tr style="background: #f8fafc;">
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
                         Property Owner</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
                         Name</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
                         Property Type</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
                         Location</th>
-                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
                         Status</th>
-                    <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; width: 140px;">
+                    <th style="padding: 0.75rem 1.25rem; text-align: center; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; width: 100px; background: #f8fafc;">
                         Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for property in properties %}
-                <tr class="property-row" data-name="{{ property.title|lower }} {{ property.location|lower }}" data-status="{% if property.status == 'available' %}available{% elif property.status == 'rented' %}rented{% else %}pending{% endif %}" style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                <tr class="property-row" data-name="{{ property.title|lower }} {{ property.location|lower }} {{ property.get_category_display|lower }}" data-status="{% if property.status == 'available' %}available{% elif property.status == 'rented' %}rented{% else %}pending{% endif %}" style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                     <!-- 1. Property Owner -->
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-weight: 800; color: #0f172a; font-size: 0.98rem;">
+                    <td style="padding: 0.65rem 1.25rem; border-bottom: 1px solid #f1f5f9;">
+                        <div style="font-weight: 800; color: #0f172a; font-size: 0.92rem;">
                             {% if property.owner.first_name or property.owner.last_name %}
                                 {{ property.owner.first_name }} {{ property.owner.last_name }}
                             {% else %}
                                 {{ property.owner.username }}
                             {% endif %}
                         </div>
-                        <small style="color: #64748b; display: block; margin-top: 0.15rem; font-weight: 600;">
-                            {{ property.owner.email }}
-                        </small>
                     </td>
 
                     <!-- 2. Name -->
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-weight: 800; color: #0f172a; font-size: 1.05rem;">{{ property.title }}</div>
+                    <td style="padding: 0.65rem 1.25rem; border-bottom: 1px solid #f1f5f9;">
+                        <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">{{ property.title }}</div>
                     </td>
 
                     <!-- 3. Property Type -->
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #0369a1; font-weight: 800; font-size: 0.95rem;">
+                    <td style="padding: 0.65rem 1.25rem; border-bottom: 1px solid #f1f5f9; color: #0369a1; font-weight: 800; font-size: 0.88rem;">
                         {{ property.get_category_display|default:property.category }}
                     </td>
 
                     <!-- 4. Location -->
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 700; font-size: 0.95rem;">
+                    <td style="padding: 0.65rem 1.25rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 700; font-size: 0.88rem;">
                         {{ property.location }}
                     </td>
 
                     <!-- 5. Status -->
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 0.65rem 1.25rem; border-bottom: 1px solid #f1f5f9;">
                         {% if property.status == 'available' %}
-                        <span class="status-pill pill-active" style="font-size: 0.88rem; font-weight: 800;">Approved</span>
+                        <span class="status-pill pill-active" style="font-size: 0.82rem; font-weight: 800; padding: 0.2rem 0.6rem;">Approved</span>
                         {% elif property.status == 'rented' %}
-                        <span class="status-pill" style="background: #e0f2fe; color: #0369a1; font-size: 0.88rem; font-weight: 800;">Rented</span>
+                        <span class="status-pill" style="background: #e0f2fe; color: #0369a1; font-size: 0.82rem; font-weight: 800; padding: 0.2rem 0.6rem;">Rented</span>
                         {% else %}
-                        <span class="status-pill pill-pending" style="font-size: 0.88rem; font-weight: 800;">Pending Vetting</span>
+                        <span class="status-pill pill-pending" style="font-size: 0.82rem; font-weight: 800; padding: 0.2rem 0.6rem;">Pending Vetting</span>
                         {% endif %}
                     </td>
 
                     <!-- 6. Actions -->
-                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
-                        <a href="{% url 'admin_property_detail' property.id %}" class="btn btn-gold"
+                    <td style="padding: 0.65rem 1.25rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                        <a href="{% url 'admin_property_detail' property.id %}" class="btn btn-gold" style="padding: 0.35rem 0.85rem; font-size: 0.82rem; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); border: none; font-weight: 800; text-decoration: none; color: white;">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 3rem 1.25rem; text-align: center; color: #94a3b8;">
+                        <p style="margin: 0; font-size: 0.92rem; font-weight: 600;">No properties registered yet.</p>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+    function filterProperties() {
+        const searchVal = (document.getElementById('propSearchFilter')?.value || '').toLowerCase().trim();
+        const statusVal = (document.getElementById('propStatusFilter')?.value || 'all').toLowerCase();
+        const rows = document.querySelectorAll('.property-row');
+
+        rows.forEach(row => {
+            const rowName = (row.getAttribute('data-name') || '').toLowerCase();
+            const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+
+            const matchesSearch = !searchVal || rowName.includes(searchVal);
+            const matchesStatus = statusVal === 'all' || rowStatus === statusVal;
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        filterProperties();
+    });
+</script>
 {% elif current_tab == 'applications' %}
 <div class="dashboard-header" style="margin-bottom: 2rem;">
     <div>
