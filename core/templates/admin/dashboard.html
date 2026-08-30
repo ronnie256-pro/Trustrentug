@@ -1063,53 +1063,50 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 </script>
 
-<!-- Landlords Table Card -->
-<div class="table-card"
-    style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
-    <div class="table-header"
-        style="padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-        <h3
-            style="margin:0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); font-weight: 800; text-decoration: underline; text-underline-offset: 4px;">
-            Our landlords
+<!-- Landlords Table Card & Filters -->
+<div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1rem 1.5rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; flex: 1;">
+        <input type="text" id="landlordNameFilter" oninput="filterAndPaginateLandlords()" placeholder="Filter by Name / Username..." style="padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; outline: none; min-width: 200px; flex: 1;">
+        <input type="text" id="landlordPhoneFilter" oninput="filterAndPaginateLandlords()" placeholder="Filter by Phone Number..." style="padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; outline: none; min-width: 180px; flex: 1;">
+        <select id="landlordStatusFilter" onchange="filterAndPaginateLandlords()" style="padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: white; outline: none;">
+            <option value="all">All Account Statuses</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending Approval</option>
+        </select>
+    </div>
+</div>
+
+<div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
+    <div class="table-header" style="padding: 1.25rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin:0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); font-weight: 800; text-decoration: underline; text-underline-offset: 4px;">
+            Our Landlords
         </h3>
-        <span style="font-size: 0.88rem; color: #475569; font-weight: 700;">Click any landlord row to view detailed
-            personal records & listed properties</span>
+        <span style="font-size: 0.88rem; color: #475569; font-weight: 700;">Click any landlord row to view detailed personal records & listed properties</span>
     </div>
     <div style="overflow-x: auto;">
         <table class="admin-table" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="background: #f8fafc;">
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Landlord Name</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Email / Account</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Phone Number</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Account Status</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for landlord in landlords %}
-                <tr onclick="window.location.href='/admin-dashboard/?tab=landlord_detail&id={{ landlord.id }}'"
-                    style="cursor: pointer; transition: background-color 0.2s;"
-                    onmouseover="this.style.backgroundColor='#f8fafc'"
-                    onmouseout="this.style.backgroundColor='transparent'">
-                    <td
-                        style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 800; color: #1e293b; font-size: 1.05rem; display: flex; align-items: center; gap: 0.75rem;">
+                <tr class="landlord-row" data-name="{% if landlord.first_name or landlord.last_name %}{{ landlord.first_name }} {{ landlord.last_name }}{% else %}{{ landlord.username }}{% endif %}" data-phone="{{ landlord.profile.phone|default:'' }}" data-status="{% if landlord.profile.is_approved %}approved{% else %}pending{% endif %}" onclick="window.location.href='/admin-dashboard/?tab=landlord_detail&id={{ landlord.id }}'" style="cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-weight: 800; color: #1e293b; font-size: 1.05rem; display: flex; align-items: center; gap: 0.75rem;">
                         {% if landlord.profile.image %}
-                        <img src="{{ landlord.profile.image.url }}" alt="{{ landlord.username }}"
-                            style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-gold);">
+                        <img src="{{ landlord.profile.image.url }}" alt="{{ landlord.username }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-gold);">
                         {% else %}
-                        <div
-                            style="width: 38px; height: 38px; background: rgba(6, 78, 59, 0.1); color: var(--color-emerald-darkest); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.95rem; border: 2px solid var(--color-gold);">
+                        <div style="width: 38px; height: 38px; background: rgba(6, 78, 59, 0.1); color: var(--color-emerald-darkest); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.95rem; border: 2px solid var(--color-gold);">
                             {{ landlord.first_name|slice:":1" }}{{ landlord.last_name|slice:":1" }}
                         </div>
                         {% endif %}
@@ -1121,42 +1118,108 @@ document.addEventListener("DOMContentLoaded", function () {
                             {% endif %}
                         </div>
                     </td>
-                    <td
-                        style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #475569; font-size: 0.92rem; font-weight: 700;">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #475569; font-size: 0.92rem; font-weight: 700;">
                         {{ landlord.email }}
                     </td>
-                    <td
-                        style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 0.92rem; font-weight: 700;">
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 0.92rem; font-weight: 700;">
                         {{ landlord.profile.phone|default:"Not Provided" }}
                     </td>
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
                         {% if landlord.profile.is_approved %}
-                        <span class="status-pill pill-active"
-                            style="font-size: 0.88rem; font-weight: 800;">Approved</span>
+                        <span class="status-pill pill-active" style="font-size: 0.88rem; font-weight: 800;">Approved</span>
                         {% else %}
-                        <span class="status-pill pill-pending" style="font-size: 0.88rem; font-weight: 800;">Pending
-                            Approval</span>
+                        <span class="status-pill pill-pending" style="font-size: 0.88rem; font-weight: 800;">Pending Approval</span>
                         {% endif %}
                     </td>
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                        <a href="/admin-dashboard/?tab=landlord_detail&id={{ landlord.id }}"
-                            style="font-size: 0.88rem; font-weight: 800; background: #f8fafc; color: var(--color-emerald-darkest); border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                        <a href="/admin-dashboard/?tab=landlord_detail&id={{ landlord.id }}" style="font-size: 0.88rem; font-weight: 800; background: #f8fafc; color: var(--color-emerald-darkest); border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
                             View Profile &rarr;
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" style="padding: 3rem 2rem; text-align: center; color: #94a3b8;">
-                        <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No property owners registered yet.
-                        </p>
+                    <td colspan="5" style="padding: 3rem 2rem; text-align: center; color: #94a3b8;">
+                        <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No property owners registered yet.</p>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <!-- Landlords Table Pagination Controls -->
+    <div style="padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.88rem; font-weight: 800; color: #334155;" id="landlordPageInfo">
+            1 of 1
+        </span>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button type="button" id="landlordPrevBtn" onclick="changeLandlordPage(-1)" style="padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: #334155;">&lt;</button>
+            <button type="button" id="landlordNextBtn" onclick="changeLandlordPage(1)" style="padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: #334155;">&gt;</button>
+        </div>
+    </div>
 </div>
+
+<script>
+    let currentLandlordPage = 1;
+    const landlordsPerPage = 7;
+
+    function filterAndPaginateLandlords() {
+        const nameVal = (document.getElementById('landlordNameFilter')?.value || '').toLowerCase().trim();
+        const phoneVal = (document.getElementById('landlordPhoneFilter')?.value || '').toLowerCase().trim();
+        const statusVal = (document.getElementById('landlordStatusFilter')?.value || 'all').toLowerCase();
+        const rows = Array.from(document.querySelectorAll('.landlord-row'));
+
+        let visibleRows = [];
+        rows.forEach(row => {
+            const rowName = (row.getAttribute('data-name') || '').toLowerCase();
+            const rowPhone = (row.getAttribute('data-phone') || '').toLowerCase();
+            const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+
+            const matchesName = !nameVal || rowName.includes(nameVal);
+            const matchesPhone = !phoneVal || rowPhone.includes(phoneVal);
+            const matchesStatus = statusVal === 'all' || rowStatus === statusVal;
+
+            if (matchesName && matchesPhone && matchesStatus) {
+                visibleRows.push(row);
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const totalPages = Math.max(1, Math.ceil(visibleRows.length / landlordsPerPage));
+        if (currentLandlordPage > totalPages) currentLandlordPage = totalPages;
+        if (currentLandlordPage < 1) currentLandlordPage = 1;
+
+        visibleRows.forEach((row, index) => {
+            const start = (currentLandlordPage - 1) * landlordsPerPage;
+            const end = start + landlordsPerPage;
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const pageInfo = document.getElementById('landlordPageInfo');
+        if (pageInfo) {
+            pageInfo.textContent = `${currentLandlordPage} of ${totalPages}`;
+        }
+        const prevBtn = document.getElementById('landlordPrevBtn');
+        const nextBtn = document.getElementById('landlordNextBtn');
+        if (prevBtn) prevBtn.disabled = (currentLandlordPage <= 1);
+        if (nextBtn) nextBtn.disabled = (currentLandlordPage >= totalPages);
+    }
+
+    function changeLandlordPage(delta) {
+        currentLandlordPage += delta;
+        filterAndPaginateLandlords();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        filterAndPaginateLandlords();
+    });
+</script>
 
 {% elif current_tab == 'landlord_detail' %}
 <!-- Back Navigation & Action Bar -->
@@ -1367,17 +1430,16 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 {% endif %}
 {% elif current_tab == 'properties' %}
-<div class="dashboard-header">
+<div class="dashboard-header" style="margin-bottom: 1.5rem;">
     <div>
-        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem;">
-            Properties Vetting Directory</h2>
-        <p style="color: #64748b; margin-top: 0.25rem;">Review uploaded physical vetting documents, view property media,
-            and list verified properties.</p>
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; font-weight: 800; margin: 0;">
+            Properties
+        </h2>
     </div>
     <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
         <button type="button" onclick="openAddHouseModal()" class="btn btn-emerald"
             style="background: var(--color-emerald-darkest) !important; color: white !important; padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(4, 61, 44, 0.35);">
-            <i class="fa-solid fa-house-medical" style="margin-right: 0.4rem; color: #f59e0b;"></i> Add House Listing
+            Add House
         </button>
         <button type="button" onclick="openAddSaleModal()" class="btn btn-gold"
             style="padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">
@@ -1387,10 +1449,6 @@ document.addEventListener("DOMContentLoaded", function () {
             style="background: #047857 !important; border-color: #03543f !important; color: white !important; padding: 0.6rem 1.25rem; font-weight: 800; font-size: 0.9rem; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.35);">
             Add Office
         </button>
-        <div
-            style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
-            {{ properties.count }} Total Submission{{ properties.count|pluralize }}
-        </div>
     </div>
 </div>
 
@@ -1402,7 +1460,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
             <div>
                 <h2 style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #0f172a; font-weight: 800;">
-                    <i class="fa-solid fa-house" style="color: var(--color-gold);"></i> Add House Listing
+                    Add House Listing
                 </h2>
                 <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.88rem;">
                     Select an Admin-defined house category (Single Room, Double Room, Luxury Studio, etc.) and specify listing details.
@@ -1774,98 +1832,96 @@ document.addEventListener("DOMContentLoaded", function () {
 
     </div>
 </div>
-</div>
+
+<!-- Properties Filter Controls Bar -->
+<div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1rem 1.5rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; flex: 1;">
+        <input type="text" id="propSearchFilter" oninput="filterAndPaginateProperties()" placeholder="Filter by Name or Location..." style="padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; outline: none; min-width: 220px; flex: 1;">
+        <select id="propStatusFilter" onchange="filterAndPaginateProperties()" style="padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.88rem; font-weight: 600; background: white; outline: none;">
+            <option value="all">All Statuses</option>
+            <option value="available">Approved / Available</option>
+            <option value="rented">Rented</option>
+            <option value="pending">Pending Vetting</option>
+        </select>
+    </div>
 </div>
 
 <!-- Properties Table Card -->
 <div class="table-card"
     style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden;">
     <div class="table-header"
-        style="padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin:0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-dark);">
-            Physical Security Listing Approvals</h3>
-        <span style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-circle"
-                style="color: #cbd5e1; font-size: 0.5rem; margin-right: 0.25rem;"></i> Vetting Required</span>
+        style="padding: 1.25rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+        <h3 style="margin:0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-dark); font-weight: 800;">
+            Properties
+        </h3>
+        <span style="font-size: 0.88rem; color: #475569; font-weight: 700;" id="propCountBadge">
+            {{ properties.count }} Properties Displayed
+        </span>
     </div>
     <div style="overflow-x: auto;">
         <table class="admin-table" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="background: #f8fafc;">
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
                         Property Owner</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
-                        Property Name</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                        Name</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                        Property Type</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
                         Location</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 150px;">
-                        View</th>
+                    <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0;">
+                        Status</th>
+                    <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; width: 140px;">
+                        Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for property in properties %}
-                <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'"
-                    onmouseout="this.style.backgroundColor='transparent'">
+                <tr class="property-row" data-name="{{ property.title|lower }} {{ property.location|lower }}" data-status="{% if property.status == 'available' %}available{% elif property.status == 'rented' %}rented{% else %}pending{% endif %}" style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
                     <!-- 1. Property Owner -->
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">
-                            {{ property.owner.first_name }} {{ property.owner.last_name }}
+                        <div style="font-weight: 800; color: #0f172a; font-size: 0.98rem;">
+                            {% if property.owner.first_name or property.owner.last_name %}
+                                {{ property.owner.first_name }} {{ property.owner.last_name }}
+                            {% else %}
+                                {{ property.owner.username }}
+                            {% endif %}
                         </div>
-                        <small style="color: #64748b; display: block; margin-top: 0.15rem;">
-                            @{{ property.owner.username }}
-                        </small>
-                        <small style="color: #94a3b8; display: block; margin-top: 0.15rem;">
+                        <small style="color: #64748b; display: block; margin-top: 0.15rem; font-weight: 600;">
                             {{ property.owner.email }}
                         </small>
                     </td>
 
-                    <!-- 2. Property Name -->
+                    <!-- 2. Name -->
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ property.title }}</div>
-                        <span
-                            style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203,163,88,0.1); color: var(--color-gold); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; margin-top: 0.25rem; display: inline-block;">
-                            {{ property.get_category_display }}
-                        </span>
+                        <div style="font-weight: 800; color: #0f172a; font-size: 1.05rem;">{{ property.title }}</div>
+                    </td>
 
+                    <!-- 3. Property Type -->
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #0369a1; font-weight: 800; font-size: 0.95rem;">
+                        {{ property.get_category_display|default:property.category }}
+                    </td>
+
+                    <!-- 4. Location -->
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 700; font-size: 0.95rem;">
+                        {{ property.location }}
+                    </td>
+
+                    <!-- 5. Status -->
+                    <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
                         {% if property.status == 'available' %}
-                        <span
-                            style="font-size: 0.75rem; background: #ecfdf5; color: #059669; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.25rem; display: inline-block;">
-                            Approved
-                        </span>
+                        <span class="status-pill pill-active" style="font-size: 0.88rem; font-weight: 800;">Approved</span>
+                        {% elif property.status == 'rented' %}
+                        <span class="status-pill" style="background: #e0f2fe; color: #0369a1; font-size: 0.88rem; font-weight: 800;">Rented</span>
                         {% else %}
-                        <span
-                            style="font-size: 0.75rem; background: #fffbeb; color: #d97706; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.25rem; display: inline-block;">
-                            Pending Vetting
-                        </span>
+                        <span class="status-pill pill-pending" style="font-size: 0.88rem; font-weight: 800;">Pending Vetting</span>
                         {% endif %}
                     </td>
 
-                    <!-- 3. Location -->
-                    <td
-                        style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-weight: 500;">
-                        <i class="fa-solid fa-location-dot"
-                            style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ property.location }}
-                    </td>
-
-                    <!-- 4. View details button -->
+                    <!-- 6. Actions -->
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; text-align: center;">
                         <a href="{% url 'admin_property_detail' property.id %}" class="btn btn-gold"
-                            style="padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); border: none; font-weight: 600; text-decoration: none; color: white;">
-                            <i class="fa-solid fa-eye"></i> View details
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
-                        <div style="font-size: 2.25rem; margin-bottom: 1.25rem; color: #cbd5e1;"><i
-                                class="fa-solid fa-house-laptop"></i></div>
-                        <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No properties submitted for
-                            verification yet.</p>
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -1877,15 +1933,12 @@ document.addEventListener("DOMContentLoaded", function () {
     <div>
         <h2
             style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; margin: 0; font-weight: 800;">
-            Construction Supervision Applications
+            Construction Applications
         </h2>
-        <p style="color: #64748b; margin-top: 0.25rem; margin-bottom: 0;">
-            Review, process, and approve client construction onboarding requests.
-        </p>
     </div>
     <div
         style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.35rem;">
-        <i class="fa-solid fa-file-signature"></i> {{ construction_applications.count }} Application{{ construction_applications.count|pluralize }}
+        {{ construction_applications.count }} Application{{ construction_applications.count|pluralize }}
     </div>
 </div>
 
@@ -1894,13 +1947,11 @@ document.addEventListener("DOMContentLoaded", function () {
     <div class="table-header"
         style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
         <h3
-            style="margin: 0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-clipboard-list" style="color: var(--color-gold);"></i> Onboarding Submissions
-            Directory
+            style="margin: 0; font-size: 1.1rem; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-weight: 800;">
+            Construction Applications
         </h3>
         <span style="font-size: 0.82rem; color: #64748b; font-weight: 600;">
-            <i class="fa-solid fa-circle" style="color: #3b82f6; font-size: 0.5rem; margin-right: 0.25rem;"></i> Active
-            Supervision Registry
+            {{ construction_applications.count }} Total Submission{{ construction_applications.count|pluralize }}
         </span>
     </div>
 
@@ -1947,23 +1998,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     <!-- 2. Country -->
                     <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
-                        <div
-                            style="font-weight: 700; color: #0369a1; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.35rem;">
-                            <i class="fa-solid fa-earth-africa"></i> {{ app.country_of_residence }}
+                        <div style="font-weight: 700; color: #0369a1; font-size: 0.95rem;">
+                            {{ app.country_of_residence }}
                         </div>
                     </td>
 
                     <!-- 3. Email -->
                     <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
                         <div style="font-weight: 600; color: #334155; font-size: 0.92rem;">
-                            <i class="fa-solid fa-envelope" style="color: #94a3b8; margin-right: 0.25rem;"></i> {{ app.email }}
+                            {{ app.email }}
                         </div>
                     </td>
 
                     <!-- 4. Contact -->
                     <td style="padding: 1.25rem 1.5rem; vertical-align: middle;">
                         <div style="font-weight: 700; color: #047857; font-size: 0.92rem;">
-                            <i class="fa-solid fa-phone" style="color: #94a3b8; margin-right: 0.25rem;"></i> {{ app.phone_number }}
+                            {{ app.phone_number }}
                         </div>
                     </td>
 
@@ -1971,17 +2021,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td style="padding: 1.25rem 1.5rem; text-align: center; vertical-align: middle;">
                         <a href="{% url 'admin_application_detail' app.id %}" class="btn btn-gold"
                             style="padding: 0.5rem 1.15rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 2px 6px rgba(203, 163, 88, 0.25);">
-                            <i class="fa-solid fa-eye"></i> View Application
+                            View Application &rarr;
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
                     <td colspan="5" style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
-                        <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;">
-                            <i class="fa-solid fa-file-circle-xmark"></i>
-                        </div>
-                        <p style="margin: 0; font-size: 1rem; font-weight: 600;">No construction supervision
+                        <p style="margin: 0; font-size: 1rem; font-weight: 600;">No construction
                             applications received yet.</p>
                     </td>
                 </tr>
