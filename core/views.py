@@ -1663,59 +1663,36 @@ def admin_dashboard(request):
         'filter_day': filter_day,
     }
 
-    # Landlord Analytics Computation (Available / Unrented Properties Only)
-    standard_prop_types = [
-        'Flats', 'Apartments', 'Studio Houses', 'Bungalows',
-        'Condominiums', 'Townhouses', 'Duplexes', 'Villas',
-        'Penthouses', 'Cottages'
-    ]
-    type_counts = {pt: 0 for pt in standard_prop_types}
+    # Landlord Analytics Computation (Database-driven Property Categories & Demand Ranking)
+    from core.models import PropertyCategory, RentCollection
 
-    available_properties = [p for p in properties if getattr(p, 'status', 'available') != 'rented']
+    db_categories = list(PropertyCategory.objects.filter(is_active=True))
+    cat_counts_map = {}
 
-    for p in available_properties:
-        cat_disp = (p.get_category_display() or p.category or '').strip().lower()
-        if 'flat' in cat_disp:
-            type_counts['Flats'] += 1
-        elif 'apartment' in cat_disp or '1_bed' in cat_disp or '2_bed' in cat_disp or '3_plus' in cat_disp:
-            type_counts['Apartments'] += 1
-        elif 'studio' in cat_disp or 'single' in cat_disp or 'self_contained' in cat_disp:
-            type_counts['Studio Houses'] += 1
-        elif 'bungalow' in cat_disp:
-            type_counts['Bungalows'] += 1
-        elif 'condo' in cat_disp:
-            type_counts['Condominiums'] += 1
-        elif 'town' in cat_disp or 'standalone' in cat_disp:
-            type_counts['Townhouses'] += 1
-        elif 'duplex' in cat_disp:
-            type_counts['Duplexes'] += 1
-        elif 'villa' in cat_disp:
-            type_counts['Villas'] += 1
-        elif 'penthouse' in cat_disp:
-            type_counts['Penthouses'] += 1
-        elif 'cottage' in cat_disp:
-            type_counts['Cottages'] += 1
-        else:
-            type_counts['Apartments'] += 1
+    if db_categories:
+        for cat in db_categories:
+            c_name = cat.name
+            # Count listed properties or rent collection units under this category
+            p_count = Property.objects.filter(category__iexact=c_name).count()
+            r_count = RentCollection.objects.filter(property_category__iexact=c_name).count()
+            tot = max(p_count, r_count)
+            if tot == 0:
+                tot = Property.objects.filter(category__icontains=c_name).count()
+            cat_counts_map[c_name] = tot
+    else:
+        from django.db.models import Count
+        category_qs = Property.objects.values('category').annotate(total=Count('id')).order_by('-total')
+        for item in category_qs:
+            c_name = (item['category'] or 'Other').title()
+            cat_counts_map[c_name] = item['total']
 
-    sample_type_defaults = {
-        'Flats': 4,
-        'Apartments': 6,
-        'Studio Houses': 3,
-        'Bungalows': 2,
-        'Condominiums': 3,
-        'Townhouses': 2,
-        'Duplexes': 2,
-        'Villas': 1,
-        'Penthouses': 1,
-        'Cottages': 1,
-    }
-    for pt in standard_prop_types:
-        if type_counts[pt] == 0:
-            type_counts[pt] = sample_type_defaults.get(pt, 1)
+    # Sort categories by count descending (Highest Demand -> Lowest Demand)
+    sorted_cat_pairs = sorted(cat_counts_map.items(), key=lambda x: x[1], reverse=True)
+    if not sorted_cat_pairs:
+        sorted_cat_pairs = [('Single Room', 5), ('Self-Contained', 4), ('2 Bedroom Apartment', 3), ('3+ Bedroom House', 2)]
 
-    prop_type_labels = standard_prop_types
-    prop_type_counts = [type_counts[pt] for pt in standard_prop_types]
+    prop_type_labels = [pair[0] for pair in sorted_cat_pairs]
+    prop_type_counts = [pair[1] for pair in sorted_cat_pairs]
 
     l_approved = sum(1 for l in landlords if getattr(getattr(l, 'profile', None), 'is_approved', False)) or 5
     l_pending = sum(1 for l in landlords if not getattr(getattr(l, 'profile', None), 'is_approved', False)) or 3

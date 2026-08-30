@@ -923,31 +923,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 {% elif current_tab == 'landlords' %}
-<div class="dashboard-header"
-    style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-    <div>
-        <h2
-            style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; font-weight: 800; margin: 0;">
-            Landlords Data
-        </h2>
-    </div>
-</div>
 
 <!-- ROW: LANDLORDS PIE CHARTS (2 Equal Side-by-Side Columns Grid) -->
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2.25rem;">
-    <!-- Chart 1: Types of Properties (Raw Number Available Property Slices) -->
+    <!-- Chart 1: Types of Properties (Database Categories & Demand Ranking) -->
     <div
         style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem; box-shadow: var(--shadow-sm);">
         <div
-            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; position: relative;">
+            style="display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; position: relative;">
             <h4
                 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; margin: 0; text-align: center; width: 100%; text-decoration: underline; text-underline-offset: 4px;">
                 TYPES OF PROPERTIES
             </h4>
-            <a href="{% url 'admin_dashboard' %}?tab=landlords"
-                style="position: absolute; right: 0; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #064e3b; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.35rem 0.95rem; text-decoration: none;">
-                View &rarr;
-            </a>
         </div>
         <div style="height: 420px; position: relative;">
             <canvas id="landlordPropertyTypesPieChart"></canvas>
@@ -958,15 +945,11 @@ document.addEventListener("DOMContentLoaded", function () {
     <div
         style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem; box-shadow: var(--shadow-sm);">
         <div
-            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; position: relative;">
+            style="display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; position: relative;">
             <h4
                 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.25rem; font-weight: 800; margin: 0; text-align: center; width: 100%; text-decoration: underline; text-underline-offset: 4px;">
                 LANDLORDS
             </h4>
-            <a href="{% url 'admin_dashboard' %}?tab=landlords"
-                style="position: absolute; right: 0; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #064e3b; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.35rem 0.95rem; text-decoration: none;">
-                View &rarr;
-            </a>
         </div>
         <div style="height: 420px; position: relative;">
             <canvas id="landlordStatusPieChart"></canvas>
@@ -976,49 +959,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // 1. Raw Number Plugin for Available Property Types Breakdown
-        const landlordRawNumberPlugin = {
-            id: 'landlordRawNumberLabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    meta.data.forEach((element, index) => {
-                        const val = dataset.data[index];
-                        if (val === 0) return;
-                        const labelStr = String(val); // Draw raw available property count
-                        const { x, y } = element.tooltipPosition();
-                        ctx.save();
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 15px sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(labelStr, x, y);
-                        ctx.restore();
-                    });
-                });
-            }
-        };
-
-        // 2. Percentage Plugin for Landlords Status Breakdown
+        // Shared Slice Percentage Plugin for Landlords Pie Charts
         const landlordSlicePlugin = {
             id: 'landlordSlicePercentageLabels',
             afterDatasetsDraw(chart) {
                 const { ctx } = chart;
                 chart.data.datasets.forEach((dataset, i) => {
                     const meta = chart.getDatasetMeta(i);
+                    if (!meta || !meta.data) return;
                     const total = dataset.data.reduce((acc, val) => acc + val, 0);
                     if (total === 0) return;
                     meta.data.forEach((element, index) => {
                         const val = dataset.data[index];
-                        if (val === 0) return;
+                        if (!val || val === 0) return;
                         const pct = Math.round((val / total) * 100) + '%';
+                        if (!element || typeof element.tooltipPosition !== 'function') return;
                         const { x, y } = element.tooltipPosition();
                         ctx.save();
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 15px sans-serif';
+                        ctx.font = 'bold 14px sans-serif';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)';
+                        ctx.lineWidth = 3;
+                        ctx.strokeText(pct, x, y);
+                        ctx.fillStyle = '#ffffff';
                         ctx.fillText(pct, x, y);
                         ctx.restore();
                     });
@@ -1026,27 +990,28 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
 
-        const solidDarkPalette = ['#064e3b', '#0369a1', '#b45309', '#b91c1c', '#581c87', '#0f766e', '#c2410c', '#334155', '#475569', '#64748b'];
+        const vibrantPalette = [
+            '#059669', '#10b981', '#34d399', '#047857', '#065f46', 
+            '#0284c7', '#0369a1', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b'
+        ];
 
         const animatedChartOptions = {
             responsive: true,
             maintainAspectRatio: false,
             animation: {
-                duration: 1800,
-                easing: 'easeInOutQuart',
                 animateRotate: true,
                 animateScale: true,
-                delay: function (context) {
-                    return (context.type === 'data' && context.mode === 'default') ? context.dataIndex * 140 : 0;
-                }
+                duration: 1200,
+                easing: 'easeOutQuart'
             },
             plugins: {
                 legend: {
                     position: 'right',
                     labels: {
                         boxWidth: 16,
-                        padding: 18,
-                        font: { size: 14, weight: '700' }
+                        padding: 16,
+                        font: { size: 13, weight: '700' },
+                        color: '#334155'
                     }
                 }
             }
@@ -1056,7 +1021,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let landlordStatusChartInstance = null;
 
         function renderLandlordCharts() {
-            // 1. Property Types Pie Chart (Displays Raw Counts of Available Unrented Properties)
+            // 1. Types of Property Pie Chart (Database-driven Property Categories & Demand)
             const ctxTypes = document.getElementById('landlordPropertyTypesPieChart')?.getContext('2d');
             if (ctxTypes) {
                 if (landlordTypesChartInstance) landlordTypesChartInstance.destroy();
@@ -1064,38 +1029,38 @@ document.addEventListener("DOMContentLoaded", function () {
                     type: 'pie',
                     data: {
                         labels: {{ landlord_analytics.prop_type_labels | safe }},
-            datasets: [{
-                data: {{ landlord_analytics.prop_type_counts | safe }},
-        backgroundColor: solidDarkPalette
-    }]
-                },
-        plugins: [landlordRawNumberPlugin],
-        options: animatedChartOptions
-            });
+                        datasets: [{
+                            data: {{ landlord_analytics.prop_type_counts | safe }},
+                            backgroundColor: vibrantPalette
+                        }]
+                    },
+                    plugins: [landlordSlicePlugin],
+                    options: animatedChartOptions
+                });
+            }
+
+            // 2. Landlords Status Breakdown Pie Chart
+            const ctxStatus = document.getElementById('landlordStatusPieChart')?.getContext('2d');
+            if (ctxStatus) {
+                if (landlordStatusChartInstance) landlordStatusChartInstance.destroy();
+                landlordStatusChartInstance = new Chart(ctxStatus, {
+                    type: 'pie',
+                    data: {
+                        labels: {{ landlord_analytics.status_labels | safe }},
+                        datasets: [{
+                            data: {{ landlord_analytics.status_counts | safe }},
+                            backgroundColor: ['#f59e0b', '#10b981', '#0284c7']
+                        }]
+                    },
+                    plugins: [landlordSlicePlugin],
+                    options: animatedChartOptions
+                });
+            }
         }
 
-    // 2. Landlords Status Breakdown Pie Chart
-    const ctxStatus = document.getElementById('landlordStatusPieChart')?.getContext('2d');
-    if (ctxStatus) {
-        if (landlordStatusChartInstance) landlordStatusChartInstance.destroy();
-        landlordStatusChartInstance = new Chart(ctxStatus, {
-            type: 'pie',
-            data: {
-                labels: {{ landlord_analytics.status_labels | safe }},
-    datasets: [{
-        data: {{ landlord_analytics.status_counts | safe }},
-        backgroundColor: ['#b45309', '#064e3b', '#0369a1']
-                    }]
-                },
-    plugins: [landlordSlicePlugin],
-        options: animatedChartOptions
-            });
-        }
-    }
-
-    renderLandlordCharts();
-    window.addEventListener('pageshow', renderLandlordCharts);
-});
+        renderLandlordCharts();
+        window.addEventListener('pageshow', renderLandlordCharts);
+    });
 </script>
 
 <!-- Landlords Table Card -->
@@ -1105,7 +1070,7 @@ document.addEventListener("DOMContentLoaded", function () {
         style="padding: 1.5rem 2rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
         <h3
             style="margin:0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-dark); font-weight: 800; text-decoration: underline; text-underline-offset: 4px;">
-            Property Owner Registry
+            Our landlords
         </h3>
         <span style="font-size: 0.88rem; color: #475569; font-weight: 700;">Click any landlord row to view detailed
             personal records & listed properties</span>
@@ -1119,16 +1084,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         Landlord Name</th>
                     <th
                         style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
-                        Username</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Email / Account</th>
                     <th
                         style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Phone Number</th>
-                    <th
-                        style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
-                        National ID (NIN)</th>
                     <th
                         style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #475569; font-weight: 800;">
                         Account Status</th>
@@ -1154,15 +1113,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             {{ landlord.first_name|slice:":1" }}{{ landlord.last_name|slice:":1" }}
                         </div>
                         {% endif %}
-                        <div>
-                            <div style="font-size: 1.05rem; color: #1e293b; font-weight: 800;">{{ landlord.first_name }}
-                                {{ landlord.last_name }}</div>
-                            <small style="color: #64748b; font-weight: 600; font-size: 0.8rem;">ID: #{{ landlord.id }}</small>
+                        <div style="font-size: 1.05rem; color: #1e293b; font-weight: 800;">
+                            {% if landlord.first_name or landlord.last_name %}
+                                {{ landlord.first_name }} {{ landlord.last_name }}
+                            {% else %}
+                                {{ landlord.username }}
+                            {% endif %}
                         </div>
-                    </td>
-                    <td
-                        style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #0369a1; font-size: 0.95rem; font-weight: 800;">
-                        @{{ landlord.username }}
                     </td>
                     <td
                         style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #475569; font-size: 0.92rem; font-weight: 700;">
@@ -1171,17 +1128,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td
                         style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 0.92rem; font-weight: 700;">
                         {{ landlord.profile.phone|default:"Not Provided" }}
-                    </td>
-                    <td
-                        style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; font-size: 0.92rem; font-weight: 700;">
-                        {% if landlord.profile.nin %}
-                        <span
-                            style="color: #1e293b; font-weight: 800; background: #f1f5f9; padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.88rem;">
-                            {{ landlord.profile.nin }}
-                        </span>
-                        {% else %}
-                        <span style="color: #94a3b8; font-style: italic; font-size: 0.88rem;">None</span>
-                        {% endif %}
                     </td>
                     <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9;">
                         {% if landlord.profile.is_approved %}
