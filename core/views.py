@@ -934,8 +934,8 @@ def admin_dashboard(request):
     else:
         properties = Property.objects.filter(parent=None).prefetch_related('units').order_by('-created_at')
     
-    # Fetch all registered landlords with their profile details
-    landlords = User.objects.filter(profile__role='landlord').select_related('profile')
+    # Fetch all registered landlords with their profile details (pending approval first)
+    landlords = User.objects.filter(profile__role='landlord').select_related('profile').order_by('profile__is_approved', '-date_joined')
 
     # Fetch all registered tenants with their profile details and calculate renting progress dynamically
     tenants_raw = User.objects.filter(profile__role='tenant').select_related('profile').prefetch_related(

@@ -692,7 +692,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const months = {{ overview_analytics.monthly_labels_12 | safe }};
+    const months = {{ overview_analytics.monthly_labels_12|default:"[]"|safe }};
 
     // Shared Slice Percentage Plugin for Pie Charts
     const slicePercentagePlugin = {
@@ -739,7 +739,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Card 1: System Revenue Line Chart (Light Green Theme)
     const ctxRevenue = document.getElementById('chartRevenueLine')?.getContext('2d');
-    if (ctxRevenue) {
+    if (ctxRevenue && typeof Chart !== 'undefined') {
         const gradRev = ctxRevenue.createLinearGradient(0, 0, 0, 400);
         gradRev.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
         gradRev.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
@@ -750,7 +750,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 labels: months,
                 datasets: [{
                     label: 'Revenue (UGX)',
-                    data: {{ overview_analytics.monthly_revenue_data | safe }},
+                    data: {{ overview_analytics.monthly_revenue_data|default:"[]"|safe }},
                     borderColor: '#10b981',
                     backgroundColor: gradRev,
                     fill: true,
@@ -785,14 +785,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Card 2: Revenue Collections Bar Chart
     const ctxRevCol = document.getElementById('chartRevenueCollectionsBar')?.getContext('2d');
-    if (ctxRevCol) {
+    if (ctxRevCol && typeof Chart !== 'undefined') {
         new Chart(ctxRevCol, {
             type: 'bar',
             data: {
-                labels: {{ overview_analytics.rev_collections_labels | safe }},
+                labels: {{ overview_analytics.rev_collections_labels|default:"[]"|safe }},
                 datasets: [{
                     label: 'UGX Collections',
-                    data: {{ overview_analytics.rev_collections_data | safe }},
+                    data: {{ overview_analytics.rev_collections_data|default:"[]"|safe }},
                     backgroundColor: ['#10b981', '#059669', '#34d399', '#047857', '#065f46', '#6ee7b7'],
                     borderRadius: 6
                 }]
@@ -820,13 +820,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Card 3: Property Quantities Pie Chart
     const ctxPropQty = document.getElementById('chartPropertyQuantitiesPie')?.getContext('2d');
-    if (ctxPropQty) {
+    if (ctxPropQty && typeof Chart !== 'undefined') {
         new Chart(ctxPropQty, {
             type: 'pie',
             data: {
-                labels: {{ overview_analytics.prop_quantity_labels | safe }},
+                labels: {{ overview_analytics.prop_quantity_labels|default:"[]"|safe }},
                 datasets: [{
-                    data: {{ overview_analytics.prop_quantity_counts | safe }},
+                    data: {{ overview_analytics.prop_quantity_counts|default:"[]"|safe }},
                     backgroundColor: ['#059669', '#10b981', '#34d399', '#047857', '#065f46']
                 }]
             },
@@ -847,13 +847,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Card 4: Demand Geographical Divisions Pie Chart
     const ctxDemandGeo = document.getElementById('chartDemandGeoPie')?.getContext('2d');
-    if (ctxDemandGeo) {
+    if (ctxDemandGeo && typeof Chart !== 'undefined') {
         new Chart(ctxDemandGeo, {
             type: 'doughnut',
             data: {
-                labels: {{ overview_analytics.area_labels | safe }},
+                labels: {{ overview_analytics.area_labels|default:"[]"|safe }},
                 datasets: [{
-                    data: {{ overview_analytics.area_counts | safe }},
+                    data: {{ overview_analytics.area_counts|default:"[]"|safe }},
                     backgroundColor: [
                         '#10b981', '#059669', '#34d399', '#047857', '#065f46', 
                         '#6ee7b7', '#a7f3d0', '#0284c7', '#0369a1', '#0891b2', 
@@ -879,7 +879,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Card 5: Monthly Sales Trend Line Chart (Green Theme)
     const ctxSalesTrend = document.getElementById('chartSalesTrendLine')?.getContext('2d');
-    if (ctxSalesTrend) {
+    if (ctxSalesTrend && typeof Chart !== 'undefined') {
         const gradSales = ctxSalesTrend.createLinearGradient(0, 0, 0, 200);
         gradSales.addColorStop(0, 'rgba(5, 150, 105, 0.25)');
         gradSales.addColorStop(1, 'rgba(5, 150, 105, 0.0)');
@@ -890,7 +890,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 labels: months,
                 datasets: [{
                     label: 'Monthly Sales',
-                    data: {{ overview_analytics.monthly_sales_trend | safe }},
+                    data: {{ overview_analytics.monthly_sales_trend|default:"[]"|safe }},
                     borderColor: '#059669',
                     backgroundColor: gradSales,
                     fill: true,
@@ -2570,21 +2570,15 @@ document.addEventListener("DOMContentLoaded", function () {
 {% elif current_tab == 'inspections' %}
 <div class="row animate__animated animate__fadeIn" style="margin-top: 1.5rem;">
     <div class="col-12">
-        <div
-            style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
-            <div
-                style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 2rem;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <h3
-                        style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-calendar-check"></i> Tenant Inspection Schedules Directory
+                    <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.35rem; font-weight: 800;">
+                        Inspections
                     </h3>
-                    <p style="margin: 0.25rem 0 0 0; color: #64748b; font-size: 0.85rem;">Review, coordinate, and update
-                        incoming physical walk-through requests submitted by tenants</p>
                 </div>
-                <div
-                    style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; color: var(--color-gold); font-size: 0.9rem; white-space: nowrap;">
-                    <i class="fa-solid fa-clock"></i> {{ viewing_requests.count }} Total Request{{ viewing_requests.count|pluralize }}
+                <div style="background: rgba(203, 163, 88, 0.1); border: 1px solid rgba(203, 163, 88, 0.3); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 800; color: var(--color-gold); font-size: 0.95rem; white-space: nowrap;">
+                    Showing {{ viewing_requests.count }} Request{{ viewing_requests.count|pluralize }}
                 </div>
             </div>
 
@@ -2592,59 +2586,53 @@ document.addEventListener("DOMContentLoaded", function () {
                 <table class="admin-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: #f8fafc;">
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
                                 Tenant Details</th>
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
                                 Property Details</th>
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
                                 Owner / Landlord Details</th>
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
+                            <th style="padding: 1.25rem 2rem; text-align: left; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;">
                                 Schedule / Status</th>
-                            <th
-                                style="padding: 1.25rem 2rem; text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 120px;">
+                            <th style="padding: 1.25rem 2rem; text-align: center; font-size: 0.88rem; text-transform: uppercase; color: #334155; font-weight: 800; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; width: 140px;">
                                 Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for req in viewing_requests %}
-                        <tr style="transition: background-color 0.2s;"
-                            onmouseover="this.style.backgroundColor='#f8fafc'"
-                            onmouseout="this.style.backgroundColor='transparent'">
+                        <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
 
                             <!-- Tenant Details -->
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                                     {% if req.tenant.profile.image %}
-                                    <img src="{{ req.tenant.profile.image.url }}" alt="{{ req.tenant.username }}"
-                                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(16, 61, 40, 0.15);">
+                                    <img src="{{ req.tenant.profile.image.url }}" alt="{{ req.tenant.username }}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(16, 61, 40, 0.15);">
                                     {% else %}
-                                    <div
-                                        style="width: 40px; height: 40px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem;">
+                                    <div style="width: 42px; height: 42px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem;">
                                         {{ req.tenant.username|first|upper }}
                                     </div>
                                     {% endif %}
                                     <div>
-                                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.tenant.first_name }} {{ req.tenant.last_name }}</div>
-                                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.15rem;"><i
-                                                class="fa-solid fa-envelope"></i> {{ req.tenant.email }}</div>
-                                        <div style="font-size: 0.8rem; color: #64748b;"><i
-                                                class="fa-solid fa-phone"></i> {{ req.tenant.profile.phone|default:"N/A" }}</div>
+                                        <div style="font-weight: 800; color: #0f172a; font-size: 1.05rem;">
+                                            {% if req.tenant.first_name or req.tenant.last_name %}
+                                                {{ req.tenant.first_name }} {{ req.tenant.last_name }}
+                                            {% else %}
+                                                {{ req.tenant.username }}
+                                            {% endif %}
+                                        </div>
+                                        <div style="font-size: 0.9rem; color: #334155; margin-top: 0.15rem; font-weight: 600;">{{ req.tenant.email }}</div>
+                                        <div style="font-size: 0.9rem; color: #047857; font-weight: 700;">{{ req.tenant.profile.phone|default:"N/A" }}</div>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Property Details -->
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
-                                <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.property.title }}</div>
-                                <span
-                                    style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203,163,88,0.1); color: var(--color-gold); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; display: inline-block; margin-top: 0.25rem; margin-bottom: 0.25rem;">
+                                <div style="font-weight: 800; color: #0f172a; font-size: 1.05rem;">{{ req.property.title }}</div>
+                                <span style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(203,163,88,0.1); color: var(--color-gold); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 800; display: inline-block; margin-top: 0.25rem; margin-bottom: 0.25rem;">
                                     {{ req.property.get_category_display }}
                                 </span>
-                                <div style="font-size: 0.8rem; color: #64748b;"><i class="fa-solid fa-location-dot"></i>
+                                <div style="font-size: 0.9rem; color: #475569; font-weight: 600;">
                                     {{ req.property.location }}</div>
                             </td>
 
@@ -2652,30 +2640,30 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                                     {% if req.property.owner.profile.image %}
-                                    <img src="{{ req.property.owner.profile.image.url }}"
-                                        alt="{{ req.property.owner.username }}"
-                                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-gold);">
+                                    <img src="{{ req.property.owner.profile.image.url }}" alt="{{ req.property.owner.username }}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-gold);">
                                     {% else %}
-                                    <div
-                                        style="width: 40px; height: 40px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem;">
+                                    <div style="width: 42px; height: 42px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem;">
                                         {{ req.property.owner.username|first|upper }}
                                     </div>
                                     {% endif %}
                                     <div>
-                                        <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">{{ req.property.owner.first_name }} {{ req.property.owner.last_name }}</div>
-                                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.15rem;"><i
-                                                class="fa-solid fa-envelope"></i> {{ req.property.owner.email }}</div>
-                                        <div style="font-size: 0.8rem; color: #64748b;"><i
-                                                class="fa-solid fa-phone"></i> {{ req.property.owner.profile.phone|default:"N/A" }}</div>
+                                        <div style="font-weight: 800; color: #0f172a; font-size: 1.05rem;">
+                                            {% if req.property.owner.first_name or req.property.owner.last_name %}
+                                                {{ req.property.owner.first_name }} {{ req.property.owner.last_name }}
+                                            {% else %}
+                                                {{ req.property.owner.username }}
+                                            {% endif %}
+                                        </div>
+                                        <div style="font-size: 0.9rem; color: #334155; margin-top: 0.15rem; font-weight: 600;">{{ req.property.owner.email }}</div>
+                                        <div style="font-size: 0.9rem; color: #047857; font-weight: 700;">{{ req.property.owner.profile.phone|default:"N/A" }}</div>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Schedule / Status -->
                             <td style="padding: 1.25rem 2rem; border-bottom: 1px solid #f1f5f9; vertical-align: top;">
-                                <div
-                                    style="background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem 0.75rem; display: inline-flex; align-items: center; gap: 0.4rem; font-family: monospace; font-size: 0.85rem; font-weight: 600; color: #334155;">
-                                    <i class="fa-solid fa-clock" style="color: var(--color-gold);"></i> {{ req.preferred_date|date:"M d, Y @ H:i" }}
+                                <div style="background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem 0.75rem; display: inline-flex; align-items: center; font-family: monospace; font-size: 0.9rem; font-weight: 700; color: #334155;">
+                                    {{ req.preferred_date|date:"M d, Y @ H:i" }}
                                 </div>
                                 <div style="margin-top: 0.5rem;">
                                     {% if req.status == 'approved' %}
@@ -3051,16 +3039,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 {% elif current_tab == 'payments' %}
 
-<!-- Payments Tab Header & Metrics -->
+<!-- SECTION: PAYMENTS MANAGEMENT & FOREX LEDGER -->
 <div class="animate__animated animate__fadeIn" style="margin-top: 1.5rem;">
+    <!-- Payments Dashboard Header Card -->
     <div
-        style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem 2rem; margin-bottom: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.02);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
                 <h2
-                    style="font-family: var(--font-heading); color: var(--color-emerald-darkest); margin: 0; font-size: 1.5rem;">
-                    <i class="fa-solid fa-credit-card" style="color: var(--color-gold); margin-right: 0.5rem;"></i>
-                    Received Payments & Escrow Ledger
+                    style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.5rem; font-weight: 900;">
+                    Payment Records
                 </h2>
             </div>
 
@@ -3069,15 +3057,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 style="display: flex; gap: 0.4rem; background: #f8fafc; padding: 0.35rem; border-radius: 30px; border: 1px solid #e2e8f0;">
                 <button onclick="switchTimeframe('annual', this)" class="btn btn-sm btn-tf-switch"
                     style="border-radius: 20px; padding: 0.35rem 1.1rem; font-size: 0.82rem; font-weight: 700; background: #f1f5f9; color: #475569; border: none; cursor: pointer; transition: all 0.2s ease;">
-                    <i class="fa-solid fa-calendar-days"></i> Annually
+                    Annually
                 </button>
                 <button onclick="switchTimeframe('monthly', this)" class="btn btn-sm btn-tf-switch"
                     style="border-radius: 20px; padding: 0.35rem 1.1rem; font-size: 0.82rem; font-weight: 700; background: #f1f5f9; color: #475569; border: none; cursor: pointer; transition: all 0.2s ease;">
-                    <i class="fa-solid fa-calendar-week"></i> Monthly
+                    Monthly
                 </button>
                 <button onclick="switchTimeframe('daily', this)" class="btn btn-sm btn-tf-switch active"
                     style="border-radius: 20px; padding: 0.35rem 1.1rem; font-size: 0.82rem; font-weight: 700; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer; transition: all 0.2s ease;">
-                    <i class="fa-solid fa-clock"></i> Daily
+                    Daily
                 </button>
             </div>
         </div>
@@ -3192,27 +3180,27 @@ document.addEventListener("DOMContentLoaded", function () {
             </button>
             <button onclick="filterPaymentCategory('for_rent_booking', this)" class="btn btn-sm btn-category-filter"
                 style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
-                <i class="fa-solid fa-lock" style="color: #047857;"></i> For Rent Booking
+                For Rent Booking
             </button>
             <button onclick="filterPaymentCategory('for_sale_booking', this)" class="btn btn-sm btn-category-filter"
                 style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
-                <i class="fa-solid fa-tag" style="color: #b45309;"></i> For Sale Booking
+                For Sale Booking
             </button>
             <button onclick="filterPaymentCategory('rent', this)" class="btn btn-sm btn-category-filter"
                 style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
-                <i class="fa-solid fa-house" style="color: #1d4ed8;"></i> Rent
+                Rent
             </button>
             <button onclick="filterPaymentCategory('buying_house', this)" class="btn btn-sm btn-category-filter"
                 style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
-                <i class="fa-solid fa-key" style="color: #6b21a8;"></i> Buying a House
+                Buying a House
             </button>
             <button onclick="filterPaymentCategory('construction', this)" class="btn btn-sm btn-category-filter"
                 style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
-                <i class="fa-solid fa-helmet-safety" style="color: #0e7490;"></i> Construction
+                Construction
             </button>
             <button onclick="filterPaymentCategory('land', this)" class="btn btn-sm btn-category-filter"
                 style="background: #f1f5f9; color: #334155; border-radius: 20px; padding: 0.45rem 1.1rem; font-size: 0.85rem; font-weight: 700;">
-                <i class="fa-solid fa-tree" style="color: #0f766e;"></i> Land
+                Land
             </button>
         </div>
 
@@ -3277,7 +3265,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <button type="submit" class="btn btn-sm btn-emerald"
                     style="border-radius: 8px; padding: 0.35rem 0.85rem; font-size: 0.82rem; font-weight: 700; background: var(--color-emerald-darkest); color: white; border: none;">
-                    <i class="fa-solid fa-filter"></i> Filter
+                    Filter
                 </button>
 
                 {% if payment_stats.filter_month or payment_stats.filter_day %}
@@ -3289,11 +3277,9 @@ document.addEventListener("DOMContentLoaded", function () {
             </form>
 
             <div style="position: relative; min-width: 220px;">
-                <i class="fa-solid fa-magnifying-glass"
-                    style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.88rem;"></i>
                 <input type="text" id="paymentSearchInput" onkeyup="searchPaymentsTable()" class="form-control"
                     placeholder="Search transactions..."
-                    style="padding-left: 2.3rem; border-radius: 8px; font-size: 0.88rem; border-color: #cbd5e1;">
+                    style="padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.88rem; border-color: #cbd5e1;">
             </div>
         </div>
     </div>
@@ -3314,7 +3300,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <a href="{% url 'download_payments_pdf' %}?filter_month={{ payment_stats.filter_month }}&filter_day={{ payment_stats.filter_day }}"
                 class="btn btn-gold"
                 style="padding: 0.5rem 1.25rem; font-size: 0.85rem; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.45rem; text-decoration: none; box-shadow: 0 2px 8px rgba(180, 83, 9, 0.15);">
-                <i class="fa-solid fa-file-pdf"></i> Download PDF Report
+                Download PDF Report
             </a>
         </div>
 
@@ -3361,9 +3347,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div style="font-weight: 800; color: #0f172a; font-size: 1.0rem; margin-bottom: 0.2rem;">
                                 {{ p.tenant.first_name }} {{ p.tenant.last_name|default:p.tenant.username }}
                             </div>
-                            <small
-                                style="color: #475569; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem;">
-                                <i class="fa-solid fa-envelope" style="color: var(--color-gold);"></i> {{ p.tenant.email }}
+                            <small style="color: #475569; font-size: 0.85rem; font-weight: 600;">
+                                {{ p.tenant.email }}
                             </small>
                         </td>
                         <td style="padding: 1.2rem 1.25rem;">
@@ -3374,7 +3359,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </a>
                             <small
                                 style="color: #475569; font-size: 0.85rem; font-weight: 600; display: block; margin-top: 0.2rem;">
-                                <i class="fa-solid fa-location-dot" style="color: #047857;"></i> {{ p.property.location }}
+                                {{ p.property.location }}
                             </small>
                             {% else %}
                             <span style="font-weight: 700; color: #475569; font-size: 0.95rem;">General Escrow</span>
@@ -3387,8 +3372,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             </span>
                         </td>
                         <td style="padding: 1.2rem 1.25rem; font-weight: 800; color: #1e293b; font-size: 0.92rem;">
-                            <i class="fa-solid fa-credit-card"
-                                style="color: var(--color-gold); margin-right: 0.4rem;"></i>
                             {{ p.payment_method }}
                         </td>
                         <td
@@ -3403,21 +3386,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         <td style="padding: 1.2rem 1.25rem;">
                             <span class="status-pill"
                                 style="background: {{ p.status_bg }}; color: {{ p.status_color }}; border: 1px solid {{ p.status_border }}; font-size: 0.82rem; font-weight: 800; padding: 0.4rem 0.85rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                                {% if p.status == 'Paid' %}
-                                <i class="fa-solid fa-circle-check" style="color: #16a34a;"></i> Paid
-                                {% elif p.status == 'Pending payment' %}
-                                <i class="fa-solid fa-clock" style="color: #d97706;"></i> Pending payment
-                                {% else %}
-                                <i class="fa-solid fa-circle-xmark" style="color: #dc2626;"></i> Failed payment
-                                {% endif %}
+                                {{ p.status }}
                             </span>
                         </td>
                     </tr>
                     {% empty %}
                     <tr id="noPaymentsRow">
                         <td colspan="8" style="text-align: center; padding: 4rem 2rem; color: #64748b;">
-                            <i class="fa-solid fa-receipt"
-                                style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;"></i>
                             <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No payment transactions logged
                                 in this category yet.</p>
                         </td>
@@ -3432,22 +3407,22 @@ document.addEventListener("DOMContentLoaded", function () {
 <script>
     const timeframeData = {
         annual: {
-            labels: {{ payment_stats.annual_labels|safe }},
-            booking: {{ payment_stats.booking_annual_counts|safe }},
-            rent2: {{ payment_stats.rent_2_annual_counts|safe }},
-            rent3: {{ payment_stats.rent_3_annual_counts|safe }}
+            labels: {{ payment_stats.annual_labels|default:"[]"|safe }},
+            booking: {{ payment_stats.booking_annual_counts|default:"[]"|safe }},
+            rent2: {{ payment_stats.rent_2_annual_counts|default:"[]"|safe }},
+            rent3: {{ payment_stats.rent_3_annual_counts|default:"[]"|safe }}
         },
         monthly: {
-            labels: {{ payment_stats.monthly_labels|safe }},
-            booking: {{ payment_stats.booking_monthly_counts|safe }},
-            rent2: {{ payment_stats.rent_2_monthly_counts|safe }},
-            rent3: {{ payment_stats.rent_3_monthly_counts|safe }}
+            labels: {{ payment_stats.monthly_labels|default:"[]"|safe }},
+            booking: {{ payment_stats.booking_monthly_counts|default:"[]"|safe }},
+            rent2: {{ payment_stats.rent_2_monthly_counts|default:"[]"|safe }},
+            rent3: {{ payment_stats.rent_3_monthly_counts|default:"[]"|safe }}
         },
         daily: {
-            labels: {{ payment_stats.daily_labels|safe }},
-            booking: {{ payment_stats.booking_daily_counts|safe }},
-            rent2: {{ payment_stats.rent_2_daily_counts|safe }},
-            rent3: {{ payment_stats.rent_3_daily_counts|safe }}
+            labels: {{ payment_stats.daily_labels|default:"[]"|safe }},
+            booking: {{ payment_stats.booking_daily_counts|default:"[]"|safe }},
+            rent2: {{ payment_stats.rent_2_daily_counts|default:"[]"|safe }},
+            rent3: {{ payment_stats.rent_3_daily_counts|default:"[]"|safe }}
         }
     };
 
