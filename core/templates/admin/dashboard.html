@@ -2604,12 +2604,42 @@ function filterOfficeApps() {
     </div>
 </div>
 
-<!-- REGISTERED AGENTS TABLE -->
+<!-- REGISTERED AGENTS TABLE & FILTERS -->
 <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 2rem;">
     <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; display: flex; align-items: center; justify-content: space-between;">
         <h3 style="margin: 0; font-size: 1.1rem; color: #0f172a; font-family: var(--font-heading); font-weight: 800;">
             Registered Inspection Agents
         </h3>
+    </div>
+
+    <!-- FILTER BAR (NAME, ROLE, AREA) -->
+    <div style="padding: 1rem 1.5rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <!-- Filter 1: Search by Name / ID / Phone -->
+        <div style="flex: 1; min-width: 200px;">
+            <input type="text" id="agent-search-name" placeholder="Search by Name, ID or Phone..." onkeyup="filterAgentsTable()" style="width: 100%; padding: 0.55rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none; background: white;">
+        </div>
+
+        <!-- Filter 2: Filter by Role -->
+        <div style="min-width: 180px;">
+            <select id="agent-filter-role" onchange="filterAgentsTable()" style="width: 100%; padding: 0.55rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none; background: white;">
+                <option value="">All Roles</option>
+                {% for role in agent_roles %}
+                <option value="{{ role.name|lower }}">{{ role.name }}</option>
+                {% endfor %}
+                <option value="__none__">No Role Assigned</option>
+            </select>
+        </div>
+
+        <!-- Filter 3: Filter by Area (District) -->
+        <div style="min-width: 180px;">
+            <select id="agent-filter-area" onchange="filterAgentsTable()" style="width: 100%; padding: 0.55rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none; background: white;">
+                <option value="">All Areas</option>
+                {% for d in service_districts %}
+                <option value="{{ d.name|lower }}">{{ d.name }}</option>
+                {% endfor %}
+                <option value="__none__">No Area Assigned (NONE)</option>
+            </select>
+        </div>
     </div>
 
     <div style="overflow-x: auto;">
@@ -2634,13 +2664,13 @@ function filterOfficeApps() {
             </thead>
             <tbody>
                 {% for agent in agents %}
-                <tr style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
-                    <!-- 1. Photo Only -->
+                <tr class="agent-row" data-name="{{ agent.name|lower }} {{ agent.agent_id|default:'' }} {{ agent.phone|default:'' }} {{ agent.email|lower }}" data-role="{% if agent.role %}{{ agent.role.name|lower }}{% else %}no role assigned{% endif %}" data-area="{% if agent.district or agent.division %}{% if agent.district %}{{ agent.district.name|lower }}{% endif %} {% if agent.division %}{{ agent.division.name|lower }}{% endif %}{% else %}none{% endif %}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <!-- 1. Photo Only (Clickable) -->
                     <td style="padding: 0.65rem 1.25rem; text-align: center; vertical-align: middle;">
                         {% if agent.image %}
-                        <img src="{{ agent.image.url }}" alt="{{ agent.name }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1.5px solid #cbd5e1; display: inline-block;">
+                        <img src="{{ agent.image.url }}" alt="{{ agent.name }}" onclick="openAgentPhotoModal('{{ agent.image.url }}', '{{ agent.name|escapejs }}')" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1.5px solid #cbd5e1; display: inline-block; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="Click to expand full image">
                         {% else %}
-                        <div style="width: 38px; height: 38px; background: #e0f2fe; color: #0284c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">
+                        <div style="width: 38px; height: 38px; background: #e0f2fe; color: #0284c7; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;" title="No custom image uploaded">
                             {{ agent.name|slice:":2"|upper }}
                         </div>
                         {% endif %}
@@ -2706,6 +2736,11 @@ function filterOfficeApps() {
                     </td>
                 </tr>
                 {% endfor %}
+                <tr id="agent-no-results-row" style="display: none;">
+                    <td colspan="7" style="padding: 3rem 1.25rem; text-align: center; color: #94a3b8;">
+                        <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No agents matching your filter criteria.</p>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -2845,6 +2880,21 @@ function filterOfficeApps() {
                 <button type="submit" style="background: var(--color-gold); border: none; color: #000; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 800; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 12px rgba(203, 163, 88, 0.35);">Save Role</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- AGENT PHOTO LIGHTBOX POP-UP MODAL -->
+<div id="agent-photo-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 999999; align-items: center; justify-content: center; padding: 1.5rem;" onclick="closeAgentPhotoModal()">
+    <div style="background: white; border-radius: 16px; width: 100%; max-width: 500px; padding: 1.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; position: relative;" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+            <h3 id="agent-photo-modal-title" style="margin: 0; font-family: var(--font-heading); font-size: 1.15rem; color: #0f172a; font-weight: 800;">
+                Agent Photo
+            </h3>
+            <button type="button" onclick="closeAgentPhotoModal()" style="background: none; border: none; font-size: 1.6rem; font-weight: 700; color: #64748b; cursor: pointer; padding: 0 0.5rem;">&times;</button>
+        </div>
+        <div style="max-height: 70vh; overflow: hidden; border-radius: 12px; background: #0f172a; display: flex; align-items: center; justify-content: center; padding: 0.5rem;">
+            <img id="agent-photo-modal-img" src="" alt="Agent Photo" style="max-width: 100%; max-height: 65vh; object-fit: contain; border-radius: 8px;">
+        </div>
     </div>
 </div>
 {% elif current_tab == 'inspections' %}
@@ -4847,6 +4897,65 @@ function filterOfficeApps() {
     function closeAddAgentRoleModal() {
         const modal = document.getElementById('add-agent-role-modal');
         if (modal) modal.style.display = 'none';
+    }
+
+    function openAgentPhotoModal(imgUrl, agentName) {
+        const modal = document.getElementById('agent-photo-modal');
+        const img = document.getElementById('agent-photo-modal-img');
+        const title = document.getElementById('agent-photo-modal-title');
+        if (modal && img) {
+            img.src = imgUrl;
+            if (title) title.textContent = agentName ? agentName + ' - Photo' : 'Agent Photo';
+            modal.style.display = 'flex';
+        }
+    }
+
+    function closeAgentPhotoModal() {
+        const modal = document.getElementById('agent-photo-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function filterAgentsTable() {
+        const nameQuery = (document.getElementById('agent-search-name')?.value || '').toLowerCase().trim();
+        const roleQuery = (document.getElementById('agent-filter-role')?.value || '').toLowerCase().trim();
+        const areaQuery = (document.getElementById('agent-filter-area')?.value || '').toLowerCase().trim();
+
+        const rows = document.querySelectorAll('.agent-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const nameText = (row.getAttribute('data-name') || '').toLowerCase();
+            const roleText = (row.getAttribute('data-role') || '').toLowerCase();
+            const areaText = (row.getAttribute('data-area') || '').toLowerCase();
+
+            const matchesName = !nameQuery || nameText.includes(nameQuery);
+
+            let matchesRole = true;
+            if (roleQuery === '__none__') {
+                matchesRole = roleText === '' || roleText.includes('no role assigned');
+            } else if (roleQuery) {
+                matchesRole = roleText.includes(roleQuery);
+            }
+
+            let matchesArea = true;
+            if (areaQuery === '__none__') {
+                matchesArea = areaText === '' || areaText.includes('none');
+            } else if (areaQuery) {
+                matchesArea = areaText.includes(areaQuery);
+            }
+
+            if (matchesName && matchesRole && matchesArea) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsRow = document.getElementById('agent-no-results-row');
+        if (noResultsRow) {
+            noResultsRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+        }
     }
 </script>
 {% endblock %}
