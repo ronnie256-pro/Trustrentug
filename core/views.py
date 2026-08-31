@@ -1087,7 +1087,7 @@ def admin_dashboard(request):
     agents = InspectionAgent.objects.all().select_related('role', 'district', 'division').order_by('-joined_at')
     agent_roles = AgentRole.objects.all().order_by('name')
     inspections = Inspection.objects.all().select_related('property').prefetch_related('reports', 'reports__agent', 'reports__agent__role').order_by('-created_at')
-    viewing_requests = ViewingRequest.objects.all().select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile').order_by('-created_at')
+    viewing_requests = ViewingRequest.objects.all().select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile', 'assigned_agent', 'assigned_agent__role').order_by('-created_at')
     
     amenities = list(PropertyAmenity.objects.all().order_by('layer', 'category', 'name'))
     for a in amenities:
@@ -3374,9 +3374,11 @@ def admin_viewing_detail(request, viewing_id):
         messages.error(request, 'Access denied. Only system administrators can access this page.')
         return redirect('login')
         
-    viewing_request = get_object_or_404(ViewingRequest.objects.select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile'), id=viewing_id)
+    viewing_request = get_object_or_404(ViewingRequest.objects.select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile', 'assigned_agent', 'assigned_agent__role'), id=viewing_id)
+    agents = InspectionAgent.objects.all().select_related('role').order_by('name')
     return render(request, 'admin/viewing_detail.html', {
         'viewing': viewing_request,
+        'agents': agents,
         'current_tab': 'inspections'
     })
 
@@ -3388,12 +3390,21 @@ def admin_viewing_status_update(request, viewing_id):
     if request.method == 'POST':
         viewing = get_object_or_404(ViewingRequest, id=viewing_id)
         status = request.POST.get('status')
-        if status in ['approved', 'declined']:
+        agent_id = request.POST.get('agent_id')
+        
+        if status in ['approved', 'declined', 'pending']:
             viewing.status = status
-            viewing.save()
-            messages.success(request, f"Inspection request status has been updated to {status.capitalize()} successfully!")
-        else:
-            messages.error(request, "Invalid status action.")
+            
+        if agent_id is not None:
+            if agent_id == '' or agent_id == '0' or agent_id == 'none':
+                viewing.assigned_agent = None
+            else:
+                agent = InspectionAgent.objects.filter(id=agent_id).first()
+                if agent:
+                    viewing.assigned_agent = agent
+                    
+        viewing.save()
+        messages.success(request, "Inspection request updated successfully!")
             
     return redirect('/admin-dashboard/?tab=inspections')
 

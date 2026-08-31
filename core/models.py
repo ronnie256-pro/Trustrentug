@@ -377,6 +377,7 @@ class TenantRental(models.Model):
 class ViewingRequest(models.Model):
     tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='viewing_requests')
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='viewing_requests')
+    assigned_agent = models.ForeignKey('InspectionAgent', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_viewings')
     preferred_date = models.DateTimeField()
     status = models.CharField(
         max_length=20, 

@@ -6,8 +6,8 @@
     <!-- Breadcrumbs & Navigation -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <a href="/admin-dashboard/?tab=inspections" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem;">
-                <i class="fa-solid fa-arrow-left"></i> Back to Inspections
+            <a href="/admin-dashboard/?tab=inspections" style="color: var(--color-emerald-dark); text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+                &larr; Back to Inspections
             </a>
             <span style="color: #94a3b8;">/</span>
             <span style="color: #64748b; font-size: 0.9rem;">Viewing Request Details</span>
@@ -16,15 +16,15 @@
         <div>
             {% if viewing.status == 'approved' %}
             <span style="font-size: 0.85rem; background: #ecfdf5; color: #059669; border: 1px solid rgba(5, 150, 105, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
-                <i class="fa-solid fa-circle-check"></i> SCHEDULE APPROVED
+                SCHEDULE APPROVED
             </span>
             {% elif viewing.status == 'declined' %}
             <span style="font-size: 0.85rem; background: #fef2f2; color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
-                <i class="fa-solid fa-circle-xmark"></i> SCHEDULE DECLINED
+                SCHEDULE DECLINED
             </span>
             {% else %}
             <span style="font-size: 0.85rem; background: #fffbeb; color: #d97706; border: 1px solid rgba(217, 119, 6, 0.2); padding: 0.4rem 1rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
-                <i class="fa-solid fa-hourglass-half"></i> PENDING COORDINATION
+                PENDING COORDINATION
             </span>
             {% endif %}
         </div>
@@ -39,10 +39,10 @@
             </h2>
             <div style="display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap;">
                 <span style="font-size: 0.85rem; color: #475569; display: inline-flex; align-items: center; gap: 0.35rem;">
-                    <i class="fa-solid fa-calendar-day" style="color: var(--color-gold);"></i> <strong>Date:</strong> {{ viewing.preferred_date|date:"l, F d, Y" }}
+                    <strong>Date:</strong> {{ viewing.preferred_date|date:"l, F d, Y" }}
                 </span>
                 <span style="font-size: 0.85rem; color: #475569; display: inline-flex; align-items: center; gap: 0.35rem;">
-                    <i class="fa-solid fa-clock" style="color: var(--color-gold);"></i> <strong>Time:</strong> {{ viewing.preferred_date|date:"H:i A (EST)" }}
+                    <strong>Time:</strong> {{ viewing.preferred_date|date:"H:i A" }}
                 </span>
             </div>
         </div>
@@ -53,15 +53,15 @@
             <form action="{% url 'admin_viewing_status_update' viewing.id %}" method="POST" style="margin: 0;">
                 {% csrf_token %}
                 <input type="hidden" name="status" value="declined">
-                <button type="submit" class="btn" style="background: white; border: 1px solid #dc2626; color: #dc2626; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='white'">
-                    <i class="fa-solid fa-xmark"></i> Decline Request
+                <button type="submit" class="btn" style="background: white; border: 1px solid #dc2626; color: #dc2626; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='white'">
+                    Decline Request
                 </button>
             </form>
             <form action="{% url 'admin_viewing_status_update' viewing.id %}" method="POST" style="margin: 0;">
                 {% csrf_token %}
                 <input type="hidden" name="status" value="approved">
-                <button type="submit" class="btn btn-gold" style="background: var(--color-gold); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; transition: all 0.2s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
-                    <i class="fa-solid fa-check"></i> Approve & Schedule
+                <button type="submit" class="btn btn-gold" style="background: var(--color-gold); border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; box-shadow: var(--shadow-sm);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+                    Approve & Schedule
                 </button>
             </form>
         </div>
@@ -84,7 +84,7 @@
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
                 <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; align-items: center; justify-content: space-between;">
                     <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-user-shield"></i> Tenant Vetting Profile
+                        Tenant Profile
                     </h3>
                     <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">ID: #{{ viewing.tenant.id }}</span>
                 </div>
@@ -102,7 +102,7 @@
                         <div>
                             <h4 style="margin: 0; font-size: 1.35rem; color: #1e293b; font-family: var(--font-heading);">{{ viewing.tenant.first_name }} {{ viewing.tenant.last_name }}</h4>
                             <span style="color: #64748b; font-size: 0.9rem; display: block; margin-top: 0.25rem;">
-                                <i class="fa-solid fa-id-badge" style="color: var(--color-gold); margin-right: 0.35rem;"></i> Verified Tenant Account
+                                Verified Tenant Account
                             </span>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
                 <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
                     <h3 style="margin: 0; font-size: 1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-pencil"></i> Special Accommodations & Coordinator Notes
+                        Special Accommodations & Coordinator Notes
                     </h3>
                 </div>
                 <div style="padding: 1.5rem 1.75rem;">
@@ -164,7 +164,7 @@
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
                 <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
                     <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-house-circle-check"></i> Property Specs & Details
+                        Property Specs & Details
                     </h3>
                 </div>
                 
@@ -177,7 +177,7 @@
                     <div style="display: flex; flex-direction: column; gap: 1rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem;">
                         <div>
                             <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Location Coordinates</span>
-                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;"><i class="fa-solid fa-location-dot" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ viewing.property.location }}</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.property.location }}</span>
                         </div>
                         <div>
                             <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Price per Month</span>
@@ -195,7 +195,7 @@
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
                 <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
                     <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="fa-solid fa-user-shield"></i> Landlord / Property Owner Contacts
+                        Landlord / Property Owner Contacts
                     </h3>
                 </div>
                 
@@ -214,7 +214,7 @@
                                 {{ viewing.property.owner.first_name }} {{ viewing.property.owner.last_name }}
                             </h4>
                             <span style="color: #10b981; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">
-                                <i class="fa-solid fa-circle-check"></i> Approved Landlord
+                                Approved Landlord
                             </span>
                         </div>
                     </div>
@@ -227,9 +227,72 @@
                         </div>
                         <div>
                             <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Landlord Contact Line</span>
-                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;"><i class="fa-solid fa-phone" style="color: var(--color-gold); margin-right: 0.35rem;"></i> {{ viewing.property.owner.profile.phone|default:"Not Available" }}</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.property.owner.profile.phone|default:"Not Available" }}</span>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Assigned Inspection Agent Card -->
+            <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
+                <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
+                        Assigned Inspection Agent
+                    </h3>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    {% if viewing.assigned_agent %}
+                    <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;">
+                        {% if viewing.assigned_agent.image %}
+                        <img src="{{ viewing.assigned_agent.image.url }}" alt="{{ viewing.assigned_agent.name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-emerald); box-shadow: var(--shadow-sm);">
+                        {% else %}
+                        <div style="width: 60px; height: 60px; background: rgba(16, 61, 40, 0.08); color: var(--color-emerald-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem;">
+                            {{ viewing.assigned_agent.name|slice:":2"|upper }}
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.2rem; color: #1e293b; font-family: var(--font-heading);">
+                                {{ viewing.assigned_agent.name }}
+                            </h4>
+                            {% if viewing.assigned_agent.role %}
+                            <span style="font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 700; display: inline-block; margin-top: 0.25rem;">
+                                {{ viewing.assigned_agent.role.name }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem; border-top: 1px dashed #f1f5f9; padding-top: 1.5rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <span style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Agent Contact</span>
+                            <span style="font-size: 0.95rem; font-weight: 600; color: #334155;">{{ viewing.assigned_agent.phone|default:viewing.assigned_agent.email }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="text-align: center; padding: 1rem 0 1.5rem; color: #64748b;">
+                        <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No agent assigned yet to conduct this inspection.</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Assignment Form -->
+                    <form action="{% url 'admin_viewing_status_update' viewing.id %}" method="POST" style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem; margin: 0;">
+                        {% csrf_token %}
+                        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;">Assign / Change Inspection Agent:</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <select name="agent_id" style="flex: 1; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; color: #334155;">
+                                <option value="none">-- Unassigned --</option>
+                                {% for ag in agents %}
+                                <option value="{{ ag.id }}" {% if viewing.assigned_agent and viewing.assigned_agent.id == ag.id %}selected{% endif %}>
+                                    {{ ag.name }} ({% if ag.role %}{{ ag.role.name }}{% else %}Agent{% endif %})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-gold" style="padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 6px; font-weight: 600; color: white; border: none; cursor: pointer;">
+                                Save Assignment
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
