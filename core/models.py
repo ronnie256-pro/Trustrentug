@@ -223,6 +223,8 @@ class InspectionAgent(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=50)
     role = models.ForeignKey(AgentRole, on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
+    district = models.ForeignKey('ServiceDistrict', on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
+    division = models.ForeignKey('ServiceDivision', on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
     image = models.FileField(upload_to='agents/', null=True, blank=True)
     agent_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     joined_at = models.DateTimeField(auto_now_add=True)

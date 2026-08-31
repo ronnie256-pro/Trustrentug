@@ -574,6 +574,8 @@ def admin_dashboard(request):
             agent_phone = request.POST.get('agent_phone', '').strip()
             agent_id_input = request.POST.get('agent_id', '').strip()
             agent_role_id = request.POST.get('agent_role_id')
+            agent_district_id = request.POST.get('agent_district')
+            agent_division_id = request.POST.get('agent_division')
             agent_image = request.FILES.get('agent_image')
             
             if agent_name and agent_email and agent_phone:
@@ -581,6 +583,14 @@ def admin_dashboard(request):
                     role_obj = None
                     if agent_role_id:
                         role_obj = AgentRole.objects.get(id=agent_role_id)
+
+                    district_obj = None
+                    if agent_district_id:
+                        district_obj = ServiceDistrict.objects.get(id=agent_district_id)
+
+                    division_obj = None
+                    if agent_division_id:
+                        division_obj = ServiceDivision.objects.get(id=agent_division_id)
                     
                     # Validate custom agent ID format (numeric) if provided
                     if agent_id_input and not agent_id_input.isdigit():
@@ -592,6 +602,8 @@ def admin_dashboard(request):
                         email=agent_email,
                         phone=agent_phone,
                         role=role_obj,
+                        district=district_obj,
+                        division=division_obj,
                         image=agent_image,
                         agent_id=agent_id_input if agent_id_input else None
                     )
@@ -1072,7 +1084,7 @@ def admin_dashboard(request):
     }
     
     # Fetch agents and roles
-    agents = InspectionAgent.objects.all().select_related('role').order_by('-joined_at')
+    agents = InspectionAgent.objects.all().select_related('role', 'district', 'division').order_by('-joined_at')
     agent_roles = AgentRole.objects.all().order_by('name')
     inspections = Inspection.objects.all().select_related('property').prefetch_related('reports', 'reports__agent', 'reports__agent__role').order_by('-created_at')
     viewing_requests = ViewingRequest.objects.all().select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile').order_by('-created_at')
