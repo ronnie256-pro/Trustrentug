@@ -930,7 +930,9 @@ def admin_dashboard(request):
 
     # Fetch properties based on active tab
     if tab == 'properties':
-        properties = Property.objects.all().select_related('owner', 'parent').order_by('-created_at')
+        properties = Property.objects.all().select_related('owner', 'parent').exclude(
+            Q(category__icontains='office') | Q(category__in=['shared_office', 'private_office', 'office'])
+        ).order_by('-created_at')
     else:
         properties = Property.objects.filter(parent=None).prefetch_related('units').order_by('-created_at')
     
