@@ -2312,170 +2312,201 @@
 {% elif current_tab == 'offices' %}
 <!-- Offices Corporate Upgrade Applications Section -->
 <div class="dashboard-header"
-    style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
     <div>
-        <h2
-            style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.85rem; margin: 0;">
-            <i class="fa-solid fa-briefcase" style="color: #0284c7; margin-right: 0.5rem;"></i> Corporate Office Upgrade
-            Applications
+        <h2 style="font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.75rem; margin: 0; font-weight: 800;">
+            Office Applications
         </h2>
-        <p style="color: #64748b; margin-top: 0.25rem; margin-bottom: 0;">
-            Review corporate office upgrade requests, BRN registration credentials, certificate PDFs, and UGX 100,000
-            reservation payment statuses.
-        </p>
     </div>
-    <div
-        style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; color: #0284c7; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem;">
-        <i class="fa-solid fa-building"></i> Total Applications: {{ office_applications|length }}
+
+    <!-- Inline Compact Filters -->
+    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <input type="text" id="officeSearchCompany" oninput="filterOfficeApps()" placeholder="Search company..." style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #0f172a; font-weight: 600; width: 180px;">
+
+        <select id="officeFilterType" onchange="filterOfficeApps()" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #0f172a; font-weight: 600; width: 130px;">
+            <option value="all">All Types</option>
+            <option value="shared">Shared</option>
+            <option value="private">Private</option>
+        </select>
+
+        <select id="officeFilterStatus" onchange="filterOfficeApps()" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #0f172a; font-weight: 600; width: 130px;">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="declined">Declined</option>
+        </select>
+
+        <span style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); padding: 0.4rem 0.75rem; border-radius: 6px; font-weight: 800; color: #0284c7; font-size: 0.82rem; display: inline-flex; align-items: center;">
+            Total: {{ office_applications|length }}
+        </span>
     </div>
 </div>
 
-<div class="table-card" style="box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden;">
-    <div class="table-header"
-        style="background: #f8fafc; padding: 1.25rem 1.75rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0; font-size: 1.1rem; color: #1e293b; font-weight: 700;">Submitted Company Applications</h3>
-        <span style="font-size: 0.85rem; color: #64748b;">Sorted by most recent</span>
-    </div>
-
-    <div style="overflow-x: auto;">
+<div class="table-card" style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); overflow: hidden; height: calc(100vh - 170px); display: flex; flex-direction: column;">
+    <div style="flex: 1; overflow-y: auto; overflow-x: auto;">
         <table class="admin-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr
-                    style="background: #f1f5f9; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #475569; letter-spacing: 0.05em;">
-                    <th style="padding: 1rem 1.25rem;">Company / BRN</th>
-                    <th style="padding: 1rem 1.25rem;">Contact Person</th>
-                    <th style="padding: 1rem 1.25rem;">Office Property</th>
-                    <th style="padding: 1rem 1.25rem;">Industry & Desks</th>
-                    <th style="padding: 1rem 1.25rem;">Payment (UGX 100k)</th>
-                    <th style="padding: 1rem 1.25rem;">Cert & Logo</th>
-                    <th style="padding: 1rem 1.25rem;">Status & Actions</th>
+            <thead style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">
+                <tr style="background: #f8fafc;">
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">Company Name</th>
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">Office</th>
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">Office Type</th>
+                    <th style="padding: 0.75rem 1.25rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">Status</th>
+                    <th style="padding: 0.75rem 1.25rem; text-align: center; font-size: 0.8rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 1px solid #e2e8f0; width: 100px; background: #f8fafc;">View</th>
                 </tr>
             </thead>
             <tbody>
                 {% for app in office_applications %}
-                <tr
-                    style="border-bottom: 1px solid #f1f5f9; background: {% if app.payment_status == 'paid' %}#f0fdf4{% else %}#ffffff{% endif %};">
-                    <td style="padding: 1.1rem 1.25rem;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            {% if app.company_logo %}
-                            <img src="{{ app.company_logo.url }}" alt="{{ app.company_name }}"
-                                style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid #cbd5e1;">
-                            {% else %}
-                            <div
-                                style="width: 44px; height: 44px; border-radius: 8px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem;">
-                                {{ app.company_name|slice:":1"|upper }}
-                            </div>
-                            {% endif %}
-                            <div>
-                                <strong style="font-size: 0.95rem; color: #0f172a; display: block;">{{ app.company_name
-                                    }}</strong>
-                                <span style="font-size: 0.78rem; color: #64748b; font-family: monospace;">BRN: {{
-                                    app.brn }}</span>
-                            </div>
+                <tr class="office-app-row" data-company="{{ app.company_name|lower }}" data-type="{% if app.property.category == 'shared_office' or 'shared' in app.property.title|lower or 'co-working' in app.property.title|lower or 'desk' in app.property.title|lower %}shared{% else %}private{% endif %}" data-status="{{ app.status }}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                    <!-- 1. Company Name -->
+                    <td style="padding: 0.65rem 1.25rem; vertical-align: middle;">
+                        <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">
+                            {{ app.company_name }}
                         </div>
                     </td>
 
-                    <td style="padding: 1.1rem 1.25rem;">
-                        <strong style="color: #334155; font-size: 0.88rem; display: block;">{{ app.contact_person
-                            }}</strong>
-                        <span style="font-size: 0.8rem; color: #64748b; display: block;"><i class="fa-solid fa-envelope"
-                                style="font-size: 0.75rem;"></i> {{ app.email }}</span>
-                        <span style="font-size: 0.8rem; color: #64748b; display: block;"><i class="fa-solid fa-phone"
-                                style="font-size: 0.75rem;"></i> {{ app.phone }}</span>
-                    </td>
-
-                    <td style="padding: 1.1rem 1.25rem;">
-                        <a href="{% url 'property_detail' app.property.id %}" target="_blank"
-                            style="font-weight: 700; color: #0284c7; text-decoration: none; font-size: 0.9rem;">
-                            {{ app.property.title }} <i class="fa-solid fa-arrow-up-right-from-square"
-                                style="font-size: 0.75rem;"></i>
-                        </a>
-                        <span style="font-size: 0.78rem; color: #64748b; display: block; margin-top: 0.2rem;">UGX {{
-                            app.property.price|floatformat:0|intcomma }}/mo</span>
-                    </td>
-
-                    <td style="padding: 1.1rem 1.25rem;">
-                        <span
-                            style="background: #f1f5f9; color: #334155; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; display: inline-block; margin-bottom: 0.25rem;">
-                            {{ app.industry|default:"General Enterprise" }}
-                        </span>
-                        <div style="font-size: 0.8rem; color: #64748b;">
-                            <strong>{{ app.number_of_staff }}</strong> Staff / Desks
+                    <!-- 2. Office -->
+                    <td style="padding: 0.65rem 1.25rem; vertical-align: middle;">
+                        <div style="font-weight: 700; color: #334155; font-size: 0.88rem;">
+                            {{ app.property.title }}
                         </div>
-                        {% if app.preferred_move_in %}
-                        <div style="font-size: 0.75rem; color: #64748b;">
-                            Move-in: {{ app.preferred_move_in|date:"M d, Y" }}
-                        </div>
-                        {% endif %}
                     </td>
 
-                    <td style="padding: 1.1rem 1.25rem;">
-                        {% if app.payment_status == 'paid' %}
-                        <span
-                            style="background: #dcfce7; color: #166534; padding: 0.3rem 0.75rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
-                            <i class="fa-solid fa-circle-check"></i> Paid UGX 100k
-                        </span>
-                        {% if app.expires_at %}
-                        <span style="font-size: 0.72rem; color: #15803d; display: block; margin-top: 0.3rem;">
-                            Locked until {{ app.expires_at|date:"M d, H:i" }}
-                        </span>
-                        {% endif %}
+                    <!-- 3. Office Type -->
+                    <td style="padding: 0.65rem 1.25rem; vertical-align: middle;">
+                        {% if app.property.category == 'shared_office' or 'shared' in app.property.title|lower or 'co-working' in app.property.title|lower or 'desk' in app.property.title|lower %}
+                        <span style="font-size: 0.78rem; font-weight: 800; color: #0284c7; background: #e0f2fe; border: 1px solid rgba(2, 132, 199, 0.25); padding: 0.2rem 0.65rem; border-radius: 20px; display: inline-block;">Shared Office</span>
                         {% else %}
-                        <span
-                            style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.75rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
-                            <i class="fa-solid fa-clock"></i> Pending Payment
-                        </span>
+                        <span style="font-size: 0.78rem; font-weight: 800; color: #4338ca; background: #e0e7ff; border: 1px solid rgba(67, 56, 202, 0.25); padding: 0.2rem 0.65rem; border-radius: 20px; display: inline-block;">Private Office</span>
                         {% endif %}
                     </td>
 
-                    <td style="padding: 1.1rem 1.25rem;">
-                        {% if app.cert_doc %}
-                        <a href="{{ app.cert_doc.url }}" target="_blank" class="btn"
-                            style="padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 700; background: #e0f2fe; color: #0369a1; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
-                            <i class="fa-solid fa-file-pdf"></i> Registration Cert PDF
-                        </a>
+                    <!-- 4. Status -->
+                    <td style="padding: 0.65rem 1.25rem; vertical-align: middle;">
+                        {% if app.status == 'approved' %}
+                        <span style="font-size: 0.78rem; font-weight: 800; color: #047857; background: #ecfdf5; border: 1px solid rgba(4, 120, 87, 0.2); padding: 0.2rem 0.6rem; border-radius: 20px; display: inline-block;">Approved</span>
+                        {% elif app.status == 'declined' %}
+                        <span style="font-size: 0.78rem; font-weight: 800; color: #b91c1c; background: #fef2f2; border: 1px solid rgba(185, 28, 28, 0.2); padding: 0.2rem 0.6rem; border-radius: 20px; display: inline-block;">Declined</span>
                         {% else %}
-                        <span style="font-size: 0.78rem; color: #94a3b8; font-style: italic;">No Document</span>
+                        <span style="font-size: 0.78rem; font-weight: 800; color: #1d4ed8; background: #eff6ff; border: 1px solid rgba(29, 78, 216, 0.2); padding: 0.2rem 0.6rem; border-radius: 20px; display: inline-block;">Pending</span>
                         {% endif %}
                     </td>
 
-                    <td style="padding: 1.1rem 1.25rem;">
-                        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-                            <span class="status-pill" style="
-                                {% if app.status == 'approved' %}background: #dcfce7; color: #15803d;
-                                {% elif app.status == 'declined' %}background: #fee2e2; color: #b91c1c;
-                                {% else %}background: #e0f2fe; color: #0369a1;{% endif %}
-                                font-size: 0.75rem; font-weight: 700; text-align: center;
-                            ">
-                                {{ app.status|title }}
-                            </span>
+                    <!-- 5. View Button -->
+                    <td style="padding: 0.65rem 1.25rem; text-align: center; vertical-align: middle;">
+                        <button type="button" onclick="document.getElementById('officeModal_{{ app.id }}').style.display='flex'" class="btn btn-gold" style="padding: 0.35rem 0.85rem; font-size: 0.82rem; font-weight: 800; border-radius: 6px; color: white; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center;">
+                            View
+                        </button>
 
-                            <form action="{% url 'admin_update_office_app_status' app.id %}" method="POST"
-                                style="display: flex; gap: 0.35rem; margin-top: 0.2rem;">
-                                {% csrf_token %}
-                                {% if app.status != 'approved' %}
-                                <button type="submit" name="status" value="approved"
-                                    title="Approve Corporate Application"
-                                    style="background: #16a34a; color: white; border: none; padding: 0.3rem 0.5rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; font-weight: 700;">
-                                    Approve
-                                </button>
-                                {% endif %}
-                                {% if app.status != 'declined' %}
-                                <button type="submit" name="status" value="declined" title="Decline Application"
-                                    style="background: #dc2626; color: white; border: none; padding: 0.3rem 0.5rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; font-weight: 700;">
-                                    Decline
-                                </button>
-                                {% endif %}
-                            </form>
+                        <!-- Office Application Details Modal (Enlarged) -->
+                        <div id="officeModal_{{ app.id }}" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(5px); align-items: center; justify-content: center; padding: 2rem; text-align: left;" onclick="if(event.target === this) this.style.display='none';">
+                            <div style="background: white; border-radius: 20px; width: 100%; max-width: 960px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); border: 1px solid #cbd5e1; animation: modalFadeIn 0.2s ease-out;">
+                                <!-- Modal Header -->
+                                <div style="padding: 1.5rem 2.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-top-left-radius: 20px; border-top-right-radius: 20px;">
+                                    <h3 style="margin: 0; font-size: 1.3rem; color: #0f172a; font-weight: 800;">Office Application Details</h3>
+                                    <button type="button" onclick="document.getElementById('officeModal_{{ app.id }}').style.display='none'" style="background: #e2e8f0; border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 1.25rem; cursor: pointer; color: #475569; font-weight: 700; display: flex; align-items: center; justify-content: center;">&times;</button>
+                                </div>
+
+                                <!-- Modal Body -->
+                                <div style="padding: 2rem 2.5rem; display: flex; flex-direction: column; gap: 1.75rem;">
+                                    <!-- Company Header Banner -->
+                                    <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 1rem;">
+                                        <div style="display: flex; align-items: center; gap: 1.25rem;">
+                                            {% if app.company_logo %}
+                                            <img src="{{ app.company_logo.url }}" alt="{{ app.company_name }}" style="width: 68px; height: 68px; border-radius: 14px; object-fit: cover; border: 1px solid #cbd5e1;">
+                                            {% else %}
+                                            <div style="width: 68px; height: 68px; border-radius: 14px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.75rem;">
+                                                {{ app.company_name|slice:":1"|upper }}
+                                            </div>
+                                            {% endif %}
+                                            <div>
+                                                <h4 style="margin: 0; font-size: 1.35rem; color: #0f172a; font-weight: 800;">{{ app.company_name }}</h4>
+                                                <span style="font-size: 0.92rem; color: #475569; font-weight: 700; font-family: monospace;">BRN: {{ app.brn }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            {% if app.property.category == 'shared_office' or 'shared' in app.property.title|lower or 'co-working' in app.property.title|lower or 'desk' in app.property.title|lower %}
+                                            <span style="font-size: 0.9rem; font-weight: 800; color: #0284c7; background: #e0f2fe; border: 1px solid rgba(2, 132, 199, 0.3); padding: 0.4rem 1.1rem; border-radius: 20px; display: inline-block;">Shared Office</span>
+                                            {% else %}
+                                            <span style="font-size: 0.9rem; font-weight: 800; color: #4338ca; background: #e0e7ff; border: 1px solid rgba(67, 56, 202, 0.3); padding: 0.4rem 1.1rem; border-radius: 20px; display: inline-block;">Private Office</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Details Grid (2x2 spacious cards) -->
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; font-size: 0.95rem;">
+                                        <div style="background: #f8fafc; padding: 1.25rem 1.5rem; border-radius: 12px; border: 1.5px solid #e2e8f0;">
+                                            <span style="font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 800; display: block; margin-bottom: 0.4rem;">Contact Person</span>
+                                            <strong style="color: #0f172a; display: block; font-size: 1.05rem;">{{ app.contact_person }}</strong>
+                                            <span style="color: #334155; display: block; margin-top: 0.3rem; font-size: 0.9rem; font-weight: 600;">Email: {{ app.email }}</span>
+                                            <span style="color: #334155; display: block; font-size: 0.9rem; font-weight: 600;">Phone: {{ app.phone }}</span>
+                                        </div>
+
+                                        <div style="background: #f8fafc; padding: 1.25rem 1.5rem; border-radius: 12px; border: 1.5px solid #e2e8f0;">
+                                            <span style="font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 800; display: block; margin-bottom: 0.4rem;">Office Property</span>
+                                            <a href="{% url 'property_detail' app.property.id %}" target="_blank" style="font-weight: 800; color: #0284c7; text-decoration: none; display: block; font-size: 1.05rem;">
+                                                {{ app.property.title }}
+                                            </a>
+                                            <span style="color: #334155; display: block; margin-top: 0.3rem; font-size: 0.9rem; font-weight: 600;">Rate: UGX {{ app.property.price|floatformat:0|intcomma }}/mo</span>
+                                        </div>
+
+                                        <div style="background: #f8fafc; padding: 1.25rem 1.5rem; border-radius: 12px; border: 1.5px solid #e2e8f0;">
+                                            <span style="font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 800; display: block; margin-bottom: 0.4rem;">Industry & Desks</span>
+                                            <strong style="color: #0f172a; display: block; font-size: 1.05rem;">{{ app.industry|default:"General Enterprise" }}</strong>
+                                            <span style="color: #334155; display: block; margin-top: 0.3rem; font-size: 0.9rem; font-weight: 600;">Staff: {{ app.number_of_staff }} Desks</span>
+                                            {% if app.preferred_move_in %}
+                                            <span style="color: #334155; display: block; font-size: 0.9rem; font-weight: 600;">Move-in Date: {{ app.preferred_move_in|date:"M d, Y" }}</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div style="background: #f8fafc; padding: 1.25rem 1.5rem; border-radius: 12px; border: 1.5px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
+                                            <div>
+                                                <span style="font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 800; display: block; margin-bottom: 0.4rem;">Reservation Payment</span>
+                                                {% if app.payment_status == 'paid' %}
+                                                <span style="background: #dcfce7; color: #166534; padding: 0.3rem 0.85rem; border-radius: 20px; font-size: 0.85rem; font-weight: 800; display: inline-block;">Paid UGX 100k</span>
+                                                {% else %}
+                                                <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.85rem; border-radius: 20px; font-size: 0.85rem; font-weight: 800; display: inline-block;">Pending Payment</span>
+                                                {% endif %}
+                                            </div>
+
+                                            <div style="margin-top: 0.75rem;">
+                                                <span style="font-size: 0.78rem; text-transform: uppercase; color: #475569; font-weight: 800; display: block; margin-bottom: 0.3rem;">Registration Document</span>
+                                                {% if app.cert_doc %}
+                                                <a href="{{ app.cert_doc.url }}" target="_blank" style="padding: 0.35rem 0.85rem; font-size: 0.85rem; font-weight: 700; background: #e0f2fe; color: #0369a1; border-radius: 6px; text-decoration: none; display: inline-block;">
+                                                    View Cert PDF
+                                                </a>
+                                                {% else %}
+                                                <span style="font-size: 0.88rem; color: #64748b; font-style: italic; font-weight: 600;">No Document</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Actions inside Modal -->
+                                    <div style="padding-top: 1.5rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                                        <form action="{% url 'admin_update_office_app_status' app.id %}" method="POST" style="display: flex; gap: 0.75rem;">
+                                            {% csrf_token %}
+                                            {% if app.status != 'approved' %}
+                                            <button type="submit" name="status" value="approved" style="background: #16a34a; color: #ffffff; border: none; padding: 0.55rem 1.5rem; border-radius: 8px; font-size: 0.92rem; cursor: pointer; font-weight: 800;">
+                                                Approve
+                                            </button>
+                                            {% endif %}
+                                            {% if app.status != 'declined' %}
+                                            <button type="submit" name="status" value="declined" style="background: #dc2626; color: #ffffff; border: none; padding: 0.55rem 1.5rem; border-radius: 8px; font-size: 0.92rem; cursor: pointer; font-weight: 800;">
+                                                Decline
+                                            </button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </td>
                 </tr>
                 {% empty %}
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 3rem 1rem; color: #64748b;">
-                        <i class="fa-solid fa-briefcase"
-                            style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem; display: block;"></i>
-                        No corporate office upgrade applications received yet.
+                <tr id="officeEmptyRow">
+                    <td colspan="5" style="padding: 3rem 1.25rem; text-align: center; color: #64748b;">
+                        <p style="margin: 0; font-size: 0.92rem; font-weight: 700;">No office applications received yet.</p>
                     </td>
                 </tr>
                 {% endfor %}
@@ -2483,6 +2514,39 @@
         </table>
     </div>
 </div>
+
+<script>
+function filterOfficeApps() {
+    const nameVal = (document.getElementById('officeSearchCompany').value || '').toLowerCase().trim();
+    const typeVal = document.getElementById('officeFilterType').value;
+    const statusVal = document.getElementById('officeFilterStatus').value;
+    
+    const rows = document.querySelectorAll('.office-app-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const company = row.getAttribute('data-company') || '';
+        const type = row.getAttribute('data-type') || '';
+        const status = row.getAttribute('data-status') || '';
+
+        const matchesCompany = !nameVal || company.includes(nameVal);
+        const matchesType = (typeVal === 'all') || (type === typeVal);
+        const matchesStatus = (statusVal === 'all') || (status === statusVal);
+
+        if (matchesCompany && matchesType && matchesStatus) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    const emptyRow = document.getElementById('officeEmptyRow');
+    if (emptyRow) {
+        emptyRow.style.display = visibleCount === 0 ? '' : 'none';
+    }
+}
+</script>
 
 {% elif current_tab == 'agents' %}
 <div class="dashboard-header" style="margin-bottom: 2rem;">
