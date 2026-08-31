@@ -1700,13 +1700,39 @@
                     <input type="number" name="price" required placeholder="e.g. 650000000"
                         style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
-                <div>
-                    <label
-                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location
-                        *</label>
-                    <input type="text" name="location" required placeholder="e.g. Naalya, Wakiso"
-                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+            <!-- Geographic Location Dropdowns (District, Division, Village) -->
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+                <label style="display: block; font-weight: 800; color: #0f172a; font-size: 0.88rem; margin-bottom: 0.75rem;">
+                    Location (District, Division, Village) *
+                </label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">District *</label>
+                        <select name="district" id="add_sale_district" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;" onchange="handleAdminDistrictCascade(this.value, 'add_sale_division', 'add_sale_village')">
+                            <option value="">-- Select District --</option>
+                            {% for d in service_districts %}
+                            <option value="{{ d.id }}">{{ d.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">Division *</label>
+                        <select name="division" id="add_sale_division" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;" onchange="handleAdminDivisionCascade(this.value, 'add_sale_village')">
+                            <option value="">-- Select Division --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">Village / Cell</label>
+                        <select name="village" id="add_sale_village" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;">
+                            <option value="">-- Select Village --</option>
+                        </select>
+                    </div>
                 </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">Street / Plot Address (Optional)</label>
+                    <input type="text" name="address" placeholder="e.g. Plot 24, Estate Road" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none; background: white;">
+                </div>
+            </div>
                 <div>
                     <label
                         style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Bedrooms</label>
@@ -2228,13 +2254,39 @@
                     <input type="text" name="title" required placeholder="e.g. Workers House - Suite 4"
                         style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
                 </div>
-                <div>
-                    <label
-                        style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Location
-                        *</label>
-                    <input type="text" name="location" required placeholder="e.g. Nakasero, Kampala CBD"
-                        style="width: 100%; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none;">
+            <!-- Geographic Location Dropdowns (District, Division, Village) -->
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+                <label style="display: block; font-weight: 800; color: #0f172a; font-size: 0.88rem; margin-bottom: 0.75rem;">
+                    Location (District, Division, Village) *
+                </label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">District *</label>
+                        <select name="district" id="add_office_district" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;" onchange="handleAdminDistrictCascade(this.value, 'add_office_division', 'add_office_village')">
+                            <option value="">-- Select District --</option>
+                            {% for d in service_districts %}
+                            <option value="{{ d.id }}">{{ d.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">Division *</label>
+                        <select name="division" id="add_office_division" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;" onchange="handleAdminDivisionCascade(this.value, 'add_office_village')">
+                            <option value="">-- Select Division --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">Village / Cell</label>
+                        <select name="village" id="add_office_village" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; background: white; font-weight: 600;">
+                            <option value="">-- Select Village --</option>
+                        </select>
+                    </div>
                 </div>
+                <div>
+                    <label style="display: block; font-weight: 700; color: #334155; font-size: 0.8rem; margin-bottom: 0.3rem;">Street / Suite Address (Optional)</label>
+                    <input type="text" name="address" placeholder="e.g. Suite 402, Jinja Road" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none; background: white;">
+                </div>
+            </div>
                 <div>
                     <label
                         style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Floor
@@ -4757,6 +4809,48 @@ function filterOfficeApps() {
     function closeAddOfficeModal() {
         const modal = document.getElementById('add-office-modal');
         if (modal) modal.style.display = 'none';
+    }
+
+    function handleAdminDistrictCascade(districtId, divisionSelectId, villageSelectId) {
+        const divisionSelect = document.getElementById(divisionSelectId);
+        const villageSelect = document.getElementById(villageSelectId);
+        if (divisionSelect) divisionSelect.innerHTML = '<option value="">-- Select Division --</option>';
+        if (villageSelect) villageSelect.innerHTML = '<option value="">-- Select Village --</option>';
+        if (!districtId) return;
+
+        fetch('/api/location-cascade/?district_id=' + districtId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.divisions && data.divisions.length > 0) {
+                    data.divisions.forEach(div => {
+                        const opt = document.createElement('option');
+                        opt.value = div.id;
+                        opt.textContent = div.name;
+                        divisionSelect.appendChild(opt);
+                    });
+                }
+            })
+            .catch(err => console.error("District cascade error:", err));
+    }
+
+    function handleAdminDivisionCascade(divisionId, villageSelectId) {
+        const villageSelect = document.getElementById(villageSelectId);
+        if (villageSelect) villageSelect.innerHTML = '<option value="">-- Select Village --</option>';
+        if (!divisionId) return;
+
+        fetch('/api/location-cascade/?division_id=' + divisionId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.villages && data.villages.length > 0) {
+                    data.villages.forEach(v => {
+                        const opt = document.createElement('option');
+                        opt.value = v.id;
+                        opt.textContent = v.name;
+                        villageSelect.appendChild(opt);
+                    });
+                }
+            })
+            .catch(err => console.error("Division cascade error:", err));
     }
 
     function openAddSaleModal() {

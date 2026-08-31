@@ -3517,6 +3517,7 @@ def admin_add_sale_property(request):
         return redirect('login')
 
     if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
         category_raw = request.POST.get('category_id') or request.POST.get('category', 'standalone')
         category_code = 'standalone'
         category_ref_obj = None
@@ -3529,9 +3530,25 @@ def admin_add_sale_property(request):
                 category_code = category_raw
 
         price = request.POST.get('price', '').strip()
-        location = request.POST.get('location', '').strip()
         description = request.POST.get('description', '').strip()
         bedrooms = request.POST.get('bedrooms', None)
+        
+        district_id = request.POST.get('district')
+        division_id = request.POST.get('division')
+        village_id = request.POST.get('village')
+        address = request.POST.get('address', '').strip()
+        location_input = request.POST.get('location', '').strip()
+
+        district_obj = ServiceDistrict.objects.filter(id=district_id).first() if (district_id and str(district_id).isdigit()) else None
+        division_obj = ServiceDivision.objects.filter(id=division_id).first() if (division_id and str(division_id).isdigit()) else None
+        village_obj = ServiceVillage.objects.filter(id=village_id).first() if (village_id and str(village_id).isdigit()) else None
+
+        loc_parts = []
+        if address: loc_parts.append(address)
+        if village_obj: loc_parts.append(village_obj.name)
+        if division_obj: loc_parts.append(division_obj.name)
+        if district_obj: loc_parts.append(district_obj.name)
+        location = ", ".join(loc_parts) if loc_parts else (location_input or "Kampala, Uganda")
         
         hero_image = request.FILES.get('hero_image')
         
@@ -3561,6 +3578,9 @@ def admin_add_sale_property(request):
                 listing_type='sale',
                 status='available',
                 price=price_val,
+                district=district_obj,
+                division=division_obj,
+                village=village_obj,
                 location=location,
                 description=description,
                 bedrooms=int(bedrooms) if bedrooms and bedrooms.isdigit() else None,
@@ -3610,10 +3630,26 @@ def admin_add_office_property(request):
     if request.method == 'POST':
         office_category = request.POST.get('office_category', 'shared_office')
         title = request.POST.get('title', '').strip()
-        location = request.POST.get('location', '').strip()
         floor = request.POST.get('floor', '').strip()
         price = request.POST.get('price', '').strip()
         description = request.POST.get('description', '').strip()
+
+        district_id = request.POST.get('district')
+        division_id = request.POST.get('division')
+        village_id = request.POST.get('village')
+        address = request.POST.get('address', '').strip()
+        location_input = request.POST.get('location', '').strip()
+
+        district_obj = ServiceDistrict.objects.filter(id=district_id).first() if (district_id and str(district_id).isdigit()) else None
+        division_obj = ServiceDivision.objects.filter(id=division_id).first() if (division_id and str(division_id).isdigit()) else None
+        village_obj = ServiceVillage.objects.filter(id=village_id).first() if (village_id and str(village_id).isdigit()) else None
+
+        loc_parts = []
+        if address: loc_parts.append(address)
+        if village_obj: loc_parts.append(village_obj.name)
+        if division_obj: loc_parts.append(division_obj.name)
+        if district_obj: loc_parts.append(district_obj.name)
+        location = ", ".join(loc_parts) if loc_parts else (location_input or "Kampala, Uganda")
 
         office_pricing_unit = request.POST.get('office_pricing_unit', '') if office_category == 'shared_office' else ''
         electricity_cost = request.POST.get('electricity_cost', '').strip() if office_category == 'shared_office' else ''
@@ -3647,6 +3683,9 @@ def admin_add_office_property(request):
                 status='available',
                 price=price_val,
                 price_per_month=price_val,
+                district=district_obj,
+                division=division_obj,
+                village=village_obj,
                 location=location,
                 floor=floor,
                 office_pricing_unit=office_pricing_unit if office_pricing_unit in ['per_table', 'per_sqm'] else None,
@@ -3678,7 +3717,7 @@ def admin_add_office_property(request):
                 prop.amenities.set(selected_amenity_ids)
 
             messages.success(request, f"Office '{prop.title}' created and published successfully!")
-            return redirect('/admin-dashboard/?tab=properties')
+            return redirect('/admin-dashboard/?tab=offices')
 
     office_amenity_names = [
         'Electricity', 'Water', 'Toilet', 'Lift', 'AC', 'Printer', 'Scanner', 'TV', 'Wifi', 'Table', 'Chairs'
