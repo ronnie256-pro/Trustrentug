@@ -3078,11 +3078,11 @@ function filterOfficeApps() {
                                         </div>
                                     </div>
 
-                                    <!-- Assigned Agent Card -->
+                                    <!-- Assigned Agent Card & Manual Assignment Form -->
                                     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem;">
                                         <span style="font-size: 0.75rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.75rem;">Assigned Inspection Agent</span>
                                         {% if req.assigned_agent %}
-                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                                             {% if req.assigned_agent.image %}
                                             <img src="{{ req.assigned_agent.image.url }}" alt="{{ req.assigned_agent.name }}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
                                             {% else %}
@@ -3098,8 +3098,28 @@ function filterOfficeApps() {
                                             </div>
                                         </div>
                                         {% else %}
-                                        <div style="color: #64748b; font-size: 0.88rem; font-weight: 600;">No agent currently assigned.</div>
+                                        <div style="color: #64748b; font-size: 0.88rem; font-weight: 600; margin-bottom: 0.75rem;">No agent currently assigned.</div>
                                         {% endif %}
+
+                                        <!-- Manual Agent Assignment Form -->
+                                        <form action="{% url 'admin_viewing_status_update' req.id %}" method="POST" style="border-top: 1px dashed #e2e8f0; padding-top: 0.75rem; margin-top: 0.5rem;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="{{ req.status }}">
+                                            <label style="display: block; font-size: 0.78rem; font-weight: 800; color: #475569; margin-bottom: 0.35rem;">Assign / Change Agent:</label>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <select name="agent_id" style="flex: 1; padding: 0.45rem 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; color: #334155; font-weight: 600;">
+                                                    <option value="none">-- Unassigned --</option>
+                                                    {% for ag in agents %}
+                                                    <option value="{{ ag.id }}" {% if req.assigned_agent and req.assigned_agent.id == ag.id %}selected{% endif %}>
+                                                        {{ ag.name }} {% if ag.role %}({{ ag.role.name }}){% endif %}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="btn btn-gold" style="padding: 0.45rem 0.85rem; font-size: 0.82rem; border-radius: 6px; font-weight: 700; color: white; border: none; cursor: pointer; white-space: nowrap;">
+                                                    Save Assignment
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
 
                                     <!-- Modal Action Buttons -->
@@ -3121,9 +3141,6 @@ function filterOfficeApps() {
                                                 </button>
                                             </form>
                                             {% endif %}
-                                            <a href="{% url 'admin_viewing_detail' req.id %}" class="btn" style="padding: 0.45rem 1rem; font-size: 0.85rem; border-radius: 6px; background: #f8fafc; color: #0284c7; border: 1px solid #cbd5e1; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;">
-                                                Full Detail Page &rarr;
-                                            </a>
                                         </div>
                                         <button type="button" onclick="closeViewingModal('{{ req.id }}')" style="padding: 0.45rem 1.25rem; font-size: 0.85rem; border-radius: 6px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-weight: 700; cursor: pointer;">
                                             Close
