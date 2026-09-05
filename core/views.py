@@ -2936,7 +2936,11 @@ def api_nearby_properties(request):
         elif p_type in ['bungalow', 'standalone', 'villa']:
             properties = properties.filter(category__in=['bungalow', 'standalone'])
         else:
-            properties = properties.filter(Q(category__icontains=p_type))
+            properties = properties.filter(
+                Q(category__icontains=p_type) | 
+                Q(category_ref__name__icontains=p_type) | 
+                Q(category_ref__code__icontains=p_type)
+            )
             
     results = []
     for prop in properties:

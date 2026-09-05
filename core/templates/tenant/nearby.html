@@ -293,32 +293,27 @@
     /* Responsive Breakpoints (Tablet & Mobile <= 1100px) */
     @media (max-width: 1100px) {
         .nearby-filter-bar {
-            justify-content: space-between;
+            justify-content: center;
+            padding: 0.5rem 0.75rem;
         }
 
         .mobile-filter-toggle {
-            display: inline-block;
+            display: none !important;
         }
 
         .filter-items-wrapper {
-            display: none;
+            display: flex !important;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
             width: 100%;
-            padding-top: 0.6rem;
-            border-top: 1px solid rgba(255,255,255,0.15);
-            margin-top: 0.4rem;
-        }
-
-        .filter-items-wrapper.open {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.6rem;
         }
 
         .nearby-filter-item {
-            width: 100%;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.2);
+            width: auto;
+            background: #f4eee2;
         }
 
         .nearby-filter-item input[type="text"] {
@@ -358,42 +353,21 @@
 <div class="nearby-viewport-wrapper">
     <!-- Top Filter Header Bar (Centered in Desktop View, Separated by Thin Line) -->
     <div class="nearby-filter-bar">
-        <button type="button" class="mobile-filter-toggle" id="filter-toggle-btn" onclick="toggleMobileFilters()">
-            Filters &#9660;
-        </button>
-
         <!-- Centered Filter Items Wrapper -->
         <div class="filter-items-wrapper" id="filter-items-wrapper">
-            <div class="nearby-filter-item">
-                <input type="text" id="filter-search-input" placeholder="Search location or title..." style="width: 200px; color: #1e1b18;" oninput="fetchNearbyProperties()" onkeydown="if(event.key==='Enter') fetchNearbyProperties();">
-            </div>
-
-            <!-- Cascading Location Controls (District -> Division -> Village) -->
-            <div class="nearby-filter-item">
-                <select id="nearby-district-select" style="color: #1e1b18; font-weight: 700; cursor: pointer;">
-                    <option value="">District</option>
-                </select>
-            </div>
-            <div class="nearby-filter-item">
-                <select id="nearby-division-select" style="color: #1e1b18; font-weight: 700; cursor: pointer;" disabled>
-                    <option value="">Division</option>
-                </select>
-            </div>
-            <div class="nearby-filter-item">
-                <select id="nearby-village-select" style="color: #1e1b18; font-weight: 700; cursor: pointer;" disabled>
-                    <option value="">Village</option>
-                </select>
-            </div>
-
             <div class="nearby-filter-item">
                 <span style="font-size: 0.85rem; color: #57534e; font-weight: 700;">Radius:</span>
                 <select id="filter-radius" onchange="fetchNearbyProperties()" style="color: #1e1b18; font-weight: 800; cursor: pointer;">
                     <option value="1">1 KM</option>
                     <option value="2" selected>2 KM</option>
+                    <option value="3">3 KM</option>
+                    <option value="4">4 KM</option>
                     <option value="5">5 KM</option>
+                    <option value="6">6 KM</option>
+                    <option value="7">7 KM</option>
+                    <option value="8">8 KM</option>
+                    <option value="9">9 KM</option>
                     <option value="10">10 KM</option>
-                    <option value="20">20 KM</option>
-                    <option value="50">50 KM</option>
                 </select>
             </div>
 
@@ -411,7 +385,7 @@
                 </select>
             </div>
 
-            <button type="button" onclick="fetchNearbyProperties(); closeMobileFilters();" style="background: var(--color-emerald-darkest); border: 1px solid var(--color-emerald-darkest); color: white; padding: 0.45rem 1.25rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+            <button type="button" onclick="fetchNearbyProperties();" style="background: var(--color-emerald-darkest); border: 1px solid var(--color-emerald-darkest); color: white; padding: 0.45rem 1.25rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
                 Filter
             </button>
         </div>
@@ -507,15 +481,18 @@
     document.addEventListener('DOMContentLoaded', function() {
         initLeafletMap();
 
-        initCascadingLocationFilters(
-            document.getElementById('nearby-district-select'),
-            document.getElementById('nearby-division-select'),
-            document.getElementById('nearby-village-select'),
-            "", "", "",
-            function () {
-                fetchNearbyProperties();
-            }
-        );
+        const distSelect = document.getElementById('nearby-district-select');
+        const divSelect = document.getElementById('nearby-division-select');
+        const villSelect = document.getElementById('nearby-village-select');
+        if (distSelect && divSelect && villSelect) {
+            initCascadingLocationFilters(
+                distSelect, divSelect, villSelect,
+                "", "", "",
+                function () {
+                    fetchNearbyProperties();
+                }
+            );
+        }
 
         const urlParams = new URLSearchParams(window.location.search);
         const paramLat = urlParams.get('lat');
@@ -648,8 +625,10 @@
         let radius = document.getElementById('filter-radius').value;
         if (!radius || radius <= 0) radius = 10;
         
-        const query = document.getElementById('filter-search-input').value.trim();
-        const propType = document.getElementById('filter-type').value;
+        const queryInput = document.getElementById('filter-search-input');
+        const query = queryInput ? queryInput.value.trim() : '';
+        const propTypeEl = document.getElementById('filter-type');
+        const propType = propTypeEl ? propTypeEl.value : '';
 
         const distEl = document.getElementById('nearby-district-select');
         const divEl = document.getElementById('nearby-division-select');
