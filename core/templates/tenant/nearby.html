@@ -400,10 +400,14 @@
             <div class="nearby-filter-item">
                 <select id="filter-type" onchange="fetchNearbyProperties()" style="color: #1e1b18; font-weight: 700; cursor: pointer;">
                     <option value="">All Property Types</option>
+                    {% for cat in property_categories %}
+                    <option value="{{ cat.name }}">{{ cat.name }}</option>
+                    {% empty %}
                     <option value="apartment">Apartment</option>
                     <option value="flat">Flat</option>
                     <option value="condo">Condo</option>
                     <option value="bungalow">Bungalow / Standalone</option>
+                    {% endfor %}
                 </select>
             </div>
 

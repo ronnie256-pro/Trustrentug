@@ -2869,7 +2869,13 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return R * c
 
 def nearby_properties_view(request):
-    return render(request, 'tenant/nearby.html')
+    try:
+        property_categories = PropertyCategory.objects.filter(is_active=True).order_by('group', 'name')
+    except Exception:
+        property_categories = []
+    return render(request, 'tenant/nearby.html', {
+        'property_categories': property_categories,
+    })
 
 def api_nearby_properties(request):
     try:
@@ -2916,6 +2922,8 @@ def api_nearby_properties(request):
             properties = properties.filter(category__in=['condo_block'])
         elif p_type in ['bungalow', 'standalone', 'villa']:
             properties = properties.filter(category__in=['bungalow', 'standalone'])
+        else:
+            properties = properties.filter(Q(category__icontains=p_type))
             
     results = []
     for prop in properties:
