@@ -1,621 +1,369 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}About Us | The TRUST Protocol{% endblock %}
+{% block title %}About Us - TRUST | The Rental Verification Platform{% endblock %}
 
 {% block content %}
+<!-- Main Page Container -->
+<div style="background-color: #fafbfc; color: #1e293b; font-family: var(--font-main); overflow-x: hidden;">
 
-<!-- 1. Premium Hero -->
-<section class="premium-hero"
-    style="padding: 0; background: linear-gradient(135deg, #064e3b 0%, #022c22 100%); position: relative; overflow: hidden; width: 100%; min-height: 620px; display: flex; align-items: center;">
-    
-    <!-- Full-Height Hero Image stretching 100% from top to bottom (Right 50%) -->
-    <div class="hero-image-column reveal delay-1"
-        style="position: absolute; top: 0; bottom: 0; right: 0; width: 50%; height: 100%; z-index: 1;">
-        <img src="{% if site_settings.about_hero_image %}{{ site_settings.about_hero_image.url }}{% else %}/static/img/about_hero.png{% endif %}"
-            alt="TRUST Verified Luxury Property"
-            style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.85) 30%, black 100%); mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.85) 30%, black 100%);">
-    </div>
-
-    <div
-        style="width: 100%; max-width: 100%; padding-left: max(1.5rem, calc((100vw - 1380px) / 2)); padding-right: 0; position: relative; z-index: 2;">
-        <div class="hero-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
-            <div class="hero-text reveal"
-                style="padding-right: 1.5rem; padding-top: 6.5rem; padding-bottom: 6.5rem; max-width: 550px;">
-                <h1 class="hero-title"
-                    style="font-family: var(--font-heading); font-size: 4.1rem; color: white; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700;">
-                    Elevating the <span style="color: var(--color-gold); font-style: italic;">real estate Experience</span>
-                </h1>
-                <p class="hero-subtitle"
-                    style="font-size: 1.18rem; color: #cbd5e1; line-height: 1.75; max-width: 520px; margin-bottom: 0;">
-                    Verified properties. Protected families. A protocol designed for absolute peace of mind in the real
-                    estate ecosystem.
-                </p>
-            </div>
-
-            <!-- Empty grid cell to keep image strictly on right 50% -->
-            <div></div>
-        </div>
-    </div>
-</section>
-
-<!-- 2. Founder's Story Section -->
-<section id="founders-story"
-    style="padding: 6.5rem 0; background-color: #ffffff; border-bottom: 1px solid var(--color-border);">
-    <div class="container">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4.5rem; align-items: center;">
-
-            <!-- Column 1: Founder's Picture -->
-            <div class="founder-image-wrapper reveal"
-                style="display: flex; justify-content: center; align-items: center;">
-                <div style="width: 100%; max-width: 500px; position: relative;">
-                    <img src="{% if site_settings.about_founder_image %}{{ site_settings.about_founder_image.url }}{% else %}/static/img/founder.png{% endif %}"
-                        alt="TRUST Protocol Founder"
-                        style="width: 100%; height: 520px; object-fit: cover; object-position: top; display: block; border-radius: 12px;">
-                </div>
-            </div>
-
-            <!-- Column 2: Founder's Story Content -->
-            <div class="founder-content reveal delay-1">
-                <h2 class="premium-heading"
-                    style="font-family: var(--font-heading); font-size: 2.85rem; color: var(--color-emerald-darkest); margin-bottom: 1.5rem; font-weight: 700; line-height: 1.15;">
-                    The Founder's Story
-                </h2>
-
-                <p style="font-size: 1.08rem; line-height: 1.85; color: #475569; margin-bottom: 1.5rem; font-weight: 400;">
-                    TRUST Protocol was created from a real experience — one that revealed how vulnerable families can be
-                    in Uganda’s property market. After relocating from Mozambique to Uganda, I set out to find a home
-                    for my family. A listing on a popular platform looked genuine. The agent seemed trustworthy. The
-                    house was real. The landlord appeared legitimate. The agreement was made, payment was sent and then
-                    both the agent and the landlord disappeared. The money was gone. The home was never mine to rent and
-                    there was no system in place to protect my family.
-                </p>
-
-                <!-- Clean Callout Box WITHOUT Left Border -->
-                <div style="background: rgba(203, 163, 88, 0.08); padding: 1.35rem 1.65rem; border-radius: 8px; margin: 1.75rem 0;">
-                    <p style="margin: 0; font-size: 1.05rem; line-height: 1.7; color: #1e293b; font-weight: 600; font-style: italic;">
-                        Too many people lose money, time, and peace because the property market lacks verification,
-                        transparency, and secure payment processes.
-                    </p>
-                </div>
-
-                <p style="font-size: 1.35rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); margin-top: 1.75rem;">
-                    TRUST Protocol was built to change that.
-                </p>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<!-- 3. The Five Pillars of TRUST -->
-<section class="premium-pillars">
-    <div class="container">
-        <div class="text-center reveal">
-            <h2 class="premium-heading">The Five Pillars of TRUST</h2>
+  <!-- SECTION 1: HERO HEADER & FOUNDER'S STORY (Ref: Picture 1) -->
+  <section style="padding: 4rem 0 3.5rem 0; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.05); width: 100%;">
+    <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+      
+      <!-- Top Grid: Title + Founder's Story + Rounded Hero Photo -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; margin-bottom: 4.5rem;">
+        
+        <!-- Left Column: Title & Founder's Story -->
+        <div>
+          <h1 style="font-family: var(--font-heading); font-size: 3.1rem; font-weight: 800; color: #0f172a; line-height: 1.12; margin-bottom: 1.5rem; letter-spacing: -1px;">
+            Why we started <span style="color: var(--color-emerald-dark, #047857);">TRUST</span>
+          </h1>
+          <p style="font-size: 1.05rem; line-height: 1.7; color: #475569; max-width: 580px; margin: 0; font-weight: 400;">
+            TRUST Protocol was created from a real experience which revealed how vulnerable families can be in Uganda’s property market. After relocating from Mozambique to Uganda, I set out to find a home for my family. A listing on a popular platform looked genuine. The agent seemed trustworthy. The house was real. The landlord appeared legitimate. The agreement was made, payment was sent and then both the agent and the landlord disappeared. The money was gone. The home was never mine to rent and there was no system in place to protect my family.
+          </p>
         </div>
 
-        <style>
-            .premium-pillars {
-                padding: 6rem 0;
-                background: linear-gradient(180deg, #faf9f6 0%, #f4f2eb 100%);
-                border-bottom: 1px solid var(--color-border);
-            }
-
-            .pillars-grid {
-                display: grid;
-                grid-template-columns: repeat(5, 1fr);
-                gap: 1.5rem;
-                margin-top: 3.5rem;
-            }
-
-            .pillar-item {
-                position: relative;
-                padding: 3rem 1.75rem 2.25rem;
-                background: rgba(255, 255, 255, 0.75);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-                border-radius: 12px;
-                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                min-height: 250px;
-                overflow: hidden;
-            }
-
-            .pillar-item:hover {
-                transform: translateY(-8px);
-                background: rgba(255, 255, 255, 0.95);
-                border-color: var(--color-gold);
-                box-shadow: 0 20px 40px rgba(10, 61, 40, 0.05), 0 1px 3px rgba(203, 163, 88, 0.1);
-            }
-
-            .pillar-letter {
-                font-size: 7.5rem;
-                font-family: var(--font-heading);
-                font-weight: 900;
-                color: rgba(10, 61, 40, 0.085);
-                position: absolute;
-                top: -0.25rem;
-                right: 0.5rem;
-                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-                user-select: none;
-                line-height: 1;
-            }
-
-            .pillar-item:hover .pillar-letter {
-                color: rgba(203, 163, 88, 0.35);
-                transform: scale(1.1) rotate(-5deg);
-            }
-
-            .pillar-content {
-                position: relative;
-                z-index: 2;
-            }
-
-            .pillar-content h3 {
-                font-family: var(--font-heading);
-                font-size: 1.25rem;
-                color: var(--color-emerald-darkest);
-                margin: 0 0 0.75rem 0;
-                font-weight: 700;
-                line-height: 1.25;
-            }
-
-            .pillar-content p {
-                font-size: 0.9rem;
-                line-height: 1.6;
-                color: var(--color-text-muted);
-                margin: 0;
-            }
-
-            @media (max-width: 1200px) {
-                .pillars-grid {
-                    grid-template-columns: repeat(3, 1fr);
-                }
-            }
-
-            @media (max-width: 768px) {
-                .pillars-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-            }
-
-            @media (max-width: 480px) {
-                .pillars-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-        </style>
-
-        <div class="pillars-grid">
-            <!-- T -->
-            <div class="pillar-item reveal">
-                <div class="pillar-letter">T</div>
-                <div class="pillar-content">
-                    <h3>Title Verification</h3>
-                    <p>Ownership documents strictly verified against central land registries.</p>
-                </div>
+        <!-- Right Column: Rounded Hero Photo with Floating Stamp Badge -->
+        <div style="position: relative;">
+          <div style="width: 100%; height: 390px; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.12); position: relative;">
+            <img src="/media/properties/hero/office.webp" alt="TRUST Office & Operations" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          
+          <!-- Floating Circular Stamp / Badge -->
+          <div style="position: absolute; bottom: -25px; left: -25px; background: #ffffff; border-radius: 50%; padding: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f1f5f9; display: flex; align-items: center; justify-content: center; width: 95px; height: 95px; box-sizing: border-box; text-align: center;">
+            <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+              <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-emerald-dark, #047857); line-height: 1.1;">
+                TRUST<br><span style="color: var(--color-gold-dark, #b45309);">VERIFIED</span>
+              </div>
             </div>
-
-            <!-- R -->
-            <div class="pillar-item reveal delay-1">
-                <div class="pillar-letter">R</div>
-                <div class="pillar-content">
-                    <h3>Registered Landlord</h3>
-                    <p>Identity-linked dynamic accountability systems protecting tenants.</p>
-                </div>
-            </div>
-
-            <!-- U -->
-            <div class="pillar-item reveal delay-2">
-                <div class="pillar-letter">U</div>
-                <div class="pillar-content">
-                    <h3>Urban Inspection</h3>
-                    <p>On-site physical validation of actual property conditions.</p>
-                </div>
-            </div>
-
-            <!-- S -->
-            <div class="pillar-item reveal delay-3">
-                <div class="pillar-letter">S</div>
-                <div class="pillar-content">
-                    <h3>Secure Escrow</h3>
-                    <p>Rigorous financial protection framework ensuring safe transactions.</p>
-                </div>
-            </div>
-
-            <!-- T -->
-            <div class="pillar-item reveal delay-4">
-                <div class="pillar-letter">T</div>
-                <div class="pillar-content">
-                    <h3>Transparent Contract</h3>
-                    <p>Legally-binding, fully encrypted digital agreements.</p>
-                </div>
-            </div>
+          </div>
         </div>
-    </div>
-</section>
 
-<!-- 4. Verification-Driven Section (Left Full-Height Image, Right Text Column strictly in pure white right area) -->
-<section class="verification-hero"
-    style="padding: 0; background: #ffffff; position: relative; overflow: hidden; width: 100%; min-height: 620px; display: flex; align-items: center; border-bottom: 1px solid var(--color-border);">
-    
-    <!-- Full-Height Left Image stretching 100% top to bottom (Fades out completely by 40% width) -->
-    <div class="verification-image-wrapper reveal delay-1"
-        style="position: absolute; top: 0; bottom: 0; left: 0; width: 40%; height: 100%; z-index: 1;">
-        <img src="{% if site_settings.about_hero_image %}{{ site_settings.about_hero_image.url }}{% else %}/static/img/about_hero.png{% endif %}"
-            alt="TRUST Verification Platform"
-            style="width: 100%; height: 100%; object-fit: cover; object-position: left center; display: block; -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%); mask-image: linear-gradient(to right, black 50%, transparent 100%);">
-    </div>
+      </div>
 
-    <div class="container" style="position: relative; z-index: 2; width: 100%;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+      <!-- Center Highlight Statement (Founder's Highlight) -->
+      <div style="text-align: center; max-width: 960px; margin: 0 auto 3.5rem auto; padding: 0 1rem;">
+        <p style="font-size: 1.5rem; line-height: 1.6; font-weight: 700; color: #0f172a; letter-spacing: -0.3px; margin: 0;">
+          "Too many people lose money, time, and peace because the property market lacks verification, transparency, and secure payment processes."
+        </p>
+      </div>
+
+      <!-- 4 Key Stat Cards Grid -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: 1100px; margin: 0 auto; text-align: center;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 2rem 1rem;">
+          <div style="font-size: 2.6rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">150+</div>
+          <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Verified Properties</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 2rem 1rem;">
+          <div style="font-size: 2.6rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">450+</div>
+          <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Happy Tenants</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 2rem 1rem;">
+          <div style="font-size: 2.6rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">200+</div>
+          <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Verified Landlords</div>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 2rem 1rem;">
+          <div style="font-size: 2.6rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">14+</div>
+          <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Districts Covered</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 2: THE FIVE PILLARS OF TRUST & OUR MISSION (Ref: Picture 3) -->
+  <section style="padding: 5rem 0; background: #fafbfc; width: 100%;">
+    <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+      
+      <!-- Block 1: The Five Pillars of TRUST (Dual Image Left, Text Right) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4.5rem; align-items: center; margin-bottom: 6rem;">
+        
+        <!-- Image Composition Left -->
+        <div style="position: relative; padding-right: 2rem;">
+          <div style="width: 85%; height: 360px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08);">
+            <img src="/media/properties/hero/construction.jpg" alt="Five Pillars Verification" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <!-- Inset Overlapping Card -->
+          <div style="position: absolute; bottom: -30px; right: 0; width: 55%; height: 220px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12);">
+            <img src="/media/properties/hero/A-20-million-budget-house.webp" alt="Field Verification" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+        </div>
+
+        <!-- Content Right: The Five Pillars of TRUST -->
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem;">
+            The Five Pillars of TRUST
+          </h2>
+          <p style="font-size: 1rem; line-height: 1.7; color: #475569; margin-bottom: 2rem;">
+            Every property listed on our platform is evaluated against our core security framework to guarantee total peace of mind.
+          </p>
+          
+          <!-- Five Pillars Checklist -->
+          <div style="display: flex; flex-direction: column; gap: 1.1rem;">
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i>
+              <div><span style="color: var(--color-gold-dark, #b45309); font-weight: 800;">T.</span> Title Verification</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i>
+              <div><span style="color: var(--color-gold-dark, #b45309); font-weight: 800;">R.</span> Registered Landlord</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i>
+              <div><span style="color: var(--color-gold-dark, #b45309); font-weight: 800;">U.</span> Urban Inspection</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i>
+              <div><span style="color: var(--color-gold-dark, #b45309); font-weight: 800;">S.</span> Secure Escrow</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i>
+              <div><span style="color: var(--color-gold-dark, #b45309); font-weight: 800;">T.</span> Transparent Contract</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Block 2: Our Mission (Text Left, Dual Image Right) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4.5rem; align-items: center;">
+        
+        <!-- Content Left: Our Mission -->
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem;">
+            Our Mission
+          </h2>
+          <p style="font-size: 1rem; line-height: 1.7; color: #475569; margin-bottom: 2rem;">
+            To provide exceptional property verification and rental services that eliminate client risk through transparency, physical field validation, and digital lease protection.
+          </p>
+
+          <!-- Bullet Checklist -->
+          <div style="display: flex; flex-direction: column; gap: 1.1rem;">
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i> Fostering Safe & Transparent Rentals
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i> Innovating for Fraud-Free Real Estate
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i> Customer-Centric Field Verification
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 1rem; font-weight: 700; color: #1e293b;">
+              <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.2rem;"></i> Building Stronger Trust Communities
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Composition Right -->
+        <div style="position: relative; padding-left: 2rem;">
+          <div style="width: 85%; height: 360px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); margin-left: auto;">
+            <img src="/media/properties/hero/office.webp" alt="Our Mission Operations" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <!-- Inset Overlapping Card -->
+          <div style="position: absolute; bottom: -30px; left: 0; width: 55%; height: 220px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12);">
+            <img src="/media/properties/hero/3_h.webp" alt="Modern Architecture" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: HOW WE DO WORK (Ref: Picture 4 - Top Video Container) -->
+  <section style="padding: 5rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.05); width: 100%;">
+    <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+      
+      <!-- Section Header -->
+      <div style="text-align: center; max-width: 650px; margin: 0 auto 3rem auto;">
+        <h2 style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem;">
+          How We do Work
+        </h2>
+        <p style="font-size: 1rem; color: #64748b; margin: 0;">
+          We follow a collaborative and transparent verification process, ensuring clear inspection records and expert execution at every stage.
+        </p>
+      </div>
+
+      <!-- Large Rounded Video Showcase Card -->
+      <div style="position: relative; width: 100%; max-width: 1200px; margin: 0 auto; height: 480px; border-radius: 32px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.15);">
+        <img src="/media/properties/hero/construction.jpg" alt="How We Work Video Showcase" style="width: 100%; height: 100%; object-fit: cover;">
+        <div style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.35); display: flex; align-items: center; justify-content: center;">
+          
+          <!-- Animated Play Button -->
+          <a href="#play" style="width: 85px; height: 85px; border-radius: 50%; background: #f59e0b; color: #ffffff; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4); transition: transform 0.25s ease;">
+            <i class="fa-solid fa-play" style="font-size: 1.8rem; margin-left: 5px;"></i>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 4: OUR TEAM (Ref: Picture 4 - Round Cards, 6 per row, max 2 rows) -->
+  <section style="padding: 5rem 0; background: #fafbfc; width: 100%;">
+    <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+      
+      <!-- Flex Header Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3.5rem;">
+        <h2 style="font-family: var(--font-heading); font-size: 2.3rem; font-weight: 800; color: #0f172a; margin: 0;">
+          Our Team
+        </h2>
+        <a href="#team" style="background: #f59e0b; color: #ffffff; padding: 0.65rem 1.6rem; border-radius: 30px; font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);">
+          Explore All
+        </a>
+      </div>
+
+      <!-- 6 Column Round Card Grid (Max 2 Rows = Up to 12 items) -->
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 2rem 1.5rem; text-align: center;">
+        
+        {% if executives %}
+          {% for exec in executives|slice:":12" %}
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 1rem; position: relative;">
+              {% if exec.image %}
+                <img src="{{ exec.image.url }}" alt="{{ exec.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+              {% else %}
+                <img src="/media/properties/hero/Kadaga.jpg" alt="{{ exec.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+              {% endif %}
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">{{ exec.name }}</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0; font-weight: 500;">{{ exec.title }}</p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <!-- Fallback Demonstration Round Team Cards (6 items) -->
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+              <img src="/media/properties/hero/Kadaga.jpg" alt="Jane Cooper" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">Jane Cooper</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0; font-weight: 500;">Operations Lead</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+              <img src="/media/properties/hero/coffee.jpg" alt="Darlene Robertson" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">Darlene Robertson</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0; font-weight: 500;">Inspection Officer</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+              <img src="/media/properties/hero/office.jpeg" alt="Darrell Steward" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">Darrell Steward</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0; font-weight: 500;">Escrow Legal Advisor</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+              <img src="/media/properties/hero/3_h.webp" alt="Jenny Wilson" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">Jenny Wilson</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0; font-weight: 500;">Community Lead</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+              <img src="/media/properties/hero/A-20-million-budget-house.webp" alt="Robert Fox" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">Robert Fox</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0; font-weight: 500;">Verification Manager</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+              <img src="/media/properties/hero/construction.jpg" alt="Courtney Henry" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">Courtney Henry</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0; font-weight: 500;">Technical Auditor</p>
+          </div>
+        {% endif %}
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 5: CONTACT FORM SPLIT (Ref: Picture 2) -->
+  <section style="padding: 5rem 0 6rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.05); width: 100%;">
+    <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+      
+      <!-- Section Title Header -->
+      <div style="text-align: center; max-width: 650px; margin: 0 auto 3.5rem auto;">
+        <h2 style="font-family: var(--font-heading); font-size: 2.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem;">
+          Start Your Project With Us
+        </h2>
+        <p style="font-size: 1rem; color: #64748b; margin: 0;">
+          Let's turn your vision into reality. Whether you're planning a residential, commercial, or diaspora project, our team is ready to guide you every step of the way.
+        </p>
+      </div>
+
+      <!-- Split Layout: Clipped Photo Left + Clean Form Box Right -->
+      <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4rem; align-items: center; max-width: 1300px; margin: 0 auto;">
+        
+        <!-- Photo Left with Custom Clipped Corner Aesthetic -->
+        <div style="width: 100%; height: 520px; border-radius: 40px 40px 0 40px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.12);">
+          <img src="/media/properties/hero/construction.jpg" alt="Start Your Project With Us" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+        <!-- Form Card Right -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 28px; padding: 2.5rem 2.25rem; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+          <h3 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-bottom: 1.75rem;">
+            Send a message
+          </h3>
+
+          <form action="#" method="POST" onsubmit="event.preventDefault(); alert('Thank you for reaching out! We will get back to you shortly.');">
             
-            <!-- Empty left grid cell to leave room for the left image -->
-            <div class="desktop-only-spacer"></div>
-
-            <!-- Right Column: Mission Top -> Followed by Text (Positioned strictly in pure white right area) -->
-            <div class="reveal"
-                style="padding-top: 5.5rem; padding-bottom: 5.5rem; padding-left: 2rem; max-width: 620px;">
-                
-                <h3 style="font-family: var(--font-heading); font-size: 2.1rem; color: var(--color-emerald-darkest); font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2;">
-                    Our mission is simple:
-                </h3>
-                <p style="font-size: 1.25rem; font-weight: 700; color: var(--color-gold); line-height: 1.55; margin-bottom: 2rem;">
-                    To make property transactions safe, honest, and predictable for everyone.
-                </p>
-
-                <p style="font-size: 1.05rem; line-height: 1.85; color: #475569; margin-bottom: 1.5rem; font-weight: 400;">
-                    We are a verification‑driven property platform designed to protect buyers, sellers, tenants, and diaspora clients. Every listing is verified. Every seller is authenticated. Every document is checked. Payments are held securely and released only when agreed conditions are met. Digital contracts ensure clarity and accountability. And for clients abroad, TRUST Protocol supervises construction projects, verifies land, and provides transparent progress updates.
-                </p>
-
-                <p style="font-size: 1.08rem; line-height: 1.85; color: #1e293b; font-weight: 600; margin: 0;">
-                    TRUST Protocol exists so that no family whether in Uganda or abroad ever has to experience what I went through. We are building a future where trust is not assumed, but guaranteed.
-                </p>
+            <div style="margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #475569; margin-bottom: 0.5rem; letter-spacing: 0.3px;">
+                Enter your full name
+              </label>
+              <input type="text" placeholder="Jahidul Islam Jidan" required style="width: 100%; padding: 0.85rem 1rem; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; box-sizing: border-box; outline: none;">
             </div>
 
+            <div style="margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #475569; margin-bottom: 0.5rem; letter-spacing: 0.3px;">
+                Enter your email address
+              </label>
+              <input type="email" placeholder="demo@gmail.com" required style="width: 100%; padding: 0.85rem 1rem; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; box-sizing: border-box; outline: none;">
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #475569; margin-bottom: 0.5rem; letter-spacing: 0.3px;">
+                Enter your phone number
+              </label>
+              <input type="tel" placeholder="+256 700 000 000" required style="width: 100%; padding: 0.85rem 1rem; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; box-sizing: border-box; outline: none;">
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #475569; margin-bottom: 0.5rem; letter-spacing: 0.3px;">
+                Message
+              </label>
+              <textarea rows="3" placeholder="Type Here" required style="width: 100%; padding: 0.85rem 1rem; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; box-sizing: border-box; outline: none; resize: vertical;"></textarea>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1.5rem;">
+              <input type="checkbox" id="terms" required style="width: 16px; height: 16px; accent-color: #047857;">
+              <label for="terms" style="font-size: 0.88rem; color: #64748b; font-weight: 500;">
+                I agree to the terms of service.
+              </label>
+            </div>
+
+            <button type="submit" style="background: #047857; color: #ffffff; border: none; padding: 0.85rem 2.25rem; font-size: 0.95rem; font-weight: 700; border-radius: 10px; cursor: pointer; transition: background 0.2s ease;">
+              Submit
+            </button>
+
+          </form>
         </div>
+
+      </div>
+
     </div>
-</section>
+  </section>
 
-<!-- 5. Contact Us & Physical Offices Section -->
-<section id="contact-us" style="padding: 6.5rem 0; background-color: #fafafa;">
-    <div class="container">
-        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4.5rem; align-items: start;">
-
-            <!-- Left Column: Contact Us Form -->
-            <div class="contact-form-wrapper reveal"
-                style="background: white; border: 1px solid var(--color-border); border-radius: 16px; padding: 2.5rem 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-                <h2 class="premium-heading"
-                    style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--color-emerald-darkest); margin-bottom: 1.5rem; font-weight: 700;">
-                    Contact Us
-                </h2>
-
-                <form action="#" method="POST"
-                    onsubmit="event.preventDefault(); alert('Thank you for reaching out to TRUST Protocol. Our team will contact you shortly!');">
-                    {% csrf_token %}
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
-                        <div class="form-group">
-                            <label
-                                style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Full
-                                Name</label>
-                            <input type="text" name="name" required
-                                style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white;">
-                        </div>
-                        <div class="form-group">
-                            <label
-                                style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Email
-                                Address</label>
-                            <input type="email" name="email" required
-                                style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white;">
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 1.25rem;">
-                        <label
-                            style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Subject</label>
-                        <input type="text" name="subject" required
-                            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white;">
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 1.75rem;">
-                        <label
-                            style="display: block; font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.4rem;">Your
-                            Message</label>
-                        <textarea name="message" rows="5" required
-                            style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: white; resize: vertical;"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-gold"
-                        style="width: 100%; padding: 0.95rem; font-weight: 700; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; background: var(--color-gold); color: #064e3b; box-shadow: 0 4px 14px rgba(203, 163, 88, 0.3);">
-                        Send Message
-                    </button>
-                </form>
-            </div>
-
-            <!-- Right Column: Physical Offices -->
-            <div class="addresses-wrapper reveal delay-1" style="padding-top: 0.5rem;">
-                <h2 class="premium-heading"
-                    style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--color-emerald-darkest); margin-bottom: 1.5rem; font-weight: 700;">
-                    Physical offices
-                </h2>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<!-- Mobile Responsive Stylesheet -->
-<style>
-    @media (max-width: 992px) {
-        /* Section 1: Premium Hero */
-        .premium-hero {
-            min-height: auto !important;
-            padding: 0 !important;
-            flex-direction: column !important;
-            align-items: stretch !important;
-        }
-
-        .premium-hero .hero-grid {
-            grid-template-columns: 1fr !important;
-            gap: 0 !important;
-        }
-
-        .premium-hero .hero-text {
-            padding: 3.5rem 1.5rem 2.5rem 1.5rem !important;
-            max-width: 100% !important;
-            text-align: center !important;
-        }
-
-        .premium-hero .hero-title {
-            font-size: 2.35rem !important;
-            margin-bottom: 1rem !important;
-        }
-
-        .premium-hero .hero-subtitle {
-            font-size: 1.05rem !important;
-        }
-
-        .premium-hero .hero-image-column {
-            position: relative !important;
-            width: 100% !important;
-            left: 0 !important;
-            right: 0 !important;
-            height: 360px !important;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            overflow: hidden !important;
-        }
-
-        .premium-hero .hero-image-column img {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            display: block !important;
-            border-radius: 0 !important;
-            -webkit-mask-image: none !important;
-            mask-image: none !important;
-        }
-
-        /* Section 2: Founder's Story */
-        #founders-story {
-            padding: 0 0 3.5rem 0 !important;
-        }
-
-        #founders-story .container {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            max-width: 100% !important;
-        }
-
-        #founders-story .container > div {
-            grid-template-columns: 1fr !important;
-            gap: 2rem !important;
-        }
-
-        .founder-image-wrapper {
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .founder-image-wrapper div {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-
-        .founder-image-wrapper img {
-            width: 100% !important;
-            height: 440px !important;
-            border-radius: 0 !important;
-            display: block !important;
-            object-fit: cover !important;
-            object-position: top !important;
-        }
-
-        .founder-content {
-            padding: 0 1.5rem !important;
-        }
-
-        .founder-content h2 {
-            font-size: 2.1rem !important;
-        }
-
-        /* Section 3: The Five Pillars (2 per row on Mobile) */
-        .premium-pillars {
-            padding: 3.5rem 0 !important;
-        }
-
-        .pillars-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 0.85rem !important;
-            margin-top: 2rem !important;
-        }
-
-        .pillar-item {
-            padding: 1.65rem 0.9rem 1.25rem 0.9rem !important;
-            min-height: 190px !important;
-            border-radius: 10px !important;
-        }
-
-        .pillar-letter {
-            font-size: 4.2rem !important;
-            top: -0.2rem !important;
-            right: 0.2rem !important;
-        }
-
-        .pillar-content h3 {
-            font-size: 1.02rem !important;
-            margin-bottom: 0.4rem !important;
-        }
-
-        .pillar-content p {
-            font-size: 0.82rem !important;
-            line-height: 1.45 !important;
-        }
-
-        /* Section 4: Verification Hero (Full-Bleed Image like above) */
-        .verification-hero {
-            min-height: auto !important;
-            padding: 0 !important;
-            flex-direction: column !important;
-            display: flex !important;
-            align-items: stretch !important;
-        }
-
-        .verification-hero .container {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            max-width: 100% !important;
-            width: 100% !important;
-        }
-
-        .verification-hero .container > div {
-            grid-template-columns: 1fr !important;
-            gap: 0 !important;
-        }
-
-        .verification-hero .desktop-only-spacer {
-            display: none !important;
-        }
-
-        .verification-hero .reveal {
-            padding: 3.5rem 1.5rem 2.5rem 1.5rem !important;
-            max-width: 100% !important;
-        }
-
-        .verification-hero .reveal h3 {
-            font-size: 1.75rem !important;
-        }
-
-        .verification-hero .reveal p {
-            font-size: 1.02rem !important;
-        }
-
-        .verification-image-wrapper {
-            position: relative !important;
-            width: 100% !important;
-            left: 0 !important;
-            right: 0 !important;
-            height: 360px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            overflow: hidden !important;
-        }
-
-        .verification-image-wrapper img {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            display: block !important;
-            border-radius: 0 !important;
-            -webkit-mask-image: none !important;
-            mask-image: none !important;
-        }
-
-        /* Section 5: Contact Us */
-        #contact-us {
-            padding: 3.5rem 0 !important;
-        }
-
-        #contact-us .container > div {
-            grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .premium-hero .hero-title {
-            font-size: 2.1rem !important;
-        }
-
-        .premium-hero .hero-image-column {
-            height: 280px !important;
-        }
-
-        .founder-image-wrapper img {
-            height: 360px !important;
-        }
-
-        .pillars-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 0.65rem !important;
-        }
-
-        .pillar-item {
-            padding: 1.4rem 0.75rem 1.1rem 0.75rem !important;
-            min-height: 180px !important;
-        }
-
-        .pillar-letter {
-            font-size: 3.6rem !important;
-        }
-
-        .pillar-content h3 {
-            font-size: 0.95rem !important;
-        }
-
-        .pillar-content p {
-            font-size: 0.78rem !important;
-        }
-
-        .verification-image-wrapper {
-            height: 280px !important;
-        }
-
-        .contact-form-wrapper form > div:first-child {
-            grid-template-columns: 1fr !important;
-        }
-
-        .contact-form-wrapper {
-            padding: 1.75rem 1.25rem !important;
-        }
-    }
-</style>
-
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
-        });
-    });
-</script>
+</div>
 {% endblock %}
