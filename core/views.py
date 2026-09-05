@@ -828,6 +828,19 @@ def admin_dashboard(request):
                 if about_founder_image:
                     settings_obj.about_founder_image = about_founder_image
 
+                if request.FILES.get('about_pillars_image_1'):
+                    settings_obj.about_pillars_image_1 = request.FILES.get('about_pillars_image_1')
+                if request.FILES.get('about_pillars_image_2'):
+                    settings_obj.about_pillars_image_2 = request.FILES.get('about_pillars_image_2')
+                if request.FILES.get('about_mission_image_1'):
+                    settings_obj.about_mission_image_1 = request.FILES.get('about_mission_image_1')
+                if request.FILES.get('about_mission_image_2'):
+                    settings_obj.about_mission_image_2 = request.FILES.get('about_mission_image_2')
+                if request.FILES.get('about_work_video_image'):
+                    settings_obj.about_work_video_image = request.FILES.get('about_work_video_image')
+                if request.FILES.get('about_contact_image'):
+                    settings_obj.about_contact_image = request.FILES.get('about_contact_image')
+
                 if request.POST.get('stat_properties'):
                     settings_obj.stat_properties = int(request.POST.get('stat_properties'))
                 if request.POST.get('stat_tenants'):

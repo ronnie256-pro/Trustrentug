@@ -520,6 +520,12 @@ class SiteSetting(models.Model):
     # About Us Images configured by Admin
     about_hero_image = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Premium Hero Image uploaded by Admin")
     about_founder_image = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Founder Story Image uploaded by Admin")
+    about_pillars_image_1 = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Pillars Image 1 uploaded by Admin")
+    about_pillars_image_2 = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Pillars Image 2 uploaded by Admin")
+    about_mission_image_1 = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Mission Image 1 uploaded by Admin")
+    about_mission_image_2 = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Mission Image 2 uploaded by Admin")
+    about_work_video_image = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us How We Work Video Showcase Image uploaded by Admin")
+    about_contact_image = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="About Us Contact Form Left Image uploaded by Admin")
 
     def __str__(self):
         return "Site Settings"
