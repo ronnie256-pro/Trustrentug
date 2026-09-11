@@ -167,20 +167,22 @@
           </p>
         </div>
 
-        <!-- Right Column: Rounded Hero Photo with Floating Stamp Badge -->
-        <div style="position: relative;">
-          <div class="about-hero-photo-box" style="width: 100%; height: 390px; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.12); position: relative; background: #f1f5f9;">
-            {% if site_settings.about_hero_image %}
-              <img src="{{ site_settings.about_hero_image.url }}" alt="TRUST Office & Operations" style="width: 100%; height: 100%; object-fit: cover;">
+        <!-- Right Column: Rounded Founder Portrait Photo with Floating Stamp Badge -->
+        <div style="position: relative; display: flex; justify-content: center;">
+          <div class="about-hero-photo-box" style="width: 100%; max-width: 380px; height: 490px; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.12); position: relative; background: #f1f5f9;">
+            {% if site_settings.about_founder_image %}
+              <img src="{{ site_settings.about_founder_image.url }}" alt="TRUST Founder" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block;">
+            {% elif site_settings.about_hero_image %}
+              <img src="{{ site_settings.about_hero_image.url }}" alt="TRUST Office & Operations" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block;">
             {% else %}
               <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 3.5rem;">
-                <i class="fa-solid fa-building-user"></i>
+                <i class="fa-solid fa-user-tie"></i>
               </div>
             {% endif %}
           </div>
           
           <!-- Floating Circular Stamp / Badge -->
-          <div class="about-founder-stamp" style="position: absolute; bottom: -25px; left: -25px; background: #ffffff; border-radius: 50%; padding: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f1f5f9; display: flex; align-items: center; justify-content: center; width: 95px; height: 95px; box-sizing: border-box; text-align: center;">
+          <div class="about-founder-stamp" style="position: absolute; bottom: -25px; left: calc(50% - 190px - 15px); background: #ffffff; border-radius: 50%; padding: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f1f5f9; display: flex; align-items: center; justify-content: center; width: 95px; height: 95px; box-sizing: border-box; text-align: center;">
             <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
               <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-emerald-dark, #047857); line-height: 1.1;">
                 OUR<br><span style="color: var(--color-gold-dark, #b45309);">FOUNDER</span>
@@ -230,9 +232,9 @@
         
         <!-- Image Composition Left -->
         <div class="about-image-comp-left">
-          <div class="about-pillars-main" style="width: 85%; height: 360px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); background: #f1f5f9;">
+          <div class="about-pillars-main" style="width: 100%; height: 380px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); background: #f1f5f9;">
             {% if site_settings.about_pillars_image_1 %}
-              <img src="{{ site_settings.about_pillars_image_1.url }}" alt="Five Pillars Verification" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="{{ site_settings.about_pillars_image_1.url }}" alt="Five Pillars Verification" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
             {% else %}
               <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 3.5rem;">
                 <i class="fa-solid fa-shield-halved"></i>
@@ -240,9 +242,9 @@
             {% endif %}
           </div>
           <!-- Inset Overlapping Card -->
-          <div class="about-pillars-inset" style="position: absolute; bottom: -30px; right: 0; width: 55%; height: 220px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); background: #f8fafc;">
+          <div class="about-pillars-inset" style="position: absolute; bottom: -30px; right: -15px; width: 55%; height: 230px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); background: #f8fafc;">
             {% if site_settings.about_pillars_image_2 %}
-              <img src="{{ site_settings.about_pillars_image_2.url }}" alt="Field Verification" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="{{ site_settings.about_pillars_image_2.url }}" alt="Field Verification" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
             {% else %}
               <div style="width: 100%; height: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.2rem;">
                 <i class="fa-solid fa-list-check"></i>
@@ -318,9 +320,9 @@
 
         <!-- Image Composition Right -->
         <div class="about-image-comp-right">
-          <div class="about-mission-main" style="width: 85%; height: 360px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); margin-left: auto; background: #f1f5f9;">
+          <div class="about-mission-main" style="width: 100%; height: 380px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); margin-left: auto; background: #f1f5f9;">
             {% if site_settings.about_mission_image_1 %}
-              <img src="{{ site_settings.about_mission_image_1.url }}" alt="Our Mission Operations" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="{{ site_settings.about_mission_image_1.url }}" alt="Our Mission Operations" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
             {% else %}
               <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 3.5rem;">
                 <i class="fa-solid fa-bullseye"></i>
@@ -328,9 +330,9 @@
             {% endif %}
           </div>
           <!-- Inset Overlapping Card -->
-          <div class="about-mission-inset" style="position: absolute; bottom: -30px; left: 0; width: 55%; height: 220px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); background: #f8fafc;">
+          <div class="about-mission-inset" style="position: absolute; bottom: -30px; left: -15px; width: 55%; height: 230px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); background: #f8fafc;">
             {% if site_settings.about_mission_image_2 %}
-              <img src="{{ site_settings.about_mission_image_2.url }}" alt="Modern Architecture" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="{{ site_settings.about_mission_image_2.url }}" alt="Modern Architecture" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
             {% else %}
               <div style="width: 100%; height: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.2rem;">
                 <i class="fa-solid fa-handshake"></i>
@@ -358,7 +360,7 @@
       <!-- Large Rounded Video Showcase Card -->
       <div class="about-video-card" style="position: relative; width: 100%; max-width: 1200px; margin: 0 auto; height: 480px; border-radius: 32px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.15); background: #0f172a;">
         {% if site_settings.about_work_video_image %}
-          <img src="{{ site_settings.about_work_video_image.url }}" alt="How We Work Video Showcase" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="{{ site_settings.about_work_video_image.url }}" alt="How We Work Video Showcase" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
         {% else %}
           <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);"></div>
         {% endif %}
@@ -395,7 +397,7 @@
           <div style="display: flex; flex-direction: column; align-items: center; width: 140px;">
             <div style="width: 140px; height: 140px; border-radius: 14px; overflow: hidden; border: 2px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); margin-bottom: 0.75rem; background: #f8fafc; position: relative;">
               {% if exec.image %}
-                <img src="{{ exec.image.url }}" alt="{{ exec.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="{{ exec.image.url }}" alt="{{ exec.name }}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block;">
               {% else %}
                 <div style="width: 100%; height: 100%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.5rem;">
                   <i class="fa-solid fa-user"></i>
@@ -441,7 +443,7 @@
         <!-- Photo Left with Custom Clipped Corner Aesthetic -->
         <div class="about-contact-photo" style="width: 100%; height: 520px; border-radius: 40px 40px 0 40px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.12); background: #f1f5f9;">
           {% if site_settings.about_contact_image %}
-            <img src="{{ site_settings.about_contact_image.url }}" alt="Start Your Project With Us" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="{{ site_settings.about_contact_image.url }}" alt="Start Your Project With Us" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
           {% else %}
             <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #047857 0%, #065f46 100%); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); font-size: 4rem;">
               <i class="fa-solid fa-paper-plane"></i>

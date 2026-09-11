@@ -4781,16 +4781,101 @@ function filterInspectionsTable() {
                     <div
                         style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.1rem; display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div style="font-weight: 700; font-size: 0.88rem; color: #475569;">About Us — Founder Photo</div>
-                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.1rem;">Used in Founder's Story section</div>
+                            <div style="font-weight: 700; font-size: 0.88rem; color: #475569;">About Us — Five Pillars Main Image 1</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.1rem;">Main photo for Pillars section</div>
                         </div>
                         <div
-                            style="width: 48px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            {% if site_settings.about_founder_image %}
-                            <img src="{{ site_settings.about_founder_image.url }}"
+                            style="width: 64px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_pillars_image_1 %}
+                            <img src="{{ site_settings.about_pillars_image_1.url }}"
                                 style="width: 100%; height: 100%; object-fit: cover;">
                             {% else %}
-                            <img src="/static/img/founder.png" style="width: 100%; height: 100%; object-fit: cover;">
+                            <i class="fa-solid fa-shield-halved" style="color: #94a3b8; font-size: 1.2rem;"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.88rem; color: #475569;">About Us — Five Pillars Inset Image 2</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.1rem;">Overlapping inset card photo</div>
+                        </div>
+                        <div
+                            style="width: 64px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_pillars_image_2 %}
+                            <img src="{{ site_settings.about_pillars_image_2.url }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <i class="fa-solid fa-list-check" style="color: #94a3b8; font-size: 1.2rem;"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.88rem; color: #475569;">About Us — Our Mission Main Image 1</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.1rem;">Main photo for Mission section</div>
+                        </div>
+                        <div
+                            style="width: 64px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_mission_image_1 %}
+                            <img src="{{ site_settings.about_mission_image_1.url }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <i class="fa-solid fa-bullseye" style="color: #94a3b8; font-size: 1.2rem;"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.88rem; color: #475569;">About Us — Our Mission Inset Image 2</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.1rem;">Overlapping inset card photo</div>
+                        </div>
+                        <div
+                            style="width: 64px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_mission_image_2 %}
+                            <img src="{{ site_settings.about_mission_image_2.url }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <i class="fa-solid fa-handshake" style="color: #94a3b8; font-size: 1.2rem;"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.88rem; color: #475569;">About Us — How We Work Video Image</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.1rem;">Video showcase thumbnail image</div>
+                        </div>
+                        <div
+                            style="width: 64px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_work_video_image %}
+                            <img src="{{ site_settings.about_work_video_image.url }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <i class="fa-solid fa-play" style="color: #94a3b8; font-size: 1.2rem;"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.1rem; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.88rem; color: #475569;">About Us — Contact Form Left Photo</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.1rem;">Banner photo next to contact form</div>
+                        </div>
+                        <div
+                            style="width: 64px; height: 48px; border-radius: 8px; background: white; border: 1px solid #cbd5e1; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            {% if site_settings.about_contact_image %}
+                            <img src="{{ site_settings.about_contact_image.url }}"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <i class="fa-solid fa-paper-plane" style="color: #94a3b8; font-size: 1.2rem;"></i>
                             {% endif %}
                         </div>
                     </div>
