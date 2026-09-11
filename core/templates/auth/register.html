@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Register | TRUST Protocol{% endblock %}
+{% block title %}Create an Account | TRUST Protocol{% endblock %}
+{% block meta_description %}Register for a free TRUST Protocol account as a tenant, property owner, or agent to search, list, and lease verified properties in Uganda.{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -219,7 +220,7 @@ footer {
             {% endif %}
         </div>
 
-        <h3 class="auth-form-title">Create Account</h3>
+        <h1 class="auth-form-title">Create Account</h1>
 
         <form action="/register/" method="POST" enctype="multipart/form-data">
             {% csrf_token %}

@@ -7,6 +7,16 @@
     <title>{% block title %}{{ meta_title|default:site_settings.site_name|default:"TRUST Protocol | Premium Verified Rental Properties & Apartments in Uganda" }}{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{{ meta_description|default:'Find verified apartments, houses, offices, and land for rent in Kampala, Wakiso, and Entebbe with TRUST Protocol escrow verification.' }}{% endblock %}">
     <meta name="google-site-verification" content="vPox8OeRVeGKJaP9lILsqT5zMyQt4wvYsplGAq5c9ug" />
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-MEASUREMENT_ID');
+    </script>
 
     {% if site_settings.site_icon %}
     <link rel="icon" type="image/png" href="{{ site_settings.site_icon.url }}">
@@ -445,6 +455,9 @@
                     <h4>Discover</h4>
                     <ul class="footer-links" style="list-style: none;">
                         <li><a href="/search/">Search Properties</a></li>
+                        <li><a href="/offices/">Commercial & Shared Offices</a></li>
+                        <li><a href="/nearby/">Nearby Map Search</a></li>
+                        <li><a href="/projects/">Construction Projects</a></li>
                         <li><a href="/how-it-works/">How Escrow Works</a></li>
                         <li><a href="/verification/">Verification Process</a></li>
                     </ul>
@@ -454,14 +467,13 @@
                     <ul class="footer-links" style="list-style: none;">
                         <li><a href="/login/">List Your Property (Login)</a></li>
                         <li><a href="/agent/report/" style="font-weight: 600; color: var(--color-gold);"><i class="fa-solid fa-clipboard-check"></i> Agent Report Portal</a></li>
-                        <li><a href="/agents/">TRUST Agent Network</a></li>
                         <li><a href="/legal/">Contract Standards</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4>Support</h4>
                     <ul class="footer-links" style="list-style: none;">
-                        <li><a href="/contact/">Contact Us</a></li>
+                        <li><a href="/about-us/">About Us & Contact</a></li>
                         <li><a href="/faq/">FAQ</a></li>
                         <li><a href="/disputes/">Dispute Resolution</a></li>
                     </ul>

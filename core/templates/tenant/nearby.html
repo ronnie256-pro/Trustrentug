@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Nearby Properties Map | TRUST Rent Ug{% endblock %}
+{% block title %}Nearby Properties Map | Interactive Map Search | TRUST Protocol{% endblock %}
+{% block meta_description %}Explore rental properties and land near your current location or target neighborhood in Uganda with interactive map search.{% endblock %}
 
 {% block extra_css %}
 <!-- Leaflet.js CSS (using cdnjs allowed by CSP) -->
@@ -351,6 +352,7 @@
 
 {% block content %}
 <div class="nearby-viewport-wrapper">
+    <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">Explore Nearby Properties on Interactive Map</h1>
     <!-- Top Filter Header Bar (Centered in Desktop View, Separated by Thin Line) -->
     <div class="nearby-filter-bar">
         <!-- Centered Filter Items Wrapper -->

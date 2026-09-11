@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Sign In | TRUST Protocol{% endblock %}
+{% block meta_description %}Sign in to your TRUST Protocol account to manage escrow property listings, viewings, payments, and agreement verifications.{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -167,7 +168,7 @@ footer {
             {% endif %}
         </div>
 
-        <h3 class="auth-form-title">Sign In</h3>
+        <h1 class="auth-form-title">Sign In</h1>
 
         <form action="/login/" method="POST">
             {% csrf_token %}

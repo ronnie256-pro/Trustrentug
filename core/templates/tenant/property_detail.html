@@ -2,6 +2,7 @@
 {% load humanize %}
 
 {% block title %}{{ property.title }} in {{ property.location }} | TRUST Protocol{% endblock %}
+{% block meta_description %}View verified details for {{ property.title }} in {{ property.location }}. Features {{ property.bedrooms|default:'0' }} bedrooms, {{ property.bathrooms|default:'0' }} bathrooms. Rent or buy safely with TRUST Protocol escrow.{% endblock %}
 
 {% block extra_css %}
 <script type="application/ld+json">

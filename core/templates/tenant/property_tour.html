@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}360° Virtual Tour - {{ property.title }} | TRUST{% endblock %}
+{% block title %}360° Virtual Tour - {{ property.title }} | TRUST Protocol{% endblock %}
+{% block meta_description %}Experience a 360-degree immersive virtual tour of {{ property.title }} in {{ property.location }}. Verify property condition before scheduling a physical visit.{% endblock %}
 
 {% block extra_css %}
 <!-- Pannellum WebGL 360 Viewer CSS -->
@@ -181,6 +182,7 @@
 
 {% block content %}
 <div class="tour-viewport-wrapper">
+    <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;">360° Virtual Tour of {{ property.title }}</h1>
     <!-- Top Floating Back Button Only -->
     <div class="tour-top-bar">
         <a href="{% url 'property_detail' property.id %}" class="btn-back-property">
