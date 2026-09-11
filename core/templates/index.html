@@ -122,6 +122,7 @@
       padding: 0 !important;
     }
   }
+
   @media (max-width: 480px) {
     .hero-container {
       min-height: 280px !important;
@@ -1556,17 +1557,28 @@
   </div>
 </section>
 
-<!-- 2. SERVICES CIRCLES BLOCK (GREEN BUTTON TITLES & BLACK SUBTEXT) -->
-<div style="position: relative; z-index: 30; margin-top: -4.5rem; margin-bottom: 2.5rem;">
+<!-- 2. SERVICES CIRCLES BLOCK (GREEN BUTTON TITLES ON DESKTOP, ICON-ONLY SINGLE ROW ON MOBILE) -->
+<div class="services-circular-block"
+  style="position: relative; z-index: 30; margin-top: -4.5rem; margin-bottom: 1.25rem;">
   <style>
+    .service-circle-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      width: 100%;
+    }
+
     .service-circle-card:hover .service-circle-img-wrapper {
       transform: translateY(-6px);
       box-shadow: 0 16px 35px rgba(10, 61, 40, 0.3) !important;
       border-color: #ffffff !important;
     }
+
     .service-circle-card:hover img {
       transform: scale(1.08);
     }
+
     .service-btn {
       background: #0b663b;
       color: #ffffff !important;
@@ -1583,106 +1595,164 @@
       text-align: center;
       white-space: nowrap;
     }
+
     .service-circle-card:hover .service-btn {
       background: #074d2b;
       color: #ffffff !important;
       transform: translateY(-2px);
       box-shadow: 0 8px 22px rgba(11, 102, 59, 0.45);
     }
-    @media (max-width: 1050px) {
+
+    @media (max-width: 992px) {
+      .services-circular-block {
+        margin-top: -3.5rem !important;
+        margin-bottom: 1rem !important;
+      }
+
       .services-circular-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 1.5rem 1rem !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 0.75rem !important;
+      }
+
+      .service-circle-img-wrapper {
+        width: 95px !important;
+        height: 95px !important;
+      }
+
+      .service-btn {
+        font-size: 0.85rem !important;
+        padding: 0.35rem 0.85rem !important;
       }
     }
+
     @media (max-width: 768px) {
+      .services-circular-block {
+        margin-top: -2.2rem !important;
+        margin-bottom: 0.5rem !important;
+      }
+
+      .services-circular-container {
+        padding: 0 0.5rem !important;
+      }
+
       .services-circular-grid {
-        grid-template-columns: repeat(6, 1fr) !important;
-        gap: 1.1rem 0.25rem !important;
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        gap: 0.4rem !important;
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
+        justify-items: center !important;
       }
-      .service-circle-card:nth-child(1) { grid-column: span 2 !important; }
-      .service-circle-card:nth-child(2) { grid-column: span 2 !important; }
-      .service-circle-card:nth-child(3) { grid-column: span 2 !important; }
-      .service-circle-card:nth-child(4) { grid-column: 2 / span 2 !important; }
-      .service-circle-card:nth-child(5) { grid-column: 4 / span 2 !important; }
+
+      .service-circle-card {
+        grid-column: auto !important;
+      }
 
       .service-circle-img-wrapper {
-        width: 82px !important;
-        height: 82px !important;
+        width: 62px !important;
+        height: 62px !important;
         border-width: 3px !important;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18) !important;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22) !important;
       }
+
+      /* Hide button text on mobile view as requested */
       .service-btn {
-        font-size: 0.76rem !important;
-        padding: 0.32rem 0.6rem !important;
-        margin-top: 0.45rem !important;
-        margin-bottom: 0.2rem !important;
+        display: none !important;
       }
+
       .service-subtext {
-        font-size: 0.7rem !important;
-        line-height: 1.15 !important;
+        display: none !important;
       }
     }
-    @media (max-width: 400px) {
+
+    @media (max-width: 480px) {
+      .services-circular-block {
+        margin-top: -1.8rem !important;
+        margin-bottom: 0.35rem !important;
+      }
+
+      .services-circular-grid {
+        gap: 0.35rem !important;
+      }
+
       .service-circle-img-wrapper {
-        width: 74px !important;
-        height: 74px !important;
+        width: 54px !important;
+        height: 54px !important;
+        border-width: 2.5px !important;
       }
-      .service-btn {
-        font-size: 0.7rem !important;
-        padding: 0.28rem 0.45rem !important;
+    }
+
+    @media (max-width: 360px) {
+      .services-circular-container {
+        padding: 0 0.25rem !important;
       }
-      .service-subtext {
-        font-size: 0.65rem !important;
+
+      .services-circular-grid {
+        gap: 0.2rem !important;
+      }
+
+      .service-circle-img-wrapper {
+        width: 46px !important;
+        height: 46px !important;
+        border-width: 2px !important;
       }
     }
   </style>
 
-  <div class="container" style="max-width: 1250px; margin: 0 auto; padding: 0 1rem;">
+  <div class="container services-circular-container" style="max-width: 1250px; margin: 0 auto; padding: 0 1rem;">
     <div style="background: transparent; border: none; padding: 0; box-shadow: none;">
-      
-      <!-- 5 Circular Service Cards Grid (GREEN BUTTON TITLES) -->
-      <div class="services-circular-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; align-items: start; justify-items: center;">
-        
+
+      <!-- 5 Circular Service Cards Grid (GREEN BUTTON TITLES ON DESKTOP, ICON-ONLY SINGLE ROW ON MOBILE) -->
+      <div class="services-circular-grid"
+        style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; align-items: start; justify-items: center;">
+
         <!-- 1. We Sale -->
-        <a href="/search/?for_sale=on" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
-          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_sale.png' %}" alt="We Sale" style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
+        <a href="/search/?for_sale=on" class="service-circle-card">
+          <div class="service-circle-img-wrapper"
+            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
+            <img src="{% static 'images/service_icon_sale.png' %}" alt="We Sale"
+              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
           </div>
           <span class="service-btn">We Sale</span>
         </a>
 
         <!-- 2. We Rent -->
-        <a href="/search/?for_rent=on" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
-          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_rent.png' %}" alt="We Rent" style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
+        <a href="/search/?for_rent=on" class="service-circle-card">
+          <div class="service-circle-img-wrapper"
+            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
+            <img src="{% static 'images/service_icon_rent.png' %}" alt="We Rent"
+              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
           </div>
           <span class="service-btn">We Rent</span>
         </a>
 
         <!-- 3. Offices -->
-        <a href="{% url 'offices' %}" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
-          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_offices.png' %}" alt="Offices" style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
+        <a href="{% url 'offices' %}" class="service-circle-card">
+          <div class="service-circle-img-wrapper"
+            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
+            <img src="{% static 'images/service_icon_offices.png' %}" alt="Offices"
+              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
           </div>
           <span class="service-btn">Offices</span>
         </a>
 
         <!-- 4. We Construct -->
-        <a href="{% url 'projects_list' %}" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
-          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_construct.png' %}" alt="We Construct" style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
+        <a href="{% url 'projects_list' %}" class="service-circle-card">
+          <div class="service-circle-img-wrapper"
+            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
+            <img src="{% static 'images/service_icon_construct.png' %}" alt="We Construct"
+              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
           </div>
           <span class="service-btn">We Construct</span>
         </a>
 
         <!-- 5. Locate Land for You -->
-        <a href="/search/?q=land" class="service-circle-card" style="display: flex; flex-direction: column; align-items: center; text-decoration: none;">
-          <div class="service-circle-img-wrapper" style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_land.png' %}" alt="Locate Land for You" style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
+        <a href="/search/?q=land" class="service-circle-card">
+          <div class="service-circle-img-wrapper"
+            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
+            <img src="{% static 'images/service_icon_land.png' %}" alt="Locate Land for You"
+              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
           </div>
           <span class="service-btn">Locate Land for You</span>
         </a>
@@ -1700,6 +1770,7 @@
       grid-template-columns: repeat(6, 1fr);
       gap: 1.25rem;
     }
+
     .newly-added-card {
       text-decoration: none;
       color: inherit;
@@ -1709,22 +1780,27 @@
       text-align: center;
       transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .newly-added-card:hover {
       transform: translateY(-5px);
     }
+
     .newly-added-card:hover .newly-added-img {
       transform: scale(1.06);
     }
+
     @media (max-width: 1480px) {
       .newly-added-grid-6col {
         grid-template-columns: repeat(4, 1fr) !important;
       }
     }
+
     @media (max-width: 1000px) {
       .newly-added-grid-6col {
         grid-template-columns: repeat(3, 1fr) !important;
       }
     }
+
     @media (max-width: 680px) {
       .newly-added-grid-6col {
         grid-template-columns: repeat(2, 1fr) !important;
@@ -1740,114 +1816,229 @@
       color: #292524;
       line-height: 1.5;
     }
+
     .map-redirect-prompt a {
       color: #047857;
       text-decoration: underline;
       font-weight: 800;
       transition: color 0.2s ease;
     }
+
     .map-redirect-prompt a:hover {
       color: #03543f;
     }
+
     @media (max-width: 768px) {
       .map-redirect-prompt {
         font-size: 0.95rem;
         margin-top: 0.75rem;
       }
     }
+
+    /* Mobile Filter Accordion Styles */
+    .landing-filter-accordion-header {
+      display: none;
+    }
+    .landing-filter-body {
+      display: block;
+    }
+    .landing-filter-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .landing-filter-card {
+        padding: 0.75rem 0.85rem !important;
+      }
+      .landing-filter-accordion-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: center !important;
+        width: 100%;
+        background: #047857 !important;
+        color: #ffffff !important;
+        border: none;
+        border-radius: 10px;
+        padding: 0.65rem 1rem;
+        font-weight: 800;
+        font-size: 1.05rem;
+        cursor: pointer;
+        outline: none;
+        text-align: center !important;
+        box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+        transition: all 0.25s ease;
+      }
+      .landing-filter-accordion-header.is-open {
+        margin-bottom: 0.85rem;
+      }
+      .landing-filter-body {
+        display: none;
+      }
+      .landing-filter-body.is-open {
+        display: block !important;
+      }
+      .landing-filter-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.65rem !important;
+        width: 100% !important;
+      }
+      .landing-filter-grid > div {
+        min-width: 0 !important;
+        flex: none !important;
+        width: 100% !important;
+      }
+      .landing-filter-grid button[type="submit"] {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+    }
   </style>
 
+  <script>
+    function toggleLandingFilterAccordion() {
+      const header = document.getElementById('landingFilterAccordionHeader');
+      const body = document.getElementById('landingFilterBody');
+      if (header && body) {
+        header.classList.toggle('is-open');
+        body.classList.toggle('is-open');
+      }
+    }
+  </script>
+
   <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
-    
+
     <!-- LANDING PAGE PROPERTY SEARCH FILTER BAR (Submits GET data directly to /search/) -->
-    <div style="max-width: 1100px; width: 100%; margin: 0 auto 2.5rem auto; box-sizing: border-box;">
-      <form id="landingFilterForm" method="GET" action="{% url 'search' %}" class="filters" style="border: none; background: transparent; padding: 0; box-shadow: none;">
-        
+    <div style="max-width: 1100px; width: 100%; margin: 0 auto 1.5rem auto; box-sizing: border-box;">
+      <form id="landingFilterForm" method="GET" action="{% url 'search' %}" class="filters"
+        style="border: none; background: transparent; padding: 0; box-shadow: none;">
+
         <!-- HORIZONTAL FILTER BAR CONTAINER (Creamy #fbf7f0 background with warm #f4eee2 input controls) -->
-        <div style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06); display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
-          <!-- Keyword / Address Input -->
-          <div style="flex: 1.5; min-width: 160px;">
-            <input type="text" name="q" placeholder="Keyword or Address..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
-          </div>
+        <div class="landing-filter-card"
+          style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06);">
+          
+          <!-- Text-Only Accordion Header (Visible only on Mobile screens <= 768px) -->
+          <button type="button" id="landingFilterAccordionHeader" class="landing-filter-accordion-header" onclick="toggleLandingFilterAccordion()">
+            <span>Filter</span>
+          </button>
 
-          <!-- Cascading Location Controls (District -> Division -> Village) -->
-          <div style="flex: 1.2; min-width: 130px;">
-            <select name="district" id="landing-district-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
-              <option value="">District</option>
-            </select>
-          </div>
-          <div style="flex: 1.2; min-width: 130px;">
-            <select name="division" id="landing-division-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;" disabled>
-              <option value="">Division</option>
-            </select>
-          </div>
-          <div style="flex: 1.2; min-width: 130px;">
-            <select name="village" id="landing-village-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;" disabled>
-              <option value="">Village</option>
-            </select>
-          </div>
+          <!-- Filter Inputs Body -->
+          <div id="landingFilterBody" class="landing-filter-body">
+            <div class="landing-filter-grid">
+              <!-- Keyword / Address Input -->
+              <div style="flex: 1.5; min-width: 160px;">
+                <input type="text" name="q" placeholder="Keyword or Address..." class="form-control"
+                  style="width: 100%; padding: 0.65rem 0.85rem; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
+              </div>
 
-          <!-- Property Type Filter -->
-          <div style="flex: 1.2; min-width: 140px;">
-            <select name="type" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
-              <option value="">All Types</option>
-              {% for cat in property_categories %}
-              <option value="{{ cat.name }}">{{ cat.name }}</option>
-              {% empty %}
-              <option value="apartment">Apartment</option>
-              <option value="flat">Flat</option>
-              <option value="condo">Condo</option>
-              <option value="bungalow">Bungalow / Standalone</option>
-              {% endfor %}
-            </select>
-          </div>
+              <!-- Cascading Location Controls (District -> Division -> Village) -->
+              <div style="flex: 1.2; min-width: 130px;">
+                <select name="district" id="landing-district-select" class="form-control"
+                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
+                  <option value="">District</option>
+                </select>
+              </div>
+              <div style="flex: 1.2; min-width: 130px;">
+                <select name="division" id="landing-division-select" class="form-control"
+                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;"
+                  disabled>
+                  <option value="">Division</option>
+                </select>
+              </div>
+              <div style="flex: 1.2; min-width: 130px;">
+                <select name="village" id="landing-village-select" class="form-control"
+                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;"
+                  disabled>
+                  <option value="">Village</option>
+                </select>
+              </div>
 
-          <!-- Filter Action Button -->
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.4rem; font-weight: 800; border-radius: 10px; background: #047857; color: white; border: none; cursor: pointer; white-space: nowrap;">
-              <i class="fa-solid fa-magnifying-glass"></i> Search
-            </button>
+              <!-- Property Type Filter -->
+              <div style="flex: 1.2; min-width: 140px;">
+                <select name="type" class="form-control"
+                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
+                  <option value="">All Types</option>
+                  {% for cat in property_categories %}
+                  <option value="{{ cat.name }}">{{ cat.name }}</option>
+                  {% empty %}
+                  <option value="apartment">Apartment</option>
+                  <option value="flat">Flat</option>
+                  <option value="condo">Condo</option>
+                  <option value="bungalow">Bungalow / Standalone</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- Filter Action Button -->
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button type="submit" class="btn btn-primary"
+                  style="padding: 0.65rem 1.4rem; font-weight: 800; border-radius: 10px; background: #047857; color: white; border: none; cursor: pointer; white-space: nowrap;">
+                  <i class="fa-solid fa-magnifying-glass"></i> Search
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </form>
 
       <!-- Map Redirect Prompt -->
       <div class="map-redirect-prompt">
-        If you are already in the same area that you want a property in, use a map. <a href="{% url 'nearby_properties' %}">click here</a>
+        If you are already in the same area that you want a property in, use a map. <a
+          href="{% url 'nearby_properties' %}">click here</a>
       </div>
     </div>
 
     <!-- Static Centered Header -->
     <div style="text-align: center; margin-bottom: 2rem;">
-      <h3 style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 800; color: #1e1b18; margin: 0; letter-spacing: -0.3px;">Newly Added</h3>
+      <h3
+        style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 800; color: #1e1b18; margin: 0; letter-spacing: -0.3px;">
+        Newly Added</h3>
     </div>
 
     <div class="newly-added-grid-6col">
       {% for property in properties|slice:":12" %}
       <a href="/property/{{ property.id }}/" class="newly-added-card" style="width: 100%;">
-        
+
         <!-- Image Box with Rounded Corners (With For Sale / For Rent Badge) -->
-        <div style="position: relative; width: 100%; height: 210px; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.06);">
+        <div
+          style="position: relative; width: 100%; height: 210px; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.06);">
           {% if property.is_for_sale or property.listing_type == 'sale' %}
-          <span style="position: absolute; top: 10px; right: 10px; background: #0284c7; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For Sale</span>
+          <span
+            style="position: absolute; top: 10px; right: 10px; background: #0284c7; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For
+            Sale</span>
           {% else %}
-          <span style="position: absolute; top: 10px; right: 10px; background: #047857; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For Rent</span>
+          <span
+            style="position: absolute; top: 10px; right: 10px; background: #047857; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For
+            Rent</span>
           {% endif %}
 
           {% if property.hero_image %}
-          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="newly-added-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% elif property.category == 'studio' %}
-          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
+            alt="{{ property.title }}" class="newly-added-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% elif property.category == '2_bed' or property.category == '1_bed' %}
-          <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
+            alt="{{ property.title }}" class="newly-added-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% else %}
-          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }}" class="newly-added-img" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
+            alt="{{ property.title }}" class="newly-added-img"
+            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
           {% endif %}
         </div>
 
         <!-- Centered Title & Price -->
         <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
-          <h4 style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
+          <h4
+            style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
             {{ property.title }}
           </h4>
           <div style="font-size: 0.92rem; color: #57534e; font-weight: 700; text-align: center;">
@@ -1862,7 +2053,8 @@
       </a>
       {% empty %}
       <div style="text-align: center; padding: 5rem 0; color: #94a3b8; grid-column: 1 / -1;">
-        <i class="fa-solid fa-house-circle-xmark" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
+        <i class="fa-solid fa-house-circle-xmark"
+          style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
         <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No recently added vetted properties found.</p>
       </div>
       {% endfor %}
@@ -1870,7 +2062,8 @@
 
     <!-- View All Button directing users to search page -->
     <div style="text-align: center; margin-top: 2.5rem;">
-      <a href="{% url 'search' %}" class="btn" style="display: inline-flex; align-items: center; gap: 0.65rem; background: #047857 !important; color: white !important; padding: 0.85rem 2.25rem; font-size: 1rem; font-weight: 700; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.35); transition: all 0.25s ease;">
+      <a href="{% url 'search' %}" class="btn"
+        style="display: inline-flex; align-items: center; gap: 0.65rem; background: #047857 !important; color: white !important; padding: 0.85rem 2.25rem; font-size: 1rem; font-weight: 700; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.35); transition: all 0.25s ease;">
         View All <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
       </a>
     </div>
@@ -1879,8 +2072,7 @@
 </section>
 
 <!-- 4. DREAM HOME & STATS SHOWCASE SECTION -->
-<section
-  style="padding: 3.5rem 0; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
+<section style="padding: 3.5rem 0; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
   <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
 
     <!-- CENTERED TEXT HEADER BLOCK -->
@@ -1893,7 +2085,8 @@
     </div>
 
     <!-- SPLIT CONTENT: SAMPLE IMAGE ON LEFT, COUNTDOWN CARDS ON RIGHT -->
-    <div class="showcase-split-grid" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3.5rem; align-items: center;">
+    <div class="showcase-split-grid"
+      style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3.5rem; align-items: center;">
 
       <!-- LEFT SIDE: SAMPLE IMAGE CARD WITH ROUNDED CORNERS -->
       <div class="showcase-image-box"
