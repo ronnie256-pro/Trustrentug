@@ -28,6 +28,10 @@
                 <div style="font-size: 0.95rem; color: #475569; margin-top: 0.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                     <span>Client: <strong>{{ project.client_name|default:'Diaspora Client' }}</strong></span>
                     <span>&bull;</span>
+                    <span>Phone: <strong>{{ project.owner_phone|default:'--' }}</strong></span>
+                    <span>&bull;</span>
+                    <span>Secret Property ID: <strong style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 6px; font-family: monospace; letter-spacing: 0.08em;">{{ project.property_id }}</strong></span>
+                    <span>&bull;</span>
                     <span>Site: <strong>{{ project.location }}</strong></span>
                     <span>&bull;</span>
                     <span>Lead Supervisor: <strong>{{ project.supervisor_name }}</strong></span>

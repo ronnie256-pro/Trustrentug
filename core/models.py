@@ -611,6 +611,17 @@ class HeroVideo(models.Model):
         return self.title
 
 
+def generate_secret_property_id():
+    """
+    Generates a 6-character alphanumeric code in uppercase,
+    excluding '0' and 'O' to eliminate any ambiguity.
+    Allowed characters: 1-9 and A-Z except O.
+    """
+    import secrets
+    charset = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ"
+    return ''.join(secrets.choice(charset) for _ in range(6))
+
+
 class ConstructionProject(models.Model):
     STATUS_CHOICES = [
         ('ongoing', 'Ongoing Construction'),
@@ -631,6 +642,22 @@ class ConstructionProject(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ongoing')
     supervisor_name = models.CharField(max_length=150, blank=True, default="TRUST Engineering & Supervision Unit")
     client_name = models.CharField(max_length=150, blank=True, help_text="Optional client/owner reference")
+    owner_phone = models.CharField(max_length=50, blank=True, help_text="Registered owner phone contact for credentials check")
+    owner_email = models.EmailField(blank=True, null=True, help_text="Registered owner email")
+    property_id = models.CharField(
+        max_length=10, 
+        unique=True, 
+        blank=True, 
+        null=True, 
+        help_text="Top secret 6-char alphanumeric code (e.g. 7K9X2B, uppercase without 0 or O)"
+    )
+    application = models.ForeignKey(
+        'DiasporaClientApplication', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL, 
+        related_name='construction_projects'
+    )
     start_date = models.DateField(blank=True, null=True)
     expected_completion = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -641,6 +668,15 @@ class ConstructionProject(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.progress_percentage}% Complete)"
+
+    def save(self, *args, **kwargs):
+        if not self.property_id:
+            while True:
+                code = generate_secret_property_id()
+                if not ConstructionProject.objects.filter(property_id=code).exists() and not DiasporaClientApplication.objects.filter(property_id=code).exists():
+                    self.property_id = code
+                    break
+        super().save(*args, **kwargs)
 
 
 class ConstructionSliderImage(models.Model):
@@ -708,6 +744,13 @@ class DiasporaClientApplication(models.Model):
     payment_method = models.CharField(max_length=50, choices=PAYMENT_CHOICES, default='swift')
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    property_id = models.CharField(
+        max_length=10, 
+        unique=True, 
+        blank=True, 
+        null=True, 
+        help_text="Secret 6-char alphanumeric code (uppercase without 0 or O)"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -716,6 +759,15 @@ class DiasporaClientApplication(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.country_of_residence}) - {self.district}"
+
+    def save(self, *args, **kwargs):
+        if not self.property_id:
+            while True:
+                code = generate_secret_property_id()
+                if not DiasporaClientApplication.objects.filter(property_id=code).exists() and not ConstructionProject.objects.filter(property_id=code).exists():
+                    self.property_id = code
+                    break
+        super().save(*args, **kwargs)
 
 
 class PesapalTransaction(models.Model):

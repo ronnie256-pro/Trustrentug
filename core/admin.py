@@ -19,7 +19,9 @@ class PropertyPanoramaAdmin(admin.ModelAdmin):
 
 @admin.register(ConstructionProject)
 class ConstructionProjectAdmin(admin.ModelAdmin):
-    list_display = ('title', 'location', 'progress_percentage', 'status', 'supervisor_name', 'created_at')
+    list_display = ('title', 'property_id', 'owner_phone', 'location', 'progress_percentage', 'status', 'supervisor_name', 'created_at')
     list_filter = ('status',)
-    search_fields = ('title', 'location', 'short_description')
+    search_fields = ('title', 'property_id', 'owner_phone', 'location', 'short_description')
+    readonly_fields = ('property_id', 'created_at', 'updated_at')
+
 

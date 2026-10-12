@@ -4711,6 +4711,77 @@ def diaspora_application_submit_view(request):
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
 
 
+@csrf_exempt
+def verify_project_credentials(request):
+    """
+    Validates confidential owner credentials (Phone Contact & 6-char Property ID)
+    before granting access to the Client Construction Dashboard.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=405)
+
+    from core.models import ConstructionProject, DiasporaClientApplication
+    import re
+
+    project_id = request.POST.get('project_id') or request.GET.get('project_id')
+    phone_input = request.POST.get('phone_contact', '').strip()
+    property_id_input = request.POST.get('property_id', '').strip().upper()
+
+    if not project_id:
+        return JsonResponse({'success': False, 'error': 'Project reference is required.'}, status=400)
+
+    if not phone_input or not property_id_input:
+        return JsonResponse({'success': False, 'error': 'Please provide both your Phone Contact and 6-character Property ID.'}, status=400)
+
+    try:
+        project = ConstructionProject.objects.get(id=project_id)
+    except ConstructionProject.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Project not found.'}, status=404)
+
+    def clean_digits(val):
+        return re.sub(r'\D', '', val or '')
+
+    input_digits = clean_digits(phone_input)
+    stored_digits = clean_digits(project.owner_phone)
+    app_digits = clean_digits(project.application.phone_number) if project.application else ''
+
+    # Compare Property ID (must match 6-char uppercase code without 0 or O)
+    prop_id_match = (
+        (project.property_id and project.property_id.upper() == property_id_input) or
+        (project.application and project.application.property_id and project.application.property_id.upper() == property_id_input)
+    )
+
+    def phone_matches(stored, user_in):
+        if not stored or not user_in:
+            return False
+        if stored == user_in:
+            return True
+        if len(stored) >= 9 and len(user_in) >= 9:
+            return stored[-9:] == user_in[-9:]
+        return False
+
+    phone_match = phone_matches(stored_digits, input_digits) or phone_matches(app_digits, input_digits)
+
+    if prop_id_match and phone_match:
+        authorized = request.session.get('authorized_projects', [])
+        if project.id not in authorized:
+            authorized.append(project.id)
+            request.session['authorized_projects'] = authorized
+        request.session[f'authorized_project_{project.id}'] = True
+        if hasattr(request.session, 'modified'):
+            request.session.modified = True
+
+        return JsonResponse({
+            'success': True,
+            'redirect_url': f'/projects/construction-dashboard/{project.id}/'
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'error': 'Access denied: The Phone Contact or Property ID does not match this project.'
+        }, status=403)
+
+
 def client_construction_dashboard(request, app_id=None):
     """
     Renders the dedicated Client Construction Supervision Dashboard to follow up on real estate assignments.
@@ -4745,6 +4816,19 @@ def client_construction_dashboard(request, app_id=None):
                 pass
         else:
             app = DiasporaClientApplication.objects.first()
+
+    if not project_obj and not app:
+        messages.error(request, "Construction project record not found.")
+        return redirect('projects_list')
+
+    # Security Access Gate: Staff/Admin OR Session Authorization Required
+    target_id = project_obj.id if project_obj else app.id
+    is_staff = request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
+    authorized_list = request.session.get('authorized_projects', [])
+    is_authorized = is_staff or (target_id in authorized_list) or request.session.get(f'authorized_project_{target_id}', False)
+
+    if not is_authorized:
+        return redirect(f'/projects/?auth_prompt=1&target_project={target_id}')
 
     # Standard 5-Phase / 25-Milestone Construction Roadmap Engine
     roadmap_phases = [

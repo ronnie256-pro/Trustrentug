@@ -585,6 +585,207 @@
         box-shadow: 0 4px 14px rgba(7, 94, 84, 0.25);
     }
 
+    /* Project Credentials Verification Modal */
+    .cred-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100000;
+        background: rgba(4, 26, 17, 0.78);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+    }
+
+    .cred-modal-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 2.25rem 2.25rem;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+        border: 1.5px solid #e2e8f0;
+        position: relative;
+        animation: credModalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes credModalPop {
+        from {
+            opacity: 0;
+            transform: scale(0.92) translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .cred-modal-close {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        background: #f1f5f9;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        color: #64748b;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .cred-modal-close:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .cred-modal-header {
+        text-align: center;
+        margin-bottom: 1.75rem;
+    }
+
+    .cred-modal-logo-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem auto;
+    }
+
+    .cred-modal-logo {
+        max-height: 58px;
+        max-width: 160px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+    }
+
+    .cred-modal-icon {
+        width: 56px;
+        height: 56px;
+        background: rgba(3, 84, 63, 0.1);
+        color: #03543f;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        margin: 0 auto 1rem auto;
+        border: 1.5px solid rgba(3, 84, 63, 0.2);
+    }
+
+    .cred-modal-title {
+        font-family: var(--font-heading);
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 0.45rem 0;
+    }
+
+    .cred-modal-subtitle {
+        font-size: 0.88rem;
+        color: #64748b;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .cred-alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .cred-input-group {
+        margin-bottom: 1.25rem;
+        text-align: left;
+    }
+
+    .cred-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.45rem;
+    }
+
+    .cred-input-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .cred-input-icon {
+        position: absolute;
+        left: 1rem;
+        color: #94a3b8;
+        font-size: 0.95rem;
+        pointer-events: none;
+    }
+
+    .cred-input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.6rem;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: #f8fafc;
+        color: #0f172a;
+        transition: all 0.2s ease;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .cred-input:focus {
+        border-color: #03543f;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(3, 84, 63, 0.12);
+    }
+
+    .cred-helper {
+        display: block;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.35rem;
+    }
+
+    .btn-cred-submit {
+        width: 100%;
+        background: #03543f;
+        color: #ffffff;
+        padding: 0.95rem 1.5rem;
+        border-radius: 14px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 6px 18px rgba(3, 84, 63, 0.28);
+        transition: all 0.25s ease;
+        margin-top: 1.5rem;
+    }
+
+    .btn-cred-submit:hover {
+        background: #024030;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(3, 84, 63, 0.38);
+    }
+
     @media (max-width: 1024px) {
         .initiative-hero-card {
             grid-template-columns: 1fr;
@@ -799,7 +1000,7 @@
     <!-- PROJECTS LIST (4 CARDS PER ROW DESKTOP, 2 ON MOBILE) -->
     <div class="projects-list">
         {% for project in projects %}
-        <a href="/projects/{{ project.id }}/" class="project-card">
+        <div class="project-card" data-project-id="{{ project.id }}" data-project-title="{{ project.title }}" style="cursor: pointer;">
             <!-- Chamfered Project Image -->
             <div class="project-img-wrapper">
                 {% if project.hero_image %}
@@ -837,7 +1038,7 @@
                     <span>Expected: {{ project.expected_completion|date:"M Y"|default:"Dec 2026" }}</span>
                 </div>
             </div>
-        </a>
+        </div>
         {% empty %}
         <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 0; color: var(--color-text-muted);">
             <h3 style="font-size: 1.4rem; color: var(--color-text-dark); font-weight: 700;">No active projects at this moment</h3>
@@ -1132,6 +1333,57 @@
         </div>
     </div>
 </div>
+
+<!-- PROJECT OWNER CREDENTIALS VERIFICATION MODAL -->
+<div class="cred-modal-overlay" id="projectCredModal">
+    <div class="cred-modal-card">
+        <button type="button" class="cred-modal-close" id="closeCredModalBtn">&times;</button>
+        
+        <div class="cred-modal-header">
+            <div class="cred-modal-logo-wrap">
+                {% if site_settings.site_logo %}
+                    <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name|default:'TRUST PROTOCOL' }}" class="cred-modal-logo">
+                {% else %}
+                    <div class="cred-modal-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <h3 class="cred-modal-title">Feed in Project credentials</h3>
+            <p class="cred-modal-subtitle" id="credProjectSubtitle">
+                This construction dashboard is restricted to the property owner. Please enter your credentials to continue.
+            </p>
+        </div>
+
+        <form id="projectCredForm" autocomplete="off">
+            <input type="hidden" id="credProjectId" name="project_id" value="">
+            
+            <div id="credErrorAlert" class="cred-alert-error" style="display: none;"></div>
+
+            <div class="cred-input-group">
+                <label class="cred-label" for="credPhoneInput">Phone Contact</label>
+                <div class="cred-input-wrap">
+                    <i class="fa-solid fa-phone cred-input-icon"></i>
+                    <input type="tel" id="credPhoneInput" name="phone_contact" class="cred-input" required>
+                </div>
+            </div>
+
+            <div class="cred-input-group">
+                <label class="cred-label" for="credPropIdInput">Property ID</label>
+                <div class="cred-input-wrap">
+                    <i class="fa-solid fa-key cred-input-icon"></i>
+                    <input type="text" id="credPropIdInput" name="property_id" class="cred-input" 
+                           maxlength="6" 
+                           style="text-transform: uppercase; font-family: monospace; letter-spacing: 0.15em; font-weight: 700;" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-cred-submit" id="credSubmitBtn">
+                <span>Access</span>
+            </button>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -1387,6 +1639,114 @@
                     updateStepView();
                 }
             });
+        }
+
+        // Project Credentials Verification Modal JS
+        const credModal = document.getElementById('projectCredModal');
+        const closeCredBtn = document.getElementById('closeCredModalBtn');
+        const credForm = document.getElementById('projectCredForm');
+        const credProjectIdInput = document.getElementById('credProjectId');
+        const credSubtitle = document.getElementById('credProjectSubtitle');
+        const credErrorAlert = document.getElementById('credErrorAlert');
+        const credSubmitBtn = document.getElementById('credSubmitBtn');
+        const credPhoneInput = document.getElementById('credPhoneInput');
+        const credPropIdInput = document.getElementById('credPropIdInput');
+
+        function openCredModal(projectId, projectTitle) {
+            if (!credModal) return;
+            credProjectIdInput.value = projectId;
+            if (projectTitle) {
+                credSubtitle.textContent = `Restricted access to ${projectTitle}. Please enter your registered credentials to continue.`;
+            } else {
+                credSubtitle.textContent = 'This construction dashboard is restricted to the property owner. Please enter your credentials to continue.';
+            }
+            credErrorAlert.style.display = 'none';
+            credErrorAlert.textContent = '';
+            credPhoneInput.value = '';
+            credPropIdInput.value = '';
+            credSubmitBtn.disabled = false;
+            credSubmitBtn.innerHTML = '<span>Access</span>';
+            credModal.style.display = 'flex';
+            setTimeout(() => credPhoneInput.focus(), 150);
+        }
+
+        function closeCredModal() {
+            if (credModal) {
+                credModal.style.display = 'none';
+            }
+        }
+
+        // Intercept click on project cards to feed credentials
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pid = this.dataset.projectId;
+                const ptitle = this.dataset.projectTitle;
+                if (pid) {
+                    openCredModal(pid, ptitle);
+                }
+            });
+        });
+
+        if (closeCredBtn) {
+            closeCredBtn.addEventListener('click', closeCredModal);
+        }
+
+        if (credModal) {
+            credModal.addEventListener('click', function(e) {
+                if (e.target === credModal) closeCredModal();
+            });
+        }
+
+        // Auto-uppercase Property ID & sanitize (no 0 or O)
+        if (credPropIdInput) {
+            credPropIdInput.addEventListener('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^1-9A-NP-Z]/g, '');
+            });
+        }
+
+        if (credForm) {
+            credForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(credForm);
+                credErrorAlert.style.display = 'none';
+                credSubmitBtn.disabled = true;
+                credSubmitBtn.innerHTML = '<span>Verifying...</span>';
+
+                fetch('/projects/verify-credentials/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        credSubmitBtn.innerHTML = '<span>Access Granted! Redirecting...</span>';
+                        window.location.href = data.redirect_url;
+                    } else {
+                        credSubmitBtn.disabled = false;
+                        credSubmitBtn.innerHTML = '<span>Access</span>';
+                        credErrorAlert.textContent = data.error || 'Access denied. Please check your credentials.';
+                        credErrorAlert.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    credSubmitBtn.disabled = false;
+                    credSubmitBtn.innerHTML = '<span>Access</span>';
+                    credErrorAlert.textContent = 'Network error. Please try again.';
+                    credErrorAlert.style.display = 'block';
+                });
+            });
+        }
+
+        // Check if page redirected back with ?auth_prompt=1&target_project=X
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('auth_prompt') === '1') {
+            const targetPid = urlParams.get('target_project');
+            if (targetPid) {
+                const targetCard = document.querySelector(`.project-card[data-project-id="${targetPid}"]`);
+                const title = targetCard ? targetCard.dataset.projectTitle : '';
+                openCredModal(targetPid, title);
+            }
         }
     });
 </script>
