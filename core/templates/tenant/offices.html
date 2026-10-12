@@ -26,7 +26,7 @@ body {
     border-radius: 16px;
     border: 2px solid rgba(10, 92, 54, 0.94);
     box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06);
-    margin-bottom: 1rem;
+    margin-bottom: 0;
 }
 .filters input[type="text"],
 .filters input[type="number"],
@@ -148,7 +148,7 @@ body {
         font-size: 0.8rem !important;
     }
     .layout {
-        padding: 1rem 0.75rem !important;
+        padding: 0.75rem 0.6rem !important;
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
@@ -156,9 +156,11 @@ body {
     }
     .mobile-filter-toggle-container {
         display: block !important;
+        margin-bottom: 0.45rem !important;
     }
     #topFilterForm {
         display: none;
+        margin-bottom: 0.45rem !important;
     }
     #topFilterForm.mobile-active {
         display: block !important;
@@ -169,20 +171,21 @@ body {
 
 {% block content %}
 <div class="layout">
-    <h1 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: #064e3b; text-align: center; margin-top: 0; margin-bottom: 0.85rem;">Private & Shared Commercial Offices for Rent</h1>
+    <!-- Accessible hidden page heading for screen readers & SEO -->
+    <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">Commercial Offices for Rent</h1>
 
     <!-- MOBILE FILTER TOGGLE BUTTON -->
-    <div class="mobile-filter-toggle-container" style="display: none; width: 100%; margin-bottom: 0.85rem; text-align: center;">
-        <button type="button" id="mobile-filter-toggle-btn" onclick="toggleMobileOfficeFilter()" style="width: 100%; max-width: 400px; padding: 0.75rem 1.25rem; background: #047857; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);">
+    <div class="mobile-filter-toggle-container" style="display: none; width: 100%; margin-bottom: 0.45rem; text-align: center;">
+        <button type="button" id="mobile-filter-toggle-btn" onclick="toggleMobileOfficeFilter()" style="width: 100%; max-width: 400px; padding: 0.65rem 1.15rem; background: #047857; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.92rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);">
             Filter Offices <span id="filter-chevron" style="margin-left: 0.25rem;">▼</span>
         </button>
     </div>
 
     <!-- CATEGORY FILTER PILLS & SEARCH BAR -->
-    <form id="topFilterForm" method="GET" action="{% url 'offices' %}" style="max-width: 1100px; width: 100%; margin: 0 auto 1.25rem auto;">
+    <form id="topFilterForm" method="GET" action="{% url 'offices' %}" style="max-width: 1100px; width: 100%; margin: 0 auto 0.35rem auto;">
         
         <!-- Category Filter Pills -->
-        <div style="display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: center; justify-content: center; margin-bottom: 1rem;">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
             <a href="{% url 'offices' %}" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'all' or not office_type %}background: var(--color-emerald-darkest); color: white; border: 1.5px solid var(--color-emerald-darkest);{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
                 All Offices
             </a>
@@ -238,7 +241,7 @@ body {
 
     <!-- CARDS GRID -->
     <main style="width: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem; margin-top: 0.15rem;">
             <p style="color: var(--color-text-muted); margin: 0;">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> office workspaces</p>
         </div>
 
