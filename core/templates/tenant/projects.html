@@ -7,12 +7,8 @@
 {% block extra_css %}
 <style>
     body {
-        background-color: #dfcfb7 !important;
-        background-image: linear-gradient(rgba(224, 211, 190, 0.88), rgba(224, 211, 190, 0.88)),
-        url("{% static 'images/blueprint_watermark.jpg' %}") !important;
-        background-repeat: repeat !important;
-        background-size: 680px auto !important;
-        background-attachment: fixed !important;
+        background-color: #ffffff !important;
+        background-image: none !important;
     }
 
     .projects-container {
@@ -23,69 +19,120 @@
         z-index: 1;
     }
 
-    /* 2-Column Hero Initiative Section (Text Left, Image Right) */
+    /* 2-Column Editorial Hero Initiative Section */
     .initiative-hero-card {
-        background: #fbf7f0;
-        border: 2px solid rgba(10, 92, 54, 0.2);
-        border-radius: 26px;
-        padding: 2.75rem 3rem;
-        box-shadow: 0 12px 36px rgba(10, 92, 54, 0.08);
+        background: #f4f6f8;
+        border: 1px solid #e2e8f0;
+        border-radius: 28px;
+        padding: 3rem 3.5rem;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
         display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
+        grid-template-columns: 1.05fr 1fr;
         gap: 3.5rem;
         align-items: center;
         margin-bottom: 3.5rem;
     }
 
-    .initiative-title {
+    .hero-breadcrumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-breadcrumb a {
+        color: #64748b;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .hero-breadcrumb a:hover {
+        color: var(--color-emerald-dark);
+    }
+
+    .hero-breadcrumb .separator {
+        color: #cbd5e1;
+    }
+
+    .hero-breadcrumb .current {
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    .hero-headline {
         font-family: var(--font-heading);
-        font-size: 2.3rem;
+        font-size: 3.1rem;
+        line-height: 1.15;
+        margin: 0 0 1.35rem 0;
+        letter-spacing: -0.5px;
+    }
+
+    .hero-headline .headline-dark {
+        color: #0f172a;
         font-weight: 800;
-        color: var(--color-emerald-darkest);
-        line-height: 1.22;
-        margin: 0 0 1.2rem 0;
+    }
+
+    .hero-headline .headline-muted {
+        color: #94a3b8;
+        font-weight: 400;
     }
 
     .initiative-text {
-        font-size: 1.08rem;
-        color: #334155;
+        font-size: 1.05rem;
+        color: #475569;
         line-height: 1.75;
-        margin: 0 0 2rem 0;
+        margin: 0 0 2.25rem 0;
+        max-width: 540px;
     }
 
     .btn-partner {
-        background: linear-gradient(135deg, var(--color-emerald-dark), var(--color-emerald-darkest));
+        background: linear-gradient(135deg, #03543f, #047857);
         color: #ffffff !important;
-        padding: 0.85rem 2.25rem;
-        border-radius: 12px;
+        padding: 0.95rem 2.4rem;
+        border-radius: 16px;
         font-weight: 800;
         font-size: 1.05rem;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 0.6rem;
-        box-shadow: 0 6px 20px rgba(7, 94, 84, 0.25);
+        box-shadow: 0 8px 24px rgba(3, 84, 63, 0.35);
         transition: all 0.25s ease;
-        border: 1.5px solid var(--color-gold);
+        border: none;
         width: fit-content;
         cursor: pointer;
     }
 
     .btn-partner:hover {
-        background: var(--color-emerald-darkest);
-        color: var(--color-gold) !important;
+        background: linear-gradient(135deg, #024030, #03543f);
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(7, 94, 84, 0.35);
+        box-shadow: 0 12px 28px rgba(3, 84, 63, 0.45);
     }
 
-    .initiative-img-wrapper {
+    /* Right Column Geometric Image Mosaic */
+    .hero-mosaic-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.15rem;
         width: 100%;
-        height: 400px;
-        border-radius: 22px;
-        overflow: hidden;
-        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
-        border: 2px solid rgba(203, 163, 88, 0.35);
+    }
+
+    /* Top Large Card (Image Slider with Chamfered Top-Left and Bottom-Right) */
+    .mosaic-top-wrapper {
         position: relative;
+        width: 100%;
+        height: 275px;
+        border-radius: 18px;
+        overflow: hidden;
+        clip-path: polygon(
+            44px 0%, 100% 0%, 100% calc(100% - 44px), 
+            calc(100% - 44px) 100%, 0% 100%, 0% 44px
+        );
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+        background: #0f172a;
     }
 
     .initiative-slide {
@@ -107,6 +154,11 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .mosaic-top-wrapper:hover .initiative-img {
+        transform: scale(1.03);
     }
 
     .initiative-slider-dots {
@@ -118,16 +170,16 @@
         display: flex;
         gap: 0.5rem;
         align-items: center;
-        background: rgba(0, 0, 0, 0.35);
+        background: rgba(0, 0, 0, 0.4);
         padding: 0.35rem 0.75rem;
         border-radius: 50px;
-        backdrop-filter: blur(6px);
+        backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.25);
     }
 
     .initiative-slider-dot {
-        width: 9px;
-        height: 9px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.55);
         cursor: pointer;
@@ -137,7 +189,46 @@
     .initiative-slider-dot.active {
         width: 22px;
         border-radius: 12px;
-        background: var(--color-gold);
+        background: #f59e0b;
+    }
+
+    /* Bottom Row (2 Showcase Images) */
+    .mosaic-bottom-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.15rem;
+        width: 100%;
+    }
+
+    .mosaic-bottom-card {
+        position: relative;
+        height: 175px;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        background: #e2e8f0;
+    }
+
+    /* Bottom-Left Image: Chamfered Bottom-Left */
+    .mosaic-card-bl {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 36px 100%, 0 calc(100% - 36px));
+    }
+
+    /* Bottom-Right Image: Chamfered Bottom-Right */
+    .mosaic-card-br {
+        clip-path: polygon(0 0, 100% 0, 100% calc(100% - 36px), calc(100% - 36px) 100%, 0 100%);
+    }
+
+    .mosaic-bottom-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+        display: block;
+    }
+
+    .mosaic-bottom-card:hover .mosaic-bottom-img {
+        transform: scale(1.06);
     }
 
     /* Section Heading & Grid */
@@ -494,19 +585,23 @@
         box-shadow: 0 4px 14px rgba(7, 94, 84, 0.25);
     }
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1024px) {
         .initiative-hero-card {
             grid-template-columns: 1fr;
-            gap: 2rem;
-            padding: 2rem;
+            gap: 2.5rem;
+            padding: 2.25rem;
         }
 
-        .initiative-img-wrapper {
-            height: 280px;
+        .hero-headline {
+            font-size: 2.4rem;
         }
 
-        .initiative-title {
-            font-size: 1.85rem;
+        .mosaic-top-wrapper {
+            height: 250px;
+        }
+
+        .mosaic-bottom-card {
+            height: 155px;
         }
 
         .projects-list {
@@ -525,11 +620,31 @@
 
         .initiative-hero-card {
             padding: 1.5rem;
-            border-radius: 18px;
+            border-radius: 20px;
         }
 
-        .initiative-img-wrapper {
-            height: 210px;
+        .hero-headline {
+            font-size: 1.95rem;
+        }
+
+        .mosaic-top-wrapper {
+            height: 200px;
+            clip-path: polygon(
+                24px 0%, 100% 0%, 100% calc(100% - 24px), 
+                calc(100% - 24px) 100%, 0% 100%, 0% 24px
+            );
+        }
+
+        .mosaic-bottom-card {
+            height: 130px;
+        }
+
+        .mosaic-card-bl {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+        }
+
+        .mosaic-card-br {
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
         }
 
         .project-img-wrapper {
@@ -548,60 +663,84 @@
 {% block content %}
 <div class="projects-container">
 
-    <!-- 2-COLUMN HERO INITIATIVE SECTION (TEXT LEFT + PARTNER BUTTON, IMAGE RIGHT) -->
+    <!-- 2-COLUMN HERO SECTION (LEFT: HEADLINE + NARRATIVE + CTA; RIGHT: GEOMETRIC MOSAIC) -->
     <div class="initiative-hero-card">
-        <!-- Left Side Text & Partner Button -->
+        <!-- Left Side: Headline + Narrative + CTA -->
         <div>
-            <h1 class="initiative-title">Supervised Construction</h1>
+            <h1 class="hero-headline">
+                <span class="headline-dark">With TRUST.</span> <br>
+                <span class="headline-muted">Your Dream is Realized.</span>
+            </h1>
+
             <p class="initiative-text">
-                TRUST Protocol partners with property owners, real estate developers, and Diaspora clients to supervise
-                home construction projects across Uganda.
+                Explore our portfolio of completed and ongoing building projects across Uganda. 
+                From bespoke diaspora homes to commercial developments, our supervisory team ensures 
+                uncompromising quality, milestone integrity, and transparent execution at every step.
             </p>
-            <button type="button" class="btn-partner" id="openDiasporaModalBtn">
-                Partner with Us
-            </button>
+
+            <div>
+                <button type="button" class="btn-partner" id="openDiasporaModalBtn">
+                    <span>Apply Now</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
 
-        <!-- Right Side Pure Image Slider (Just Images, No Text Overlay) -->
-        <div class="initiative-img-wrapper" id="initiativeImageSlider">
-            {% if slider_images %}
-                {% for img in slider_images %}
-                <div class="initiative-slide {% if forloop.first %}active{% endif %}">
-                    <img src="{{ img.image.url }}" alt="Supervised Construction {{ forloop.counter }}" class="initiative-img">
-                </div>
-                {% endfor %}
-
-                <div class="initiative-slider-dots">
+        <!-- Right Side: 3-Piece Geometric Image Mosaic -->
+        <div class="hero-mosaic-container">
+            <!-- Top Section: Image Slider (Chamfered Top-Left & Bottom-Right) -->
+            <div class="mosaic-top-wrapper" id="initiativeImageSlider">
+                {% if slider_images %}
                     {% for img in slider_images %}
-                    <span class="initiative-slider-dot {% if forloop.first %}active{% endif %}" onclick="goToInitiativeSlide({{ forloop.counter0 }})"></span>
+                    <div class="initiative-slide {% if forloop.first %}active{% endif %}">
+                        <img src="{{ img.image.url }}" alt="Featured Project {{ forloop.counter }}" class="initiative-img">
+                    </div>
                     {% endfor %}
-                </div>
-            {% else %}
-                <!-- Default Fallback Slides -->
-                <div class="initiative-slide active">
-                    <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80"
-                        alt="Supervised Construction 1" class="initiative-img">
-                </div>
-                <div class="initiative-slide">
-                    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"
-                        alt="Supervised Construction 2" class="initiative-img">
-                </div>
-                <div class="initiative-slide">
-                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
-                        alt="Supervised Construction 3" class="initiative-img">
-                </div>
-                <div class="initiative-slide">
-                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
-                        alt="Supervised Construction 4" class="initiative-img">
-                </div>
 
-                <div class="initiative-slider-dots">
-                    <span class="initiative-slider-dot active" onclick="goToInitiativeSlide(0)"></span>
-                    <span class="initiative-slider-dot" onclick="goToInitiativeSlide(1)"></span>
-                    <span class="initiative-slider-dot" onclick="goToInitiativeSlide(2)"></span>
-                    <span class="initiative-slider-dot" onclick="goToInitiativeSlide(3)"></span>
+                    <div class="initiative-slider-dots">
+                        {% for img in slider_images %}
+                        <span class="initiative-slider-dot {% if forloop.first %}active{% endif %}" onclick="goToInitiativeSlide({{ forloop.counter0 }})"></span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- Default High-Quality Architecture Slides -->
+                    <div class="initiative-slide active">
+                        <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80"
+                            alt="Featured Project 1" class="initiative-img">
+                    </div>
+                    <div class="initiative-slide">
+                        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"
+                            alt="Featured Project 2" class="initiative-img">
+                    </div>
+                    <div class="initiative-slide">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+                            alt="Featured Project 3" class="initiative-img">
+                    </div>
+                    <div class="initiative-slide">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
+                            alt="Featured Project 4" class="initiative-img">
+                    </div>
+
+                    <div class="initiative-slider-dots">
+                        <span class="initiative-slider-dot active" onclick="goToInitiativeSlide(0)"></span>
+                        <span class="initiative-slider-dot" onclick="goToInitiativeSlide(1)"></span>
+                        <span class="initiative-slider-dot" onclick="goToInitiativeSlide(2)"></span>
+                        <span class="initiative-slider-dot" onclick="goToInitiativeSlide(3)"></span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Bottom Row: 2 Geometric Static Images -->
+            <div class="mosaic-bottom-row">
+                <div class="mosaic-bottom-card mosaic-card-bl">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80" 
+                         alt="Architectural Excellence" class="mosaic-bottom-img">
                 </div>
-            {% endif %}
+                <div class="mosaic-bottom-card mosaic-card-br">
+                    <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80" 
+                         alt="Modern Construction Supervision" class="mosaic-bottom-img">
+                </div>
+            </div>
         </div>
     </div>
 
