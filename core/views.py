@@ -26,7 +26,8 @@ from core.emails import (
     send_property_approved_email,
     send_property_revision_requested_email,
     send_tenant_payment_receipt_email,
-    send_landlord_rent_received_email
+    send_landlord_rent_received_email,
+    send_password_reset_email
 )
 
 AMENITY_ICONS = {
@@ -267,6 +268,33 @@ def admin_2fa_setup_view(request):
 
 def password_reset_view(request):
     if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        if email:
+            from django.contrib.auth.tokens import default_token_generator
+            from django.utils.http import urlsafe_base64_encode
+            from django.utils.encoding import force_bytes
+
+            users = User.objects.filter(email__iexact=email, is_active=True)
+            for user in users:
+                # Strictly exclude admin accounts - focus on tenants and landlords only
+                if user.is_superuser or user.is_staff:
+                    continue
+                try:
+                    profile = user.profile
+                    if profile.role not in ['tenant', 'landlord']:
+                        continue
+                except Exception:
+                    continue
+
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                reset_url = request.build_absolute_uri(f"/reset-password/{uid}/{token}/")
+                try:
+                    send_password_reset_email(user, reset_url)
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).error(f"Failed to dispatch password reset email: {e}")
+
         messages.info(request, 'If an account exists with that email, a password reset link has been dispatched.')
         return render(request, 'auth/password_reset.html', {
             'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
@@ -274,6 +302,48 @@ def password_reset_view(request):
     return render(request, 'auth/password_reset.html', {
         'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
     })
+
+
+def password_reset_confirm_view(request, uidb64, token):
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.http import urlsafe_base64_decode
+    from django.utils.encoding import force_str
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        # Strictly exclude admin accounts - focus on tenants and landlords only
+        is_admin = user.is_superuser or user.is_staff
+        user_role = getattr(getattr(user, 'profile', None), 'role', None)
+        if is_admin or user_role not in ['tenant', 'landlord']:
+            messages.error(request, 'Password reset is not permitted for this account type.')
+            return redirect('login')
+
+        if request.method == 'POST':
+            new_password = request.POST.get('new_password', '')
+            confirm_password = request.POST.get('confirm_password', '')
+
+            if len(new_password) < 6:
+                messages.error(request, 'Password must be at least 6 characters long.')
+                return render(request, 'auth/password_reset_confirm.html', {'valid_user': user})
+
+            if new_password != confirm_password:
+                messages.error(request, 'Passwords do not match.')
+                return render(request, 'auth/password_reset_confirm.html', {'valid_user': user})
+
+            user.set_password(new_password)
+            user.save()
+            messages.success(request, 'Your password has been successfully reset! You can now log in.')
+            return redirect('login')
+
+        return render(request, 'auth/password_reset_confirm.html', {'valid_user': user})
+    else:
+        messages.error(request, 'The password reset link is invalid or has expired. Please request a new one.')
+        return redirect('password_reset_form')
 
 def register_view(request):
     if request.method == 'POST':
@@ -2731,19 +2801,15 @@ def property_tour_view(request, property_id):
 def checkout_view(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id)
     
-    # Pre-calculate prices (convert to float for format calculation compatibility)
-    price = float(property_obj.price) if property_obj.price else 0.0
-    security_deposit = price * 0.1
-    pipeline_fee = price * 0.01
+    # Pre-calculate prices as rounded whole integers (UGX has no cents/decimals)
+    price = int(round(float(property_obj.price))) if property_obj.price else 0
+    security_deposit = int(round(price * 0.10))
+    pipeline_fee = int(round(price * 0.01))
     total_escrow = price + security_deposit + pipeline_fee
     
-    # Make pretty currency formats
+    # Standard whole number currency formatting for UGX
     def format_ugx(val):
-        if val >= 1000000:
-            return f"UGX {val/1000000:.2f}M".replace('.00M', 'M')
-        elif val >= 1000:
-            return f"UGX {val/1000:.0f}K"
-        return f"UGX {val:.0f}"
+        return f"UGX {int(round(float(val))):,}"
         
     context = {
         'property': property_obj,
@@ -3264,7 +3330,7 @@ def tenant_process_payment(request, property_id):
         if property_obj.is_for_sale:
             messages.error(request, "Properties for sale cannot be purchased through rental payment. You can only pay the 1% 7-day booking fee.")
             return redirect(f'/tenant/dashboard/?tab=payments&booking_id={property_id}')
-        price = float(property_obj.price) if property_obj.price else 0.0
+        price = int(round(float(property_obj.price))) if property_obj.price else 0
         months = 3 if payment_type == 'rent_3' else 2
         total_escrow = price * months
 
@@ -4979,7 +5045,7 @@ def pesapal_initiate_payment(request, property_id=None):
     if not booking_obj and property_id:
         prop = Property.objects.filter(id=property_id).first()
         if prop:
-            fee = (prop.price or 0) * 0.01 if prop.is_for_sale else (prop.price or 0) * 0.05
+            fee = int(round(float(prop.price or 0) * 0.01 if prop.is_for_sale else float(prop.price or 0) * 0.05))
             booking_obj = TenantBooking.objects.create(
                 tenant=request.user,
                 property=prop,
@@ -4997,19 +5063,19 @@ def pesapal_initiate_payment(request, property_id=None):
         base_rent = float(property_obj.price or 0)
         total_rent = base_rent * months_to_pay
         commission = total_rent * 0.10
-        amount = total_rent + commission
+        amount = int(round(total_rent + commission))
     elif payment_type in ['rent_2', 'rent_3']:
         months = 3 if payment_type == 'rent_3' else 2
         base_rent = float(property_obj.price or 0)
         total_rent = base_rent * months
         commission = total_rent * 0.10
-        amount = total_rent + commission
+        amount = int(round(total_rent + commission))
     elif payment_type == 'booking_sale':
-        amount = float(property_obj.price or 0) * 0.01
+        amount = int(round(float(property_obj.price or 0) * 0.01))
     else:
-        amount = float(booking_obj.booking_fee or 0)
+        amount = int(round(float(booking_obj.booking_fee or 0)))
         if amount <= 0:
-            amount = float(property_obj.price or 0) * 0.05
+            amount = int(round(float(property_obj.price or 0) * 0.05))
 
     # 1. Fetch Pesapal OAuth Bearer Token
     token, token_err = get_pesapal_bearer_token()
@@ -5065,7 +5131,7 @@ def pesapal_initiate_payment(request, property_id=None):
 def pesapal_initiate_office_payment(request, app_id):
     app = get_object_or_404(OfficeApplication, id=app_id)
     property_obj = app.property
-    amount = float(app.booking_fee or 100000.00)
+    amount = int(round(float(app.booking_fee or 100000.00)))
 
     token, token_err = get_pesapal_bearer_token()
     if not token:

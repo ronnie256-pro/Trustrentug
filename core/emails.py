@@ -109,11 +109,12 @@ def send_tenant_payment_receipt_email(user, property_obj, amount, tracking_id, p
     recipient_email = getattr(user, 'email', '')
     if not recipient_email:
         return
+    formatted_amount = f"{int(round(float(amount))):,}" if amount is not None else "0"
     subject = f"Official Receipt – Payment #{tracking_id}"
     html_content = render_to_string("emails/tenant_payment_receipt.html", {
         "user": user,
         "property": property_obj,
-        "amount": amount,
+        "amount": formatted_amount,
         "tracking_id": tracking_id,
         "payment_purpose": payment_purpose,
         "payment_method": payment_method,
@@ -127,14 +128,27 @@ def send_landlord_rent_received_email(landlord, property_obj, tenant_name, amoun
     """Template 7: Landlord Rent Payment Received Alert (Landlord ONLY - Full Rent Payments Only)"""
     if not landlord or not landlord.email:
         return
+    formatted_amount = f"{int(round(float(amount))):,}" if amount is not None else "0"
     subject = f"Payment Confirmed: Rent Collected for {property_obj.title}"
     html_content = render_to_string("emails/landlord_rent_received.html", {
         "landlord": landlord,
         "property": property_obj,
         "tenant_name": tenant_name,
-        "amount": amount,
+        "amount": formatted_amount,
         "tracking_id": tracking_id,
         "rental_term": rental_term,
         "site_url": site_url,
     })
     return send_resend_email(landlord.email, subject, html_content)
+
+
+def send_password_reset_email(user, reset_url):
+    """Template 8: Password Reset Request Email with secure token link"""
+    if not user.email:
+        return {"status": "skipped", "reason": "No recipient email"}
+    subject = "Password Reset Request – TRUST Protocol"
+    html_content = render_to_string("emails/password_reset_email.html", {
+        "user": user,
+        "reset_url": reset_url,
+    })
+    return send_resend_email(user.email, subject, html_content)

@@ -39,6 +39,7 @@ urlpatterns = [
     path('admin-login-auth/', views.admin_login_api, name='admin_login_api'),
     path('system-admin/2fa-setup/', views.admin_2fa_setup_view, name='admin_2fa_setup'),
     path('reset-password/', views.password_reset_view, name='password_reset_form'),
+    path('reset-password/<str:uidb64>/<str:token>/', views.password_reset_confirm_view, name='password_reset_confirm'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('register/', views.register_view, name='register'),
     path('landlord/', views.landlord_dashboard, name='landlord_dashboard'),
