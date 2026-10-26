@@ -99,6 +99,8 @@ urlpatterns = [
     path('admin-dashboard/construction-progress/<int:project_id>/', views.admin_construction_progress, name='admin_construction_progress'),
     path('admin-dashboard/construction-slider/upload/', views.admin_upload_construction_slider, name='admin_upload_construction_slider'),
     path('admin-dashboard/construction-slider/delete/<int:image_id>/', views.admin_delete_construction_slider, name='admin_delete_construction_slider'),
+    path('admin-dashboard/showcase-slider/upload/', views.admin_upload_showcase_slider, name='admin_upload_showcase_slider'),
+    path('admin-dashboard/showcase-slider/delete/<int:image_id>/', views.admin_delete_showcase_slider, name='admin_delete_showcase_slider'),
     path('agent/report/', views.agent_report_auth, name='agent_report_auth'),
     path('agent/submit-report/', views.agent_submit_report, name='agent_submit_report'),
     

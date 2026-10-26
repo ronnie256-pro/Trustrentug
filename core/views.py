@@ -17,7 +17,7 @@ from core.models import (
     ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic,
     SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama,
     DiasporaClientApplication, ConstructionProject, ConstructionSliderImage,
-    OfficeApplication
+    OfficeApplication, ShowcaseSliderImage
 )
 from core.emails import (
     send_tenant_welcome_email,
@@ -923,6 +923,10 @@ def admin_dashboard(request):
                     settings_obj.stat_districts = int(request.POST.get('stat_districts'))
                 if request.POST.get('stat_agents'):
                     settings_obj.stat_agents = int(request.POST.get('stat_agents'))
+                if request.POST.get('stat_offices'):
+                    settings_obj.stat_offices = int(request.POST.get('stat_offices'))
+                if request.POST.get('stat_projects'):
+                    settings_obj.stat_projects = int(request.POST.get('stat_projects'))
                 
                 if request.POST.get('top_selling_title'):
                     settings_obj.top_selling_title = request.POST.get('top_selling_title').strip()
@@ -1830,6 +1834,7 @@ def admin_dashboard(request):
     construction_applications = DiasporaClientApplication.objects.all().order_by('-created_at')
     construction_projects = ConstructionProject.objects.all().order_by('-created_at')
     slider_images = ConstructionSliderImage.objects.all().order_by('-created_at')
+    showcase_slider_images = ShowcaseSliderImage.objects.all().order_by('order', '-created_at')
     office_applications = OfficeApplication.objects.all().select_related('property', 'user').order_by('-created_at')
 
     return render(request, 'admin/dashboard.html', {
@@ -1860,6 +1865,7 @@ def admin_dashboard(request):
         'construction_applications': construction_applications,
         'construction_projects': construction_projects,
         'slider_images': slider_images,
+        'showcase_slider_images': showcase_slider_images,
         'office_applications': office_applications,
         'office_amenities': office_amenities,
         'property_categories': PropertyCategory.objects.all().order_by('group', 'name'),
@@ -2346,10 +2352,16 @@ def home_view(request):
     except Exception:
         property_categories = []
 
+    try:
+        showcase_slides = ShowcaseSliderImage.objects.filter(is_active=True).order_by('order', '-created_at')
+    except Exception:
+        showcase_slides = []
+
     return render(request, 'index.html', {
         'properties': properties,
         'hero_videos': hero_videos,
         'property_categories': property_categories,
+        'showcase_slides': showcase_slides,
     })
 
 def about_us_view(request):
@@ -4656,6 +4668,39 @@ def admin_delete_construction_slider(request, image_id):
     img_obj.delete()
     messages.success(request, "Construction slider image deleted successfully.")
     return redirect('/admin-dashboard/?tab=construction')
+
+
+def admin_upload_showcase_slider(request):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        images = request.FILES.getlist('slider_images')
+        slide_title = request.POST.get('title', '').strip()
+        count = 0
+        for img in images:
+            ShowcaseSliderImage.objects.create(
+                image=img,
+                title=slide_title if slide_title else None
+            )
+            count += 1
+        if count > 0:
+            messages.success(request, f"Successfully uploaded {count} Dream Home Showcase slide(s)!")
+        else:
+            messages.error(request, "No slide images were selected.")
+    return redirect('/admin-dashboard/?tab=settings&section=branding')
+
+
+def admin_delete_showcase_slider(request, image_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+
+    slide_obj = get_object_or_404(ShowcaseSliderImage, id=image_id)
+    slide_obj.delete()
+    messages.success(request, "Dream Home Showcase slide deleted successfully.")
+    return redirect('/admin-dashboard/?tab=settings&section=branding')
 
 
 def projects_list_view(request):

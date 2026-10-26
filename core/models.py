@@ -499,12 +499,14 @@ class SiteSetting(models.Model):
     site_logo = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Top header logo replacement for 'Shield and TRUST'")
 
     # Counter Stats configured by Admin
-    stat_properties = models.IntegerField(default=120, help_text="Properties Counter Display")
+    stat_properties = models.IntegerField(default=120, help_text="Houses / Properties Counter Display")
     stat_tenants = models.IntegerField(default=450, help_text="Tenants Counter Display")
     stat_moved_in = models.IntegerField(default=380, help_text="Moved In Counter Display")
     stat_landlords = models.IntegerField(default=85, help_text="Landlords Counter Display")
     stat_districts = models.IntegerField(default=14, help_text="Districts Counter Display")
     stat_agents = models.IntegerField(default=32, help_text="Agents Counter Display")
+    stat_offices = models.IntegerField(default=45, help_text="Offices Counter Display")
+    stat_projects = models.IntegerField(default=28, help_text="Projects Counter Display")
 
     # Top Selling Apartment configured by Admin
     top_selling_title = models.CharField(max_length=200, default="Penthouse Apartment in Kololo", help_text="Top Selling Apartment Title")
@@ -688,6 +690,20 @@ class ConstructionSliderImage(models.Model):
 
     def __str__(self):
         return f"Construction Slider Image #{self.id}"
+
+
+class ShowcaseSliderImage(models.Model):
+    image = models.FileField(upload_to='showcase/slider/')
+    title = models.CharField(max_length=150, blank=True, null=True, help_text="Optional slide caption/title")
+    order = models.IntegerField(default=0, help_text="Display order sequence")
+    is_active = models.BooleanField(default=True, help_text="Show or hide this slide")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return f"Showcase Slide #{self.id} ({self.title or 'Untitled'})"
 
 
 class DiasporaClientApplication(models.Model):

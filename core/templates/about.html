@@ -23,11 +23,38 @@
   
   .about-stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    max-width: 1100px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+    max-width: 1350px;
     margin: 0 auto;
     text-align: center;
+  }
+
+  /* Safety Guarantees Section Styles: 1 Row Display */
+  .about-guarantees-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .about-guarantees-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: #0f172a;
+    padding: 0.35rem 0.5rem;
+    white-space: nowrap;
+  }
+
+  .about-guarantees-item i {
+    color: #e11d48;
+    font-size: 1.2rem;
   }
   
   .about-split-grid {
@@ -48,12 +75,55 @@
 
   .about-image-comp-left {
     position: relative;
-    padding-right: 2rem;
+    padding-right: 2.5rem;
+    padding-bottom: 2rem;
   }
 
   .about-image-comp-right {
     position: relative;
-    padding-left: 2rem;
+    padding-left: 2.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .about-pillars-main,
+  .about-mission-main {
+    width: 100%;
+    height: 420px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    background: #f1f5f9;
+    position: relative;
+  }
+
+  .about-pillars-inset,
+  .about-mission-inset {
+    position: absolute;
+    bottom: -10px;
+    width: 52%;
+    height: 240px;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 5px solid #ffffff;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.14);
+    background: #ffffff;
+  }
+
+  .about-pillars-inset {
+    right: 0;
+  }
+
+  .about-mission-inset {
+    left: 0;
+  }
+
+  .about-comp-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    transition: transform 0.4s ease;
   }
 
   /* Responsive Mobile Breakpoints */
@@ -69,8 +139,12 @@
     }
 
     .about-stats-grid {
-      grid-template-columns: repeat(2, 1fr) !important;
+      grid-template-columns: repeat(3, 1fr) !important;
       gap: 1rem !important;
+    }
+
+    .about-guarantees-row {
+      gap: 1rem 1.5rem !important;
     }
 
     .about-split-grid {
@@ -201,23 +275,37 @@
         </p>
       </div>
 
-      <!-- 4 Key Stat Cards Grid -->
+      <!-- 6 Key Stat Cards Grid (Houses, Offices, Agents, Projects, Moved-in, Districts) -->
       <div class="about-stats-grid">
+        <!-- 1. Houses -->
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.5rem 1rem;">
-          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_properties|default:"0" }}+</div>
-          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Verified Properties</div>
+          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_properties|default:120 }}+</div>
+          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Houses</div>
         </div>
+        <!-- 2. Offices -->
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.5rem 1rem;">
-          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_tenants|default:"0" }}+</div>
-          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Happy Tenants</div>
+          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_offices|default:45 }}+</div>
+          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Offices</div>
         </div>
+        <!-- 3. Agents -->
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.5rem 1rem;">
-          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_landlords|default:"0" }}+</div>
-          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Verified Landlords</div>
+          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_agents|default:32 }}+</div>
+          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Agents</div>
         </div>
+        <!-- 4. Projects -->
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.5rem 1rem;">
-          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_districts|default:"0" }}+</div>
-          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Districts Covered</div>
+          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_projects|default:28 }}+</div>
+          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Projects</div>
+        </div>
+        <!-- 5. Moved-in -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.5rem 1rem;">
+          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_moved_in|default:380 }}+</div>
+          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Moved-in</div>
+        </div>
+        <!-- 6. Districts -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.5rem 1rem;">
+          <div style="font-size: 2.4rem; font-weight: 800; color: #0f172a; line-height: 1; margin-bottom: 0.5rem;">{{ site_settings.stat_districts|default:14 }}+</div>
+          <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Districts</div>
         </div>
       </div>
 
@@ -233,9 +321,9 @@
         
         <!-- Image Composition Left -->
         <div class="about-image-comp-left">
-          <div class="about-pillars-main" style="width: 100%; height: 380px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); background: #f1f5f9;">
+          <div class="about-pillars-main">
             {% if site_settings.about_pillars_image_1 %}
-              <img src="{{ site_settings.about_pillars_image_1.url }}" alt="Five Pillars Verification" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              <img class="about-comp-img" src="{{ site_settings.about_pillars_image_1.url }}" alt="Five Pillars Verification">
             {% else %}
               <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 3.5rem;">
                 <i class="fa-solid fa-shield-halved"></i>
@@ -243,9 +331,9 @@
             {% endif %}
           </div>
           <!-- Inset Overlapping Card -->
-          <div class="about-pillars-inset" style="position: absolute; bottom: -30px; right: -15px; width: 55%; height: 230px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); background: #f8fafc;">
+          <div class="about-pillars-inset">
             {% if site_settings.about_pillars_image_2 %}
-              <img src="{{ site_settings.about_pillars_image_2.url }}" alt="Field Verification" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              <img class="about-comp-img" src="{{ site_settings.about_pillars_image_2.url }}" alt="Field Verification">
             {% else %}
               <div style="width: 100%; height: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.2rem;">
                 <i class="fa-solid fa-list-check"></i>
@@ -256,12 +344,9 @@
 
         <!-- Content Right: The Five Pillars of TRUST -->
         <div>
-          <h2 class="about-section-title" style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem;">
+          <h2 class="about-section-title" style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 2rem;">
             The Five Pillars of TRUST
           </h2>
-          <p style="font-size: 1rem; line-height: 1.7; color: #475569; margin-bottom: 2rem;">
-            Every property listed on our platform is evaluated against our core security framework to guarantee total peace of mind.
-          </p>
           
           <!-- Five Pillars Checklist -->
           <div style="display: flex; flex-direction: column; gap: 1.1rem;">
@@ -295,12 +380,9 @@
         
         <!-- Content Left: Our Mission -->
         <div>
-          <h2 class="about-section-title" style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem;">
+          <h2 class="about-section-title" style="font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 2rem;">
             Our Mission
           </h2>
-          <p style="font-size: 1rem; line-height: 1.7; color: #475569; margin-bottom: 2rem;">
-            To provide exceptional property verification and rental services that eliminate client risk through transparency, physical field validation, and digital lease protection.
-          </p>
 
           <!-- Bullet Checklist -->
           <div style="display: flex; flex-direction: column; gap: 1.1rem;">
@@ -321,9 +403,9 @@
 
         <!-- Image Composition Right -->
         <div class="about-image-comp-right">
-          <div class="about-mission-main" style="width: 100%; height: 380px; border-radius: 28px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.08); margin-left: auto; background: #f1f5f9;">
+          <div class="about-mission-main" style="margin-left: auto;">
             {% if site_settings.about_mission_image_1 %}
-              <img src="{{ site_settings.about_mission_image_1.url }}" alt="Our Mission Operations" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              <img class="about-comp-img" src="{{ site_settings.about_mission_image_1.url }}" alt="Our Mission Operations">
             {% else %}
               <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 3.5rem;">
                 <i class="fa-solid fa-bullseye"></i>
@@ -331,9 +413,9 @@
             {% endif %}
           </div>
           <!-- Inset Overlapping Card -->
-          <div class="about-mission-inset" style="position: absolute; bottom: -30px; left: -15px; width: 55%; height: 230px; border-radius: 24px; overflow: hidden; border: 6px solid #ffffff; box-shadow: 0 15px 35px rgba(0,0,0,0.12); background: #f8fafc;">
+          <div class="about-mission-inset">
             {% if site_settings.about_mission_image_2 %}
-              <img src="{{ site_settings.about_mission_image_2.url }}" alt="Modern Architecture" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+              <img class="about-comp-img" src="{{ site_settings.about_mission_image_2.url }}" alt="Modern Architecture">
             {% else %}
               <div style="width: 100%; height: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 2.2rem;">
                 <i class="fa-solid fa-handshake"></i>
@@ -427,8 +509,32 @@
     </div>
   </section>
 
+  <!-- SECTION: OUR SAFETY GUARANTEES -->
+  <section class="about-section-padding" style="padding: 5rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.05); width: 100%;">
+    <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
+      
+      <!-- Section Header -->
+      <div style="text-align: center; max-width: 720px; margin: 0 auto 3rem auto;">
+        <h2 class="about-section-title" style="font-family: var(--font-heading); font-size: 2.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0;">
+          Our Safety Guarantees
+        </h2>
+      </div>
+
+      <!-- Guarantees Single Row Layout -->
+      <div class="about-guarantees-row">
+        <div class="about-guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake landlords</div>
+        <div class="about-guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake agents</div>
+        <div class="about-guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake properties</div>
+        <div class="about-guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No double‑renting</div>
+        <div class="about-guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No middlemen</div>
+        <div class="about-guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No hidden charges</div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- SECTION 5: CONTACT FORM SPLIT -->
-  <section class="about-section-padding" style="padding: 5rem 0 6rem 0; background: #ffffff; border-top: 1px solid rgba(0,0,0,0.05); width: 100%;">
+  <section class="about-section-padding" style="padding: 5rem 0 6rem 0; background: #fafbfc; border-top: 1px solid rgba(0,0,0,0.05); width: 100%;">
     <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
       
       <!-- Section Title Header -->

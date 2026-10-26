@@ -841,10 +841,11 @@
     .showcase-image-box {
       display: block !important;
       width: 100% !important;
+      height: 280px !important;
     }
 
     .showcase-image-box img {
-      height: 280px !important;
+      height: 100% !important;
       display: block !important;
       width: 100% !important;
       object-fit: cover !important;
@@ -1990,8 +1991,7 @@
 
       <!-- Map Redirect Prompt -->
       <div class="map-redirect-prompt">
-        If you are already in the same area that you want a property in, use a map. <a
-          href="{% url 'nearby_properties' %}">click here</a>
+        Use a Map. <a href="{% url 'nearby_properties' %}">click here</a>
       </div>
     </div>
 
@@ -2086,83 +2086,131 @@
 
     </div>
 
-    <!-- SPLIT CONTENT: SAMPLE IMAGE ON LEFT, COUNTDOWN CARDS ON RIGHT -->
+    <!-- SPLIT CONTENT: SLIDER ON LEFT, COUNTDOWN CARDS ON RIGHT -->
     <div class="showcase-split-grid"
-      style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3.5rem; align-items: center;">
+      style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3.5rem; align-items: stretch;">
 
-      <!-- LEFT SIDE: SAMPLE IMAGE CARD WITH ROUNDED CORNERS -->
+      <!-- LEFT SIDE: ADMIN-MANAGED LOOPED IMAGE SLIDER -->
       <div class="showcase-image-box"
-        style="position: relative; border-radius: 22px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.06);">
-        {% if site_settings.pipeline_left_image %}
-        <img src="{{ site_settings.pipeline_left_image.url }}" alt="Dream Home Showcase"
-          style="width: 100%; height: 440px; object-fit: cover; display: block;">
-        {% else %}
-        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80"
-          alt="Dream Home Showcase" style="width: 100%; height: 440px; object-fit: cover; display: block;">
+        id="dream-home-slider"
+        style="position: relative; border-radius: 22px; overflow: hidden; height: 440px; background: transparent; -webkit-mask-image: radial-gradient(ellipse 95% 92% at 50% 50%, #000 68%, transparent 100%); mask-image: radial-gradient(ellipse 95% 92% at 50% 50%, #000 68%, transparent 100%);">
+        
+        <div class="showcase-slides-track" style="position: relative; width: 100%; height: 100%;">
+          {% if showcase_slides %}
+            {% for slide in showcase_slides %}
+            <div class="showcase-slide {% if forloop.first %}active{% endif %}"
+              style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: {% if forloop.first %}1{% else %}0{% endif %}; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: {% if forloop.first %}auto{% else %}none{% endif %};">
+              <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Dream Home Showcase' }}"
+                style="width: 100%; height: 100%; object-fit: cover; display: block;">
+              {% if slide.title %}
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2.5rem 1.5rem 1.25rem; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%); color: white;">
+                <span style="font-size: 1.05rem; font-weight: 700; letter-spacing: 0.3px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">{{ slide.title }}</span>
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          {% elif site_settings.pipeline_left_image %}
+            <div class="showcase-slide active" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 1;">
+              <img src="{{ site_settings.pipeline_left_image.url }}" alt="Dream Home Showcase"
+                style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+          {% else %}
+            <div class="showcase-slide active" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 1;">
+              <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80"
+                alt="Dream Home Showcase" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+          {% endif %}
+        </div>
+
+        {% if showcase_slides and showcase_slides|length > 1 %}
+        <!-- Navigation Arrows -->
+        <button type="button" class="showcase-arrow showcase-prev" onclick="changeShowcaseSlide(-1)" aria-label="Previous Slide"
+          style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); color: white; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s ease; z-index: 10; font-size: 1rem;">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button type="button" class="showcase-arrow showcase-next" onclick="changeShowcaseSlide(1)" aria-label="Next Slide"
+          style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); color: white; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s ease; z-index: 10; font-size: 1rem;">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- Slider Indicator Dots -->
+        <div class="showcase-dots" style="position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10;">
+          {% for slide in showcase_slides %}
+          <span class="showcase-dot {% if forloop.first %}active{% endif %}" onclick="goToShowcaseSlide({{ forloop.counter0 }})"
+            style="width: {% if forloop.first %}24px{% else %}10px{% endif %}; height: 10px; border-radius: {% if forloop.first %}10px{% else %}50%{% endif %}; background: {% if forloop.first %}#ffffff{% else %}rgba(255,255,255,0.45){% endif %}; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></span>
+          {% endfor %}
+        </div>
         {% endif %}
       </div>
 
-      <!-- RIGHT SIDE: ANIMATED COUNTDOWN STATS GRID -->
+      <!-- RIGHT SIDE: ANIMATED COUNTDOWN STATS GRID (HOUSES, OFFICES, AGENTS, PROJECTS, MOVED-IN, DISTRICTS) -->
       <div class="showcase-stats-grid"
-        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem 1rem; background: #faf7f2; padding: 2.25rem 1.75rem; border-radius: 22px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem 1rem; background: #faf7f2; padding: 2.25rem 1.75rem; border-radius: 22px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03); align-content: center;">
+        
+        <!-- 1. Houses -->
         <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
           <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
-            class="counter-num" data-target="{{ site_settings.stat_properties|default:120 }}">0</div>
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
+            class="counter-num" data-target="{{ site_settings.stat_properties|default:120 }}">0+</div>
           <div
             style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Properties</div>
+            Houses</div>
         </div>
 
+        <!-- 2. Offices -->
         <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
           <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
-            class="counter-num" data-target="{{ site_settings.stat_tenants|default:450 }}">0</div>
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
+            class="counter-num" data-target="{{ site_settings.stat_offices|default:45 }}">0+</div>
           <div
             style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Tenants</div>
+            Offices</div>
         </div>
 
+        <!-- 3. Agents -->
         <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
           <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
-            class="counter-num" data-target="{{ site_settings.stat_moved_in|default:380 }}">0</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Moved In</div>
-        </div>
-
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
-            class="counter-num" data-target="{{ site_settings.stat_landlords|default:85 }}">0</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Landlords</div>
-        </div>
-
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
-            class="counter-num" data-target="{{ site_settings.stat_districts|default:14 }}">0</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Districts</div>
-        </div>
-
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1;"
-            class="counter-num" data-target="{{ site_settings.stat_agents|default:32 }}">0</div>
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
+            class="counter-num" data-target="{{ site_settings.stat_agents|default:32 }}">0+</div>
           <div
             style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
             Agents</div>
+        </div>
+
+        <!-- 4. Projects -->
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
+            class="counter-num" data-target="{{ site_settings.stat_projects|default:28 }}">0+</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Projects</div>
+        </div>
+
+        <!-- 5. Moved-in -->
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
+            class="counter-num" data-target="{{ site_settings.stat_moved_in|default:380 }}">0+</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Moved-in</div>
+        </div>
+
+        <!-- 6. Districts -->
+        <div
+          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
+          <div
+            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
+            class="counter-num" data-target="{{ site_settings.stat_districts|default:14 }}">0+</div>
+          <div
+            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Districts</div>
         </div>
       </div>
 
@@ -2201,8 +2249,6 @@
             <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my
               landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                alt="Joan N." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">Joan Nakimera</h4>
                 <span class="testimonial-role">Verified Tenant • Entebbe</span>
@@ -2215,8 +2261,6 @@
             <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit
               was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
-                alt="Arthur M." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">Arthur Musoke</h4>
                 <span class="testimonial-role">Verified Tenant • Kira</span>
@@ -2229,8 +2273,6 @@
             <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On
               TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
-                alt="Grace N." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">Grace Namubiru</h4>
                 <span class="testimonial-role">Verified Tenant • Kampala</span>
@@ -2243,8 +2285,6 @@
             <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was
               legally certified. The inventory checklist made move-in flawless."</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
-                alt="David O." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">David Okello</h4>
                 <span class="testimonial-role">Verified Tenant • Bugolobi</span>
@@ -2261,8 +2301,6 @@
             <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my
               landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                alt="Joan N." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">Joan Nakimera</h4>
                 <span class="testimonial-role">Verified Tenant • Entebbe</span>
@@ -2275,8 +2313,6 @@
             <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit
               was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
-                alt="Arthur M." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">Arthur Musoke</h4>
                 <span class="testimonial-role">Verified Tenant • Kira</span>
@@ -2289,8 +2325,6 @@
             <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On
               TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
-                alt="Grace N." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">Grace Namubiru</h4>
                 <span class="testimonial-role">Verified Tenant • Kampala</span>
@@ -2303,49 +2337,11 @@
             <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was
               legally certified. The inventory checklist made move-in flawless."</p>
             <div class="testimonial-user">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
-                alt="David O." class="testimonial-avatar">
               <div>
                 <h4 class="testimonial-name">David Okello</h4>
                 <span class="testimonial-role">Verified Tenant • Bugolobi</span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 6. SAFETY GUARANTEES -->
-<section class="bg-surface" style="padding: 4.5rem 0;">
-  <div class="container">
-
-    <!-- CENTERED HEADER -->
-    <div style="text-align: center; max-width: 720px; margin: 0 auto 3rem auto;">
-      <h2 class="section-title" style="margin-bottom: 1.15rem;">Our Safety Guarantees</h2>
-    </div>
-
-    <!-- SPLIT CONTENT: GUARANTEES LIST ON LEFT, METADATA DISPLAY ON RIGHT -->
-    <div class="guarantees-split">
-      <div>
-        <div class="guarantees-list">
-          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake landlords</div>
-          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake agents</div>
-          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No fake properties</div>
-          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No double‑renting</div>
-          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No middlemen</div>
-          <div class="guarantees-item"><i class="fa-solid fa-circle-xmark"></i> No hidden charges</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="metadata-display-card"
-          style="padding: 1rem; border-radius: 22px; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 15px 35px rgba(0,0,0,0.08); background: #ffffff;">
-          <!-- Verified Property Sample Preview Image -->
-          <div style="position: relative; border-radius: 16px; overflow: hidden; height: 340px;">
-            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
-              alt="Verified Listing Preview" style="width: 100%; height: 100%; object-fit: cover; display: block;">
           </div>
         </div>
       </div>
@@ -2499,6 +2495,79 @@
     } else {
       counterElements.forEach(el => animateCounter(el));
     }
+
+    // Dream Home Showcase Looped Image Slider
+    (function initShowcaseSlider() {
+      const slider = document.getElementById('dream-home-slider');
+      if (!slider) return;
+      const slides = slider.querySelectorAll('.showcase-slide');
+      const dots = slider.querySelectorAll('.showcase-dot');
+      if (slides.length <= 1) return;
+
+      let currentSlide = 0;
+      let slideTimer = null;
+      const intervalMs = 4000;
+
+      function showSlide(index) {
+        if (index >= slides.length) index = 0;
+        if (index < 0) index = slides.length - 1;
+        currentSlide = index;
+
+        slides.forEach((slide, idx) => {
+          if (idx === currentSlide) {
+            slide.style.opacity = '1';
+            slide.style.pointerEvents = 'auto';
+            slide.classList.add('active');
+          } else {
+            slide.style.opacity = '0';
+            slide.style.pointerEvents = 'none';
+            slide.classList.remove('active');
+          }
+        });
+
+        dots.forEach((dot, idx) => {
+          if (idx === currentSlide) {
+            dot.style.background = '#ffffff';
+            dot.style.width = '24px';
+            dot.style.borderRadius = '10px';
+          } else {
+            dot.style.background = 'rgba(255,255,255,0.45)';
+            dot.style.width = '10px';
+            dot.style.borderRadius = '50%';
+          }
+        });
+      }
+
+      function startTimer() {
+        stopTimer();
+        slideTimer = setInterval(() => {
+          showSlide(currentSlide + 1);
+        }, intervalMs);
+      }
+
+      function stopTimer() {
+        if (slideTimer) {
+          clearInterval(slideTimer);
+          slideTimer = null;
+        }
+      }
+
+      slider.addEventListener('mouseenter', stopTimer);
+      slider.addEventListener('mouseleave', startTimer);
+
+      window.changeShowcaseSlide = function(delta) {
+        showSlide(currentSlide + delta);
+        startTimer();
+      };
+
+      window.goToShowcaseSlide = function(index) {
+        showSlide(index);
+        startTimer();
+      };
+
+      showSlide(0);
+      startTimer();
+    })();
 
     if (typeof initCascadingLocationFilters === 'function') {
       initCascadingLocationFilters(
