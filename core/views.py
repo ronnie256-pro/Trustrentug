@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from core.models import (
@@ -893,6 +893,8 @@ def admin_dashboard(request):
                     settings_obj.site_icon = site_icon
                 if site_logo:
                     settings_obj.site_logo = site_logo
+                if request.FILES.get('pdf_logo'):
+                    settings_obj.pdf_logo = request.FILES.get('pdf_logo')
                 if about_hero_image:
                     settings_obj.about_hero_image = about_hero_image
                 if about_founder_image:
@@ -1837,6 +1839,14 @@ def admin_dashboard(request):
     showcase_slider_images = ShowcaseSliderImage.objects.all().order_by('order', '-created_at')
     office_applications = OfficeApplication.objects.all().select_related('property', 'user').order_by('-created_at')
 
+    # Reports Tab Datasets
+    office_categories = ['private_office', 'shared_office', 'office_building']
+    report_houses = Property.objects.exclude(category__in=office_categories).select_related('owner', 'district').order_by('-id')
+    report_offices = Property.objects.filter(category__in=office_categories).select_related('owner', 'district').order_by('-id')
+    report_construction = construction_projects
+    report_tenants_list = tenants
+    report_landlords_list = landlords
+
     return render(request, 'admin/dashboard.html', {
         'properties': properties,
         'stats': stats,
@@ -1870,6 +1880,12 @@ def admin_dashboard(request):
         'office_amenities': office_amenities,
         'property_categories': PropertyCategory.objects.all().order_by('group', 'name'),
         'active_section': request.GET.get('section', 'categories') or 'categories',
+        'report_subtab': request.GET.get('report_type', 'houses'),
+        'report_houses': report_houses,
+        'report_offices': report_offices,
+        'report_construction': report_construction,
+        'report_tenants': report_tenants_list,
+        'report_landlords': report_landlords_list,
         'current_tab': tab
     })
 
@@ -4639,6 +4655,93 @@ def download_payments_pdf(request):
     response['Content-Disposition'] = f'attachment; filename="TRUST_Payments_Ledger_{timezone.now().strftime("%Y%m%d")}.pdf"'
     response.write(pdf)
     return response
+
+
+# ==========================================
+# ADMIN REPORTS TAB PDF DOWNLOAD VIEWS
+# ==========================================
+def download_house_pdf_view(request, property_id):
+    if not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+    prop = get_object_or_404(Property, id=property_id)
+    site_settings = SiteSetting.objects.first()
+    from core.pdf_reports import generate_house_pdf
+    buffer = generate_house_pdf(prop, site_settings=site_settings)
+    pdf = buffer.getvalue()
+    buffer.close()
+    code = prop.property_id or f"HSE-{prop.id}"
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="TRUST_House_Report_{code}.pdf"'
+    response.write(pdf)
+    return response
+
+
+def download_office_pdf_view(request, property_id):
+    if not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+    prop = get_object_or_404(Property, id=property_id)
+    site_settings = SiteSetting.objects.first()
+    from core.pdf_reports import generate_office_pdf
+    buffer = generate_office_pdf(prop, site_settings=site_settings)
+    pdf = buffer.getvalue()
+    buffer.close()
+    code = prop.property_id or f"OFC-{prop.id}"
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="TRUST_Office_Report_{code}.pdf"'
+    response.write(pdf)
+    return response
+
+
+def download_construction_pdf_view(request, project_id):
+    if not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+    project = get_object_or_404(ConstructionProject, id=project_id)
+    site_settings = SiteSetting.objects.first()
+    from core.pdf_reports import generate_construction_pdf
+    buffer = generate_construction_pdf(project, site_settings=site_settings)
+    pdf = buffer.getvalue()
+    buffer.close()
+    code = project.property_id or f"CNST-{project.id}"
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="TRUST_Construction_Report_{code}.pdf"'
+    response.write(pdf)
+    return response
+
+
+def download_tenant_pdf_view(request, tenant_id):
+    if not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+    tenant = get_object_or_404(User, id=tenant_id)
+    site_settings = SiteSetting.objects.first()
+    from core.pdf_reports import generate_tenant_pdf
+    buffer = generate_tenant_pdf(tenant, site_settings=site_settings)
+    pdf = buffer.getvalue()
+    buffer.close()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="TRUST_Tenant_Report_TNT-{tenant.id:04d}.pdf"'
+    response.write(pdf)
+    return response
+
+
+def download_landlord_pdf_view(request, landlord_id):
+    if not is_admin_user(request.user):
+        messages.error(request, 'Access denied.')
+        return redirect('login')
+    landlord = get_object_or_404(User, id=landlord_id)
+    site_settings = SiteSetting.objects.first()
+    from core.pdf_reports import generate_landlord_pdf
+    buffer = generate_landlord_pdf(landlord, site_settings=site_settings)
+    pdf = buffer.getvalue()
+    buffer.close()
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="TRUST_Landlord_Report_LLD-{landlord.id:04d}.pdf"'
+    response.write(pdf)
+    return response
+
 
 
 def admin_upload_construction_slider(request):

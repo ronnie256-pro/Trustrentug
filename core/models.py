@@ -497,6 +497,7 @@ class SiteSetting(models.Model):
     site_name = models.CharField(max_length=100, default='TRUST')
     site_icon = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Favicon / Tab icon")
     site_logo = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Top header logo replacement for 'Shield and TRUST'")
+    pdf_logo = models.FileField(upload_to='site_settings/', null=True, blank=True, help_text="Official high-resolution logo for PDF reports")
 
     # Counter Stats configured by Admin
     stat_properties = models.IntegerField(default=120, help_text="Houses / Properties Counter Display")

@@ -4085,6 +4085,457 @@ function filterInspectionsTable() {
     }
 </script>
 
+{% elif current_tab == 'reports' %}
+
+<!-- REPORTS TAB CONTENT -->
+<div class="animate__animated animate__fadeIn" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+
+    <!-- TOP HEADER -->
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 1.75rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.25rem;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="background: #ecfdf5; color: var(--color-emerald-darkest); width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; border: 1px solid rgba(4, 120, 87, 0.2);">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </span>
+                <div>
+                    <h3 style="font-family: var(--font-heading); color: #0f172a; margin: 0; font-size: 1.45rem; font-weight: 800;">
+                        System Reports & PDF Exports
+                    </h3>
+                    <p style="margin: 0.2rem 0 0 0; color: #64748b; font-size: 0.85rem;">
+                        Download verified official PDF documentation for Houses, Offices, Construction Projects, Tenants, and Landlords.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <a href="{% url 'download_payments_pdf' %}" class="btn" style="background: #022416; color: white; border-radius: 10px; font-weight: 700; font-size: 0.85rem; padding: 0.65rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <i class="fa-solid fa-credit-card"></i> Payments Ledger PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- CATEGORY FILTER PILLS -->
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem;" id="report-type-pills">
+        <button type="button" onclick="switchReportSubTab('houses')" id="pill-btn-houses" class="report-nav-pill active-pill" style="padding: 0.65rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease;">
+            <i class="fa-solid fa-house"></i> Houses
+            <span style="background: rgba(4,120,87,0.15); color: #047857; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">{{ report_houses|length }}</span>
+        </button>
+        <button type="button" onclick="switchReportSubTab('offices')" id="pill-btn-offices" class="report-nav-pill" style="padding: 0.65rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; background: white; color: #475569;">
+            <i class="fa-solid fa-briefcase"></i> Offices
+            <span style="background: #f1f5f9; color: #64748b; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">{{ report_offices|length }}</span>
+        </button>
+        <button type="button" onclick="switchReportSubTab('construction')" id="pill-btn-construction" class="report-nav-pill" style="padding: 0.65rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; background: white; color: #475569;">
+            <i class="fa-solid fa-helmet-safety"></i> Construction Projects
+            <span style="background: #f1f5f9; color: #64748b; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">{{ report_construction|length }}</span>
+        </button>
+        <button type="button" onclick="switchReportSubTab('tenants')" id="pill-btn-tenants" class="report-nav-pill" style="padding: 0.65rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; background: white; color: #475569;">
+            <i class="fa-solid fa-users"></i> Tenants
+            <span style="background: #f1f5f9; color: #64748b; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">{{ report_tenants|length }}</span>
+        </button>
+        <button type="button" onclick="switchReportSubTab('landlords')" id="pill-btn-landlords" class="report-nav-pill" style="padding: 0.65rem 1.25rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; background: white; color: #475569;">
+            <i class="fa-solid fa-user-tie"></i> Landlords
+            <span style="background: #f1f5f9; color: #64748b; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">{{ report_landlords|length }}</span>
+        </button>
+    </div>
+
+    <!-- QUICK SEARCH INPUT -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+        <i class="fa-solid fa-magnifying-glass" style="color: #94a3b8; font-size: 1rem;"></i>
+        <input type="text" id="report-search-input" onkeyup="filterReportsTable()" placeholder="Search current report items by ID, title, name, location, or status..." style="width: 100%; border: none; outline: none; font-size: 0.9rem; color: #1e293b; background: transparent;">
+    </div>
+
+    <!-- 1. HOUSES REPORT TABLE -->
+    <div id="report-section-houses" class="report-section-pane" style="display: block;">
+        <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafbfc;">
+                <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-house" style="color: var(--color-emerald);"></i> Residential Houses Documentation
+                </h4>
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Showing {{ report_houses|length }} entries</span>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="table-houses">
+                    <thead>
+                        <tr>
+                            <th style="padding: 1rem 1.25rem;">ID & Title</th>
+                            <th style="padding: 1rem 1.25rem;">Category</th>
+                            <th style="padding: 1rem 1.25rem;">Owner / Landlord</th>
+                            <th style="padding: 1rem 1.25rem;">Location</th>
+                            <th style="padding: 1rem 1.25rem;">Price / Month</th>
+                            <th style="padding: 1rem 1.25rem;">Status</th>
+                            <th style="padding: 1rem 1.25rem; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for h in report_houses %}
+                        <tr class="report-data-row">
+                            <td style="padding: 1rem 1.25rem;">
+                                <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem;">{{ h.title }}</div>
+                                <div style="font-size: 0.78rem; color: #64748b; font-family: monospace;">{{ h.property_id|default:h.id }}</div>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ h.get_category_display|default:h.category|default:"Residential" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #334155;">
+                                {% if h.owner %}
+                                    <div style="font-weight: 700;">{{ h.owner.get_full_name|default:h.owner.username }}</div>
+                                    <div style="font-size: 0.75rem; color: #64748b;">{{ h.owner.phone|default:h.owner.email }}</div>
+                                {% else %}
+                                    <span style="color: #94a3b8; font-style: italic;">Platform Managed</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ h.location|truncatechars:28|default:"Kampala" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-weight: 700; color: #0f172a; font-size: 0.88rem;">
+                                {% if h.price_per_month %}UGX {{ h.price_per_month|floatformat:0 }}{% elif h.price %}UGX {{ h.price|floatformat:0 }}{% else %}Contact{% endif %}
+                            </td>
+                            <td style="padding: 1rem 1.25rem;">
+                                <span class="status-pill {% if h.status == 'available' %}pill-active{% else %}pill-maintenance{% endif %}" style="text-transform: capitalize;">
+                                    {{ h.status }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; text-align: center;">
+                                <a href="{% url 'download_house_pdf' h.id %}" class="btn" style="background: #022416; color: white; border-radius: 8px; padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <i class="fa-solid fa-download"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2.5rem; color: #94a3b8;">
+                                <i class="fa-solid fa-house" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                No residential house records available for export.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. OFFICES REPORT TABLE -->
+    <div id="report-section-offices" class="report-section-pane" style="display: none;">
+        <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafbfc;">
+                <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-briefcase" style="color: var(--color-gold);"></i> Commercial Offices Documentation
+                </h4>
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Showing {{ report_offices|length }} entries</span>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="table-offices">
+                    <thead>
+                        <tr>
+                            <th style="padding: 1rem 1.25rem;">Office ID & Title</th>
+                            <th style="padding: 1rem 1.25rem;">Floor / Suite</th>
+                            <th style="padding: 1rem 1.25rem;">Pricing Unit</th>
+                            <th style="padding: 1rem 1.25rem;">Monthly Rate</th>
+                            <th style="padding: 1rem 1.25rem;">Location</th>
+                            <th style="padding: 1rem 1.25rem;">Status</th>
+                            <th style="padding: 1rem 1.25rem; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in report_offices %}
+                        <tr class="report-data-row">
+                            <td style="padding: 1rem 1.25rem;">
+                                <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem;">{{ o.title }}</div>
+                                <div style="font-size: 0.78rem; color: #64748b; font-family: monospace;">{{ o.property_id|default:o.id }}</div>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ o.floor|default:"Standard Suite" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ o.get_office_pricing_unit_display|default:"Per Month" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-weight: 700; color: #0f172a; font-size: 0.88rem;">
+                                {% if o.price %}UGX {{ o.price|floatformat:0 }}{% else %}Contact{% endif %}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ o.location|truncatechars:28|default:"Kampala Commercial" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem;">
+                                <span class="status-pill {% if o.status == 'available' %}pill-active{% else %}pill-maintenance{% endif %}" style="text-transform: capitalize;">
+                                    {{ o.status }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; text-align: center;">
+                                <a href="{% url 'download_office_pdf' o.id %}" class="btn" style="background: #022416; color: white; border-radius: 8px; padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <i class="fa-solid fa-download"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2.5rem; color: #94a3b8;">
+                                <i class="fa-solid fa-briefcase" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                No commercial office listings available for export.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. CONSTRUCTION PROJECTS REPORT TABLE -->
+    <div id="report-section-construction" class="report-section-pane" style="display: none;">
+        <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafbfc;">
+                <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-helmet-safety" style="color: #2563eb;"></i> Construction Projects Progress Documentation
+                </h4>
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Showing {{ report_construction|length }} entries</span>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="table-construction">
+                    <thead>
+                        <tr>
+                            <th style="padding: 1rem 1.25rem;">Project ID & Name</th>
+                            <th style="padding: 1rem 1.25rem;">Client / Owner</th>
+                            <th style="padding: 1rem 1.25rem;">Site Location</th>
+                            <th style="padding: 1rem 1.25rem;">Progress</th>
+                            <th style="padding: 1rem 1.25rem;">Status</th>
+                            <th style="padding: 1rem 1.25rem; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in report_construction %}
+                        <tr class="report-data-row">
+                            <td style="padding: 1rem 1.25rem;">
+                                <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem;">{{ c.title }}</div>
+                                <div style="font-size: 0.78rem; color: #2563eb; font-family: monospace; font-weight: 700;">{{ c.property_id|default:c.id }}</div>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #334155;">
+                                <div style="font-weight: 700;">{{ c.client_name|default:"Diaspora Client" }}</div>
+                                <div style="font-size: 0.75rem; color: #64748b;">{{ c.owner_phone|default:c.owner_email }}</div>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ c.location|truncatechars:28|default:"Uganda" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="flex: 1; height: 7px; background: #f1f5f9; border-radius: 6px; overflow: hidden; min-width: 70px;">
+                                        <div style="width: {{ c.progress_percentage }}%; height: 100%; background: var(--color-emerald); border-radius: 6px;"></div>
+                                    </div>
+                                    <span style="font-size: 0.78rem; font-weight: 800; color: #0f172a;">{{ c.progress_percentage }}%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1rem 1.25rem;">
+                                <span class="status-pill {% if c.status == 'completed' %}pill-active{% else %}pill-maintenance{% endif %}" style="text-transform: capitalize;">
+                                    {{ c.status }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; text-align: center;">
+                                <a href="{% url 'download_construction_pdf' c.id %}" class="btn" style="background: #022416; color: white; border-radius: 8px; padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <i class="fa-solid fa-download"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2.5rem; color: #94a3b8;">
+                                <i class="fa-solid fa-helmet-safety" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                No ongoing or completed construction projects available.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. TENANTS REPORT TABLE -->
+    <div id="report-section-tenants" class="report-section-pane" style="display: none;">
+        <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafbfc;">
+                <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-users" style="color: var(--color-emerald);"></i> Tenant Records & Lease Portfolio Documentation
+                </h4>
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Showing {{ report_tenants|length }} entries</span>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="table-tenants">
+                    <thead>
+                        <tr>
+                            <th style="padding: 1rem 1.25rem;">Tenant ID & Name</th>
+                            <th style="padding: 1rem 1.25rem;">Email Address</th>
+                            <th style="padding: 1rem 1.25rem;">Phone</th>
+                            <th style="padding: 1rem 1.25rem;">Joined Date</th>
+                            <th style="padding: 1rem 1.25rem;">Status</th>
+                            <th style="padding: 1rem 1.25rem; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in report_tenants %}
+                        <tr class="report-data-row">
+                            <td style="padding: 1rem 1.25rem;">
+                                <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem;">{{ t.get_full_name|default:t.username }}</div>
+                                <div style="font-size: 0.78rem; color: #64748b; font-family: monospace;">TNT-{{ t.id }}</div>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ t.email|default:"N/A" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ t.phone|default:"N/A" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #64748b;">
+                                {{ t.date_joined|date:"M d, Y" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem;">
+                                <span class="status-pill {% if t.is_active %}pill-active{% else %}pill-maintenance{% endif %}">
+                                    {% if t.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; text-align: center;">
+                                <a href="{% url 'download_tenant_pdf' t.id %}" class="btn" style="background: #022416; color: white; border-radius: 8px; padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <i class="fa-solid fa-download"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2.5rem; color: #94a3b8;">
+                                <i class="fa-solid fa-users" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                No registered tenant profiles available.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. LANDLORDS REPORT TABLE -->
+    <div id="report-section-landlords" class="report-section-pane" style="display: none;">
+        <div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafbfc;">
+                <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-user-tie" style="color: var(--color-emerald-dark);"></i> Landlord Portfolios & Ownership Audit Documentation
+                </h4>
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Showing {{ report_landlords|length }} entries</span>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="table-landlords">
+                    <thead>
+                        <tr>
+                            <th style="padding: 1rem 1.25rem;">Landlord ID & Name</th>
+                            <th style="padding: 1rem 1.25rem;">Email Address</th>
+                            <th style="padding: 1rem 1.25rem;">Phone</th>
+                            <th style="padding: 1rem 1.25rem;">Owned Units</th>
+                            <th style="padding: 1rem 1.25rem;">Status</th>
+                            <th style="padding: 1rem 1.25rem; text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in report_landlords %}
+                        <tr class="report-data-row">
+                            <td style="padding: 1rem 1.25rem;">
+                                <div style="font-weight: 800; color: #0f172a; font-size: 0.9rem;">{{ l.get_full_name|default:l.username }}</div>
+                                <div style="font-size: 0.78rem; color: #64748b; font-family: monospace;">LLD-{{ l.id }}</div>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ l.email|default:"N/A" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-size: 0.85rem; color: #475569;">
+                                {{ l.phone|default:"N/A" }}
+                            </td>
+                            <td style="padding: 1rem 1.25rem; font-weight: 700; color: #0f172a; font-size: 0.88rem;">
+                                {{ l.properties.count }} property units
+                            </td>
+                            <td style="padding: 1rem 1.25rem;">
+                                <span class="status-pill pill-active">
+                                    Verified
+                                </span>
+                            </td>
+                            <td style="padding: 1rem 1.25rem; text-align: center;">
+                                <a href="{% url 'download_landlord_pdf' l.id %}" class="btn" style="background: #022416; color: white; border-radius: 8px; padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <i class="fa-solid fa-download"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2.5rem; color: #94a3b8;">
+                                <i class="fa-solid fa-user-tie" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                No verified landlord profiles recorded.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- REPORTS TAB CLIENT JAVASCRIPT CONTROLLER -->
+<script>
+    function switchReportSubTab(type) {
+        // Hide all section panes
+        const panes = document.querySelectorAll('.report-section-pane');
+        panes.forEach(pane => pane.style.display = 'none');
+
+        // Show active pane
+        const targetPane = document.getElementById('report-section-' + type);
+        if (targetPane) targetPane.style.display = 'block';
+
+        // Update pills
+        const pills = document.querySelectorAll('.report-nav-pill');
+        pills.forEach(pill => {
+            pill.style.background = 'white';
+            pill.style.color = '#475569';
+            pill.style.borderColor = '#cbd5e1';
+        });
+
+        const activePill = document.getElementById('pill-btn-' + type);
+        if (activePill) {
+            activePill.style.background = '#022416';
+            activePill.style.color = '#ffffff';
+            activePill.style.borderColor = '#022416';
+        }
+
+        // Clear search input on tab change
+        const searchInput = document.getElementById('report-search-input');
+        if (searchInput) {
+            searchInput.value = '';
+            filterReportsTable();
+        }
+    }
+
+    function filterReportsTable() {
+        const query = (document.getElementById('report-search-input').value || '').toLowerCase().trim();
+        const activePane = document.querySelector('.report-section-pane[style*="display: block"]') || document.querySelector('.report-section-pane:not([style*="display: none"])');
+        if (!activePane) return;
+
+        const rows = activePane.querySelectorAll('tbody tr.report-data-row');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            if (!query || text.indexOf(query) > -1) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Initialize initial active pill color
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstPill = document.getElementById('pill-btn-houses');
+        if (firstPill) {
+            firstPill.style.background = '#022416';
+            firstPill.style.color = '#ffffff';
+            firstPill.style.borderColor = '#022416';
+        }
+    });
+</script>
+
 {% elif current_tab == 'settings' %}
 
 <!-- Settings Sub-Navigation Header -->
@@ -4978,8 +5429,15 @@ function filterInspectionsTable() {
                 <input type="file" name="site_icon" accept="image/*" style="width: 100%; font-size: 0.85rem;">
             </div>
             <div style="margin-bottom: 1.25rem;">
-                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Primary Logo Image</label>
+                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Primary Logo Image (Website Header)</label>
                 <input type="file" name="site_logo" accept="image/*" style="width: 100%; font-size: 0.85rem;">
+            </div>
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">Official PDF Reports Logo (Top Center of Reports)</label>
+                <input type="file" name="pdf_logo" accept="image/*" style="width: 100%; font-size: 0.85rem;">
+                {% if site_settings.pdf_logo %}
+                    <span style="font-size: 0.75rem; color: #047857; margin-top: 0.25rem; display: block;">Current: {{ site_settings.pdf_logo.name }}</span>
+                {% endif %}
             </div>
             <div style="margin-bottom: 1.25rem;">
                 <label style="display: block; font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.35rem;">About Us — Premium Hero Image</label>
