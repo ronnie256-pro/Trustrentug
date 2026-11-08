@@ -1029,6 +1029,22 @@ def admin_dashboard(request):
                 messages.error(request, "Construction project record not found.")
             return redirect('/admin-dashboard/?tab=construction')
 
+        elif action == 'update_locate_request_status':
+            req_id = request.POST.get('request_id')
+            new_status = request.POST.get('status')
+            new_payment_status = request.POST.get('payment_status')
+            try:
+                locate_req = HouseLocateRequest.objects.get(id=req_id)
+                if new_status in dict(HouseLocateRequest.STATUS_CHOICES):
+                    locate_req.status = new_status
+                if new_payment_status in ['pending_payment', 'paid', 'failed']:
+                    locate_req.payment_status = new_payment_status
+                locate_req.save()
+                messages.success(request, f"Tenant Search Request #{locate_req.id} ({locate_req.full_name}) updated successfully!")
+            except HouseLocateRequest.DoesNotExist:
+                messages.error(request, "Tenant search request record not found.")
+            return redirect('/admin-dashboard/?tab=tenant_requests')
+
     # Fetch properties based on active tab
     if tab == 'properties':
         properties = Property.objects.all().select_related('owner', 'parent').exclude(
@@ -1839,6 +1855,15 @@ def admin_dashboard(request):
     showcase_slider_images = ShowcaseSliderImage.objects.all().order_by('order', '-created_at')
     office_applications = OfficeApplication.objects.all().select_related('property', 'user').order_by('-created_at')
 
+    # Tenant Custom Property Locate Requests (HouseLocateRequest)
+    tenant_locate_requests = list(HouseLocateRequest.objects.select_related('user').order_by('-created_at'))
+    locate_request_stats = {
+        'total': len(tenant_locate_requests),
+        'paid': sum(1 for r in tenant_locate_requests if r.payment_status == 'paid' or r.status in ['paid_searching', 'property_located', 'completed']),
+        'located': sum(1 for r in tenant_locate_requests if r.status in ['property_located', 'completed']),
+        'total_fees_collected': sum(float(r.search_fee or 0) for r in tenant_locate_requests if r.payment_status == 'paid'),
+    }
+
     # Reports Tab Datasets
     office_categories = ['private_office', 'shared_office', 'office_building']
     report_houses = Property.objects.exclude(category__in=office_categories).select_related('owner', 'district').order_by('-id')
@@ -1852,6 +1877,8 @@ def admin_dashboard(request):
         'stats': stats,
         'landlords': landlords,
         'tenants': tenants,
+        'tenant_locate_requests': tenant_locate_requests,
+        'locate_request_stats': locate_request_stats,
         'agents': agents,
         'agent_roles': agent_roles,
         'inspections': inspections,

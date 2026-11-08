@@ -1766,7 +1766,7 @@
 </div>
 
 <!-- 3. RECENTLY ADDED LANDINGS SECTION (POSITION 3: IMMEDIATELY AFTER SERVICES, 6 CARDS PER ROW, CENTERED TITLE & PRICE) -->
-<section style="padding: 2rem 0 3.5rem 0; background: #ffffff; width: 100%; border-bottom: 1px solid rgba(0,0,0,0.04);">
+<section style="padding: 1.5rem 0 2.5rem 0; background: #ffffff; width: 100%; border-bottom: none;">
   <style>
     .newly-added-grid-6col {
       display: grid;
@@ -2225,29 +2225,12 @@
       {% endfor %}
     </div>
 
-    <!-- View All Button directing users to search page -->
-    <div style="text-align: center; margin-top: 2.5rem;">
-      <a href="{% url 'search' %}" class="btn"
-        style="display: inline-flex; align-items: center; gap: 0.65rem; background: #047857 !important; color: white !important; padding: 0.85rem 2.25rem; font-size: 1rem; font-weight: 700; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.35); transition: all 0.25s ease;">
-        View All <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
-      </a>
-    </div>
-
   </div>
 </section>
 
 <!-- 4. DREAM HOME & STATS SHOWCASE SECTION -->
-<section style="padding: 3.5rem 0; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
+<section style="padding: 2.5rem 0 3.5rem 0; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
   <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
-
-    <!-- CENTERED TEXT HEADER BLOCK -->
-    <div style="text-align: center; max-width: 760px; margin: 0 auto 2.5rem auto;">
-      <h2
-        style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; color: #1e1b18; line-height: 1.15; margin-bottom: 1.15rem; letter-spacing: -0.5px;">
-        We Help You To Find <span style="color: var(--color-emerald-darkest);">Your Dream Home</span>
-      </h2>
-
-    </div>
 
     <!-- SPLIT CONTENT: SLIDER ON LEFT, COUNTDOWN CARDS ON RIGHT -->
     <div class="showcase-split-grid"
@@ -2861,12 +2844,16 @@
 
       <!-- ─── STEP 2B: NO DATABASE MATCH -> AUTHORIZE TRUST PROTOCOL PROMPT ─── -->
       <div id="shfStepAuthorize" style="display: none; text-align: center; padding: 0.5rem 0;">
-        <div style="width: 68px; height: 68px; border-radius: 50%; background: #fef3c7; border: 2px solid #cba358; color: #b45309; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.85rem;">
-          <i class="fa-solid fa-shield-halved"></i>
+        <div style="margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center;">
+          {% if site_settings and site_settings.site_logo %}
+          <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name|default:'TRUST PROTOCOL' }}" style="height: 68px; width: auto; max-width: 140px; object-fit: contain;">
+          {% elif site_settings and site_settings.site_icon %}
+          <img src="{{ site_settings.site_icon.url }}" alt="{{ site_settings.site_name|default:'TRUST PROTOCOL' }}" style="height: 68px; width: auto; max-width: 140px; object-fit: contain;">
+          {% endif %}
         </div>
 
         <h4 style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.65rem 0;">
-          Authorize TRUST PROTOCOL to Locate Your Home
+          Ohhh, Sorry
         </h4>
 
         <p style="font-size: 0.96rem; color: #44403c; line-height: 1.6; max-width: 540px; margin: 0 auto 1.25rem auto;">
@@ -2875,7 +2862,7 @@
 
         <div style="background: #fbf7f0; border: 1.5px solid rgba(203, 163, 88, 0.5); border-radius: 14px; padding: 1rem 1.2rem; text-align: left; margin-bottom: 1.35rem; font-size: 0.9rem; color: #292524;">
           <div style="font-weight: 800; color: #032215; margin-bottom: 0.4rem;">
-            <i class="fa-solid fa-file-signature" style="color: #047857; margin-right: 6px;"></i> Client Search Mandate Summary:
+            Client Search Mandate Summary:
           </div>
           <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.65;">
             <li><strong>Preferred Village(s):</strong> <span id="shfAuthSummaryVillages"></span></li>
@@ -2890,7 +2877,7 @@
             <i class="fa-solid fa-arrow-left"></i> Modify Request
           </button>
           <button type="button" class="shf-btn-primary" style="width: auto; padding: 0.85rem 1.75rem;" onclick="grantTrustAuthorization()">
-            <i class="fa-solid fa-check-double"></i> I Authorize TRUST PROTOCOL
+            Proceed
           </button>
         </div>
       </div>
@@ -2941,14 +2928,14 @@
           </div>
 
           <!-- 20% SEARCH FEE SUMMARY BOX -->
-          <div style="background: linear-gradient(135deg, #032215 0%, #064e3b 100%); color: #ffffff; border-radius: 14px; padding: 1.15rem 1.35rem; margin: 1.15rem 0; border: 1.5px solid #cba358;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
+          <div style="background: #fbf7f0; color: #1e1b18; border-radius: 14px; padding: 1.15rem 1.35rem; margin: 1.15rem 0; border: 1.5px solid #e7e5e4;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; font-size: 0.9rem; color: #57534e;">
               <span>Your Maximum Budget Range:</span>
-              <strong id="shfFeeMaxBudgetDisplay">UGX 0</strong>
+              <strong id="shfFeeMaxBudgetDisplay" style="color: #1e1b18;">UGX 0</strong>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.55rem; border-top: 1px solid rgba(255,255,255,0.18); font-size: 1.1rem;">
-              <span style="color: #cba358; font-weight: 800;">Search Fee (20% of Maximum Range):</span>
-              <strong id="shfFeeAmountDisplay" style="font-size: 1.25rem; color: #ffffff;">UGX 0</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.55rem; border-top: 1px solid #e7e5e4; font-size: 1.1rem;">
+              <span style="color: #1e1b18; font-weight: 800;">Search Fee (20% of Maximum Range):</span>
+              <strong id="shfFeeAmountDisplay" style="font-size: 1.25rem; color: #047857;">UGX 0</strong>
             </div>
           </div>
 
@@ -2959,7 +2946,7 @@
               <i class="fa-solid fa-arrow-left"></i> Back
             </button>
             <button type="submit" id="shfPaySubmitBtn" class="shf-btn-primary" style="flex: 1;">
-              <i class="fa-solid fa-lock"></i> <span id="shfPayBtnLabel">Pay 20% Search Fee</span>
+              <span id="shfPayBtnLabel">Pay Now</span>
             </button>
           </div>
         </form>
@@ -3151,8 +3138,8 @@
       if (titleEl) {
         if (stepName === 'step1') titleEl.textContent = 'Tell Us What Home You Need';
         else if (stepName === 'results') titleEl.textContent = 'Matched Verified Properties';
-        else if (stepName === 'authorize') titleEl.textContent = 'Authorize Custom House Search';
-        else if (stepName === 'personal') titleEl.textContent = 'Personal Details & 20% Search Fee';
+        else if (stepName === 'authorize') titleEl.textContent = 'PLAN B';
+        else if (stepName === 'personal') titleEl.textContent = 'Personal details';
       }
     };
 
@@ -3235,7 +3222,7 @@
           const feeAmount = Math.round(maxBudget * 0.20);
           document.getElementById('shfFeeMaxBudgetDisplay').textContent = `UGX ${maxBudget.toLocaleString()}`;
           document.getElementById('shfFeeAmountDisplay').textContent = `UGX ${feeAmount.toLocaleString()}`;
-          document.getElementById('shfPayBtnLabel').textContent = `Pay 20% Search Fee (UGX ${feeAmount.toLocaleString()})`;
+          document.getElementById('shfPayBtnLabel').textContent = 'Pay Now';
 
           if (data.matched && data.properties && data.properties.length > 0) {
             // Prioritize showing matching database properties

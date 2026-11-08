@@ -3572,6 +3572,196 @@ function filterInspectionsTable() {
     </div>
 </div>
 
+{% elif current_tab == 'tenant_requests' %}
+
+<!-- SECTION: TENANT PROPERTY SEARCH REQUESTS (PLAN B / HOUSE LOCATE REQUESTS) -->
+<div class="animate__animated animate__fadeIn" style="margin-top: 0.5rem;">
+
+    <!-- KPI Summary Row -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem;">
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em;">Total Search Requests</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #0f172a; margin-top: 0.35rem; font-family: var(--font-heading);">{{ locate_request_stats.total|default:0 }}</div>
+        </div>
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #047857; letter-spacing: 0.05em;">Paid & Active Searches</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #047857; margin-top: 0.35rem; font-family: var(--font-heading);">{{ locate_request_stats.paid|default:0 }}</div>
+        </div>
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #1d4ed8; letter-spacing: 0.05em;">Properties Located</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #1d4ed8; margin-top: 0.35rem; font-family: var(--font-heading);">{{ locate_request_stats.located|default:0 }}</div>
+        </div>
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+            <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #b45309; letter-spacing: 0.05em;">20% Search Fees Collected</div>
+            <div style="font-size: 1.55rem; font-weight: 800; color: #0f172a; margin-top: 0.5rem; font-family: var(--font-heading);">UGX {{ locate_request_stats.total_fees_collected|floatformat:0|intcomma }}</div>
+        </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); overflow: hidden;">
+        <div style="padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.45rem; font-weight: 800;">
+                    Tenant Property Search Requests
+                </h3>
+                <p style="margin: 0.25rem 0 0 0; font-size: 0.88rem; color: #64748b;">
+                    Clients who authorized TRUST PROTOCOL to locate a verified property on their behalf.
+                </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <select id="locateRequestStatusFilter" onchange="filterLocateRequests(this.value)" class="form-select"
+                    style="border-radius: 8px; font-size: 0.9rem; font-weight: 700; border-color: #cbd5e1; padding: 0.45rem 1rem; width: auto; background: white; cursor: pointer;">
+                    <option value="all">All Statuses</option>
+                    <option value="pending_payment">Pending Search Fee Payment</option>
+                    <option value="paid_searching">Paid – Agent Searching</option>
+                    <option value="property_located">Property Located</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <div style="background: rgba(16, 61, 40, 0.08); border: 1px solid rgba(16, 61, 40, 0.15); padding: 0.5rem 1rem; border-radius: 6px; font-weight: 700; color: var(--color-emerald-darkest); font-size: 0.9rem;">
+                    {{ tenant_locate_requests|length }} Request{{ tenant_locate_requests|length|pluralize }}
+                </div>
+            </div>
+        </div>
+
+        <div class="tenant-table-scroll" style="max-height: 640px; overflow-y: auto; overflow-x: auto;">
+            <table class="admin-table" style="width: 100%; border-collapse: collapse; min-width: 1150px;">
+                <thead style="position: sticky; top: 0; z-index: 10; background: #f8fafc;">
+                    <tr style="background: #f8fafc;">
+                        <th style="padding: 1.1rem 1.25rem; text-align: left; font-size: 0.82rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 2px solid #cbd5e1;">Client Details</th>
+                        <th style="padding: 1.1rem 1.25rem; text-align: left; font-size: 0.82rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 2px solid #cbd5e1;">Preferred Locations</th>
+                        <th style="padding: 1.1rem 1.25rem; text-align: left; font-size: 0.82rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 2px solid #cbd5e1;">House Specs & Budget</th>
+                        <th style="padding: 1.1rem 1.25rem; text-align: left; font-size: 0.82rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 2px solid #cbd5e1;">Needed Date & Notes</th>
+                        <th style="padding: 1.1rem 1.25rem; text-align: left; font-size: 0.82rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 2px solid #cbd5e1;">20% Search Fee</th>
+                        <th style="padding: 1.1rem 1.25rem; text-align: left; font-size: 0.82rem; text-transform: uppercase; color: #334155; font-weight: 800; border-bottom: 2px solid #cbd5e1;">Status & Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in tenant_locate_requests %}
+                    <tr class="locate-req-row" data-status="{{ req.status }}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='transparent'">
+                        <!-- 1. Client Details -->
+                        <td style="padding: 1.15rem 1.25rem; vertical-align: top;">
+                            <div style="font-size: 0.75rem; font-weight: 800; color: #047857; margin-bottom: 0.2rem;">#REQ-{{ req.id }} &bull; {{ req.created_at|date:"d M Y, H:i" }}</div>
+                            <div style="font-weight: 800; color: #0f172a; font-size: 1rem;">{{ req.full_name }}</div>
+                            <div style="font-size: 0.84rem; color: #334155; margin-top: 0.2rem;"><i class="fa-solid fa-phone" style="color: #047857; width: 16px;"></i> {{ req.phone_number }}</div>
+                            <div style="font-size: 0.84rem; color: #334155;"><i class="fa-solid fa-envelope" style="color: #047857; width: 16px;"></i> {{ req.email }}</div>
+                            <div style="font-size: 0.82rem; color: #475569; margin-top: 0.25rem;">
+                                <strong>Profession:</strong> {{ req.profession }}<br>
+                                <strong>NIN:</strong> <span style="font-family: monospace; font-weight: 700;">{{ req.nin_number }}</span>
+                            </div>
+                        </td>
+
+                        <!-- 2. Preferred Locations (Villages) -->
+                        <td style="padding: 1.15rem 1.25rem; vertical-align: top;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; max-width: 240px;">
+                                {% for loc in req.preferred_locations %}
+                                <span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.22rem 0.6rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700;">
+                                    {{ loc }}
+                                </span>
+                                {% empty %}
+                                <span style="color: #94a3b8; font-size: 0.85rem;">Not specified</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+
+                        <!-- 3. House Specs & Budget -->
+                        <td style="padding: 1.15rem 1.25rem; vertical-align: top;">
+                            <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">{{ req.house_type }}</div>
+                            <div style="font-size: 0.84rem; color: #475569; font-weight: 600; margin-bottom: 0.35rem;">
+                                {% if req.bedrooms is not None %}{{ req.bedrooms }} Bedroom{{ req.bedrooms|pluralize }}{% else %}Any Bedrooms{% endif %}
+                            </div>
+                            <div style="font-size: 0.84rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.35rem 0.65rem; display: inline-block;">
+                                <span style="color: #64748b; font-weight: 600;">Budget:</span><br>
+                                <strong style="color: #064e3b;">UGX {{ req.min_budget|floatformat:0|intcomma }} – {{ req.max_budget|floatformat:0|intcomma }}</strong>
+                            </div>
+                        </td>
+
+                        <!-- 4. Needed Date & Special Requirements -->
+                        <td style="padding: 1.15rem 1.25rem; vertical-align: top; max-width: 260px;">
+                            <div style="font-size: 0.84rem; font-weight: 700; color: #0f172a; margin-bottom: 0.35rem;">
+                                <i class="fa-regular fa-calendar" style="color: #047857; margin-right: 4px;"></i> Needed: {{ req.time_or_period|default:"Immediate" }}
+                            </div>
+                            {% if req.special_requirements %}
+                            <div style="font-size: 0.82rem; color: #475569; line-height: 1.45; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.45rem 0.65rem;">
+                                {{ req.special_requirements }}
+                            </div>
+                            {% else %}
+                            <span style="font-size: 0.82rem; color: #94a3b8; font-style: italic;">No special requirements</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- 5. 20% Search Fee & Payment Status -->
+                        <td style="padding: 1.15rem 1.25rem; vertical-align: top;">
+                            <div style="font-weight: 800; color: #0f172a; font-size: 1rem; margin-bottom: 0.35rem;">
+                                UGX {{ req.search_fee|floatformat:0|intcomma }}
+                            </div>
+                            {% if req.payment_status == 'paid' %}
+                            <span style="font-size: 0.75rem; font-weight: 800; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 0.25rem 0.65rem; border-radius: 12px; text-transform: uppercase;">
+                                Paid
+                            </span>
+                            {% elif req.payment_status == 'failed' %}
+                            <span style="font-size: 0.75rem; font-weight: 800; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 0.25rem 0.65rem; border-radius: 12px; text-transform: uppercase;">
+                                Failed
+                            </span>
+                            {% else %}
+                            <span style="font-size: 0.75rem; font-weight: 800; background: #fffbeb; color: #b45309; border: 1px solid #fde68a; padding: 0.25rem 0.65rem; border-radius: 12px; text-transform: uppercase;">
+                                Pending Payment
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- 6. Status & Actions -->
+                        <td style="padding: 1.15rem 1.25rem; vertical-align: top;">
+                            <form method="POST" action="/admin-dashboard/?tab=tenant_requests" style="display: flex; flex-direction: column; gap: 0.45rem;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="update_locate_request_status">
+                                <input type="hidden" name="request_id" value="{{ req.id }}">
+                                <select name="status" class="form-select" style="font-size: 0.82rem; font-weight: 700; padding: 0.35rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+                                    <option value="pending_payment" {% if req.status == 'pending_payment' %}selected{% endif %}>Pending Search Fee</option>
+                                    <option value="paid_searching" {% if req.status == 'paid_searching' %}selected{% endif %}>Paid – Agent Searching</option>
+                                    <option value="property_located" {% if req.status == 'property_located' %}selected{% endif %}>Property Located</option>
+                                    <option value="completed" {% if req.status == 'completed' %}selected{% endif %}>Completed</option>
+                                    <option value="cancelled" {% if req.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                                <select name="payment_status" class="form-select" style="font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+                                    <option value="pending_payment" {% if req.payment_status == 'pending_payment' %}selected{% endif %}>Fee: Pending</option>
+                                    <option value="paid" {% if req.payment_status == 'paid' %}selected{% endif %}>Fee: Paid</option>
+                                    <option value="failed" {% if req.payment_status == 'failed' %}selected{% endif %}>Fee: Failed</option>
+                                </select>
+                                <button type="submit" style="background: #047857; color: white; border: none; border-radius: 6px; padding: 0.4rem 0.75rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 4rem 2rem; color: #64748b;">
+                            <i class="fa-solid fa-magnifying-glass-location" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem; display: block;"></i>
+                            <p style="margin: 0; font-size: 1.05rem; font-weight: 600;">No tenant property search requests submitted yet.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterLocateRequests(statusVal) {
+        const rows = document.querySelectorAll('.locate-req-row');
+        rows.forEach(row => {
+            const rowStatus = row.getAttribute('data-status');
+            if (statusVal === 'all' || rowStatus === statusVal) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+
 {% elif current_tab == 'payments' %}
 
 <!-- SECTION: PAYMENTS MANAGEMENT & FOREX LEDGER -->
