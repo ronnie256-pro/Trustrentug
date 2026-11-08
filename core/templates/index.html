@@ -2845,7 +2845,9 @@
       <!-- ─── STEP 2B: NO DATABASE MATCH -> AUTHORIZE TRUST PROTOCOL PROMPT ─── -->
       <div id="shfStepAuthorize" style="display: none; text-align: center; padding: 0.5rem 0;">
         <div style="margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center;">
-          {% if site_settings and site_settings.site_logo %}
+          {% if site_settings and site_settings.pdf_logo %}
+          <img src="{{ site_settings.pdf_logo.url }}" alt="{{ site_settings.site_name|default:'TRUST PROTOCOL' }}" style="height: 76px; width: auto; max-width: 240px; object-fit: contain;">
+          {% elif site_settings and site_settings.site_logo %}
           <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name|default:'TRUST PROTOCOL' }}" style="height: 68px; width: auto; max-width: 140px; object-fit: contain;">
           {% elif site_settings and site_settings.site_icon %}
           <img src="{{ site_settings.site_icon.url }}" alt="{{ site_settings.site_name|default:'TRUST PROTOCOL' }}" style="height: 68px; width: auto; max-width: 140px; object-fit: contain;">
