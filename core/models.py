@@ -887,4 +887,56 @@ class RentCollection(models.Model):
         return f"{self.unit_number} - {self.property.title} ({self.get_status_display()})"
 
 
+class HouseLocateRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending_payment', 'Pending Search Fee Payment'),
+        ('paid_searching', 'Paid – Agent Searching'),
+        ('property_located', 'Property Located'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='locate_requests')
+
+    # Step 1: Property Requirements
+    preferred_locations = models.JSONField(default=list, help_text="List of selected village names/IDs")
+    min_budget = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    max_budget = models.DecimalField(max_digits=12, decimal_places=2)
+    house_type = models.CharField(max_length=100)
+    bedrooms = models.IntegerField(null=True, blank=True)
+    time_or_period = models.CharField(max_length=150)
+    special_requirements = models.TextField(blank=True)
+
+    # Step 2: Authorization
+    is_authorized = models.BooleanField(default=True)
+    authorized_at = models.DateTimeField(auto_now_add=True)
+
+    # Step 3: Personal Information
+    full_name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=50)
+    profession = models.CharField(max_length=150)
+    email = models.EmailField()
+    nin_number = models.CharField(max_length=100)
+
+    # Step 4: 20% Search Fee & Payment Status
+    search_fee = models.DecimalField(max_digits=12, decimal_places=2, help_text="20% of max_budget")
+    payment_status = models.CharField(
+        max_length=20,
+        choices=[('pending_payment', 'Pending Payment'), ('paid', 'Paid'), ('failed', 'Failed')],
+        default='pending_payment'
+    )
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending_payment')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'House Locate Request'
+        verbose_name_plural = 'House Locate Requests'
+
+    def __str__(self):
+        return f"Locate Request #{self.id} - {self.full_name} ({self.house_type}, Max UGX {self.max_budget:,.0f})"
+
+
+
 

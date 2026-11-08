@@ -1838,168 +1838,331 @@
       }
     }
 
-    /* Mobile Filter Accordion Styles */
-    .landing-filter-accordion-header {
-      display: none;
+    /* Smart Home Finder Typing Banner & Modal Styles */
+    .smart-finder-banner {
+      max-width: 920px;
+      margin: 0 auto 1rem auto;
+      padding: 0.75rem 1rem;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      text-align: center;
+      position: relative;
     }
-    .landing-filter-body {
-      display: block;
-    }
-    .landing-filter-grid {
+
+    .smart-finder-typing-wrap {
+      min-height: 2.4rem;
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .smart-finder-typing-text {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #032b1b;
+      line-height: 1.35;
+      letter-spacing: -0.2px;
+    }
+
+    .smart-finder-click-here {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #047857;
+      color: #ffffff !important;
+      font-size: 1.08rem;
+      font-weight: 800;
+      padding: 0.65rem 1.85rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 6px 18px rgba(4, 120, 87, 0.28);
+      transition: all 0.25s ease;
+    }
+
+    .smart-finder-click-here:hover {
+      background: #03543f;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(4, 120, 87, 0.38);
+    }
+
+    /* Modal Backdrop & Box */
+    .shf-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 20, 13, 0.76);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .shf-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .shf-modal-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 680px;
+      border-radius: 20px;
+      border: 2px solid rgba(203, 163, 88, 0.45);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      animation: shfModalSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes shfModalSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .shf-modal-header {
+      background: #ffffff;
+      color: #1e1b18;
+      padding: 1.25rem 1.5rem 0.85rem 1.5rem;
+      display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid #e7e5e4;
+    }
+
+    .shf-modal-header h3 {
+      margin: 0;
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #1e1b18 !important;
+    }
+
+    .shf-close-btn {
+      background: #f5f5f4;
+      color: #1e1b18;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .shf-close-btn:hover {
+      background: #e7e5e4;
+    }
+
+    .shf-modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .shf-form-group {
+      margin-bottom: 1.15rem;
+      text-align: left;
+    }
+
+    .shf-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #1e1b18;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .shf-input, .shf-select, .shf-textarea {
       width: 100%;
+      padding: 0.72rem 0.9rem;
+      background: #fbf7f0;
+      border: 1.5px solid rgba(10, 92, 54, 0.28);
+      border-radius: 10px;
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: #1e1b18;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .shf-input:focus, .shf-select:focus, .shf-textarea:focus {
+      outline: none;
+      border-color: #047857;
+      box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.12);
+      background: #ffffff;
+    }
+
+    .shf-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+    }
+
+    /* Village Autocomplete & Chips */
+    .shf-village-SuggestBox {
+      position: relative;
+    }
+
+    .shf-village-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1.5px solid #047857;
+      border-radius: 10px;
+      margin-top: 4px;
+      max-height: 210px;
+      overflow-y: auto;
+      z-index: 50;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    }
+
+    .shf-village-dropdown.is-visible {
+      display: block;
+    }
+
+    .shf-village-option {
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      font-size: 0.92rem;
+      color: #1e1b18;
+      font-weight: 600;
+    }
+
+    .shf-village-option:hover {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .shf-village-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.55rem;
+    }
+
+    .shf-village-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #047857;
+      color: #ffffff;
+      padding: 0.32rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .shf-village-tag button {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 0.95rem;
+      line-height: 1;
+      padding: 0;
+      opacity: 0.85;
+    }
+
+    .shf-village-tag button:hover {
+      opacity: 1;
+    }
+
+    .shf-btn-primary {
+      width: 100%;
+      padding: 0.88rem 1.5rem;
+      background: #047857;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.02rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      box-shadow: 0 6px 18px rgba(4, 120, 87, 0.28);
+      transition: all 0.2s ease;
+    }
+
+    .shf-btn-primary:hover {
+      background: #03543f;
+      transform: translateY(-1px);
+    }
+
+    .shf-btn-secondary {
+      padding: 0.75rem 1.25rem;
+      background: #f5f5f4;
+      color: #292524;
+      border: 1px solid #d6d3d1;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .shf-btn-secondary:hover {
+      background: #e7e5e4;
     }
 
     @media (max-width: 768px) {
-      .landing-filter-card {
-        padding: 0.75rem 0.85rem !important;
+      .smart-finder-banner {
+        padding: 1.2rem 1rem;
       }
-      .landing-filter-accordion-header {
-        display: flex !important;
-        align-items: center;
-        justify-content: center !important;
-        width: 100%;
-        background: #047857 !important;
-        color: #ffffff !important;
-        border: none;
-        border-radius: 10px;
-        padding: 0.65rem 1rem;
-        font-weight: 800;
-        font-size: 1.05rem;
-        cursor: pointer;
-        outline: none;
-        text-align: center !important;
-        box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
-        transition: all 0.25s ease;
+      .smart-finder-typing-text {
+        font-size: 1.12rem;
       }
-      .landing-filter-accordion-header.is-open {
-        margin-bottom: 0.85rem;
+      .shf-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
       }
-      .landing-filter-body {
-        display: none;
-      }
-      .landing-filter-body.is-open {
-        display: block !important;
-      }
-      .landing-filter-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.65rem !important;
-        width: 100% !important;
-      }
-      .landing-filter-grid > div {
-        min-width: 0 !important;
-        flex: none !important;
-        width: 100% !important;
-      }
-      .landing-filter-grid button[type="submit"] {
-        width: 100% !important;
-        justify-content: center !important;
+      .shf-modal-body {
+        padding: 1.15rem;
       }
     }
   </style>
 
-  <script>
-    function toggleLandingFilterAccordion() {
-      const header = document.getElementById('landingFilterAccordionHeader');
-      const body = document.getElementById('landingFilterBody');
-      if (header && body) {
-        header.classList.toggle('is-open');
-        body.classList.toggle('is-open');
-      }
-    }
-  </script>
-
   <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
 
-    <!-- LANDING PAGE PROPERTY SEARCH FILTER BAR (Submits GET data directly to /search/) -->
-    <div style="max-width: 1100px; width: 100%; margin: 0 auto 1.5rem auto; box-sizing: border-box;">
-      <form id="landingFilterForm" method="GET" action="{% url 'search' %}" class="filters"
-        style="border: none; background: transparent; padding: 0; box-shadow: none;">
-
-        <!-- HORIZONTAL FILTER BAR CONTAINER (Creamy #fbf7f0 background with warm #f4eee2 input controls) -->
-        <div class="landing-filter-card"
-          style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06);">
-          
-          <!-- Text-Only Accordion Header (Visible only on Mobile screens <= 768px) -->
-          <button type="button" id="landingFilterAccordionHeader" class="landing-filter-accordion-header" onclick="toggleLandingFilterAccordion()">
-            <span>Filter</span>
-          </button>
-
-          <!-- Filter Inputs Body -->
-          <div id="landingFilterBody" class="landing-filter-body">
-            <div class="landing-filter-grid">
-              <!-- Keyword / Address Input -->
-              <div style="flex: 1.5; min-width: 160px;">
-                <input type="text" name="q" placeholder="Keyword or Address..." class="form-control"
-                  style="width: 100%; padding: 0.65rem 0.85rem; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
-              </div>
-
-              <!-- Cascading Location Controls (District -> Division -> Village) -->
-              <div style="flex: 1.2; min-width: 130px;">
-                <select name="district" id="landing-district-select" class="form-control"
-                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
-                  <option value="">District</option>
-                </select>
-              </div>
-              <div style="flex: 1.2; min-width: 130px;">
-                <select name="division" id="landing-division-select" class="form-control"
-                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;"
-                  disabled>
-                  <option value="">Division</option>
-                </select>
-              </div>
-              <div style="flex: 1.2; min-width: 130px;">
-                <select name="village" id="landing-village-select" class="form-control"
-                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;"
-                  disabled>
-                  <option value="">Village</option>
-                </select>
-              </div>
-
-              <!-- Property Type Filter -->
-              <div style="flex: 1.2; min-width: 140px;">
-                <select name="type" class="form-control"
-                  style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer; background: #f4eee2 !important; border: 1px solid rgba(203, 163, 88, 0.4) !important; border-radius: 10px !important; color: #1e1b18 !important; font-weight: 600;">
-                  <option value="">All Types</option>
-                  {% for cat in property_categories %}
-                  <option value="{{ cat.name }}">{{ cat.name }}</option>
-                  {% empty %}
-                  <option value="apartment">Apartment</option>
-                  <option value="flat">Flat</option>
-                  <option value="condo">Condo</option>
-                  <option value="bungalow">Bungalow / Standalone</option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <!-- Filter Action Button -->
-              <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <button type="submit" class="btn btn-primary"
-                  style="padding: 0.65rem 1.4rem; font-weight: 800; border-radius: 10px; background: #047857; color: white; border: none; cursor: pointer; white-space: nowrap;">
-                  <i class="fa-solid fa-magnifying-glass"></i> Search
-                </button>
-              </div>
-            </div>
-          </div>
+    <!-- LANDING PAGE SMART HOME FINDER TYPING PROMPT (Replaces old filter bar) -->
+    <div style="max-width: 1100px; width: 100%; margin: 0 auto 1.75rem auto; box-sizing: border-box;">
+      <div class="smart-finder-banner">
+        <div class="smart-finder-typing-wrap">
+          <span id="smartFinderTypewriter" class="smart-finder-typing-text"></span><span class="typewriter-cursor" style="font-size: 1.45rem; font-weight: 900; color: #047857; margin-left: 2px;">|</span>
         </div>
-      </form>
-
-      <!-- Map Redirect Prompt -->
-      <div class="map-redirect-prompt">
-        Use a Map. <a href="{% url 'nearby_properties' %}">click here</a>
+        <div>
+          <button type="button" class="smart-finder-click-here" onclick="openSmartHomeFinderModal()">
+            Click here
+          </button>
+        </div>
       </div>
-    </div>
-
-    <!-- Static Centered Header -->
-    <div style="text-align: center; margin-bottom: 2rem;">
-      <h3
-        style="font-family: var(--font-heading); font-size: 1.65rem; font-weight: 800; color: #1e1b18; margin: 0; letter-spacing: -0.3px;">
-        Newly Added</h3>
     </div>
 
     <div class="newly-added-grid-6col">
@@ -2568,15 +2731,620 @@
       showSlide(0);
       startTimer();
     })();
-
-    if (typeof initCascadingLocationFilters === 'function') {
-      initCascadingLocationFilters(
-        document.getElementById('landing-district-select'),
-        document.getElementById('landing-division-select'),
-        document.getElementById('landing-village-select')
-      );
-    }
   });
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SMART HOME FINDER & TRUST PROTOCOL HOUSE-HUNTING AUTHORIZATION MODAL
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="smartHomeFinderModal" class="shf-modal-backdrop" onclick="if(event.target === this) closeSmartHomeFinderModal()">
+  <div class="shf-modal-card">
+    <!-- Modal Header -->
+    <div class="shf-modal-header">
+      <div>
+        <h3 id="shfModalTitle">Tell Us What Home You Need</h3>
+      </div>
+      <button type="button" class="shf-close-btn" onclick="closeSmartHomeFinderModal()" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="shf-modal-body">
+
+      <!-- ─── STEP 1: PROPERTY PREFERENCES FORM ─── -->
+      <div id="shfStep1">
+        <form id="shfSearchForm" onsubmit="handleSmartHomeSearch(event)">
+          <!-- 1. Preferred Location (Village Autocomplete + Multi-Tag List) -->
+          <div class="shf-form-group">
+            <label class="shf-label"><i class="fa-solid fa-location-dot" style="color: #047857; margin-right: 4px;"></i> Preferred Location (Villages) *</label>
+            <div class="shf-village-SuggestBox">
+              <input type="text" id="shfVillageInput" class="shf-input" autocomplete="off">
+              <div id="shfVillageDropdown" class="shf-village-dropdown"></div>
+            </div>
+            <div style="font-size: 0.78rem; color: #57534e; margin-top: 0.3rem;">
+              Type a village and click it from the list to add to your preferred locations. You can add multiple villages.
+            </div>
+            <div id="shfSelectedVillagesContainer" class="shf-village-tags"></div>
+          </div>
+
+          <!-- 2. Budget Range (Min & Max UGX) -->
+          <div class="shf-form-group">
+            <label class="shf-label"><i class="fa-solid fa-coins" style="color: #047857; margin-right: 4px;"></i> Budget Range (UGX / Month) *</label>
+            <div class="shf-grid-2">
+              <div>
+                <input type="number" id="shfMinBudget" class="shf-input" min="0" step="10000" placeholder="MIN" required>
+              </div>
+              <div>
+                <input type="number" id="shfMaxBudget" class="shf-input" min="10000" step="10000" placeholder="MAX" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Type of House & 4. Number of Bedrooms -->
+          <div class="shf-grid-2">
+            <div class="shf-form-group">
+              <label class="shf-label"><i class="fa-solid fa-house" style="color: #047857; margin-right: 4px;"></i> Type of House *</label>
+              <select id="shfHouseType" class="shf-select" required>
+                <option value=""></option>
+                {% for opt in house_type_options %}
+                <option value="{{ opt.value }}">{{ opt.label }}</option>
+                {% empty %}
+                <option value="single_room">Single Room</option>
+                <option value="self_contained">Self-Contained Room</option>
+                <option value="studio">Studio Apartment</option>
+                <option value="1_bed">1 Bedroom Apartment</option>
+                <option value="2_bed">2 Bedroom Apartment</option>
+                <option value="3_plus_bed">3+ Bedroom Apartment</option>
+                <option value="bungalow">Bungalow</option>
+                <option value="standalone">Standalone House</option>
+                <option value="apartment_block">Apartment Block</option>
+                <option value="flat">Flat (Multi-Floor Building)</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="shf-form-group">
+              <label class="shf-label"><i class="fa-solid fa-bed" style="color: #047857; margin-right: 4px;"></i> Number of Bedrooms *</label>
+              <select id="shfBedrooms" class="shf-select" required>
+                <option value="0">0 (Single Room / Studio)</option>
+                <option value="1" selected>1 Bedroom</option>
+                <option value="2">2 Bedrooms</option>
+                <option value="3">3 Bedrooms</option>
+                <option value="4">4 Bedrooms</option>
+                <option value="5+">5+ Bedrooms</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 5. When do you need this house -->
+          <div class="shf-form-group">
+            <label class="shf-label"><i class="fa-solid fa-calendar-check" style="color: #047857; margin-right: 4px;"></i> When do you need this house *</label>
+            <input type="date" id="shfTimePeriod" class="shf-input" required style="cursor: pointer;" onclick="if(this.showPicker) this.showPicker()">
+          </div>
+
+          <!-- 6. Special Requirements (Description) -->
+          <div class="shf-form-group">
+            <label class="shf-label"><i class="fa-solid fa-clipboard-list" style="color: #047857; margin-right: 4px;"></i> Special Requirements (Description)</label>
+            <textarea id="shfSpecialRequirements" class="shf-textarea" rows="3"></textarea>
+          </div>
+
+          <div id="shfStep1Error" style="display: none; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.65rem 0.9rem; border-radius: 10px; font-size: 0.88rem; font-weight: 700; margin-bottom: 1rem;"></div>
+
+          <button type="submit" id="shfSearchSubmitBtn" class="shf-btn-primary">
+            <i class="fa-solid fa-magnifying-glass"></i> Find Verified Home
+          </button>
+        </form>
+      </div>
+
+      <!-- ─── STEP 2A: MATCHED DATABASE PROPERTIES ─── -->
+      <div id="shfStepResults" style="display: none;">
+        <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.15rem; display: flex; align-items: center; gap: 0.75rem;">
+          <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.5rem;"></i>
+          <div>
+            <div style="font-weight: 800; color: #064e3b; font-size: 0.98rem;">We found verified properties matching your request!</div>
+            <div id="shfMatchedSubtitle" style="font-size: 0.84rem; color: #047857; font-weight: 600;"></div>
+          </div>
+        </div>
+
+        <div id="shfMatchedList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; border-top: 1px solid #e7e5e4; padding-top: 1rem;">
+          <button type="button" class="shf-btn-secondary" onclick="showShfStep('step1')">
+            <i class="fa-solid fa-arrow-left"></i> Edit Search
+          </button>
+          <button type="button" class="shf-btn-secondary" style="border-color: #047857; color: #047857;" onclick="showShfStep('authorize')">
+            Not what you want? Authorize Custom Search <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── STEP 2B: NO DATABASE MATCH -> AUTHORIZE TRUST PROTOCOL PROMPT ─── -->
+      <div id="shfStepAuthorize" style="display: none; text-align: center; padding: 0.5rem 0;">
+        <div style="width: 68px; height: 68px; border-radius: 50%; background: #fef3c7; border: 2px solid #cba358; color: #b45309; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.85rem;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <h4 style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.65rem 0;">
+          Authorize TRUST PROTOCOL to Locate Your Home
+        </h4>
+
+        <p style="font-size: 0.96rem; color: #44403c; line-height: 1.6; max-width: 540px; margin: 0 auto 1.25rem auto;">
+          We currently do not have a property in our database matching your exact request. Would you like to grant authority to <strong>TRUST PROTOCOL</strong> to deploy our field inspection agents to locate and verify a house matching your specifications?
+        </p>
+
+        <div style="background: #fbf7f0; border: 1.5px solid rgba(203, 163, 88, 0.5); border-radius: 14px; padding: 1rem 1.2rem; text-align: left; margin-bottom: 1.35rem; font-size: 0.9rem; color: #292524;">
+          <div style="font-weight: 800; color: #032215; margin-bottom: 0.4rem;">
+            <i class="fa-solid fa-file-signature" style="color: #047857; margin-right: 6px;"></i> Client Search Mandate Summary:
+          </div>
+          <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.65;">
+            <li><strong>Preferred Village(s):</strong> <span id="shfAuthSummaryVillages"></span></li>
+            <li><strong>Budget Range:</strong> <span id="shfAuthSummaryBudget"></span></li>
+            <li><strong>House Type & Bedrooms:</strong> <span id="shfAuthSummaryType"></span></li>
+            <li><strong>Time / Period:</strong> <span id="shfAuthSummaryTime"></span></li>
+          </ul>
+        </div>
+
+        <div style="display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap;">
+          <button type="button" class="shf-btn-secondary" onclick="showShfStep('step1')">
+            <i class="fa-solid fa-arrow-left"></i> Modify Request
+          </button>
+          <button type="button" class="shf-btn-primary" style="width: auto; padding: 0.85rem 1.75rem;" onclick="grantTrustAuthorization()">
+            <i class="fa-solid fa-check-double"></i> I Authorize TRUST PROTOCOL
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── STEP 3: PERSONAL INFORMATION & 20% SEARCH FEE PAYMENT ─── -->
+      <div id="shfStepPersonal" style="display: none;">
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.15rem; font-size: 0.88rem; color: #065f46; font-weight: 600;">
+          <i class="fa-solid fa-user-check" style="margin-right: 6px; color: #047857;"></i>
+          Authorization granted. Please complete your personal details below to proceed with the <strong>20% Search Fee</strong>.
+        </div>
+
+        <form id="shfPersonalForm" onsubmit="handlePersonalFormSubmit(event)">
+          <!-- NAMES -->
+          <div class="shf-form-group">
+            <label class="shf-label">Full Names *</label>
+            <input type="text" id="shfFullName" class="shf-input" required
+              value="{% if user.is_authenticated %}{{ user.get_full_name|default:user.username }}{% endif %}">
+          </div>
+
+          <!-- PHONE NUMBER & PROFESSION -->
+          <div class="shf-grid-2">
+            <div class="shf-form-group">
+              <label class="shf-label">Phone Number *</label>
+              <input type="tel" id="shfPhone" class="shf-input" required
+                value="{% if user.is_authenticated and user.profile %}{{ user.profile.phone }}{% endif %}">
+            </div>
+
+            <div class="shf-form-group">
+              <label class="shf-label">Profession *</label>
+              <input type="text" id="shfProfession" class="shf-input" required
+                value="{% if user.is_authenticated and user.profile and user.profile.profession %}{{ user.profile.profession }}{% endif %}">
+            </div>
+          </div>
+
+          <!-- EMAIL & NIN NUMBER -->
+          <div class="shf-grid-2">
+            <div class="shf-form-group">
+              <label class="shf-label">Email Address *</label>
+              <input type="email" id="shfEmail" class="shf-input" required
+                value="{% if user.is_authenticated %}{{ user.email }}{% endif %}">
+            </div>
+
+            <div class="shf-form-group">
+              <label class="shf-label">NIN Number (National ID) *</label>
+              <input type="text" id="shfNin" class="shf-input" required
+                value="{% if user.is_authenticated and user.profile %}{{ user.profile.nin }}{% endif %}">
+            </div>
+          </div>
+
+          <!-- 20% SEARCH FEE SUMMARY BOX -->
+          <div style="background: linear-gradient(135deg, #032215 0%, #064e3b 100%); color: #ffffff; border-radius: 14px; padding: 1.15rem 1.35rem; margin: 1.15rem 0; border: 1.5px solid #cba358;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
+              <span>Your Maximum Budget Range:</span>
+              <strong id="shfFeeMaxBudgetDisplay">UGX 0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.55rem; border-top: 1px solid rgba(255,255,255,0.18); font-size: 1.1rem;">
+              <span style="color: #cba358; font-weight: 800;">Search Fee (20% of Maximum Range):</span>
+              <strong id="shfFeeAmountDisplay" style="font-size: 1.25rem; color: #ffffff;">UGX 0</strong>
+            </div>
+          </div>
+
+          <div id="shfStep3Error" style="display: none; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.65rem 0.9rem; border-radius: 10px; font-size: 0.88rem; font-weight: 700; margin-bottom: 1rem;"></div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <button type="button" class="shf-btn-secondary" onclick="showShfStep('authorize')">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button type="submit" id="shfPaySubmitBtn" class="shf-btn-primary" style="flex: 1;">
+              <i class="fa-solid fa-lock"></i> <span id="shfPayBtnLabel">Pay 20% Search Fee</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // 1. Typing Animation on Landing Page
+    const targetPhrase = "Tell us your budget and preferred location. We'll help you find a verified home.";
+    const typeEl = document.getElementById('smartFinderTypewriter');
+    if (typeEl) {
+      let charIndex = 0;
+      let isDeleting = false;
+
+      function tickTypewriter() {
+        if (!isDeleting) {
+          charIndex++;
+          typeEl.textContent = targetPhrase.slice(0, charIndex);
+          if (charIndex >= targetPhrase.length) {
+            isDeleting = true;
+            setTimeout(tickTypewriter, 3800);
+            return;
+          }
+          setTimeout(tickTypewriter, 42);
+        } else {
+          charIndex--;
+          typeEl.textContent = targetPhrase.slice(0, charIndex);
+          if (charIndex <= 0) {
+            isDeleting = false;
+            setTimeout(tickTypewriter, 600);
+            return;
+          }
+          setTimeout(tickTypewriter, 18);
+        }
+      }
+      tickTypewriter();
+    }
+
+    // 2. Village Autocomplete & Multi-Tag State
+    let allVillages = [];
+    let selectedVillages = [];
+    let villagesLoaded = false;
+
+    function loadAllVillages() {
+      if (villagesLoaded) return;
+      villagesLoaded = true;
+      fetch('/api/location-cascade/')
+        .then(r => r.json())
+        .then(data => {
+          allVillages = data.villages || [];
+        })
+        .catch(() => {});
+    }
+
+    const villageInput = document.getElementById('shfVillageInput');
+    const villageDropdown = document.getElementById('shfVillageDropdown');
+    const selectedContainer = document.getElementById('shfSelectedVillagesContainer');
+
+    function renderSelectedVillages() {
+      if (!selectedContainer) return;
+      selectedContainer.innerHTML = '';
+      selectedVillages.forEach((vName, idx) => {
+        const tag = document.createElement('span');
+        tag.className = 'shf-village-tag';
+        tag.innerHTML = `<i class="fa-solid fa-location-dot" style="font-size: 0.75rem;"></i> <span>${vName}</span> <button type="button" aria-label="Remove" data-idx="${idx}">&times;</button>`;
+        tag.querySelector('button').addEventListener('click', function () {
+          selectedVillages.splice(idx, 1);
+          renderSelectedVillages();
+        });
+        selectedContainer.appendChild(tag);
+      });
+    }
+
+    function addPreferredVillage(name) {
+      const clean = (name || '').trim();
+      if (!clean) return;
+      if (!selectedVillages.some(v => v.toLowerCase() === clean.toLowerCase())) {
+        selectedVillages.push(clean);
+        renderSelectedVillages();
+      }
+      if (villageInput) villageInput.value = '';
+      if (villageDropdown) villageDropdown.classList.remove('is-visible');
+    }
+
+    if (villageInput && villageDropdown) {
+      villageInput.addEventListener('focus', function () {
+        loadAllVillages();
+        if (this.value.trim().length > 0) {
+          this.dispatchEvent(new Event('input'));
+        }
+      });
+
+      villageInput.addEventListener('input', function () {
+        loadAllVillages();
+        const query = this.value.trim().toLowerCase();
+        if (!query) {
+          villageDropdown.classList.remove('is-visible');
+          villageDropdown.innerHTML = '';
+          return;
+        }
+
+        const matches = allVillages.filter(v =>
+          v.name.toLowerCase().includes(query) ||
+          (v.division_name && v.division_name.toLowerCase().includes(query)) ||
+          (v.district_name && v.district_name.toLowerCase().includes(query))
+        ).slice(0, 10);
+
+        villageDropdown.innerHTML = '';
+
+        matches.forEach(v => {
+          const item = document.createElement('div');
+          item.className = 'shf-village-option';
+          const sub = [v.division_name, v.district_name].filter(Boolean).join(', ');
+          item.innerHTML = `
+            <span><i class="fa-solid fa-location-dot" style="color: #047857; margin-right: 6px;"></i> ${v.name} <small style="color: #78716c; font-weight: 500;">${sub ? '(' + sub + ')' : ''}</small></span>
+            <span style="color: #047857; font-size: 0.8rem; font-weight: 800;">+ Add</span>
+          `;
+          item.addEventListener('click', () => addPreferredVillage(v.name));
+          villageDropdown.appendChild(item);
+        });
+
+        // Allow adding exact typed village if not already listed
+        if (!matches.some(m => m.name.toLowerCase() === query)) {
+          const customItem = document.createElement('div');
+          customItem.className = 'shf-village-option';
+          customItem.innerHTML = `
+            <span><i class="fa-solid fa-plus-circle" style="color: #047857; margin-right: 6px;"></i> Add village "<strong>${this.value.trim()}</strong>"</span>
+            <span style="color: #047857; font-size: 0.8rem; font-weight: 800;">+ Add</span>
+          `;
+          customItem.addEventListener('click', () => addPreferredVillage(this.value.trim()));
+          villageDropdown.appendChild(customItem);
+        }
+
+        villageDropdown.classList.add('is-visible');
+      });
+
+      villageInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+          e.preventDefault();
+          const firstOption = villageDropdown.querySelector('.shf-village-option');
+          if (firstOption) {
+            firstOption.click();
+          } else {
+            addPreferredVillage(this.value.trim());
+          }
+        }
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!villageInput.contains(e.target) && !villageDropdown.contains(e.target)) {
+          villageDropdown.classList.remove('is-visible');
+        }
+      });
+    }
+
+    // 3. Modal Navigation Helpers
+    window.openSmartHomeFinderModal = function () {
+      loadAllVillages();
+      const modal = document.getElementById('smartHomeFinderModal');
+      if (modal) {
+        modal.classList.add('is-open');
+        showShfStep('step1');
+      }
+    };
+
+    window.closeSmartHomeFinderModal = function () {
+      const modal = document.getElementById('smartHomeFinderModal');
+      if (modal) {
+        modal.classList.remove('is-open');
+      }
+    };
+
+    window.showShfStep = function (stepName) {
+      const s1 = document.getElementById('shfStep1');
+      const sRes = document.getElementById('shfStepResults');
+      const sAuth = document.getElementById('shfStepAuthorize');
+      const sPers = document.getElementById('shfStepPersonal');
+      const titleEl = document.getElementById('shfModalTitle');
+
+      if (s1) s1.style.display = stepName === 'step1' ? 'block' : 'none';
+      if (sRes) sRes.style.display = stepName === 'results' ? 'block' : 'none';
+      if (sAuth) sAuth.style.display = stepName === 'authorize' ? 'block' : 'none';
+      if (sPers) sPers.style.display = stepName === 'personal' ? 'block' : 'none';
+
+      if (titleEl) {
+        if (stepName === 'step1') titleEl.textContent = 'Tell Us What Home You Need';
+        else if (stepName === 'results') titleEl.textContent = 'Matched Verified Properties';
+        else if (stepName === 'authorize') titleEl.textContent = 'Authorize Custom House Search';
+        else if (stepName === 'personal') titleEl.textContent = 'Personal Details & 20% Search Fee';
+      }
+    };
+
+    function getCsrfToken() {
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+      return cookieValue || '{{ csrf_token }}';
+    }
+
+    // 4. Step 1 Search Submission (Prioritizes Database Properties)
+    window.handleSmartHomeSearch = function (e) {
+      e.preventDefault();
+      const errBox = document.getElementById('shfStep1Error');
+      if (errBox) errBox.style.display = 'none';
+
+      // Auto-add any text left inside villageInput
+      if (villageInput && villageInput.value.trim()) {
+        addPreferredVillage(villageInput.value.trim());
+      }
+
+      if (selectedVillages.length === 0) {
+        if (errBox) {
+          errBox.textContent = 'Please type and add at least one preferred village location.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const minBudget = parseFloat(document.getElementById('shfMinBudget').value || '0');
+      const maxBudget = parseFloat(document.getElementById('shfMaxBudget').value || '0');
+      if (maxBudget <= 0 || maxBudget < minBudget) {
+        if (errBox) {
+          errBox.textContent = 'Please enter a valid budget range (Maximum budget must be greater than or equal to Minimum budget).';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const houseTypeSelect = document.getElementById('shfHouseType');
+      const houseType = houseTypeSelect.value;
+      const houseTypeLabel = houseTypeSelect.options[houseTypeSelect.selectedIndex]?.text || houseType;
+      const bedrooms = document.getElementById('shfBedrooms').value;
+      const timePeriod = document.getElementById('shfTimePeriod').value.trim();
+      const specialReq = document.getElementById('shfSpecialRequirements').value.trim();
+
+      const submitBtn = document.getElementById('shfSearchSubmitBtn');
+      const origHtml = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Searching Verified Database...';
+
+      fetch('/api/smart-home-search/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify({
+          preferred_locations: selectedVillages,
+          min_budget: minBudget,
+          max_budget: maxBudget,
+          house_type: houseType,
+          bedrooms: bedrooms,
+          time_or_period: timePeriod,
+          special_requirements: specialReq,
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origHtml;
+
+          // Populate summary fields for authorization & fee steps
+          document.getElementById('shfAuthSummaryVillages').textContent = selectedVillages.join(', ');
+          document.getElementById('shfAuthSummaryBudget').textContent = `UGX ${minBudget.toLocaleString()} – UGX ${maxBudget.toLocaleString()}`;
+          document.getElementById('shfAuthSummaryType').textContent = `${houseTypeLabel} (${bedrooms} Bedroom${bedrooms === '1' ? '' : 's'})`;
+          document.getElementById('shfAuthSummaryTime').textContent = timePeriod;
+
+          const feeAmount = Math.round(maxBudget * 0.20);
+          document.getElementById('shfFeeMaxBudgetDisplay').textContent = `UGX ${maxBudget.toLocaleString()}`;
+          document.getElementById('shfFeeAmountDisplay').textContent = `UGX ${feeAmount.toLocaleString()}`;
+          document.getElementById('shfPayBtnLabel').textContent = `Pay 20% Search Fee (UGX ${feeAmount.toLocaleString()})`;
+
+          if (data.matched && data.properties && data.properties.length > 0) {
+            // Prioritize showing matching database properties
+            const listEl = document.getElementById('shfMatchedList');
+            const subEl = document.getElementById('shfMatchedSubtitle');
+            subEl.textContent = `Showing ${data.properties.length} verified listing(s) matching your criteria.`;
+            listEl.innerHTML = data.properties.map(p => `
+              <a href="${p.url}" style="text-decoration: none; color: inherit; border: 1.5px solid #e7e5e4; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; background: #fff; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                <div style="height: 155px; width: 100%; overflow: hidden; position: relative;">
+                  <img src="${p.image_url}" alt="${p.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                  <span style="position: absolute; top: 8px; right: 8px; background: #047857; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 6px;">${p.category}</span>
+                </div>
+                <div style="padding: 0.85rem;">
+                  <div style="font-weight: 800; font-size: 0.98rem; color: #1e1b18; margin-bottom: 0.25rem;">${p.title}</div>
+                  <div style="font-size: 0.82rem; color: #57534e; margin-bottom: 0.4rem;"><i class="fa-solid fa-location-dot" style="color: #047857;"></i> ${p.location}</div>
+                  <div style="font-weight: 800; font-size: 0.95rem; color: #047857;">${p.price_formatted} / mo</div>
+                </div>
+              </a>
+            `).join('');
+            showShfStep('results');
+          } else {
+            // No database match -> Prompt user to authorize TRUST PROTOCOL
+            showShfStep('authorize');
+          }
+        })
+        .catch(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origHtml;
+          if (errBox) {
+            errBox.textContent = 'An error occurred while searching. Please try again.';
+            errBox.style.display = 'block';
+          }
+        });
+    };
+
+    // 5. Step 2B -> Step 3 Transition (Grant Permission)
+    window.grantTrustAuthorization = function () {
+      showShfStep('personal');
+    };
+
+    // 6. Step 3 Personal Information Submission & 20% Search Fee Payment Redirect
+    window.handlePersonalFormSubmit = function (e) {
+      e.preventDefault();
+      const errBox = document.getElementById('shfStep3Error');
+      if (errBox) errBox.style.display = 'none';
+
+      const minBudget = parseFloat(document.getElementById('shfMinBudget').value || '0');
+      const maxBudget = parseFloat(document.getElementById('shfMaxBudget').value || '0');
+      const houseTypeSelect = document.getElementById('shfHouseType');
+      const houseTypeLabel = houseTypeSelect.options[houseTypeSelect.selectedIndex]?.text || houseTypeSelect.value;
+      const bedrooms = document.getElementById('shfBedrooms').value;
+      const timePeriod = document.getElementById('shfTimePeriod').value.trim();
+      const specialReq = document.getElementById('shfSpecialRequirements').value.trim();
+
+      const fullName = document.getElementById('shfFullName').value.trim();
+      const phone = document.getElementById('shfPhone').value.trim();
+      const profession = document.getElementById('shfProfession').value.trim();
+      const email = document.getElementById('shfEmail').value.trim();
+      const nin = document.getElementById('shfNin').value.trim();
+
+      const payBtn = document.getElementById('shfPaySubmitBtn');
+      const origHtml = payBtn.innerHTML;
+      payBtn.disabled = true;
+      payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing & Redirecting to Payment...';
+
+      fetch('/api/house-locate/submit/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify({
+          preferred_locations: selectedVillages,
+          min_budget: minBudget,
+          max_budget: maxBudget,
+          house_type: houseTypeLabel,
+          bedrooms: bedrooms,
+          time_or_period: timePeriod,
+          special_requirements: specialReq,
+          full_name: fullName,
+          phone_number: phone,
+          profession: profession,
+          email: email,
+          nin_number: nin,
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 'ok' && data.payment_url) {
+            window.location.href = data.payment_url;
+          } else {
+            payBtn.disabled = false;
+            payBtn.innerHTML = origHtml;
+            if (errBox) {
+              errBox.textContent = data.message || 'Could not submit request. Please check all fields.';
+              errBox.style.display = 'block';
+            }
+          }
+        })
+        .catch(() => {
+          payBtn.disabled = false;
+          payBtn.innerHTML = origHtml;
+          if (errBox) {
+            errBox.textContent = 'Network error while initiating payment. Please try again.';
+            errBox.style.display = 'block';
+          }
+        });
+    };
+  })();
 </script>
 
 {% endblock %}

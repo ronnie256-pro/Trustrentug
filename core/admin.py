@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Property, PropertyPanorama, HeroVideo, UserProfile, 
     Inspection, InspectionReport, InspectionAgent, AgentRole,
-    ConstructionProject, ShowcaseSliderImage
+    ConstructionProject, ShowcaseSliderImage, HouseLocateRequest
 )
 
 @admin.register(HeroVideo)
@@ -29,5 +29,14 @@ class ConstructionProjectAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     search_fields = ('title', 'property_id', 'owner_phone', 'location', 'short_description')
     readonly_fields = ('property_id', 'created_at', 'updated_at')
+
+
+@admin.register(HouseLocateRequest)
+class HouseLocateRequestAdmin(admin.ModelAdmin):
+    list_display = ('id', 'full_name', 'phone_number', 'house_type', 'max_budget', 'search_fee', 'payment_status', 'status', 'created_at')
+    list_filter = ('payment_status', 'status', 'house_type')
+    search_fields = ('full_name', 'phone_number', 'email', 'nin_number', 'profession')
+    readonly_fields = ('authorized_at', 'created_at', 'updated_at')
+
 
 

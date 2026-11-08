@@ -17,7 +17,7 @@ from core.models import (
     ServiceDistrict, ServiceDivision, ServiceVillage, PopupLogic,
     SiteSetting, ChatThread, ChatMessage, HeroVideo, PropertyPanorama,
     DiasporaClientApplication, ConstructionProject, ConstructionSliderImage,
-    OfficeApplication, ShowcaseSliderImage
+    OfficeApplication, ShowcaseSliderImage, HouseLocateRequest
 )
 from core.emails import (
     send_tenant_welcome_email,
@@ -2368,6 +2368,19 @@ def home_view(request):
     except Exception:
         property_categories = []
 
+    # Build unified house type options from database PropertyCategory + Property model choices
+    house_type_options = []
+    seen_labels = set()
+    default_choices = list(Property.SINGLE_UNIT_CHOICES) + list(Property.MULTI_UNIT_CHOICES)
+    for code, label in default_choices:
+        if label.lower() not in seen_labels:
+            house_type_options.append({'value': code, 'label': label})
+            seen_labels.add(label.lower())
+    for cat in property_categories:
+        if cat.group != 'office' and cat.name.lower() not in seen_labels:
+            house_type_options.append({'value': cat.name, 'label': cat.name})
+            seen_labels.add(cat.name.lower())
+
     try:
         showcase_slides = ShowcaseSliderImage.objects.filter(is_active=True).order_by('order', '-created_at')
     except Exception:
@@ -2377,6 +2390,7 @@ def home_view(request):
         'properties': properties,
         'hero_videos': hero_videos,
         'property_categories': property_categories,
+        'house_type_options': house_type_options,
         'showcase_slides': showcase_slides,
     })
 
@@ -3092,13 +3106,260 @@ def api_location_cascade(request):
 
     districts = ServiceDistrict.objects.all().order_by('name')
     divisions = ServiceDivision.objects.all().select_related('district').order_by('name')
-    villages = ServiceVillage.objects.all().select_related('division').order_by('name')
+    villages = ServiceVillage.objects.all().select_related('division', 'division__district').order_by('name')
 
     return JsonResponse({
         'districts': [{'id': d.id, 'name': d.name} for d in districts],
         'divisions': [{'id': d.id, 'district_id': d.district_id, 'name': d.name} for d in divisions],
-        'villages': [{'id': v.id, 'division_id': v.division_id, 'name': v.name} for v in villages],
+        'villages': [{
+            'id': v.id,
+            'division_id': v.division_id,
+            'name': v.name,
+            'division_name': v.division.name if v.division else '',
+            'district_name': v.division.district.name if (v.division and v.division.district) else ''
+        } for v in villages],
     })
+
+
+def api_smart_home_search(request):
+    """
+    Prioritizes searching existing verified properties in the database based on:
+    - Preferred Locations (villages list)
+    - Budget range (min_budget, max_budget)
+    - Type of house (house_type)
+    - Number of bedrooms (bedrooms)
+    - Special requirements (description)
+    - Time or Period (time_or_period)
+    If no property matches, returns matched=False so the frontend prompts the user
+    to authorize TRUST PROTOCOL to locate a house on their behalf.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
+
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    preferred_locations = data.get('preferred_locations', [])
+    if isinstance(preferred_locations, str):
+        preferred_locations = [v.strip() for v in preferred_locations.split(',') if v.strip()]
+
+    try:
+        min_budget = float(str(data.get('min_budget') or '0').replace(',', '').strip() or 0)
+    except (ValueError, TypeError):
+        min_budget = 0.0
+
+    try:
+        max_budget = float(str(data.get('max_budget') or '0').replace(',', '').strip() or 0)
+    except (ValueError, TypeError):
+        max_budget = 0.0
+
+    house_type = str(data.get('house_type') or '').strip()
+    bedrooms_raw = str(data.get('bedrooms') or '').strip()
+    special_requirements = str(data.get('special_requirements') or '').strip()
+    time_or_period = str(data.get('time_or_period') or '').strip()
+
+    bedrooms_val = None
+    if bedrooms_raw != '' and bedrooms_raw.lower() != 'any':
+        try:
+            bedrooms_val = int(bedrooms_raw.replace('+', ''))
+        except (ValueError, TypeError):
+            bedrooms_val = None
+
+    office_categories = ['private_office', 'shared_office', 'office_building']
+    qs = Property.objects.filter(status='available', parent=None).exclude(
+        category__in=office_categories
+    )
+
+    # 1. Location filter (villages)
+    if preferred_locations:
+        loc_q = Q()
+        for loc in preferred_locations:
+            loc_clean = str(loc).strip()
+            if loc_clean:
+                loc_q |= (
+                    Q(village__name__iexact=loc_clean) |
+                    Q(village__name__icontains=loc_clean) |
+                    Q(location__icontains=loc_clean) |
+                    Q(title__icontains=loc_clean)
+                )
+        if loc_q:
+            qs = qs.filter(loc_q)
+
+    # 2. Budget Range filter
+    if min_budget > 0:
+        qs = qs.filter(price__gte=min_budget)
+    if max_budget > 0:
+        qs = qs.filter(price__lte=max_budget)
+
+    # 3. Type of House filter
+    if house_type and house_type.lower() not in ['any', 'all', '']:
+        ht = house_type.lower()
+        type_q = Q(category__iexact=ht) | Q(category_ref__name__iexact=house_type)
+        if ht in ['single_room', 'single room']:
+            type_q |= Q(category='single_room') | Q(category_ref__name__icontains='single room') | Q(title__icontains='single room')
+        elif ht in ['self_contained', 'self-contained', 'self-contained room']:
+            type_q |= Q(category='self_contained') | Q(category_ref__name__icontains='self') | Q(title__icontains='self-contained') | Q(title__icontains='self contained')
+        elif ht in ['double_room', 'double room']:
+            type_q |= Q(category_ref__name__icontains='double') | Q(title__icontains='double room')
+        elif ht in ['studio', 'studio apartment', 'luxury studio']:
+            type_q |= Q(category='studio') | Q(category_ref__name__icontains='studio') | Q(title__icontains='studio')
+        elif ht in ['1_bed', '1 bedroom apartment', '1 bedroom']:
+            type_q |= Q(category='1_bed') | Q(bedrooms=1)
+        elif ht in ['2_bed', '2 bedroom apartment', '2 bedroom']:
+            type_q |= Q(category='2_bed') | Q(bedrooms=2)
+        elif ht in ['3_plus_bed', '3+ bedroom apartment', '3+ bedroom']:
+            type_q |= Q(category='3_plus_bed') | Q(bedrooms__gte=3)
+        elif ht in ['apartment', 'apartment/flat', 'flat', 'apartment_block']:
+            type_q |= Q(category__in=['studio', '1_bed', '2_bed', '3_plus_bed', 'apartment_block', 'flat']) | Q(category_ref__name__icontains='apartment') | Q(category_ref__name__icontains='flat')
+        elif ht in ['condo', 'condo_block', 'condominium', 'condominium block']:
+            type_q |= Q(category='condo_block') | Q(title__icontains='condo')
+        elif ht in ['bungalow']:
+            type_q |= Q(category='bungalow') | Q(title__icontains='bungalow')
+        elif ht in ['standalone', 'standalone house']:
+            type_q |= Q(category='standalone') | Q(title__icontains='standalone')
+        qs = qs.filter(type_q)
+
+    # 4. Number of Bedrooms filter
+    if bedrooms_val is not None:
+        if bedrooms_val == 0:
+            qs = qs.filter(Q(bedrooms=0) | Q(bedrooms__isnull=True, category__in=['single_room', 'self_contained', 'studio']))
+        elif bedrooms_val == 1:
+            qs = qs.filter(Q(bedrooms=1) | Q(bedrooms__isnull=True, category='1_bed'))
+        elif bedrooms_val == 2:
+            qs = qs.filter(Q(bedrooms=2) | Q(bedrooms__isnull=True, category='2_bed'))
+        elif bedrooms_val >= 3:
+            if '+' in bedrooms_raw or bedrooms_val >= 5:
+                qs = qs.filter(Q(bedrooms__gte=bedrooms_val) | Q(bedrooms__isnull=True, category='3_plus_bed'))
+            else:
+                qs = qs.filter(Q(bedrooms=bedrooms_val) | Q(bedrooms__isnull=True, category='3_plus_bed'))
+
+    qs = qs.distinct().order_by('-created_at')
+    matched_list = list(qs)
+
+    # 5. Rank by Special Requirements keywords if any matches exist
+    if matched_list and special_requirements:
+        keywords = [w.lower() for w in special_requirements.split() if len(w) > 2]
+        if keywords:
+            def score_prop(p):
+                blob = f"{p.title or ''} {p.description or ''} {p.location or ''}".lower()
+                return sum(1 for kw in keywords if kw in blob)
+            matched_list.sort(key=score_prop, reverse=True)
+
+    results = []
+    for p in matched_list[:12]:
+        img_url = p.hero_image.url if p.hero_image else 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80'
+        results.append({
+            'id': p.id,
+            'title': p.title,
+            'location': p.location,
+            'price': float(p.price or 0),
+            'price_formatted': f"UGX {int(round(float(p.price or 0))):,}",
+            'category': p.get_category_display() if p.category else (p.category_ref.name if p.category_ref else 'Verified Home'),
+            'bedrooms': p.bedrooms,
+            'image_url': img_url,
+            'url': p.get_absolute_url(),
+            'is_for_sale': p.is_for_sale,
+        })
+
+    search_fee = int(round(max_budget * 0.20))
+
+    return JsonResponse({
+        'status': 'ok',
+        'matched': len(results) > 0,
+        'count': len(matched_list),
+        'properties': results,
+        'max_budget': max_budget,
+        'search_fee': search_fee,
+        'search_fee_formatted': f"UGX {search_fee:,}",
+    })
+
+
+def submit_house_locate_request(request):
+    """
+    Saves the client's authorization + personal information + property requirements,
+    computes the 20% search fee of maximum budget, and returns the Pesapal payment URL.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'POST required'}, status=405)
+
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    preferred_locations = data.get('preferred_locations', [])
+    if isinstance(preferred_locations, str):
+        preferred_locations = [v.strip() for v in preferred_locations.split(',') if v.strip()]
+
+    try:
+        min_budget = float(str(data.get('min_budget') or '0').replace(',', '').strip() or 0)
+    except (ValueError, TypeError):
+        min_budget = 0.0
+
+    try:
+        max_budget = float(str(data.get('max_budget') or '0').replace(',', '').strip() or 0)
+    except (ValueError, TypeError):
+        max_budget = 0.0
+
+    if max_budget <= 0:
+        return JsonResponse({'status': 'error', 'message': 'Please provide a valid maximum budget.'}, status=400)
+
+    house_type = str(data.get('house_type') or 'Any').strip()
+    bedrooms_raw = str(data.get('bedrooms') or '').strip()
+    bedrooms_val = None
+    if bedrooms_raw and bedrooms_raw.lower() != 'any':
+        try:
+            bedrooms_val = int(bedrooms_raw.replace('+', ''))
+        except (ValueError, TypeError):
+            bedrooms_val = None
+
+    time_or_period = str(data.get('time_or_period') or '').strip()
+    special_requirements = str(data.get('special_requirements') or '').strip()
+
+    full_name = str(data.get('full_name') or '').strip()
+    phone_number = str(data.get('phone_number') or '').strip()
+    profession = str(data.get('profession') or '').strip()
+    email = str(data.get('email') or '').strip()
+    nin_number = str(data.get('nin_number') or '').strip()
+
+    if not all([full_name, phone_number, profession, email, nin_number]):
+        return JsonResponse({'status': 'error', 'message': 'All personal information fields (Names, Phone, Profession, Email, NIN) are required.'}, status=400)
+
+    search_fee = round(max_budget * 0.20, 2)
+
+    locate_req = HouseLocateRequest.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        preferred_locations=preferred_locations,
+        min_budget=min_budget,
+        max_budget=max_budget,
+        house_type=house_type,
+        bedrooms=bedrooms_val,
+        time_or_period=time_or_period,
+        special_requirements=special_requirements,
+        is_authorized=True,
+        full_name=full_name,
+        phone_number=phone_number,
+        profession=profession,
+        email=email,
+        nin_number=nin_number,
+        search_fee=search_fee,
+        payment_status='pending_payment',
+        status='pending_payment',
+    )
+
+    from django.urls import reverse
+    payment_url = reverse('pesapal_initiate_locate_payment', kwargs={'req_id': locate_req.id})
+
+    return JsonResponse({
+        'status': 'ok',
+        'request_id': locate_req.id,
+        'search_fee': int(round(search_fee)),
+        'search_fee_formatted': f"UGX {int(round(search_fee)):,}",
+        'payment_url': payment_url,
+    })
+
 
 # --- TENANT DASHBOARD VIEWS ---
 
@@ -5323,6 +5584,58 @@ def pesapal_initiate_office_payment(request, app_id):
     return redirect(redirect_url)
 
 
+def pesapal_initiate_locate_payment(request, req_id):
+    locate_req = get_object_or_404(HouseLocateRequest, id=req_id)
+    amount = int(round(float(locate_req.search_fee or 0)))
+    if amount <= 0:
+        amount = int(round(float(locate_req.max_budget or 0) * 0.20))
+
+    token, token_err = get_pesapal_bearer_token()
+    if not token:
+        messages.error(request, f"Pesapal Authentication Failed: {token_err}")
+        return redirect('home')
+
+    ipn_id, ipn_err = register_pesapal_ipn(token)
+    merchant_ref = f"TRUST-LOCATE-{locate_req.id}-{int(timezone.now().timestamp())}"
+    callback_url = request.build_absolute_uri('/payments/pesapal/callback/')
+
+    name_parts = (locate_req.full_name or "TRUST Client").strip().split(' ', 1)
+    first_name = name_parts[0]
+    last_name = name_parts[1] if len(name_parts) > 1 else "Client"
+
+    redirect_url, order_tracking_id, order_err = submit_pesapal_order(
+        merchant_reference=merchant_ref,
+        amount=amount,
+        description=f"TRUST Protocol 20% House Search Fee (Req #{locate_req.id} - {locate_req.house_type})",
+        customer_email=locate_req.email or "client@trustrentug.com",
+        customer_phone=locate_req.phone_number or "0700000000",
+        customer_first_name=first_name,
+        customer_last_name=last_name,
+        callback_url=callback_url,
+        token=token,
+        ipn_id=ipn_id
+    )
+
+    if not redirect_url:
+        messages.error(request, f"Failed to launch Pesapal payment window: {order_err}")
+        return redirect('home')
+
+    PesapalTransaction.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        booking=None,
+        merchant_reference=merchant_ref,
+        order_tracking_id=order_tracking_id,
+        amount=amount,
+        currency='UGX',
+        payment_type='house_locate_fee',
+        status='PENDING',
+        ipn_id=ipn_id,
+        redirect_url=redirect_url
+    )
+
+    return redirect(redirect_url)
+
+
 def admin_update_office_app_status(request, app_id):
     if not is_admin_user(request.user):
         messages.error(request, "Access denied. Only system administrators can perform this action.")
@@ -5374,7 +5687,20 @@ def pesapal_callback(request):
                     tx.status = 'COMPLETED'
                     tx.save()
 
-                    if tx.merchant_reference and tx.merchant_reference.startswith('TRUST-OFFICE-'):
+                    if tx.merchant_reference and tx.merchant_reference.startswith('TRUST-LOCATE-'):
+                        try:
+                            req_id = int(tx.merchant_reference.split('-')[2])
+                            locate_req = HouseLocateRequest.objects.filter(id=req_id).first()
+                            if locate_req:
+                                locate_req.payment_status = 'paid'
+                                locate_req.status = 'paid_searching'
+                                locate_req.save()
+                                messages.success(request, f"20% House Search Fee of UGX {tx.amount:,.0f} received! TRUST Protocol agents have been dispatched to locate your verified home.")
+                                return redirect('/?locate_payment_success=1')
+                        except Exception:
+                            pass
+
+                    elif tx.merchant_reference and tx.merchant_reference.startswith('TRUST-OFFICE-'):
                         try:
                             app_id = int(tx.merchant_reference.split('-')[2])
                             office_app = OfficeApplication.objects.filter(id=app_id).first()
@@ -5439,7 +5765,18 @@ def pesapal_ipn_listener(request):
                     tx.status = 'COMPLETED'
                     tx.save()
 
-                    if tx.merchant_reference and tx.merchant_reference.startswith('TRUST-OFFICE-'):
+                    if tx.merchant_reference and tx.merchant_reference.startswith('TRUST-LOCATE-'):
+                        try:
+                            req_id = int(tx.merchant_reference.split('-')[2])
+                            locate_req = HouseLocateRequest.objects.filter(id=req_id).first()
+                            if locate_req:
+                                locate_req.payment_status = 'paid'
+                                locate_req.status = 'paid_searching'
+                                locate_req.save()
+                        except Exception:
+                            pass
+
+                    elif tx.merchant_reference and tx.merchant_reference.startswith('TRUST-OFFICE-'):
                         try:
                             app_id = int(tx.merchant_reference.split('-')[2])
                             office_app = OfficeApplication.objects.filter(id=app_id).first()
