@@ -417,6 +417,12 @@
     text-decoration: underline;
   }
 
+  .tp-mobile-return-wrap {
+    display: none;
+    text-align: center;
+    margin-top: 1.25rem;
+  }
+
   @media (max-width: 900px) {
     .tp-auth-screen {
       grid-template-columns: 1fr;
@@ -424,8 +430,14 @@
     .tp-auth-left {
       display: none;
     }
+    .tp-mobile-return-wrap {
+      display: block;
+    }
+    .tp-mobile-return-wrap .tp-return-home-btn {
+      margin-top: 0;
+    }
     .tp-auth-right {
-      min-height: calc(100vh - 75px);
+      min-height: 100vh;
       padding: 2rem 1.25rem;
     }
   }
@@ -691,6 +703,10 @@
         <p class="tp-auth-bottom-text">
           Already have an account? <a href="/login/">Sign in</a>
         </p>
+
+        <div class="tp-mobile-return-wrap">
+          <a href="/" class="tp-return-home-btn">Return Home</a>
+        </div>
       </form>
 
     </div>
