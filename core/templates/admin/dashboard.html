@@ -5524,39 +5524,53 @@ function filterInspectionsTable() {
             </div>
         </div>
 
-        <!-- DREAM HOME SHOWCASE SLIDER MANAGEMENT CARD -->
+        <!-- LANDING PAGE HERO TEXT + IMAGE STORY SLIDER MANAGEMENT CARD -->
         <div class="col-12" style="margin-bottom: 1.5rem;">
             <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
                     <div>
                         <h4 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fa-solid fa-images" style="color: #047857;"></i> Dream Home Showcase Image Slider (Landing Page)
+                            <i class="fa-solid fa-film" style="color: #047857;"></i> Landing Page Hero Text + Image Story Slider
                         </h4>
                         <p style="margin: 0.15rem 0 0 0; color: #64748b; font-size: 0.8rem;">
-                            Upload photos for the looped image slider displayed on the landing page next to the statistics countdown.
+                            Add synchronized slides for the Hero section. Each slide pairs Primary Text and Secondary Text on the left with a looped Image on the right.
                         </p>
                     </div>
                 </div>
 
-                <!-- Upload Form -->
+                <!-- Add New Hero Slide Form -->
                 <form action="{% url 'admin_upload_showcase_slider' %}" method="POST" enctype="multipart/form-data" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem;">
                     {% csrf_token %}
-                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
-                        <div style="flex: 1; min-width: 240px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div>
                             <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem;">
-                                Select Slider Image(s)
+                                Primary Text (Headline) *
                             </label>
-                            <input type="file" name="slider_images" multiple accept="image/*" required class="form-control" style="padding: 0.5rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; width: 100%;">
-                        </div>
-                        <div style="flex: 1; min-width: 200px;">
-                            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem;">
-                                Slide Title / Caption (Optional)
-                            </label>
-                            <input type="text" name="title" placeholder="e.g. Luxury Naalya Villa" class="form-control" style="padding: 0.5rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; width: 100%;">
+                            <input type="text" name="title" required placeholder="e.g. Find a Safe, Verified Home" class="form-control" style="padding: 0.55rem 0.75rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; width: 100%; box-sizing: border-box;">
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-emerald" style="padding: 0.55rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Slide(s)
+                            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem;">
+                                Secondary Text (Subtext) *
+                            </label>
+                            <input type="text" name="secondary_text" required placeholder="e.g. Stop chasing brokers. Stop worrying about scams." class="form-control" style="padding: 0.55rem 0.75rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; width: 100%; box-sizing: border-box;">
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+                        <div style="flex: 1; min-width: 220px;">
+                            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem;">
+                                Select Slide Image *
+                            </label>
+                            <input type="file" name="slider_images" accept="image/*" required class="form-control" style="padding: 0.45rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; width: 100%; box-sizing: border-box;">
+                        </div>
+                        <div style="width: 120px;">
+                            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem;">
+                                Sequence Order
+                            </label>
+                            <input type="number" name="order" value="0" min="0" class="form-control" style="padding: 0.55rem 0.75rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: white; width: 100%; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-emerald" style="padding: 0.6rem 1.35rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Add Hero Slide
                             </button>
                         </div>
                     </div>
@@ -5565,21 +5579,50 @@ function filterInspectionsTable() {
                 <!-- Active Slides List -->
                 <div>
                     <div style="font-weight: 700; font-size: 0.9rem; color: #1e293b; margin-bottom: 0.75rem;">
-                        Active Slides ({% if showcase_slider_images %}{{ showcase_slider_images.count }}{% else %}0{% endif %})
+                        Active Hero Story Slides ({% if showcase_slider_images %}{{ showcase_slider_images.count }}{% else %}0{% endif %})
                     </div>
                     {% if showcase_slider_images %}
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
                         {% for slide in showcase_slider_images %}
-                        <div style="position: relative; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                            <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Showcase Slide' }}" style="width: 100%; height: 120px; object-fit: cover; display: block;">
-                            <div style="padding: 0.5rem; display: flex; justify-content: space-between; align-items: center; background: #ffffff;">
-                                <span style="font-size: 0.75rem; color: #64748b; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">
-                                    {{ slide.title|default:"Slide" }}
+                        <div style="border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; flex-direction: column;">
+                            <div style="position: relative;">
+                                <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Hero Slide' }}" style="width: 100%; height: 150px; object-fit: cover; display: block;">
+                                <span style="position: absolute; top: 8px; left: 8px; background: rgba(15, 23, 42, 0.8); color: #ffffff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 6px;">
+                                    Slide #{{ forloop.counter }} (Order: {{ slide.order }})
                                 </span>
-                                <form action="{% url 'admin_delete_showcase_slider' slide.id %}" method="POST" onsubmit="return confirm('Are you sure you want to remove this showcase slide?');" style="margin: 0;">
+                            </div>
+                            <div style="padding: 0.85rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                                <form action="{% url 'admin_upload_showcase_slider' %}" method="POST" enctype="multipart/form-data" style="margin: 0;">
                                     {% csrf_token %}
-                                    <button type="submit" style="background: #fee2e2; color: #dc2626; border: none; border-radius: 6px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem;" title="Delete slide">
-                                        <i class="fa-solid fa-trash-can"></i>
+                                    <input type="hidden" name="slide_id" value="{{ slide.id }}">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <label style="display: block; font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Primary Text</label>
+                                        <input type="text" name="title" value="{{ slide.title|default:'' }}" placeholder="Find a Safe, Verified Home" style="width: 100%; padding: 0.4rem 0.55rem; font-size: 0.82rem; font-weight: 700; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <label style="display: block; font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Secondary Text</label>
+                                        <textarea name="secondary_text" rows="2" placeholder="Stop chasing brokers. Stop worrying about scams." style="width: 100%; padding: 0.4rem 0.55rem; font-size: 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">{{ slide.secondary_text|default:'' }}</textarea>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.65rem;">
+                                        <div style="flex: 1;">
+                                            <label style="display: block; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Replace Image (Optional)</label>
+                                            <input type="file" name="slider_image" accept="image/*" style="width: 100%; font-size: 0.75rem;">
+                                        </div>
+                                        <div style="width: 68px;">
+                                            <label style="display: block; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Order</label>
+                                            <input type="number" name="order" value="{{ slide.order }}" style="width: 100%; padding: 0.35rem 0.45rem; font-size: 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+                                        <button type="submit" style="background: #047857; color: #ffffff; border: none; border-radius: 6px; padding: 0.4rem 0.8rem; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                                <form action="{% url 'admin_delete_showcase_slider' slide.id %}" method="POST" onsubmit="return confirm('Remove this hero slide?');" style="margin-top: -1.85rem; align-self: flex-end;">
+                                    {% csrf_token %}
+                                    <button type="submit" style="background: #fee2e2; color: #dc2626; border: none; border-radius: 6px; padding: 0.4rem 0.65rem; display: flex; align-items: center; gap: 0.3rem; cursor: pointer; font-size: 0.75rem; font-weight: 700;" title="Delete slide">
+                                        <i class="fa-solid fa-trash-can"></i> Delete
                                     </button>
                                 </form>
                             </div>
@@ -5588,7 +5631,7 @@ function filterInspectionsTable() {
                     </div>
                     {% else %}
                     <div style="padding: 1.25rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 0.85rem;">
-                        <i class="fa-solid fa-circle-info" style="color: #0284c7; margin-right: 0.35rem;"></i> No custom showcase slides uploaded yet. The landing page is currently using the default showcase image.
+                        <i class="fa-solid fa-circle-info" style="color: #0284c7; margin-right: 0.35rem;"></i> No custom hero slides uploaded yet. The landing page is currently displaying the default hero text and image.
                     </div>
                     {% endif %}
                 </div>

@@ -695,16 +695,17 @@ class ConstructionSliderImage(models.Model):
 
 class ShowcaseSliderImage(models.Model):
     image = models.FileField(upload_to='showcase/slider/')
-    title = models.CharField(max_length=150, blank=True, null=True, help_text="Optional slide caption/title")
+    title = models.CharField(max_length=255, blank=True, null=True, help_text="Primary text / headline for the hero slide")
+    secondary_text = models.TextField(blank=True, null=True, help_text="Secondary text / subtext synced with the hero slide")
     order = models.IntegerField(default=0, help_text="Display order sequence")
     is_active = models.BooleanField(default=True, help_text="Show or hide this slide")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['order', '-created_at']
+        ordering = ['order', 'created_at']
 
     def __str__(self):
-        return f"Showcase Slide #{self.id} ({self.title or 'Untitled'})"
+        return f"Hero Slide #{self.id} ({self.title or 'Untitled'})"
 
 
 class DiasporaClientApplication(models.Model):

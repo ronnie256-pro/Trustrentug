@@ -71,11 +71,11 @@
   /* Typography */
   .tp-h1 {
     font-family: var(--tp-font-heading);
-    font-size: clamp(2.4rem, 4.5vw, 3.75rem);
+    font-size: clamp(2.15rem, 3.2vw, 3.1rem);
     font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    margin: 0 0 1.25rem 0;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    margin: 0 0 1rem 0;
     color: var(--tp-cream-light);
   }
 
@@ -174,56 +174,76 @@
     border-color: var(--tp-cream-light);
   }
 
-  /* ─── 1. HERO SECTION (Deep Plum 30% + Butter Cream Card + Spring Green CTA) ─── */
+  /* ─── 1. HERO SECTION (Unified Full-Width Image Slider + Synchronized Foreground Text) ─── */
   .tp-hero {
-    background-color: var(--tp-plum);
+    position: relative;
+    background-color: var(--tp-plum-deep);
     color: var(--tp-cream-light);
-    padding: 4.5rem 0 5.5rem 0;
-  }
-
-  .tp-hero-grid {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 3.5rem;
+    width: 100%;
+    height: 620px;
+    min-height: 620px;
+    max-height: 620px;
+    display: flex;
     align-items: center;
+    overflow: hidden;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  .tp-hero-Tagline {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--tp-spring);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    margin-bottom: 0.85rem;
+  .tp-hero-inner {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .tp-hero-left-col {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Foreground Synchronized Text Stage (Fixed & Indestructible Height) */
+  .tp-hero-text-stage {
+    position: relative;
+    height: 230px;
+    min-height: 230px;
+    max-height: 230px;
+    margin-bottom: 1.5rem;
+  }
+
+  .tp-hero-text-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .tp-hero-text-slide.is-active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 
   .tp-hero-sub {
     font-size: 1.18rem;
-    color: var(--tp-cream);
-    margin: 0 0 1.75rem 0;
-    max-width: 560px;
-    font-weight: 500;
-  }
-
-  .tp-hero-promise {
-    background-color: var(--tp-plum-mid);
-    padding: 1.25rem 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    max-width: 540px;
-  }
-
-  .tp-hero-promise p {
-    margin: 0 0 0.35rem 0;
     color: var(--tp-cream-light);
-    font-size: 1rem;
+    margin: 0;
+    max-width: 580px;
     font-weight: 500;
-  }
-
-  .tp-hero-promise strong {
-    color: var(--tp-spring);
-    font-size: 0.98rem;
-    font-weight: 800;
+    line-height: 1.6;
   }
 
   .tp-hero-actions {
@@ -232,69 +252,60 @@
     gap: 1rem;
   }
 
-  /* Right Column: Quick Housing Brief Card */
-  .tp-brief-card {
-    background-color: var(--tp-cream-light);
-    color: var(--tp-plum);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 20px 50px rgba(15, 5, 14, 0.35);
-  }
-
-  .tp-brief-card h2 {
-    font-family: var(--tp-font-heading);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--tp-plum) !important;
-    margin: 0 0 0.35rem 0;
-  }
-
-  .tp-brief-card p {
-    font-size: 0.92rem;
-    color: var(--tp-plum-muted);
-    margin: 0 0 1.35rem 0;
-    font-weight: 500;
-  }
-
-  .tp-field-group {
-    margin-bottom: 1rem;
-  }
-
-  .tp-field-label {
-    display: block;
-    font-size: 0.82rem;
-    font-weight: 800;
-    color: var(--tp-plum);
-    margin-bottom: 0.35rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  .tp-input,
-  .tp-select {
+  /* Full-Section Background Image Slider Stage (Fixed & Indestructible) */
+  .tp-hero-image-stage {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    padding: 0.75rem 0.9rem;
-    background-color: var(--tp-cream);
-    border: 1.5px solid var(--tp-cream-warm);
-    border-radius: 10px;
-    font-family: var(--tp-font-body);
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--tp-plum);
-    box-sizing: border-box;
+    height: 620px;
+    min-height: 620px;
+    max-height: 620px;
+    z-index: 1;
+    overflow: hidden;
+    background-color: var(--tp-plum-deep);
   }
 
-  .tp-input:focus,
-  .tp-select:focus {
-    outline: none;
-    border-color: var(--tp-plum);
-    background-color: #ffffff;
+  .tp-hero-image-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: rgba(30, 11, 29, 0.52);
   }
 
-  .tp-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.85rem;
+  .tp-hero-image-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .tp-hero-image-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .tp-hero-image-slide img {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    display: block;
+    transform: scale(1);
+    transition: transform 5.5s linear;
+  }
+
+  .tp-hero-image-slide.is-active img {
+    transform: scale(1.06);
   }
 
   /* ─── 2. WHY TRUST PROTOCOL ─── */
@@ -906,11 +917,25 @@
   }
 
   @media (max-width: 900px) {
-    .tp-hero-grid,
+    .tp-hero {
+      height: 520px;
+      min-height: 520px;
+      max-height: 520px;
+    }
+    .tp-hero-image-stage {
+      height: 520px;
+      min-height: 520px;
+      max-height: 520px;
+    }
     .tp-owners-grid,
     .tp-about-grid {
       grid-template-columns: 1fr;
       gap: 2.25rem;
+    }
+    .tp-hero-text-stage {
+      height: 220px;
+      min-height: 220px;
+      max-height: 220px;
     }
     .tp-section {
       padding: 4rem 0;
@@ -925,12 +950,17 @@
     .tp-benefits-grid {
       grid-template-columns: 1fr;
     }
-    .tp-why-banner {
-      padding: 1.5rem;
+    .tp-hero {
+      height: 480px;
+      min-height: 480px;
+      max-height: 480px;
     }
-    .tp-brief-card,
-    .tp-about-box,
-    .tp-final-cta-box {
+    .tp-hero-image-stage {
+      height: 480px;
+      min-height: 480px;
+      max-height: 480px;
+    }
+    .tp-why-banner {
       padding: 1.5rem;
     }
   }
@@ -941,95 +971,74 @@
 <div class="tp-landing">
 
   <!-- ═══════════════════════════════════════════════════════════════════════
-       1. HERO SECTION
+       1. HERO SECTION (Synchronized Text + Full-Bleed Faded Image Story Slider)
        ═══════════════════════════════════════════════════════════════════════ -->
-  <section class="tp-hero">
-    <div class="tp-container">
-      <div class="tp-hero-grid">
-
-        <!-- Left Column: Core Headline & Value Proposition -->
-        <div>
-          <h1 class="tp-h1">Find a Safe, Verified Home</h1>
-          <p class="tp-hero-sub">
-            Stop chasing brokers. Stop worrying about scams. Stop wasting time viewing unsuitable houses.
-          </p>
-
-          <div class="tp-hero-promise">
-            <p>We'll help you find a verified home that matches your needs.</p>
-            <strong>TRUST Protocol works for tenants.</strong>
-          </div>
-
-          <div class="tp-hero-actions">
-            <button type="button" class="tp-btn-spring" onclick="openSmartHomeFinderModal()">
-              Tell Us What You Need
-            </button>
-            <a href="/search/" class="tp-btn-outline-cream">
-              Start Your Housing Search
-            </a>
-          </div>
+  <section class="tp-hero" id="tpHeroStoryPlayer">
+    <div class="tp-hero-inner">
+      <!-- Left Column: Synchronized Primary + Secondary Text & Stationary CTAs -->
+      <div class="tp-hero-left-col">
+        <div class="tp-hero-text-stage">
+          {% if showcase_slides %}
+            {% for slide in showcase_slides %}
+            <div class="tp-hero-text-slide {% if forloop.first %}is-active{% endif %}" data-slide-index="{{ forloop.counter0 }}">
+              <h1 class="tp-h1">{{ slide.title|default:"Find a Safe, Verified Home" }}</h1>
+              <p class="tp-hero-sub">
+                {{ slide.secondary_text|default:"Stop chasing brokers. Stop worrying about scams. Stop wasting time viewing unsuitable houses." }}
+              </p>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="tp-hero-text-slide is-active" data-slide-index="0">
+              <h1 class="tp-h1">Find a Safe, Verified Home</h1>
+              <p class="tp-hero-sub">
+                Stop chasing brokers. Stop worrying about scams. Stop wasting time viewing unsuitable houses.
+              </p>
+            </div>
+            <div class="tp-hero-text-slide" data-slide-index="1">
+              <h1 class="tp-h1">Every Landlord &amp; Property Checked</h1>
+              <p class="tp-hero-sub">
+                Our field team inspects the house, verifies ownership documentation, and confirms occupancy before you commit.
+              </p>
+            </div>
+            <div class="tp-hero-text-slide" data-slide-index="2">
+              <h1 class="tp-h1">Move In With Complete Confidence</h1>
+              <p class="tp-hero-sub">
+                Tell us your budget, preferred location, and move-in date. We handle the search and verification for you.
+              </p>
+            </div>
+          {% endif %}
         </div>
 
-        <!-- Right Column: Quick Housing Brief Interactive Form -->
-        <div class="tp-brief-card">
-          <h2>Simply tell us:</h2>
-          <p>Share your requirements below and we will match you with verified homes.</p>
-
-          <form id="heroQuickBriefForm" onsubmit="handleHeroQuickBriefSubmit(event)">
-            <!-- 1. Preferred Location (Villages) -->
-            <div class="tp-field-group">
-              <label class="tp-field-label" for="heroVillageInput">Your preferred location (Villages)</label>
-              <div class="shf-village-SuggestBox">
-                <input type="text" id="heroVillageInput" class="tp-input" autocomplete="off">
-                <div id="heroVillageDropdown" class="shf-village-dropdown"></div>
-              </div>
-              <div id="heroSelectedVillagesContainer" class="shf-village-tags"></div>
-            </div>
-
-            <!-- 2. Your budget -->
-            <div class="tp-field-group">
-              <label class="tp-field-label">Your budget (UGX / Month)</label>
-              <div class="tp-grid-2">
-                <input type="number" id="heroMinBudget" class="tp-input" min="0" step="10000" placeholder="MIN" required>
-                <input type="number" id="heroMaxBudget" class="tp-input" min="10000" step="10000" placeholder="MAX" required>
-              </div>
-            </div>
-
-            <!-- 3. Preferred house type & 4. Your move-in date -->
-            <div class="tp-grid-2">
-              <div class="tp-field-group">
-                <label class="tp-field-label" for="heroHouseType">Preferred house type</label>
-                <select id="heroHouseType" class="tp-select" required>
-                  <option value=""></option>
-                  {% for opt in house_type_options %}
-                  <option value="{{ opt.value }}">{{ opt.label }}</option>
-                  {% empty %}
-                  <option value="single_room">Single Room</option>
-                  <option value="self_contained">Self-Contained Room</option>
-                  <option value="studio">Studio Apartment</option>
-                  <option value="1_bed">1 Bedroom Apartment</option>
-                  <option value="2_bed">2 Bedroom Apartment</option>
-                  <option value="3_plus_bed">3+ Bedroom Apartment</option>
-                  <option value="bungalow">Bungalow</option>
-                  <option value="standalone">Standalone House</option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <div class="tp-field-group">
-                <label class="tp-field-label" for="heroMoveInDate">Your move-in date</label>
-                <input type="date" id="heroMoveInDate" class="tp-input" required style="cursor: pointer;" onclick="if(this.showPicker) this.showPicker()">
-              </div>
-            </div>
-
-            <div id="heroBriefError" style="display: none; background: #fef2f2; color: #b91c1c; padding: 0.6rem 0.85rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.85rem;"></div>
-
-            <button type="submit" class="tp-btn-plum" style="width: 100%; margin-top: 0.35rem;">
-              Match Me With Verified Homes
-            </button>
-          </form>
+        <div class="tp-hero-actions">
+          <button type="button" class="tp-btn-spring" onclick="openSmartHomeFinderModal()">
+            Tell Us What You Need
+          </button>
+          <a href="/search/" class="tp-btn-outline-cream">
+            Start Your Housing Search
+          </a>
         </div>
-
       </div>
+    </div>
+
+    <!-- Right Side: Full-Bleed Image Display Screen (Extreme Right to Midway, Full Height, Faded Into Deep Plum) -->
+    <div class="tp-hero-image-stage">
+      {% if showcase_slides %}
+        {% for slide in showcase_slides %}
+        <div class="tp-hero-image-slide {% if forloop.first %}is-active{% endif %}" data-slide-index="{{ forloop.counter0 }}">
+          <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Verified Home' }}">
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="tp-hero-image-slide is-active" data-slide-index="0">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=85" alt="Find a Safe, Verified Home">
+        </div>
+        <div class="tp-hero-image-slide" data-slide-index="1">
+          <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1400&q=85" alt="Every Landlord and Property Checked">
+        </div>
+        <div class="tp-hero-image-slide" data-slide-index="2">
+          <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=85" alt="Move In With Complete Confidence">
+        </div>
+      {% endif %}
     </div>
   </section>
 
@@ -1155,7 +1164,7 @@
         <!-- 1. Young Professionals -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-briefcase" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Young Professionals</h3>
+            <h3><i class="fa-solid fa-briefcase" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Young Professionals</h3>
             <p>Starting a new job? We'll help you find a home close to where you work.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Young Professional')">
@@ -1166,7 +1175,7 @@
         <!-- 2. Newly Employed Graduates -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-user-graduate" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Newly Employed Graduates</h3>
+            <h3><i class="fa-solid fa-user-graduate" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Newly Employed Graduates</h3>
             <p>First salary. First apartment. Let us help you avoid costly mistakes.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Newly Employed Graduate')">
@@ -1177,7 +1186,7 @@
         <!-- 3. Newly Married Couples -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-heart" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Newly Married Couples</h3>
+            <h3><i class="fa-solid fa-heart" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Newly Married Couples</h3>
             <p>Building a life together starts with finding the right home.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Newly Married Couple')">
@@ -1188,7 +1197,7 @@
         <!-- 4. Teachers and Lecturers -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-chalkboard-user" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Teachers and Lecturers</h3>
+            <h3><i class="fa-solid fa-chalkboard-user" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Teachers and Lecturers</h3>
             <p>Relocating to a new school or university? We'll help you settle quickly.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Teacher / Lecturer')">
@@ -1199,7 +1208,7 @@
         <!-- 5. Bank Employees -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-building-columns" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Bank Employees</h3>
+            <h3><i class="fa-solid fa-building-columns" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Bank Employees</h3>
             <p>Financial professionals deserve secure and verified housing.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Bank Employee')">
@@ -1210,7 +1219,7 @@
         <!-- 6. NGO Staff -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-earth-africa" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>NGO Staff</h3>
+            <h3><i class="fa-solid fa-earth-africa" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>NGO Staff</h3>
             <p>Moving between projects and assignments? We'll help you find accommodation that fits your needs.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('NGO Staff')">
@@ -1221,7 +1230,7 @@
         <!-- 7. Civil Servants -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-landmark" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Civil Servants</h3>
+            <h3><i class="fa-solid fa-landmark" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Civil Servants</h3>
             <p>New posting? New district? Let us simplify your transition.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Civil Servant')">
@@ -1232,7 +1241,7 @@
         <!-- 8. Medical Workers -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-stethoscope" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Medical Workers</h3>
+            <h3><i class="fa-solid fa-stethoscope" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Medical Workers</h3>
             <p>Focus on serving others while we help you find a suitable home.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Medical Worker')">
@@ -1243,7 +1252,7 @@
         <!-- 9. University Students -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-graduation-cap" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>University Students</h3>
+            <h3><i class="fa-solid fa-graduation-cap" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>University Students</h3>
             <p>Don't get scammed looking for accommodation. Find verified housing options.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('University Student')">
@@ -1254,7 +1263,7 @@
         <!-- 10. Diaspora Ugandans -->
         <div class="tp-persona-card">
           <div>
-            <h3><i class="fa-solid fa-plane-arrival" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Diaspora Ugandans</h3>
+            <h3><i class="fa-solid fa-plane-arrival" style="color: var(--tp-spring); margin-right: 0.45rem;"></i>Diaspora Ugandans</h3>
             <p>Returning home, renting, buying or building? We'll help you navigate the process with confidence.</p>
           </div>
           <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Diaspora Ugandan')">
@@ -1557,27 +1566,64 @@
 
 <script>
   (function () {
-    // 1. Persona Filter Tabs ("Who We Help")
-    const filterContainer = document.getElementById('tpPersonaFilters');
-    const personaCards = document.querySelectorAll('#tpPersonaGrid .tp-persona-card');
-    if (filterContainer && personaCards.length) {
-      filterContainer.addEventListener('click', function (e) {
-        const btn = e.target.closest('.tp-filter-btn');
-        if (!btn) return;
-        const filter = btn.getAttribute('data-filter');
+    // 1. Synchronized Hero Text + Image Story Player
+    (function initHeroStoryPlayer() {
+      const player = document.getElementById('tpHeroStoryPlayer');
+      if (!player) return;
 
-        filterContainer.querySelectorAll('.tp-filter-btn').forEach(b => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
+      const textSlides = player.querySelectorAll('.tp-hero-text-slide');
+      const imgSlides = player.querySelectorAll('.tp-hero-image-slide');
+      const timelineSegs = player.querySelectorAll('.tp-hero-timeline-seg');
+      const totalSlides = Math.min(textSlides.length, imgSlides.length);
+      if (totalSlides <= 1) return;
 
-        personaCards.forEach(card => {
-          if (filter === 'all' || card.getAttribute('data-category') === filter) {
-            card.style.display = 'flex';
-          } else {
-            card.style.display = 'none';
+      let currentIndex = 0;
+      let timerId = null;
+      const DURATION_MS = 5000;
+
+      function activateSlide(nextIdx) {
+        if (nextIdx >= totalSlides) nextIdx = 0;
+        if (nextIdx < 0) nextIdx = totalSlides - 1;
+        currentIndex = nextIdx;
+
+        textSlides.forEach((el, idx) => {
+          el.classList.toggle('is-active', idx === currentIndex);
+        });
+
+        imgSlides.forEach((el, idx) => {
+          el.classList.toggle('is-active', idx === currentIndex);
+        });
+
+        timelineSegs.forEach((seg, idx) => {
+          seg.classList.remove('is-active', 'is-done');
+          // Force reflow so the fill animation restarts cleanly on the active segment
+          void seg.offsetWidth;
+          if (idx < currentIndex) {
+            seg.classList.add('is-done');
+          } else if (idx === currentIndex) {
+            seg.classList.add('is-active');
           }
         });
+      }
+
+      function scheduleNext() {
+        if (timerId) clearInterval(timerId);
+        timerId = setInterval(() => {
+          activateSlide(currentIndex + 1);
+        }, DURATION_MS);
+      }
+
+      timelineSegs.forEach(seg => {
+        seg.addEventListener('click', function () {
+          const targetIdx = parseInt(this.getAttribute('data-slide-index') || '0', 10);
+          activateSlide(targetIdx);
+          scheduleNext();
+        });
       });
-    }
+
+      activateSlide(0);
+      scheduleNext();
+    })();
 
     // 2. Shared Village Autocomplete & Multi-Tag State (Syncs Hero Form & Modal Form)
     let allVillages = [];

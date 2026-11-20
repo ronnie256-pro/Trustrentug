@@ -1852,7 +1852,7 @@ def admin_dashboard(request):
     construction_applications = DiasporaClientApplication.objects.all().order_by('-created_at')
     construction_projects = ConstructionProject.objects.all().order_by('-created_at')
     slider_images = ConstructionSliderImage.objects.all().order_by('-created_at')
-    showcase_slider_images = ShowcaseSliderImage.objects.all().order_by('order', '-created_at')
+    showcase_slider_images = ShowcaseSliderImage.objects.all().order_by('order', 'created_at')
     office_applications = OfficeApplication.objects.all().select_related('property', 'user').order_by('-created_at')
 
     # Tenant Custom Property Locate Requests (HouseLocateRequest)
@@ -2409,7 +2409,7 @@ def home_view(request):
             seen_labels.add(cat.name.lower())
 
     try:
-        showcase_slides = ShowcaseSliderImage.objects.filter(is_active=True).order_by('order', '-created_at')
+        showcase_slides = ShowcaseSliderImage.objects.filter(is_active=True).order_by('order', 'created_at')
     except Exception:
         showcase_slides = []
 
@@ -5067,19 +5067,40 @@ def admin_upload_showcase_slider(request):
         return redirect('login')
 
     if request.method == 'POST':
-        images = request.FILES.getlist('slider_images')
+        slide_id = request.POST.get('slide_id', '').strip()
         slide_title = request.POST.get('title', '').strip()
+        secondary_text = request.POST.get('secondary_text', '').strip()
+        try:
+            order_val = int(request.POST.get('order', 0) or 0)
+        except ValueError:
+            order_val = 0
+
+        if slide_id:
+            slide_obj = get_object_or_404(ShowcaseSliderImage, id=slide_id)
+            slide_obj.title = slide_title or None
+            slide_obj.secondary_text = secondary_text or None
+            slide_obj.order = order_val
+            new_img = request.FILES.get('slider_image')
+            if new_img:
+                slide_obj.image = new_img
+            slide_obj.save()
+            messages.success(request, "Hero slide updated successfully!")
+            return redirect('/admin-dashboard/?tab=settings&section=branding')
+
+        images = request.FILES.getlist('slider_images')
         count = 0
         for img in images:
             ShowcaseSliderImage.objects.create(
                 image=img,
-                title=slide_title if slide_title else None
+                title=slide_title if slide_title else None,
+                secondary_text=secondary_text if secondary_text else None,
+                order=order_val + count
             )
             count += 1
         if count > 0:
-            messages.success(request, f"Successfully uploaded {count} Dream Home Showcase slide(s)!")
+            messages.success(request, f"Successfully added {count} Hero Story slide(s)!")
         else:
-            messages.error(request, "No slide images were selected.")
+            messages.error(request, "No slide image was selected.")
     return redirect('/admin-dashboard/?tab=settings&section=branding')
 
 
@@ -5090,7 +5111,7 @@ def admin_delete_showcase_slider(request, image_id):
 
     slide_obj = get_object_or_404(ShowcaseSliderImage, id=image_id)
     slide_obj.delete()
-    messages.success(request, "Dream Home Showcase slide deleted successfully.")
+    messages.success(request, "Hero Story slide deleted successfully.")
     return redirect('/admin-dashboard/?tab=settings&section=branding')
 
 
