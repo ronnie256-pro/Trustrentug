@@ -5,251 +5,384 @@
 {% block meta_description %}Search all verified rental properties, houses, apartments, commercial offices, and land for sale or rent across Uganda with TRUST Protocol escrow verification.{% endblock %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
 <style>
-body {
-    background-color: #e5dccb !important;
-}
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TRUST PROTOCOL SEARCH PAGE
+     Color Ratio: 60% Butter Cream | 30% Deep Plum | 10% Spring Green
+     ═══════════════════════════════════════════════════════════════════════════ */
+  :root {
+    --tp-cream: #FBF5E6;
+    --tp-cream-light: #FFFDF8;
+    --tp-cream-warm: #F2E8D5;
+    --tp-plum: #2B1129;
+    --tp-plum-deep: #1E0B1D;
+    --tp-plum-mid: #3D1A3A;
+    --tp-plum-muted: #5A4257;
+    --tp-spring: #00D67F;
+    --tp-spring-hover: #00B86B;
+    --tp-font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --tp-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
 
-.search-header {
-    background-color: var(--color-emerald-darkest);
-    color: white;
-    padding: 3rem 0;
-}
-.search-bar-inline {
-    display: flex;
-    gap: 1rem;
-    background: #fff;
-    padding: 0.5rem;
-    border-radius: var(--radius-sm);
-}
-.search-bar-inline input, .search-bar-inline select {
-    border: none;
-    padding: 0.8rem;
-    font-family: var(--font-body);
-    font-size: 1rem;
-    outline: none;
-}
-.search-bar-inline input {
-    flex: 2;
-    border-right: 1px solid var(--color-border);
-}
-.search-bar-inline select {
-    flex: 1;
-}
+  body {
+    background-color: var(--tp-cream) !important;
+    color: var(--tp-plum) !important;
+    font-family: var(--tp-font-body) !important;
+  }
 
-.layout {
+  .layout {
     display: flex;
     flex-direction: column;
-    padding: 1.5rem 1rem;
+    padding: 2.65rem 1.25rem 3.5rem 1.25rem;
     max-width: 1650px;
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
-}
+  }
 
-.filters {
-    background: #fbf7f0;
-    padding: 0.85rem 1.1rem;
-    border-radius: 16px;
-    border: 2px solid rgba(10, 92, 54, 0.94);
-    box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06);
-    margin-bottom: 1rem;
-}
-.filters input[type="text"],
-.filters input[type="number"],
-.filters select {
-    background: #f4eee2 !important;
-    border: 1px solid rgba(203, 163, 88, 0.4) !important;
+  /* ─── HORIZONTAL FILTER BAR (Clean, No Deep Plum Background Box) ─── */
+  .tp-filter-bar-box {
+    background-color: transparent;
+    padding: 0.25rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filters input[type="number"],
+  .filters select {
+    background-color: var(--tp-cream-light) !important;
+    border: 1.5px solid rgba(43, 17, 41, 0.22) !important;
     border-radius: 10px !important;
-    color: #1e1b18 !important;
+    color: var(--tp-plum) !important;
+    font-family: var(--tp-font-body) !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .filters input[type="number"]::placeholder {
+    color: var(--tp-plum-muted) !important;
+    opacity: 0.8;
+  }
+
+  .filters input[type="number"]:focus,
+  .filters select:focus {
+    outline: none !important;
+    background-color: #ffffff !important;
+    border-color: var(--tp-plum) !important;
+    box-shadow: 0 0 0 3px rgba(0, 214, 127, 0.22) !important;
+  }
+
+  .filters select:disabled {
+    background-color: var(--tp-cream-warm) !important;
+    color: var(--tp-plum-muted) !important;
+    opacity: 0.75;
+  }
+
+  .tp-filter-submit-btn {
+    padding: 0.68rem 1.45rem;
+    background-color: var(--tp-spring);
+    color: var(--tp-plum-deep) !important;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--tp-font-body);
+    font-size: 0.94rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .tp-filter-submit-btn:hover {
+    background-color: var(--tp-spring-hover);
+  }
+
+  .tp-filter-clear-btn {
+    padding: 0.68rem 1rem;
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light) !important;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--tp-font-body);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .tp-filter-clear-btn:hover {
+    background-color: var(--tp-plum-mid);
+  }
+
+  /* ─── RESULTS TOOLBAR ─── */
+  .tp-results-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.85rem 0 1rem 0;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .tp-results-count {
+    color: var(--tp-plum-muted);
+    font-size: 0.96rem;
     font-weight: 600;
-}
-.filters input[type="text"]:focus,
-.filters input[type="number"]:focus,
-.filters select:focus {
-    background: #ffffff !important;
-    border-color: var(--color-gold) !important;
-    box-shadow: 0 0 0 3px rgba(203, 163, 88, 0.2) !important;
-}
+    margin: 0;
+  }
 
-.results-grid {
+  .tp-results-count strong {
+    color: var(--tp-plum);
+    font-weight: 800;
+  }
+
+  .tp-sort-select {
+    width: auto;
+    padding: 0.5rem 0.9rem;
+    border-radius: 10px;
+    background-color: var(--tp-cream-light);
+    border: 1.5px solid var(--tp-cream-warm);
+    color: var(--tp-plum);
+    font-family: var(--tp-font-body);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .tp-sort-select:focus {
+    outline: none;
+    border-color: var(--tp-plum);
+  }
+
+  /* ─── PROPERTY CARDS GRID (STRICTLY IDENTICAL CARD SIZES) ─── */
+  .results-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1.15rem;
-}
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.35rem;
+    align-items: stretch;
+  }
 
-.property-card {
+  .property-card {
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    background: transparent;
-    border: none;
-    box-shadow: none;
-}
-.property-card:hover {
-    transform: translateY(-5px);
-}
-.card-img-wrapper {
+    background-color: var(--tp-cream-light);
+    border-radius: 18px;
+    padding: 0.65rem 0.65rem 1rem 0.65rem;
+    width: 100%;
+    min-width: 0;
+    height: 312px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 20px rgba(43, 17, 41, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+  }
+
+  .property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(43, 17, 41, 0.12);
+  }
+
+  .card-img-wrapper {
     position: relative;
     width: 100%;
-    height: 210px;
-    border-radius: 18px;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    flex-shrink: 0;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-}
-.card-img {
+    background-color: var(--tp-plum-deep);
+  }
+
+  .card-img {
     height: 100%;
     width: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
-}
-.property-card:hover .card-img {
-    transform: scale(1.06);
-}
-.verified-tag {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: linear-gradient(135deg, #f97316, #ea580c);
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 0.72rem;
-    border-radius: 20px;
-    padding: 0.28rem 0.75rem;
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
-    display: inline-block;
-    border: none;
-    letter-spacing: 0.3px;
-    z-index: 5;
-}
+    display: block;
+    transition: transform 0.45s ease;
+  }
 
-.property-card.on-sale .card-img-wrapper {
-    border: 2.5px solid #2563eb !important;
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3) !important;
-}
-.blue-sale-ribbon {
+  .property-card:hover .card-img {
+    transform: scale(1.05);
+  }
+
+  /* Status Ribbons (Deep Plum for Sale, Spring Green for Rent) */
+  .tp-status-ribbon {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: linear-gradient(135deg, #1d4ed8, #2563eb);
-    color: #ffffff;
+    top: 10px;
+    right: 10px;
+    font-family: var(--tp-font-body);
     font-weight: 800;
     font-size: 0.7rem;
-    border-radius: 20px;
-    padding: 0.28rem 0.75rem;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-    letter-spacing: 0.4px;
+    border-radius: 50px;
+    padding: 0.3rem 0.78rem;
+    letter-spacing: 0.04em;
     z-index: 6;
     text-transform: uppercase;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
+    gap: 0.32rem;
+    box-shadow: 0 4px 12px rgba(15, 5, 14, 0.25);
+  }
 
-.card-body-upper {
-    padding: 1.15rem 1.35rem 0.75rem 1.35rem;
-    background: #ffffff;
-}
-.card-title {
-    font-family: var(--font-heading);
-    font-size: 1.28rem;
+  .tp-status-ribbon.is-rent {
+    background-color: var(--tp-spring);
+    color: var(--tp-plum-deep);
+  }
+
+  .tp-status-ribbon.is-sale {
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+  }
+
+  .vr-tour-tag {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+    padding: 0.28rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.72rem;
     font-weight: 800;
-    color: #1e1b18;
+    box-shadow: 0 4px 12px rgba(15, 5, 14, 0.3);
+  }
+
+  .card-info-box {
+    padding: 0.75rem 0.35rem 0 0.35rem;
+    text-align: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .card-title-text {
+    font-family: var(--tp-font-heading);
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    margin: 0 0 0.25rem 0;
     line-height: 1.25;
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+    width: 100%;
+    white-space: nowrap;
     overflow: hidden;
-}
+    text-overflow: ellipsis;
+    text-align: center;
+  }
 
-    @media (max-width: 1500px) {
-        .results-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-    @media (max-width: 1150px) {
-        .results-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 768px) {
-        .results-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 0.75rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            justify-content: center !important;
-            box-sizing: border-box !important;
-        }
-        .property-card {
-            width: 100% !important;
-            max-width: 100% !important;
-            border-radius: 14px !important;
-            box-sizing: border-box !important;
-            margin: 0 auto !important;
-        }
-        .card-img-wrapper {
-            width: 100% !important;
-            max-width: 100% !important;
-            height: 135px !important;
-            box-sizing: border-box !important;
-        }
-        .verified-tag {
-            top: 6px !important;
-            left: 6px !important;
-            padding: 0.18rem 0.5rem !important;
-            font-size: 0.62rem !important;
-        }
-        .blue-sale-ribbon {
-            top: 6px !important;
-            right: 6px !important;
-            padding: 0.18rem 0.5rem !important;
-            font-size: 0.6rem !important;
-        }
-        .card-title {
-            font-size: 0.92rem !important;
-            line-height: 1.2 !important;
-            -webkit-line-clamp: 1 !important;
-        }
-        .card-title-text {
-            font-size: 0.88rem !important;
-        }
-        .card-price-text {
-            font-size: 0.8rem !important;
-        }
-        .layout {
-            padding: 0.75rem 0.6rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
-        }
-        .mobile-filter-toggle-container {
-            display: block !important;
-            margin-bottom: 0.45rem !important;
-        }
-        #topFilterForm {
-            display: none;
-            margin-bottom: 0.45rem !important;
-        }
-        #topFilterForm.mobile-active {
-            display: block !important;
-            animation: slideDownFade 0.3s ease-out;
-        }
-    }
+  .card-price-text {
+    font-size: 0.92rem;
+    color: var(--tp-plum);
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    @keyframes slideDownFade {
-        from {
-            opacity: 0;
-            transform: translateY(-8px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+  .card-location-text {
+    font-size: 0.8rem;
+    color: var(--tp-plum-muted);
+    font-weight: 600;
+    text-align: center;
+    margin-top: 0.22rem;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  /* Empty State Box */
+  .tp-empty-state {
+    grid-column: 1 / -1;
+    background-color: var(--tp-cream-light);
+    border-radius: 18px;
+    text-align: center;
+    padding: 4rem 1.5rem;
+    color: var(--tp-plum-muted);
+    box-shadow: 0 6px 20px rgba(43, 17, 41, 0.05);
+  }
+
+  @media (max-width: 1500px) {
+    .results-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (max-width: 1150px) {
+    .results-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 768px) {
+    .results-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 0.75rem !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      justify-content: center !important;
+      box-sizing: border-box !important;
     }
+    .property-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 225px !important;
+      border-radius: 14px !important;
+      padding: 0.45rem 0.45rem 0.65rem 0.45rem !important;
+      box-sizing: border-box !important;
+      margin: 0 auto !important;
+    }
+    .card-img-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 130px !important;
+      min-height: 130px !important;
+      max-height: 130px !important;
+      border-radius: 10px !important;
+      box-sizing: border-box !important;
+    }
+    .tp-status-ribbon {
+      top: 6px !important;
+      right: 6px !important;
+      padding: 0.18rem 0.5rem !important;
+      font-size: 0.6rem !important;
+    }
+    .card-title-text {
+      font-size: 0.88rem !important;
+    }
+    .card-price-text {
+      font-size: 0.8rem !important;
+    }
+    .layout {
+      padding: 0.75rem 0.6rem 2.5rem 0.6rem !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      overflow-x: hidden !important;
+    }
+    .mobile-filter-toggle-container {
+      display: block !important;
+      margin-bottom: 0.55rem !important;
+    }
+    #topFilterForm {
+      display: none;
+      margin-bottom: 0.55rem !important;
+    }
+    #topFilterForm.mobile-active {
+      display: block !important;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -260,59 +393,33 @@ body {
 
     <!-- MOBILE FILTER TOGGLE BUTTON -->
     <div class="mobile-filter-toggle-container" style="display: none; width: 100%; margin-bottom: 0.45rem; text-align: center;">
-        <button type="button" id="mobile-filter-toggle-btn" onclick="toggleMobileSearchFilter()" style="width: 100%; max-width: 400px; padding: 0.65rem 1.15rem; background: #047857; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.92rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);">
-            Filter Properties <span id="filter-chevron" style="margin-left: 0.25rem;">▼</span>
+        <button type="button" id="mobile-filter-toggle-btn" onclick="toggleMobileSearchFilter()" style="width: 100%; max-width: 400px; padding: 0.7rem 1.15rem; background: var(--tp-plum); color: var(--tp-cream-light); border: none; border-radius: 12px; font-family: var(--tp-font-body); font-weight: 800; font-size: 0.92rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            Filter Properties <span id="filter-chevron" style="margin-left: 0.25rem; color: var(--tp-spring);">▼</span>
         </button>
     </div>
 
-    <!-- REPOSITIONED HORIZONTAL FILTER FORM WITH FULL BLUE TOP TOGGLE -->
-    <form id="topFilterForm" method="GET" action="{% url 'search' %}" class="filters" style="max-width: 1100px; width: 100%; margin: 0 auto 0.35rem auto; border: none; background: transparent; padding: 0; box-shadow: none;">
-        
-        <!-- TOP TOGGLE PILLS: "For sale" (Blue) & "For Rent" (Green) (CENTERED & REDUCED SIZE) -->
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; max-width: 290px; width: 100%; margin: 0 auto 0.45rem auto;">
-            <!-- 1. For sale (Blue) -->
-            <div style="flex: 1; min-width: 115px; background: linear-gradient(135deg, #1d4ed8, #2563eb); border: 1.5px solid #1e40af; padding: 0.22rem 0.65rem; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);">
-                <label for="for_sale_checkbox" style="font-weight: 700; font-size: 0.76rem; color: #ffffff !important; cursor: pointer; margin: 0;">
-                    For sale
-                </label>
-                <input type="checkbox" id="for_sale_checkbox" name="for_sale" value="on" {% if for_sale %}checked{% endif %} onchange="if(this.checked){ document.getElementById('for_rent_checkbox').checked = false; } this.form.submit();" style="width: 13px; height: 13px; accent-color: #2563eb; cursor: pointer; margin: 0; vertical-align: middle;">
-            </div>
-
-            <!-- 2. For Rent (Green) -->
-            <div style="flex: 1; min-width: 115px; background: linear-gradient(135deg, #047857, #10b981); border: 1.5px solid #065f46; padding: 0.22rem 0.65rem; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);">
-                <label for="for_rent_checkbox" style="font-weight: 700; font-size: 0.76rem; color: #ffffff !important; cursor: pointer; margin: 0;">
-                    For Rent
-                </label>
-                <input type="checkbox" id="for_rent_checkbox" name="for_rent" value="on" {% if for_rent %}checked{% endif %} onchange="if(this.checked){ document.getElementById('for_sale_checkbox').checked = false; } this.form.submit();" style="width: 13px; height: 13px; accent-color: #10b981; cursor: pointer; margin: 0; vertical-align: middle;">
-            </div>
-        </div>
-
-        <!-- 2. HORIZONTAL FILTER BAR CONTAINER -->
-        <div style="background: #fbf7f0; border: 2px solid rgba(10, 92, 54, 0.94); border-radius: 16px; padding: 0.85rem 1.1rem; box-shadow: 0 6px 20px rgba(10, 92, 54, 0.06); display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
-            <!-- Keyword / Address Input -->
-            <div style="flex: 1.5; min-width: 150px;">
-                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Keyword or Address..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
-            </div>
-
+    <!-- HORIZONTAL FILTER FORM (No Plum Background, No For Sale/Rent Checkboxes, No Keyword Input) -->
+    <form id="topFilterForm" method="GET" action="{% url 'search' %}" class="filters" style="max-width: 1080px; width: 100%; margin: 0 auto 0.5rem auto;">
+        <div class="tp-filter-bar-box">
             <!-- Cascading Location Controls (District -> Division -> Village) -->
-            <div style="flex: 1.2; min-width: 130px;">
+            <div style="flex: 1.2; min-width: 135px;">
                 <select name="district" id="search-district-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;">
                     <option value="">District</option>
                 </select>
             </div>
-            <div style="flex: 1.2; min-width: 130px;">
+            <div style="flex: 1.2; min-width: 135px;">
                 <select name="division" id="search-division-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;" disabled>
                     <option value="">Division</option>
                 </select>
             </div>
-            <div style="flex: 1.2; min-width: 130px;">
+            <div style="flex: 1.2; min-width: 135px;">
                 <select name="village" id="search-village-select" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;" disabled>
                     <option value="">Village</option>
                 </select>
             </div>
 
             <!-- Property Type Filter -->
-            <div style="flex: 1.2; min-width: 140px;">
+            <div style="flex: 1.2; min-width: 145px;">
                 <select name="type" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; cursor: pointer;">
                     <option value="" {% if not type %}selected{% endif %}>All Types</option>
                     {% for cat in property_categories %}
@@ -327,29 +434,29 @@ body {
             </div>
 
             <!-- Price Range Filter -->
-            <div style="flex: 1.5; min-width: 170px; display: flex; gap: 0.35rem; align-items: center;">
+            <div style="flex: 1.5; min-width: 180px; display: flex; gap: 0.35rem; align-items: center;">
                 <input type="number" name="min_price" value="{{ min_price|default:'' }}" placeholder="Min UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
-                <span style="color: var(--color-text-muted); font-size: 0.85rem;">-</span>
+                <span style="color: var(--tp-plum-muted); font-size: 0.85rem; font-weight: 700;">-</span>
                 <input type="number" name="max_price" value="{{ max_price|default:'' }}" placeholder="Max UGX" class="form-control" style="width: 100%; padding: 0.65rem;">
             </div>
 
             <!-- Filter Buttons -->
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.25rem; font-weight: 700; border-radius: 10px;">
+                <button type="submit" class="tp-filter-submit-btn">
                     Filter
                 </button>
-                {% if q or district or division or village or type or min_price or max_price or for_sale %}
-                <a href="{% url 'search' %}" class="btn btn-outline" style="padding: 0.65rem 0.85rem; text-decoration: none; border-radius: 10px;" title="Reset All Filters">Clear</a>
+                {% if district or division or village or type or min_price or max_price %}
+                <a href="{% url 'search' %}" class="tp-filter-clear-btn" title="Reset All Filters">Clear</a>
                 {% endif %}
             </div>
         </div>
     </form>
 
-    <!-- 3. CARDS GRID (5 CARDS PER ROW, IMMEDIATELY BELOW) -->
-    <main>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem; margin-top: 0.15rem;">
-            <p style="color: var(--color-text-muted); margin: 0;">Showing <strong style="color: var(--color-text-dark);">{{ total_count }}</strong> properties</p>
-            <select class="form-control" style="width: auto; padding: 0.45rem 0.75rem; border-radius: 8px;">
+    <!-- CARDS GRID (5 IDENTICAL-SIZE CARDS PER ROW) -->
+    <div>
+        <div class="tp-results-toolbar">
+            <p class="tp-results-count">Showing <strong>{{ total_count }}</strong> properties</p>
+            <select class="tp-sort-select">
                 <option>Sort by: Recommended</option>
                 <option>Price: Low to High</option>
                 <option>Price: High to Low</option>
@@ -358,7 +465,7 @@ body {
 
         <div class="results-grid">
             {% for property in properties %}
-            <a href="{{ property.get_absolute_url }}" class="property-card {% if for_sale or property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}on-sale{% endif %}">
+            <a href="{{ property.get_absolute_url }}" class="property-card">
                 <!-- Image Box with Rounded Corners -->
                 <div class="card-img-wrapper">
                     {% if property.hero_image %}
@@ -371,33 +478,33 @@ body {
                     <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80" alt="{{ property.title }} in {{ property.location }}" loading="lazy" class="card-img">
                     {% endif %}
                     
-                    {% if for_sale or property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}
-                    <!-- Blue For Sale Badge on Top Right Corner -->
-                    <div class="blue-sale-ribbon">
-                        <i class="fa-solid fa-tag"></i> For Sale
+                    {% if property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}
+                    <!-- Deep Plum For Sale Badge -->
+                    <div class="tp-status-ribbon is-sale">
+                        <i class="fa-solid fa-tag" style="color: var(--tp-spring);"></i> For Sale
                     </div>
                     {% else %}
-                    <!-- Green For Rent Badge on Top Right Corner -->
-                    <div class="blue-sale-ribbon" style="background: #047857 !important;">
+                    <!-- Spring Green For Rent Badge -->
+                    <div class="tp-status-ribbon is-rent">
                         <i class="fa-solid fa-key"></i> For Rent
                     </div>
                     {% endif %}
 
                     {% if property.panoramas.all %}
-                    <div class="vr-tour-tag" style="position: absolute; bottom: 12px; right: 12px; background: rgba(7, 94, 84, 0.92); color: #fff; padding: 0.28rem 0.75rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.25); border: 1px solid var(--color-gold); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
-                        <i class="fa-solid fa-vr-cardboard" style="color: var(--color-gold);"></i> 360°
+                    <div class="vr-tour-tag">
+                        <i class="fa-solid fa-vr-cardboard" style="color: var(--tp-spring);"></i> 360°
                     </div>
                     {% endif %}
                 </div>
 
                 <!-- Centered Title, Price & Location -->
-                <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
-                    <h4 class="card-title-text" style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
+                <div class="card-info-box">
+                    <h4 class="card-title-text">
                         {{ property.title }}
                     </h4>
-                    <div class="card-price-text" style="font-size: 0.92rem; color: #57534e; font-weight: 700; text-align: center;">
+                    <div class="card-price-text">
                         {% if property.price %}
-                            {% if for_sale or property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}
+                            {% if property.category == 'bungalow' or property.category == 'standalone' or 'sale' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower or 'house' in property.title|lower or 'villa' in property.title|lower or 'cottage' in property.title|lower or 'townhouse' in property.title|lower or property.price >= 50000000 %}
                             UGX {{ property.price|floatformat:0|intcomma }}
                             {% else %}
                             UGX {{ property.price|floatformat:0|intcomma }} / mo
@@ -407,20 +514,20 @@ body {
                         {% endif %}
                     </div>
                     <!-- Location below price -->
-                    <div class="card-location-text" style="font-size: 0.82rem; color: #78716c; font-weight: 600; text-align: center; margin-top: 0.2rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        <i class="fa-solid fa-location-dot" style="color: var(--color-gold); font-size: 0.78rem;"></i> {{ property.location|default:'Uganda' }}
+                    <div class="card-location-text">
+                        <i class="fa-solid fa-location-dot" style="color: var(--tp-spring); font-size: 0.78rem; margin-right: 0.2rem;"></i>{{ property.location|default:'Uganda' }}
                     </div>
                 </div>
             </a>
             {% empty %}
-            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 0; color: var(--color-text-muted);">
-                <i class="fa-solid fa-circle-question" style="font-size: 3rem; margin-bottom: 1rem; color: var(--color-gold);"></i>
-                <p style="font-size: 1.1rem; font-weight: 500;">No properties match your active search filters.</p>
-                <a href="{% url 'search' %}" class="btn btn-outline" style="margin-top: 1rem; display: inline-block;">Clear All Filters</a>
+            <div class="tp-empty-state">
+                <i class="fa-solid fa-house-circle-xmark" style="font-size: 2.75rem; margin-bottom: 1rem; color: var(--tp-plum); display: block;"></i>
+                <p style="font-size: 1.08rem; font-weight: 600; color: var(--tp-plum); margin: 0 0 1.25rem 0;">No properties match your active search filters.</p>
+                <a href="{% url 'search' %}" class="tp-filter-submit-btn" style="text-decoration: none; display: inline-block;">Clear All Filters</a>
             </div>
             {% endfor %}
         </div>
-    </main>
+    </div>
 </div>
 {% endblock %}
 

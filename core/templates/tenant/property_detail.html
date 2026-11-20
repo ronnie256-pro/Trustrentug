@@ -52,7 +52,6 @@
     .booking-card {
         background: #ffffff !important;
         border: 1.5px solid rgba(203, 163, 88, 0.25) !important;
-        border-top: 5px solid var(--color-emerald-darkest) !important;
         box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07) !important;
         border-radius: 20px !important;
     }
@@ -186,7 +185,7 @@
     .gallery-main-container {
         position: relative;
         width: 100%;
-        height: 540px;
+        height: 485px;
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
@@ -623,7 +622,6 @@
         padding: 2rem;
         border-radius: 18px !important;
         border: 1.5px solid rgba(10, 92, 54, 0.25) !important;
-        border-top: 4px solid var(--color-emerald-darkest) !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
         position: relative !important;
         width: 100%;
@@ -848,41 +846,39 @@
 
         <!-- Split Image Section Container -->
         <div class="property-gallery-split">
-            <!-- Left Container: Display Section (Shows Hero Image on Page Load) -->
-            <div class="gallery-main-container" style="position: relative; cursor: pointer;">
-                <div class="hero-zoom-badge" onclick="openLightboxModal(0)" title="Click to view full size">
-                    <i class="fa-solid fa-expand"></i> Zoom Fullsize
+            <!-- Left Container: Display Section (Shows Hero Image on Page Load, Title Below Image) -->
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                <div class="gallery-main-container" onclick="openLightboxModal(0)" style="position: relative; cursor: zoom-in;" title="Click to view full size">
+                    {% if is_office or property.is_office %}
+                    <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #047857; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center;">
+                        Office
+                    </span>
+                    {% elif property.listing_type == 'sale' or property.price >= 50000000 or 'sale' in property.title|lower or 'estate' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower %}
+                    <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #2563eb; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <i class="fa-solid fa-tags"></i> For Sale
+                    </span>
+                    {% else %}
+                    <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #059669; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <i class="fa-solid fa-key"></i> For Rent
+                    </span>
+                    {% endif %}
+
+                    {% if property.hero_image %}
+                    <img id="mainGalleryImg" src="{{ property.hero_image.url }}" alt="{{ property.title }} - Featured View"
+                        class="gallery-main-img" style="cursor: zoom-in;" title="Click to view full size">
+                    {% else %}
+                    <img id="mainGalleryImg"
+                        src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
+                        alt="{{ property.title }} - Featured View" class="gallery-main-img" style="cursor: zoom-in;" title="Click to view full size">
+                    {% endif %}
                 </div>
 
-                {% if is_office or property.is_office %}
-                <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #047857; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(4, 120, 87, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center;">
-                    Office
-                </span>
-                {% elif property.listing_type == 'sale' or property.price >= 50000000 or 'sale' in property.title|lower or 'estate' in property.title|lower or 'land' in property.title|lower or 'plot' in property.title|lower %}
-                <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #2563eb; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 0.35rem;">
-                    <i class="fa-solid fa-tags"></i> For Sale
-                </span>
-                {% else %}
-                <span style="position: absolute; top: 1.25rem; right: 1.25rem; background: #059669; color: #ffffff; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.45rem 1.15rem; border-radius: 30px; z-index: 15; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4); border: 1.5px solid rgba(255,255,255,0.4); display: inline-flex; align-items: center; gap: 0.35rem;">
-                    <i class="fa-solid fa-key"></i> For Rent
-                </span>
-                {% endif %}
-
-                {% if property.hero_image %}
-                <img id="mainGalleryImg" src="{{ property.hero_image.url }}" alt="{{ property.title }} - Featured View"
-                    class="gallery-main-img" onclick="openLightboxModal(0)" style="cursor: zoom-in;" title="Click to view full size">
-                {% else %}
-                <img id="mainGalleryImg"
-                    src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80"
-                    alt="{{ property.title }} - Featured View" class="gallery-main-img" onclick="openLightboxModal(0)" style="cursor: zoom-in;" title="Click to view full size">
-                {% endif %}
-
-                <!-- Title & Location Overlay Banner at Very Bottom of Hero Image Viewer -->
-                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem 1.5rem; background: linear-gradient(to top, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.45) 70%, transparent 100%); color: #ffffff; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                    <h1 style="margin: 0; font-size: 1.75rem; font-family: 'Playfair Display', Georgia, serif; font-weight: 800; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                <!-- Property Title & Location Below the Main Image -->
+                <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding: 0.2rem 0.25rem 0 0.25rem;">
+                    <h1 style="margin: 0; font-size: 1.85rem; font-family: 'Playfair Display', Georgia, serif; font-weight: 800; color: #1e1b18; line-height: 1.2;">
                         {{ property.title }}
                     </h1>
-                    <p style="margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--color-gold-light); display: flex; align-items: center; gap: 0.4rem; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+                    <p style="margin: 0; font-size: 1.02rem; font-weight: 600; color: #57534e; display: flex; align-items: center; gap: 0.4rem;">
                         <i class="fa-solid fa-location-dot" style="color: var(--color-gold);"></i> {{ property.location }}
                     </p>
                 </div>

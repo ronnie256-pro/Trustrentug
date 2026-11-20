@@ -2456,7 +2456,6 @@ def disputes_view(request):
 
 
 def search_view(request):
-    q = request.GET.get('q', '').strip()
     district_param = request.GET.get('district', '').strip()
     division_param = request.GET.get('division', '').strip()
     village_param = request.GET.get('village', '').strip()
@@ -2464,9 +2463,6 @@ def search_view(request):
     min_price = request.GET.get('min_price', '').strip()
     max_price = request.GET.get('max_price', '').strip()
     selected_amenities = []
-
-    for_sale = request.GET.get('for_sale') == 'on' or p_type == 'sale'
-    for_rent = request.GET.get('for_rent') == 'on' or p_type == 'rent'
 
     try:
         office_categories = ['private_office', 'shared_office', 'office_building']
@@ -2488,9 +2484,6 @@ def search_view(request):
             properties = properties.filter(
                 Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
             )
-
-        if q:
-            properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
             
         if p_type and p_type.lower() != 'all types':
             p_lower = p_type.lower()
@@ -2524,24 +2517,6 @@ def search_view(request):
             properties = properties.filter(Q(amenities__name__icontains='security') | Q(amenities__name__icontains='guard') | Q(amenities__name__icontains='cctv'))
             selected_amenities.append('security')
             
-        sale_query = (
-            Q(category__in=['bungalow', 'standalone']) | 
-            Q(title__icontains='sale') | 
-            Q(title__icontains='land') | 
-            Q(title__icontains='plot') |
-            Q(title__icontains='house') |
-            Q(title__icontains='villa') |
-            Q(title__icontains='cottage') |
-            Q(title__icontains='townhouse') |
-            Q(description__icontains='sale') |
-            Q(price__gte=50000000)
-        )
-
-        if for_sale and not for_rent:
-            properties = properties.filter(sale_query)
-        elif for_rent and not for_sale:
-            properties = properties.exclude(sale_query)
-            
         properties = properties.distinct().order_by('-created_at')
         total_count = properties.count()
     except Exception:
@@ -2561,15 +2536,12 @@ def search_view(request):
     return render(request, 'tenant/search.html', {
         'properties': properties,
         'total_count': total_count,
-        'q': q,
         'district': district_param,
         'division': division_param,
         'village': village_param,
         'type': p_type,
         'min_price': min_price,
         'max_price': max_price,
-        'for_sale': for_sale,
-        'for_rent': for_rent,
         'selected_amenities': selected_amenities,
         'active_popup': active_popup,
         'property_categories': property_categories
@@ -2585,7 +2557,6 @@ def offices_view(request):
     district_param = request.GET.get('district', '').strip()
     division_param = request.GET.get('division', '').strip()
     village_param = request.GET.get('village', '').strip()
-    q = request.GET.get('q', '').strip()
     min_price = request.GET.get('min_price', '').strip()
     max_price = request.GET.get('max_price', '').strip()
 
@@ -2628,9 +2599,6 @@ def offices_view(request):
                 Q(location__icontains=district_param) | Q(title__icontains=district_param) | Q(description__icontains=district_param)
             )
 
-        if q:
-            properties = properties.filter(Q(location__icontains=q) | Q(title__icontains=q))
-
         if min_price and min_price.isdigit():
             properties = properties.filter(price__gte=int(min_price))
             
@@ -2652,7 +2620,6 @@ def offices_view(request):
         'properties': properties,
         'total_count': total_count,
         'office_type': office_type,
-        'q': q,
         'district': district_param,
         'division': division_param,
         'village': village_param,

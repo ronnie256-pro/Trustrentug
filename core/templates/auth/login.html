@@ -4,211 +4,622 @@
 {% block meta_description %}Sign in to your TRUST Protocol account to manage escrow property listings, viewings, payments, and agreement verifications.{% endblock %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
 <style>
-.auth-split-wrapper {
-    min-height: calc(100vh - 120px);
+  :root {
+    --tp-cream: #FBF5E6;
+    --tp-cream-light: #FFFDF8;
+    --tp-cream-warm: #F2E8D5;
+    --tp-plum: #2B1129;
+    --tp-plum-deep: #1E0B1D;
+    --tp-plum-mid: #3D1A3A;
+    --tp-plum-muted: #5A4257;
+    --tp-spring: #00D67F;
+    --tp-spring-panel: #00B86B;
+    --tp-spring-hover: #009E5B;
+    --tp-font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --tp-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Fullscreen Override (Hide site header & footer, zero top gap) */
+  header.navbar,
+  .navbar,
+  footer {
+    display: none !important;
+  }
+
+  html body main {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    min-height: 100vh !important;
+  }
+
+  body {
+    background-color: var(--tp-cream-light) !important;
+    color: var(--tp-plum) !important;
+    font-family: var(--tp-font-body) !important;
+    margin: 0 !important;
+  }
+
+  /* ─── 2-COLUMN FULL-SCREEN SPLIT LAYOUT ─── */
+  .tp-auth-screen {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  /* ─── LEFT SHOWCASE PANEL (Spring Green + Floating Shapes + Synced Illustration & Text) ─── */
+  .tp-auth-left {
+    position: relative;
+    background-color: var(--tp-spring-panel);
+    color: var(--tp-cream-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2.75rem;
+    overflow: hidden;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* Floating subtle rounded-square shapes in background */
+  .tp-bg-shape {
+    position: absolute;
+    background: rgba(255, 253, 248, 0.11);
+    border-radius: 22px;
+    pointer-events: none;
+  }
+
+  .tp-bg-shape.s1 {
+    width: 130px;
+    height: 130px;
+    top: 7%;
+    left: -35px;
+    transform: rotate(-14deg);
+  }
+
+  .tp-bg-shape.s2 {
+    width: 85px;
+    height: 85px;
+    top: 22%;
+    right: 8%;
+    transform: rotate(16deg);
+  }
+
+  .tp-bg-shape.s3 {
+    width: 145px;
+    height: 145px;
+    bottom: 12%;
+    left: 6%;
+    transform: rotate(-12deg);
+  }
+
+  .tp-bg-shape.s4 {
+    width: 70px;
+    height: 70px;
+    bottom: 26%;
+    left: 24%;
+    transform: rotate(18deg);
+  }
+
+  .tp-bg-shape.s5 {
+    width: 120px;
+    height: 120px;
+    bottom: -25px;
+    right: -20px;
+    transform: rotate(-15deg);
+  }
+
+  .tp-auth-slide-box {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 390px;
+  }
+
+  .tp-auth-slide-item {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tp-auth-slide-item.is-active {
+    display: flex;
+  }
+
+  .tp-auth-illustration-wrap {
+    width: 100%;
+    max-width: 300px;
+    height: 245px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4rem 1.5rem;
-    background: url('/static/images/auth_bg.jpg') center/cover no-repeat;
-}
+    margin-bottom: 1.75rem;
+  }
 
-footer {
-    margin-top: 0 !important;
-}
+  .tp-auth-slide-item h2 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #ffffff !important;
+    margin: 0 0 0.65rem 0;
+  }
 
-.auth-single-card {
-    max-width: 540px;
-    width: 100%;
-    background: #ffffff;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
-    border: 1px solid #e2e8f0;
-    padding: 3.5rem 3rem;
-}
+  .tp-auth-slide-item p {
+    font-size: 0.94rem;
+    line-height: 1.6;
+    color: rgba(255, 253, 248, 0.94);
+    margin: 0;
+    font-weight: 500;
+    min-height: 4.6rem;
+  }
 
-.auth-form-title {
-    text-align: center;
-    font-family: var(--font-heading);
-    font-size: 2.35rem;
-    font-weight: 800;
-    color: #047857;
-    margin-bottom: 2rem;
-}
-
-.form-group-modern {
-    margin-bottom: 1.5rem;
+  .tp-auth-dots {
     position: relative;
-}
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    margin-top: 1.4rem;
+  }
 
-.input-with-icon-modern {
+  .tp-auth-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50px;
+    background: rgba(255, 253, 248, 0.45);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: width 0.25s ease, background-color 0.25s ease;
+  }
+
+  .tp-auth-dot.is-active {
+    width: 24px;
+    background: #ffffff;
+  }
+
+  .tp-return-home-btn {
+    position: relative;
+    z-index: 2;
+    margin-top: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.68rem 1.65rem;
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light) !important;
+    font-family: var(--tp-font-body);
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .tp-return-home-btn:hover {
+    background-color: var(--tp-cream-light);
+    color: var(--tp-plum) !important;
+  }
+
+  /* ─── RIGHT FORM PANEL (Clean Open Canvas) ─── */
+  .tp-auth-right {
+    background-color: var(--tp-cream-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .tp-auth-form-container {
+    width: 100%;
+    max-width: 410px;
+  }
+
+  .tp-auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.35rem;
+    text-decoration: none;
+  }
+
+  .tp-auth-logo img {
+    height: 92px;
+    width: auto;
+    max-width: 310px;
+    object-fit: contain;
+  }
+
+  .tp-auth-heading {
+    text-align: center;
+    font-family: var(--tp-font-heading);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--tp-plum) !important;
+    margin: 0 0 0.4rem 0;
+  }
+
+  .tp-auth-subheading {
+    text-align: center;
+    font-size: 0.94rem;
+    color: var(--tp-plum-muted);
+    margin: 0 0 1.85rem 0;
+    font-weight: 500;
+  }
+
+  .tp-auth-field {
+    margin-bottom: 1.2rem;
+  }
+
+  .tp-auth-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.45rem;
+  }
+
+  .tp-auth-label {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+  }
+
+  .tp-auth-reset-link {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--tp-spring-panel);
+    text-decoration: none;
+  }
+
+  .tp-auth-reset-link:hover {
+    color: var(--tp-plum);
+    text-decoration: underline;
+  }
+
+  .tp-auth-input-wrap {
     position: relative;
     display: flex;
     align-items: center;
-}
+  }
 
-.input-with-icon-modern i {
-    position: absolute;
-    left: 1.25rem;
-    color: #94a3b8;
-    font-size: 1.25rem;
-    transition: color 0.2s ease;
-}
-
-.input-with-icon-modern input:focus + i,
-.input-with-icon-modern select:focus + i {
-    color: #047857;
-}
-
-.form-control-modern {
+  .tp-auth-input {
     width: 100%;
-    padding: 1.1rem 1.5rem 1.1rem 3.25rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
-    font-size: 1.08rem;
-    color: #1e293b;
-    background: #f8fafc;
-    transition: all 0.25s ease;
+    padding: 0.78rem 1rem;
+    background-color: #ffffff;
+    border: 1.5px solid #d6d3c9;
+    border-radius: 8px;
+    font-family: var(--tp-font-body);
+    font-size: 0.94rem;
+    font-weight: 500;
+    color: var(--tp-plum);
     box-sizing: border-box;
-}
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
 
-.form-control-modern:focus {
+  .tp-auth-input::placeholder {
+    color: #9ca3af;
+  }
+
+  .tp-auth-input:focus {
     outline: none;
-    border-color: #047857;
-    background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.18);
-}
+    border-color: var(--tp-spring-panel);
+    box-shadow: 0 0 0 3px rgba(0, 184, 107, 0.16);
+  }
 
-.btn-green-submit {
-    width: 100%;
-    background: #047857;
-    color: #ffffff;
-    font-weight: 800;
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
-    padding: 1.15rem 2rem;
+  .tp-eye-btn {
+    position: absolute;
+    right: 0.85rem;
+    background: none;
     border: none;
-    border-radius: 12px;
+    color: #9ca3af;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    transition: all 0.25s ease;
-    margin-top: 1.25rem;
-    box-shadow: 0 8px 22px rgba(4, 120, 87, 0.28);
-}
+    font-size: 0.98rem;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.btn-green-submit:hover {
-    background: #065f46;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(4, 120, 87, 0.38);
-}
+  .tp-eye-btn:hover {
+    color: var(--tp-plum);
+  }
 
-.auth-form-footer {
+  .tp-auth-submit {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    background-color: var(--tp-spring-panel);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--tp-font-body);
+    font-size: 0.96rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 0.4rem;
+    transition: background-color 0.15s ease;
+  }
+
+  .tp-auth-submit:hover {
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+  }
+
+  .tp-auth-divider {
+    height: 1px;
+    background-color: var(--tp-cream-warm);
+    margin: 1.75rem 0 1.25rem 0;
+    width: 100%;
+  }
+
+  .tp-auth-bottom-text {
     text-align: center;
-    margin-top: 2rem;
-    font-size: 1rem;
-    color: #64748b;
-}
+    font-size: 0.9rem;
+    color: var(--tp-plum-muted);
+    font-weight: 500;
+    margin: 0;
+  }
 
-.auth-form-footer a {
-    color: #64748b;
+  .tp-auth-bottom-text a {
+    color: var(--tp-spring-panel);
+    font-weight: 700;
     text-decoration: none;
-    margin: 0 0.5rem;
-    font-weight: 600;
-}
+    margin-left: 0.25rem;
+  }
 
-.auth-form-footer a:hover {
-    color: #047857;
+  .tp-auth-bottom-text a:hover {
+    color: var(--tp-plum);
     text-decoration: underline;
-}
+  }
 
-@media (max-width: 768px) {
-    .auth-split-wrapper {
-        padding: 2rem 1rem;
+  @media (max-width: 900px) {
+    .tp-auth-screen {
+      grid-template-columns: 1fr;
     }
-    .auth-single-card {
-        padding: 2.25rem 1.5rem;
-        border-radius: 18px;
+    .tp-auth-left {
+      display: none;
     }
-    .auth-form-title {
-        font-size: 1.85rem;
-        margin-bottom: 1.5rem;
+    .tp-auth-right {
+      min-height: calc(100vh - 75px);
+      padding: 2.5rem 1.5rem;
     }
-    .form-control-modern {
-        padding: 0.85rem 1rem 0.85rem 2.85rem;
-        font-size: 0.98rem;
-        border-radius: 10px;
-    }
-    .input-with-icon-modern i {
-        left: 1rem;
-        font-size: 1.1rem;
-    }
-    .btn-green-submit {
-        padding: 0.95rem 1.25rem;
-        font-size: 1.05rem;
-        border-radius: 10px;
-    }
-}
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="auth-split-wrapper">
-    <div class="auth-single-card">
-        
-        <div style="text-align: center; margin-bottom: 1.25rem;">
-            {% if site_settings.site_logo %}
-                <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 64px; width: auto; object-fit: contain;">
-            {% else %}
-                <div style="font-size: 2.4rem; font-weight: 800; font-family: var(--font-heading); color: #047857; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-shield-halved"></i> TRUST
-                </div>
-            {% endif %}
+<div class="tp-auth-screen">
+
+  <!-- ─── LEFT PANEL: Synchronized Illustrations & Story Slides ─── -->
+  <div class="tp-auth-left">
+    <div class="tp-bg-shape s1"></div>
+    <div class="tp-bg-shape s2"></div>
+    <div class="tp-bg-shape s3"></div>
+    <div class="tp-bg-shape s4"></div>
+    <div class="tp-bg-shape s5"></div>
+
+    <!-- Synchronized Image + Text Slides -->
+    <div class="tp-auth-slide-box" id="tpAuthSlides">
+
+      <!-- Slide 1: Verified Homes & Landlords -->
+      <div class="tp-auth-slide-item is-active" data-idx="0">
+        <div class="tp-auth-illustration-wrap">
+          <svg viewBox="0 0 360 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <path d="M72 145C52 92 95 35 162 32C229 29 298 58 304 124C310 190 264 238 190 240C116 242 92 198 72 145Z" fill="#FFFDF8" fill-opacity="0.88"/>
+            <rect x="135" y="24" width="116" height="198" rx="16" fill="#FFFFFF" stroke="#2B1129" stroke-width="2.5"/>
+            <circle cx="152" cy="40" r="3" fill="#2B1129"/>
+            <line x1="224" y1="38" x2="236" y2="38" stroke="#2B1129" stroke-width="2" stroke-linecap="round"/>
+            <line x1="224" y1="43" x2="236" y2="43" stroke="#2B1129" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="193" cy="82" r="26" fill="#F2E8D5"/>
+            <path d="M179 85L193 72L207 85V98H179V85Z" fill="#2B1129"/>
+            <path d="M189 98V88H197V98" fill="#00D67F"/>
+            <circle cx="168" cy="128" r="9" fill="#00D67F"/>
+            <circle cx="193" cy="128" r="9" fill="#2B1129"/>
+            <circle cx="218" cy="128" r="9" fill="#00D67F"/>
+            <rect x="151" y="150" width="84" height="24" rx="5" fill="#FBF5E6" stroke="#E2D6C1" stroke-width="1.5"/>
+            <line x1="158" y1="159" x2="215" y2="159" stroke="#2B1129" stroke-width="2" stroke-linecap="round"/>
+            <line x1="158" y1="166" x2="196" y2="166" stroke="#5A4257" stroke-width="2" stroke-linecap="round"/>
+            <rect x="151" y="182" width="84" height="24" rx="5" fill="#FBF5E6" stroke="#E2D6C1" stroke-width="1.5"/>
+            <line x1="158" y1="191" x2="220" y2="191" stroke="#2B1129" stroke-width="2" stroke-linecap="round"/>
+            <line x1="158" y1="198" x2="188" y2="198" stroke="#5A4257" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="110" cy="84" r="14" fill="#5A4257"/>
+            <path d="M98 80C98 71 122 71 122 80" fill="#2B1129"/>
+            <path d="M92 104C92 100 96 98 102 98H118C124 98 128 100 128 104L131 150H89L92 104Z" fill="#3D1A3A"/>
+            <path d="M92 150H128L124 228H112L109 172L104 228H92V150Z" fill="#1E0B1D"/>
+            <rect x="88" y="228" width="16" height="6" rx="3" fill="#00D67F"/>
+            <rect x="112" y="228" width="16" height="6" rx="3" fill="#00D67F"/>
+            <path d="M266 216C266 195 282 176 288 172C292 184 282 204 266 216Z" fill="#2B1129"/>
+            <path d="M264 216C252 200 245 184 248 178C258 182 264 200 264 216Z" fill="#3D1A3A"/>
+            <polygon points="256,216 276,216 273,234 259,234" fill="#2B1129"/>
+            <line x1="64" y1="234" x2="296" y2="234" stroke="#1E0B1D" stroke-width="2" stroke-linecap="round" stroke-opacity="0.35"/>
+          </svg>
         </div>
+        <h2>Verified Homes &amp; Landlords</h2>
+        <p>Sign in to your account to track property searches, verified landlord inspections, and tenancy agreements.</p>
+      </div>
 
-        <h1 class="auth-form-title">Sign In</h1>
+      <!-- Slide 2: Protected Transactions (Shield & Verified Contract Illustration) -->
+      <div class="tp-auth-slide-item" data-idx="1">
+        <div class="tp-auth-illustration-wrap">
+          <svg viewBox="0 0 360 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <path d="M80 140C65 85 110 35 180 35C250 35 300 80 292 145C284 210 235 242 175 242C115 242 95 195 80 140Z" fill="#FFFDF8" fill-opacity="0.88"/>
+            <!-- Certificate / Contract Sheet -->
+            <rect x="96" y="42" width="138" height="176" rx="14" fill="#FFFFFF" stroke="#2B1129" stroke-width="2.5"/>
+            <rect x="114" y="64" width="64" height="10" rx="5" fill="#2B1129"/>
+            <line x1="114" y1="90" x2="212" y2="90" stroke="#5A4257" stroke-width="3" stroke-linecap="round"/>
+            <line x1="114" y1="106" x2="200" y2="106" stroke="#5A4257" stroke-width="3" stroke-linecap="round"/>
+            <line x1="114" y1="122" x2="184" y2="122" stroke="#5A4257" stroke-width="3" stroke-linecap="round"/>
+            <rect x="114" y="144" width="80" height="26" rx="6" fill="#FBF5E6" stroke="#E2D6C1" stroke-width="1.5"/>
+            <path d="M124 157L131 163L145 149" stroke="#00B86B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="154" y1="157" x2="182" y2="157" stroke="#2B1129" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Large Verification Shield Overlapping Right -->
+            <path d="M234 94L282 112V156C282 190 261 216 234 226C207 216 186 190 186 156V112L234 94Z" fill="#2B1129" stroke="#FFFDF8" stroke-width="3"/>
+            <circle cx="234" cy="158" r="24" fill="#00D67F"/>
+            <path d="M223 158L231 166L247 150" stroke="#1E0B1D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="64" y1="234" x2="296" y2="234" stroke="#1E0B1D" stroke-width="2" stroke-linecap="round" stroke-opacity="0.35"/>
+          </svg>
+        </div>
+        <h2>Protected Transactions</h2>
+        <p>Every property recommended by TRUST Protocol is inspected and documented before you commit your money.</p>
+      </div>
 
-        <form action="/login/" method="POST">
-            {% csrf_token %}
-
-            <div class="form-group-modern">
-                <div class="input-with-icon-modern">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" id="username" name="username" class="form-control-modern" placeholder="Username" required autocomplete="username">
-                </div>
-            </div>
-
-            <div class="form-group-modern">
-                <div class="input-with-icon-modern">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="password" name="password" class="form-control-modern" placeholder="Password" required autocomplete="current-password">
-                </div>
-            </div>
-
-            <div style="display: flex; justify-content: flex-end; margin: -0.25rem 0 1.25rem 0; font-size: 0.95rem;">
-                <a href="/reset-password/" style="color: #047857; text-decoration: none; font-weight: 700;">Forgot Password?</a>
-            </div>
-
-            <div style="margin: 1.25rem 0; display: flex; justify-content: center; overflow: hidden;">
-                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
-            </div>
-
-            <button type="submit" class="btn-green-submit">
-                Log In
-            </button>
-
-            <div style="text-align: center; margin-top: 1.25rem; font-size: 1.05rem; font-weight: 600; color: #475569;">
-                Do not have account, <a href="/register/" style="color: #047857; text-decoration: none; font-weight: 800;">SIGN UP</a>
-            </div>
-
-            <div class="auth-form-footer">
-                <a href="/terms/">Terms & Conditions</a> • <a href="/privacy/">Privacy Policy</a>
-            </div>
-        </form>
+      <!-- Slide 3: Built For Tenants & Owners (Verified Apartment Building & Location Pin Illustration) -->
+      <div class="tp-auth-slide-item" data-idx="2">
+        <div class="tp-auth-illustration-wrap">
+          <svg viewBox="0 0 360 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <path d="M74 148C58 92 104 38 176 36C248 34 302 74 298 142C294 210 242 242 178 242C114 242 90 204 74 148Z" fill="#FFFDF8" fill-opacity="0.88"/>
+            <!-- Modern Verified Apartment Building -->
+            <rect x="112" y="64" width="112" height="170" rx="8" fill="#FFFFFF" stroke="#2B1129" stroke-width="2.5"/>
+            <path d="M104 66L168 32L232 66H104Z" fill="#2B1129"/>
+            <!-- Windows Grid -->
+            <rect x="128" y="84" width="22" height="24" rx="4" fill="#F2E8D5" stroke="#2B1129" stroke-width="2"/>
+            <rect x="158" y="84" width="22" height="24" rx="4" fill="#00D67F" stroke="#2B1129" stroke-width="2"/>
+            <rect x="188" y="84" width="22" height="24" rx="4" fill="#F2E8D5" stroke="#2B1129" stroke-width="2"/>
+            <rect x="128" y="122" width="22" height="24" rx="4" fill="#00D67F" stroke="#2B1129" stroke-width="2"/>
+            <rect x="158" y="122" width="22" height="24" rx="4" fill="#F2E8D5" stroke="#2B1129" stroke-width="2"/>
+            <rect x="188" y="122" width="22" height="24" rx="4" fill="#00D67F" stroke="#2B1129" stroke-width="2"/>
+            <!-- Entrance Door -->
+            <rect x="152" y="176" width="32" height="58" rx="4" fill="#2B1129"/>
+            <circle cx="176" cy="205" r="2.5" fill="#00D67F"/>
+            <!-- Floating Location Pin Badge -->
+            <path d="M262 76C244 76 230 90 230 108C230 132 262 162 262 162C262 162 294 132 294 108C294 90 280 76 262 76Z" fill="#2B1129" stroke="#FFFDF8" stroke-width="2.5"/>
+            <circle cx="262" cy="108" r="13" fill="#00D67F"/>
+            <line x1="64" y1="234" x2="296" y2="234" stroke="#1E0B1D" stroke-width="2" stroke-linecap="round" stroke-opacity="0.35"/>
+          </svg>
+        </div>
+        <h2>Built For Tenants &amp; Owners</h2>
+        <p>Tell us your budget and preferred location or manage your verified property listings in one place.</p>
+      </div>
 
     </div>
+
+    <!-- 3-Dot Indicator -->
+    <div class="tp-auth-dots" id="tpAuthDots">
+      <button type="button" class="tp-auth-dot is-active" data-idx="0" aria-label="Slide 1"></button>
+      <button type="button" class="tp-auth-dot" data-idx="1" aria-label="Slide 2"></button>
+      <button type="button" class="tp-auth-dot" data-idx="2" aria-label="Slide 3"></button>
+    </div>
+
+    <!-- Return Home Button -->
+    <a href="/" class="tp-return-home-btn">Return Home</a>
+  </div>
+
+  <!-- ─── RIGHT PANEL: Clean Sign In Form ─── -->
+  <div class="tp-auth-right">
+    <div class="tp-auth-form-container">
+
+      <!-- Larger Official Logo (Clicking returns to Homepage) -->
+      <a href="/" class="tp-auth-logo" title="Back to TRUST Protocol Home">
+        {% if site_settings and site_settings.pdf_logo %}
+          <img src="{{ site_settings.pdf_logo.url }}" alt="{{ site_settings.site_name|default:'TRUST Protocol' }}">
+        {% elif site_settings and site_settings.site_logo %}
+          <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name|default:'TRUST Protocol' }}">
+        {% else %}
+          <span style="font-family: var(--tp-font-heading); font-size: 2rem; font-weight: 700; color: var(--tp-plum);">TRUST PROTOCOL</span>
+        {% endif %}
+      </a>
+
+      <h1 class="tp-auth-heading">Sign in</h1>
+      <p class="tp-auth-subheading">Enter your credentials to access your account</p>
+
+      <form action="/login/" method="POST">
+        {% csrf_token %}
+
+        <div class="tp-auth-field">
+          <div class="tp-auth-label-row">
+            <label class="tp-auth-label" for="username">Username</label>
+          </div>
+          <div class="tp-auth-input-wrap">
+            <input type="text" id="username" name="username" class="tp-auth-input" placeholder="Enter your username" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="tp-auth-field">
+          <div class="tp-auth-label-row">
+            <label class="tp-auth-label" for="password">Password</label>
+            <a href="/reset-password/" class="tp-auth-reset-link">Reset password</a>
+          </div>
+          <div class="tp-auth-input-wrap">
+            <input type="password" id="password" name="password" class="tp-auth-input" placeholder="Enter your password" required autocomplete="current-password" style="padding-right: 2.6rem;">
+            <button type="button" class="tp-eye-btn" onclick="toggleAuthPassword('password', this)" aria-label="Toggle password visibility">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        {% if recaptcha_site_key %}
+        <div style="margin: 1rem 0; display: flex; justify-content: center; overflow: hidden;">
+          <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+          <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
+        </div>
+        {% endif %}
+
+        <button type="submit" class="tp-auth-submit">
+          Sign in
+        </button>
+
+        <div class="tp-auth-divider"></div>
+
+        <p class="tp-auth-bottom-text">
+          Don't have an account? <a href="/register/">Register</a>
+        </p>
+      </form>
+
+    </div>
+  </div>
+
 </div>
+
+<script>
+  function toggleAuthPassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      if (icon) {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      }
+    } else {
+      input.type = 'password';
+      if (icon) {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+  }
+
+  (function initAuthLeftSlider() {
+    const slides = document.querySelectorAll('#tpAuthSlides .tp-auth-slide-item');
+    const dots = document.querySelectorAll('#tpAuthDots .tp-auth-dot');
+    if (slides.length <= 1) return;
+    let current = 0;
+
+    function showSlide(idx) {
+      current = idx % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === current));
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === current));
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', function () {
+        showSlide(parseInt(this.getAttribute('data-idx') || '0', 10));
+      });
+    });
+
+    setInterval(() => {
+      showSlide(current + 1);
+    }, 4500);
+  })();
+</script>
 {% endblock %}

@@ -189,10 +189,10 @@ body {
             <a href="{% url 'offices' %}" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'all' or not office_type %}background: var(--color-emerald-darkest); color: white; border: 1.5px solid var(--color-emerald-darkest);{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
                 All Offices
             </a>
-            <a href="{% url 'offices' %}?office_type=private{% if q %}&q={{ q }}{% endif %}" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'private' %}background: #1d4ed8; color: white; border: 1.5px solid #1d4ed8;{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
+            <a href="{% url 'offices' %}?office_type=private" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'private' %}background: #1d4ed8; color: white; border: 1.5px solid #1d4ed8;{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
                 Private Offices
             </a>
-            <a href="{% url 'offices' %}?office_type=shared{% if q %}&q={{ q }}{% endif %}" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'shared' %}background: #047857; color: white; border: 1.5px solid #047857;{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
+            <a href="{% url 'offices' %}?office_type=shared" class="btn btn-sm" style="border-radius: 30px; padding: 0.45rem 1.2rem; font-weight: 800; font-size: 0.85rem; text-decoration: none; transition: all 0.2s ease; {% if office_type == 'shared' %}background: #047857; color: white; border: 1.5px solid #047857;{% else %}background: #f4eee2; color: #334155; border: 1.5px solid rgba(203, 163, 88, 0.4);{% endif %}">
                 Shared Offices
             </a>
         </div>
@@ -200,10 +200,6 @@ body {
         <!-- Filter Input Bar -->
         <div class="filters" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between;">
             <input type="hidden" name="office_type" value="{{ office_type|default:'all' }}">
-            
-            <div style="flex: 1.5; min-width: 150px;">
-                <input type="text" name="q" value="{{ q|default:'' }}" placeholder="Keyword or Building..." class="form-control" style="width: 100%; padding: 0.65rem 0.85rem;">
-            </div>
 
             <!-- Cascading Location Controls (District -> Division -> Village) -->
             <div style="flex: 1.2; min-width: 130px;">
@@ -232,7 +228,7 @@ body {
                 <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.35rem; font-weight: 700; border-radius: 10px;">
                     Filter
                 </button>
-                {% if q or district or division or village or min_price or max_price or office_type != 'all' %}
+                {% if district or division or village or min_price or max_price or office_type != 'all' %}
                 <a href="{% url 'offices' %}" class="btn btn-outline" style="padding: 0.65rem 0.85rem; text-decoration: none; border-radius: 10px;">Clear</a>
                 {% endif %}
             </div>
