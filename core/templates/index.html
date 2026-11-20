@@ -2,2720 +2,1321 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %}TRUST Protocol | Verified Apartments & Properties for Rent & Sale in Uganda{% endblock %}
-{% block meta_description %}Search verified rental properties, luxury apartments, offices, standalone houses, and land for rent in Kampala, Entebbe, and Wakiso with TRUST Protocol escrow protection.{% endblock %}
+{% block title %}TRUST Protocol | Tenant-First Verified Homes in Uganda{% endblock %}
+{% block meta_description %}Find a safe, verified home in Uganda. Tell TRUST Protocol your budget, preferred location, house type, and move-in date. Every property and landlord is verified.{% endblock %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
 <style>
-  /* ═══════════════════════════════════════════════════════════
-     TRUST Landing Page — Premium Editorial Design & Grid
-     ═══════════════════════════════════════════════════════════ */
-
-  /* Global Section Settings */
-  section {
-    padding: 8rem 0;
-    position: relative;
-    overflow: hidden;
+  /* ═══════════════════════════════════════════════════════════════════════════
+     TRUST PROTOCOL LANDING PAGE
+     Color Ratio: 60% Butter Cream | 30% Deep Plum | 10% Spring Green
+     ═══════════════════════════════════════════════════════════════════════════ */
+  :root {
+    --tp-cream: #FBF5E6;
+    --tp-cream-light: #FFFDF8;
+    --tp-cream-warm: #F2E8D5;
+    --tp-plum: #2B1129;
+    --tp-plum-deep: #1E0B1D;
+    --tp-plum-mid: #3D1A3A;
+    --tp-plum-muted: #5A4257;
+    --tp-spring: #00D67F;
+    --tp-spring-hover: #00B86B;
+    --tp-font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --tp-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
-  .bg-darkest {
-    background-color: var(--color-emerald-darkest);
-    color: #ffffff;
-    position: relative;
-    overflow: hidden;
+  body {
+    background-color: var(--tp-cream) !important;
+    color: var(--tp-plum) !important;
+    font-family: var(--tp-font-body) !important;
   }
 
-  .video-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: 1;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    opacity: 0.18;
-    /* Perfect elegant visual balance */
-    pointer-events: none;
-  }
-
-  .bg-darkest .container {
-    position: relative;
-    z-index: 2;
-  }
-
-  .bg-cream {
-    background-color: var(--color-bg-base);
-  }
-
-  .bg-surface {
-    background-color: var(--color-surface);
-  }
-
-  .section-label {
-    color: var(--color-gold);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-title {
-    font-family: var(--font-heading);
-    font-size: 3.25rem;
-    line-height: 1.15;
-    color: var(--color-emerald-dark);
-    margin-bottom: 2rem;
-    font-weight: 500;
-  }
-
-  .bg-darkest .section-title {
-    color: #ffffff !important;
-  }
-
-  .hero-container h1,
-  .hero-container h2,
-  .hero-container h3,
-  .hero-container h4,
-  .hero-container h5,
-  .hero-container h6,
-  .bg-darkest h1,
-  .bg-darkest h2,
-  .bg-darkest h3,
-  .bg-darkest h4,
-  .bg-darkest h5,
-  .bg-darkest h6 {
-    color: #ffffff !important;
-  }
-
-  .section-lead {
-    font-size: 1.2rem;
-    line-height: 1.7;
-    color: var(--color-text-muted);
-    font-weight: 300;
-    max-width: 700px;
-    margin-bottom: 3.5rem;
-  }
-
-  .bg-darkest .section-lead,
-  .hero-container .section-lead {
-    color: rgba(255, 255, 255, 0.95) !important;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
-  }
-
-  /* 1. Hero Section */
-  .hero-container {
-    padding: 11rem 0 9rem;
-    background-color: #03140d;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-
-  @media (max-width: 768px) {
-    .hero-container {
-      min-height: 360px !important;
-      height: 48vh !important;
-      padding: 0 !important;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero-container {
-      min-height: 280px !important;
-      height: 40vh !important;
-      padding: 0 !important;
-    }
-  }
-
-  .hero-slider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-
-  .slide-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0;
-    transition: opacity 2s ease-in-out;
-  }
-
-  .slide-img.active {
-    opacity: 1;
-  }
-
-  .hero-overlay {
-    display: none !important;
-  }
-
-  .hero-container::before {
-    display: none !important;
-  }
-
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 4rem;
-    align-items: center;
-    position: relative;
-    z-index: 3;
-  }
-
-  .hero-headline {
-    font-family: var(--font-heading);
-    font-size: 4.5rem;
-    line-height: 1.05;
-    font-weight: 400;
-    margin-bottom: 1.5rem;
-    letter-spacing: -1px;
-    color: #ffffff !important;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-  }
-
-  .hero-headline span {
-    color: var(--color-gold) !important;
-    font-style: italic;
-  }
-
-  .hero-bullets {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin: 2.5rem 0 3.5rem;
-  }
-
-  .hero-bullet-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 1rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.95);
-  }
-
-  .hero-bullet-item i {
-    color: var(--color-gold);
-    font-size: 1.1rem;
-  }
-
-  .hero-cta-buttons {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .hero-cta-buttons .btn {
-    padding: 1.2rem 2.5rem;
-    font-size: 1rem;
-  }
-
-  /* Architectural Blueprint Background Pattern */
-  .blueprint-bg-section {
-    position: relative;
-    padding: 2rem 0;
-    background-color: #fcfaf5;
-    background-image:
-      linear-gradient(rgba(16, 61, 40, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(16, 61, 40, 0.05) 1px, transparent 1px),
-      linear-gradient(rgba(203, 163, 88, 0.04) 2px, transparent 2px),
-      linear-gradient(90deg, rgba(203, 163, 88, 0.04) 2px, transparent 2px);
-    background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    width: 100%;
-  }
-
-  .stat-counter-box {
-    transition: transform 0.25s ease;
-  }
-
-  .stat-counter-box:hover {
-    transform: translateY(-3px);
-  }
-
-  /* Typewriter Cursor Animation */
-  @keyframes blinkCursor {
-
-    0%,
-    100% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0;
-    }
-  }
-
-  .typewriter-cursor {
-    animation: blinkCursor 0.75s infinite;
-  }
-
-  /* Winding Snake Roadmap (Steps 1-7) */
-  .snake-roadmap-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1.1rem;
-    padding: 0.5rem 0;
-  }
-
-  .snake-step-row {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-  }
-
-  .snake-step-row.step-left {
-    justify-content: flex-start;
-  }
-
-  .snake-step-row.step-right {
-    justify-content: flex-end;
-    text-align: right;
-  }
-
-  .snake-circle-badge {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid var(--color-gold);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: #072a1c;
-    transition: transform 0.25s ease, background 0.25s ease;
-  }
-
-  .snake-step-row:hover .snake-circle-badge {
-    transform: scale(1.1);
-    background: var(--color-gold);
-  }
-
-  .snake-circle-badge small {
-    font-size: 0.52rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    line-height: 1;
-    text-transform: uppercase;
-    color: #072a1c;
-  }
-
-  .snake-circle-badge span {
-    font-size: 1.15rem;
-    font-weight: 900;
-    line-height: 1;
-    color: #072a1c;
-  }
-
-  .snake-step-content {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(203, 163, 88, 0.35);
-    border-radius: 12px;
-    padding: 0.6rem 1rem;
-    backdrop-filter: blur(8px);
-    max-width: 250px;
-    transition: all 0.25s ease;
-  }
-
-  .snake-step-row:hover .snake-step-content {
-    border-color: var(--color-gold);
-    background: rgba(203, 163, 88, 0.15);
-    transform: translateY(-2px);
-  }
-
-  .snake-step-content h4 {
-    margin: 0;
-    font-size: 0.86rem;
-    font-weight: 700;
-    color: white;
-  }
-
-  /* 2. Why TRUST Exists */
-  .problem-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
-  }
-
-  /* 3. The Meaning of T.R.U.S.T. */
-  .pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1.5rem;
-    margin-top: 4rem;
-  }
-
-  .pillar-card {
-    background: #ffffff;
-    border: 1px solid var(--color-border);
-    padding: 2.5rem 1.75rem;
-    border-radius: var(--radius-sm);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .pillar-card:hover {
-    border-color: var(--color-gold);
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .pillar-letter {
-    font-family: var(--font-heading);
-    font-size: 3.5rem;
-    color: var(--color-gold);
-    line-height: 1;
-    margin-bottom: 1rem;
-    font-weight: bold;
-    display: block;
-  }
-
-  .pillar-card h3 {
-    font-size: 1.15rem;
-    color: var(--color-emerald-dark);
-    margin-bottom: 1rem;
-  }
-
-  .pillar-card p {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
+  .tp-landing {
+    background-color: var(--tp-cream);
+    color: var(--tp-plum);
+    font-family: var(--tp-font-body);
     line-height: 1.6;
   }
 
-  /* 4. How TRUST Works */
-  .workflow-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 1rem;
-    margin-top: 4rem;
-    position: relative;
-  }
-
-  .workflow-step {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 2.25rem 1.25rem;
-    border-radius: var(--radius-md);
-    text-align: center;
-    position: relative;
-    backdrop-filter: blur(12px) saturate(120%);
-    -webkit-backdrop-filter: blur(12px) saturate(120%);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .workflow-step:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: var(--color-gold);
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(203, 163, 88, 0.18);
-  }
-
-  .workflow-number {
-    font-family: var(--font-heading);
-    font-size: 2.25rem;
-    color: var(--color-gold);
-    font-weight: 600;
-    display: block;
-    margin-bottom: 0.75rem;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  .workflow-step p {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #ffffff;
-    line-height: 1.4;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  }
-
-  /* 5. Safety Guarantees */
-  .guarantees-split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6rem;
-    align-items: center;
-  }
-
-  .guarantees-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-  }
-
-  .guarantees-item {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--color-emerald-darkest);
-    padding: 0.5rem 0;
-  }
-
-  .guarantees-item i {
-    color: #e11d48;
-    /* Crimson marker */
-    font-size: 1.25rem;
-  }
-
-  .metadata-display-card {
-    background: var(--color-bg-base);
-    border: 1px dashed var(--color-gold);
-    padding: 3rem;
-    border-radius: var(--radius-md);
-  }
-
-  .metadata-display-card h3 {
-    font-size: 1.25rem;
-    color: var(--color-emerald-dark);
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0.75rem;
-  }
-
-  .metadata-list-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    font-size: 0.95rem;
-  }
-
-  .metadata-list-item span:first-child {
-    font-weight: 600;
-    color: var(--color-text-muted);
-  }
-
-  .metadata-list-item span:last-child {
-    font-weight: 600;
-    font-family: monospace;
-    color: var(--color-emerald-darkest);
-  }
-
-  /* 6. Landlords Protection */
-  .landlord-grid {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 6rem;
-    align-items: center;
-  }
-
-  .landlord-list {
-    list-style: none;
-    margin-top: 2rem;
-  }
-
-  .landlord-list li {
-    position: relative;
-    padding-left: 2rem;
-    margin-bottom: 1.25rem;
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: var(--color-text-dark);
-  }
-
-  .landlord-list li::before {
-    content: '✔';
-    position: absolute;
-    left: 0;
-    color: var(--color-gold);
-    font-weight: bold;
-  }
-
-  .landlord-image-wrapper {
-    position: relative;
-  }
-
-  .landlord-image-wrapper img {
-    width: 100%;
-    aspect-ratio: 4/3;
-    object-fit: cover;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .landlord-image-wrapper::before {
-    content: '';
-    position: absolute;
-    top: -1.5rem;
-    left: -1.5rem;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    border: 1px solid var(--color-gold);
-    z-index: -1;
-  }
-
-  /* 7. Why TRUST is Different */
-  .difference-card {
-    background: linear-gradient(135deg, var(--color-emerald-darkest) 0%, #03140d 100%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 5rem 4rem;
-    border-radius: var(--radius-md);
-    color: #ffffff;
-    text-align: center;
-    position: relative;
-  }
-
-  .difference-tagline {
-    font-family: var(--font-heading);
-    font-size: 2.75rem;
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-    font-weight: 400;
-    color: #ffffff !important;
-  }
-
-  .difference-tagline span {
-    color: var(--color-gold) !important;
-    font-style: italic;
-  }
-
-  .verifications-pills {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin: 3rem 0;
-  }
-
-  .verification-pill {
-    background: rgba(203, 163, 88, 0.12);
-    border: 1px solid rgba(203, 163, 88, 0.4);
-    color: var(--color-gold-light);
-    padding: 0.65rem 1.5rem;
-    border-radius: var(--radius-full);
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  /* 8. Property Catalog Listing */
-  .catalog-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    margin-top: 3rem;
-  }
-
-  .catalog-card {
-    background: #ffffff;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .catalog-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--color-gold);
-    box-shadow: var(--shadow-md);
-  }
-
-  .catalog-img-wrapper {
-    height: 240px;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .catalog-img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-  }
-
-  .catalog-card:hover .catalog-img {
-    transform: scale(1.05);
-  }
-
-  .catalog-overlay-tag {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: var(--color-emerald);
-    color: var(--color-gold);
-    padding: 0.35rem 0.85rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .catalog-body {
-    padding: 2rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .catalog-price {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    color: var(--color-emerald-darkest);
-    font-weight: 600;
-    margin-bottom: 0.35rem;
-  }
-
-  .catalog-price span {
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    font-weight: 400;
-  }
-
-  .catalog-title {
-    font-size: 1.15rem;
-    color: var(--color-emerald-dark);
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-
-  .catalog-location {
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .catalog-meta-box {
-    border-top: 1px solid var(--color-border);
-    padding-top: 1.25rem;
-    margin-top: auto;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-
-  .catalog-meta-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-weight: 500;
-  }
-
-  .catalog-meta-item i {
-    color: var(--color-gold);
-    font-size: 0.9rem;
-  }
-
-  /* Responsive Styling */
-  @media (max-width: 1200px) {
-    .pillars-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .workflow-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .catalog-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 992px) {
-    .section-title {
-      font-size: 2.75rem;
-    }
-
-    .hero-headline {
-      font-size: 3.5rem;
-    }
-
-    .hero-grid {
-      grid-template-columns: 1fr;
-      text-align: center;
-      gap: 3rem;
-    }
-
-    .hero-bullets {
-      justify-items: center;
-    }
-
-    .hero-cta-buttons {
-      justify-content: center;
-    }
-
-    .problem-grid,
-    .guarantees-split,
-    .landlord-grid {
-      grid-template-columns: 1fr;
-      gap: 4rem;
-    }
-
-    .landlord-image-wrapper {
-      order: -1;
-    }
-  }
-
-  @media (max-width: 768px) {
-    section {
-      padding: 5rem 0;
-    }
-
-    .section-title {
-      font-size: 2.25rem;
-    }
-
-    .hero-headline {
-      font-size: 2.75rem;
-    }
-
-    .hero-bullets {
-      grid-template-columns: 1fr;
-    }
-
-    .hero-cta-buttons {
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-    }
-
-    .hero-cta-buttons .btn {
-      width: 100%;
-    }
-
-    .pillars-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .workflow-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .guarantees-list {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 0.85rem 0.75rem !important;
-    }
-
-    .guarantees-item {
-      font-size: 0.92rem !important;
-      padding: 0.35rem 0 !important;
-    }
-
-    .guarantees-item i {
-      font-size: 1.05rem !important;
-    }
-
-    .showcase-split-grid {
-      grid-template-columns: 1fr !important;
-      gap: 2.25rem !important;
-    }
-
-    .showcase-image-box {
-      display: block !important;
-      width: 100% !important;
-      height: 280px !important;
-    }
-
-    .showcase-image-box img {
-      height: 100% !important;
-      display: block !important;
-      width: 100% !important;
-      object-fit: cover !important;
-    }
-
-    .showcase-stats-grid {
-      grid-template-columns: repeat(3, 1fr) !important;
-      gap: 1rem 0.5rem !important;
-      padding: 1.25rem 0.85rem !important;
-    }
-
-    .metadata-display-card {
-      padding: 1.5rem;
-    }
-
-    .difference-card {
-      padding: 3rem 1.5rem;
-    }
-
-    .difference-tagline {
-      font-size: 2rem;
-    }
-
-    .catalog-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Clean Cards Section (Enlarged and Responsive) */
-  .glass-section {
-    padding: 6rem 0;
-    background: transparent;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .glass-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    margin-top: 1rem;
-  }
-
-  .glass-card {
-    background: #ffffff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    color: var(--color-text-dark);
-    text-decoration: none;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .glass-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--color-gold);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .glass-img-wrapper {
-    height: 240px;
-    /* Big and highly visible image! */
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .glass-img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-
-  .glass-card:hover .glass-img {
-    transform: scale(1.06);
-  }
-
-  .glass-tag {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: var(--color-emerald);
-    color: var(--color-gold);
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .glass-body {
-    padding: 1.75rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .glass-price {
-    font-family: var(--font-heading);
-    font-size: 1.4rem;
-    color: var(--color-emerald-darkest);
-    font-weight: 600;
-    margin-bottom: 0.35rem;
-  }
-
-  .glass-price span {
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    font-weight: 400;
-  }
-
-  .glass-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-emerald-dark);
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    height: auto;
-  }
-
-  .glass-location {
-    color: var(--color-text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .glass-meta {
-    border-top: 1px solid var(--color-border);
-    padding-top: 1rem;
-    margin-top: auto;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .glass-meta-item {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .glass-meta-item i {
-    color: var(--color-gold);
-    font-size: 0.85rem;
-  }
-
-  /* Vetted Properties Grid Layout (Center Width) */
-  .vetted-container-padding {
-    max-width: 1280px;
+  .tp-container {
+    max-width: 1240px;
     margin: 0 auto;
     padding: 0 1.5rem;
-    width: 100%;
     box-sizing: border-box;
   }
 
-  .vetted-grid-container {
+  .tp-section {
+    padding: 5.5rem 0;
+  }
+
+  .tp-section-cream {
+    background-color: var(--tp-cream);
+    color: var(--tp-plum);
+  }
+
+  .tp-section-cream-alt {
+    background-color: var(--tp-cream-warm);
+    color: var(--tp-plum);
+  }
+
+  .tp-section-plum {
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+  }
+
+  /* Typography */
+  .tp-h1 {
+    font-family: var(--tp-font-heading);
+    font-size: clamp(2.4rem, 4.5vw, 3.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0 0 1.25rem 0;
+    color: var(--tp-cream-light);
+  }
+
+  .tp-h2 {
+    font-family: var(--tp-font-heading);
+    font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin: 0 0 1rem 0;
+    color: var(--tp-plum);
+  }
+
+  .tp-section-plum .tp-h2 {
+    color: var(--tp-cream-light) !important;
+  }
+
+  .tp-lead {
+    font-size: 1.125rem;
+    color: var(--tp-plum-muted);
+    max-width: 660px;
+    margin: 0 0 2.75rem 0;
+    font-weight: 500;
+  }
+
+  .tp-section-plum .tp-lead {
+    color: var(--tp-cream-warm);
+  }
+
+  /* Solid Buttons (No hover opacity fade) */
+  .tp-btn-spring {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--tp-spring);
+    color: var(--tp-plum-deep) !important;
+    font-family: var(--tp-font-body);
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 0.95rem 1.75rem;
+    border-radius: 10px;
+    border: 2px solid var(--tp-spring);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .tp-btn-spring:hover {
+    background-color: var(--tp-spring-hover);
+    border-color: var(--tp-spring-hover);
+    color: var(--tp-plum-deep) !important;
+  }
+
+  .tp-btn-plum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light) !important;
+    font-family: var(--tp-font-body);
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 0.95rem 1.75rem;
+    border-radius: 10px;
+    border: 2px solid var(--tp-plum);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tp-btn-plum:hover {
+    background-color: var(--tp-plum-mid);
+    border-color: var(--tp-plum-mid);
+  }
+
+  .tp-btn-outline-cream {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--tp-plum-mid);
+    color: var(--tp-cream-light) !important;
+    font-family: var(--tp-font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.95rem 1.75rem;
+    border-radius: 10px;
+    border: 2px solid var(--tp-cream-warm);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tp-btn-outline-cream:hover {
+    background-color: var(--tp-cream-light);
+    color: var(--tp-plum-deep) !important;
+    border-color: var(--tp-cream-light);
+  }
+
+  /* ─── 1. HERO SECTION (Deep Plum 30% + Butter Cream Card + Spring Green CTA) ─── */
+  .tp-hero {
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+    padding: 4.5rem 0 5.5rem 0;
+  }
+
+  .tp-hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .tp-hero-Tagline {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--tp-spring);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+
+  .tp-hero-sub {
+    font-size: 1.18rem;
+    color: var(--tp-cream);
+    margin: 0 0 1.75rem 0;
+    max-width: 560px;
+    font-weight: 500;
+  }
+
+  .tp-hero-promise {
+    background-color: var(--tp-plum-mid);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    max-width: 540px;
+  }
+
+  .tp-hero-promise p {
+    margin: 0 0 0.35rem 0;
+    color: var(--tp-cream-light);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .tp-hero-promise strong {
+    color: var(--tp-spring);
+    font-size: 0.98rem;
+    font-weight: 800;
+  }
+
+  .tp-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* Right Column: Quick Housing Brief Card */
+  .tp-brief-card {
+    background-color: var(--tp-cream-light);
+    color: var(--tp-plum);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 20px 50px rgba(15, 5, 14, 0.35);
+  }
+
+  .tp-brief-card h2 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--tp-plum) !important;
+    margin: 0 0 0.35rem 0;
+  }
+
+  .tp-brief-card p {
+    font-size: 0.92rem;
+    color: var(--tp-plum-muted);
+    margin: 0 0 1.35rem 0;
+    font-weight: 500;
+  }
+
+  .tp-field-group {
+    margin-bottom: 1rem;
+  }
+
+  .tp-field-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--tp-plum);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .tp-input,
+  .tp-select {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    background-color: var(--tp-cream);
+    border: 1.5px solid var(--tp-cream-warm);
+    border-radius: 10px;
+    font-family: var(--tp-font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--tp-plum);
+    box-sizing: border-box;
+  }
+
+  .tp-input:focus,
+  .tp-select:focus {
+    outline: none;
+    border-color: var(--tp-plum);
+    background-color: #ffffff;
+  }
+
+  .tp-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+  }
+
+  /* ─── 2. WHY TRUST PROTOCOL ─── */
+  .tp-why-header {
+    max-width: 720px;
+    margin-bottom: 3rem;
+  }
+
+  .tp-grid-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.75rem;
+    gap: 1.5rem;
   }
 
-  .vetted-card-grid-wrapper {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 3px solid rgba(4, 120, 87, 0.45) !important;
-    /* Thick Deep Emerald Border */
-    box-shadow: 0 10px 30px rgba(10, 61, 40, 0.07) !important;
-    background: rgba(255, 255, 255, 0.18) !important;
-    /* Sheer frosted glass */
-    backdrop-filter: blur(16px) saturate(120%);
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
-    position: relative;
-    /* absolute stars/fireworks placement */
-    overflow: hidden;
-    border-radius: 12px;
-    text-decoration: none;
-    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  .tp-clean-card {
+    background-color: var(--tp-cream-light);
+    border-radius: 14px;
+    padding: 1.85rem 1.6rem;
+    box-shadow: 0 4px 18px rgba(43, 17, 41, 0.05);
   }
 
-  .vetted-card-grid-wrapper:hover {
-    border-color: rgba(4, 120, 87, 0.95) !important;
-    box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: translateY(-6px) !important;
-    /* Gentle premium card lift */
+  .tp-card-num {
+    display: inline-block;
+    font-family: var(--tp-font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    background-color: var(--tp-cream-warm);
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
   }
 
-  /* Responsive breakpoints for Vetted Properties Grid */
-  @media (max-width: 1600px) {
-    .vetted-grid-container {
-      grid-template-columns: repeat(4, 1fr);
-    }
+  .tp-clean-card h3 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    margin: 0 0 0.6rem 0;
   }
 
-  @media (max-width: 1200px) {
-    .vetted-grid-container {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  .tp-clean-card p {
+    font-size: 0.94rem;
+    color: var(--tp-plum-muted);
+    margin: 0;
   }
 
-  @media (max-width: 768px) {
-    .vetted-container-padding {
-      padding: 0 1.5rem;
-    }
-
-    .vetted-grid-container {
-      display: grid !important;
-      grid-template-columns: none !important;
-      grid-template-rows: repeat(2, auto) !important;
-      grid-auto-flow: column !important;
-      overflow-x: auto !important;
-      scroll-snap-type: x mandatory !important;
-      -webkit-overflow-scrolling: touch !important;
-      gap: 1rem !important;
-      padding-bottom: 1rem !important;
-      scrollbar-width: none;
-    }
-
-    .vetted-grid-container::-webkit-scrollbar {
-      display: none;
-    }
-
-    .typewriter-header-container {
-      min-height: 3.8rem !important;
-      height: 3.8rem !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-
-    .typewriter-header-h3 {
-      font-size: 1.25rem !important;
-      line-height: 1.35 !important;
-    }
-
-    .vetted-card-grid-wrapper {
-      width: 285px !important;
-      flex-shrink: 0 !important;
-      scroll-snap-align: start !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-img-wrapper {
-      height: 160px !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-tag {
-      top: 0.5rem !important;
-      left: 0.5rem !important;
-      font-size: 0.7rem !important;
-      padding: 0.25rem 0.6rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-body {
-      padding: 0.95rem 1rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-price {
-      font-size: 1.1rem !important;
-      margin-bottom: 0.25rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-title {
-      font-size: 0.95rem !important;
-      margin-bottom: 0.25rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-location {
-      font-size: 0.82rem !important;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .vetted-container-padding {
-      padding: 0 0.75rem;
-    }
-
-    .typewriter-header-container {
-      min-height: 4.2rem !important;
-      height: 4.2rem !important;
-    }
-
-    .typewriter-header-h3 {
-      font-size: 1.15rem !important;
-      line-height: 1.35 !important;
-    }
-
-    .vetted-grid-container {
-      display: grid !important;
-      grid-template-columns: none !important;
-      grid-template-rows: repeat(2, auto) !important;
-      grid-auto-flow: column !important;
-      overflow-x: auto !important;
-      scroll-snap-type: x mandatory !important;
-      -webkit-overflow-scrolling: touch !important;
-      gap: 0.85rem !important;
-      padding-bottom: 0.75rem !important;
-      scrollbar-width: none;
-    }
-
-    .vetted-grid-container::-webkit-scrollbar {
-      display: none;
-    }
-
-    .vetted-card-grid-wrapper {
-      width: 260px !important;
-      flex-shrink: 0 !important;
-      scroll-snap-align: start !important;
-      border-width: 2px !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-img-wrapper {
-      height: 145px !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-tag {
-      font-size: 0.65rem !important;
-      padding: 0.2rem 0.5rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-body {
-      padding: 0.85rem 0.9rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-price {
-      font-size: 1rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-title {
-      font-size: 0.88rem !important;
-    }
-
-    .vetted-card-grid-wrapper .glass-location {
-      font-size: 0.78rem !important;
-    }
-  }
-
-  /* Full-Width Seamless Marquee CSS */
-  .marquee-container {
-    overflow: hidden;
-    width: 100%;
-    max-width: 100%;
-    position: relative;
+  .tp-why-banner {
+    margin-top: 2.5rem;
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+    border-radius: 14px;
+    padding: 2rem 2.5rem;
     display: flex;
-    padding: 1.5rem 0;
-  }
-
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    /* Animation is driven by JS after images load — see bottom <script> */
-    will-change: transform;
-  }
-
-  /* JS sets data-paused="true" on hover */
-  .marquee-track[data-paused="true"] {
-    /* Visual indicator only — JS reads this attribute to pause */
-  }
-
-  .marquee-group {
-    display: flex;
-    gap: 2rem;
     align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tp-why-banner h3 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--tp-cream-light) !important;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .tp-why-banner p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--tp-spring);
+  }
+
+  /* ─── 3. HOW IT WORKS ─── */
+  .tp-step-card {
+    background-color: var(--tp-cream-light);
+    border-radius: 14px;
+    padding: 2rem 1.65rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 18px rgba(43, 17, 41, 0.05);
+  }
+
+  .tp-step-tag {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+    margin-bottom: 1.15rem;
+  }
+
+  .tp-step-card.is-highlight .tp-step-tag {
+    background-color: var(--tp-spring);
+    color: var(--tp-plum-deep);
+  }
+
+  .tp-step-card h3 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    margin: 0 0 0.65rem 0;
+  }
+
+  .tp-step-card p {
+    font-size: 0.94rem;
+    color: var(--tp-plum-muted);
+    margin: 0 0 1rem 0;
+  }
+
+  .tp-check-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tp-check-list li {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--tp-plum);
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .tp-check-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--tp-spring-hover);
     flex-shrink: 0;
-    /* Trailing padding equals the card gap so the seam is invisible */
-    padding-right: 2rem;
   }
 
-  .marquee-card-wrapper {
-    flex: 0 0 320px;
-    width: 320px;
-    height: 100%;
-    border: 3px solid rgba(4, 120, 87, 0.45) !important;
-    /* Thick Deep Emerald Border */
-    box-shadow: 0 10px 30px rgba(10, 61, 40, 0.07) !important;
-    background: rgba(255, 255, 255, 0.18) !important;
-    /* Elegant sheer frosted glass */
-    backdrop-filter: blur(16px) saturate(120%);
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
-    position: relative;
-    /* for absolute stars/fireworks placement */
-    overflow: hidden;
-    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  /* ─── 4. WHO WE HELP ─── */
+  .tp-who-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
   }
 
-  .marquee-card-wrapper:hover {
-    border-color: rgba(4, 120, 87, 0.95) !important;
-    box-shadow: 0 15px 40px rgba(4, 120, 87, 0.28) !important;
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: translateY(-6px) !important;
-    /* Gentle premium card lift */
+  .tp-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
-  /* Fireworks & Shooting Star Container */
-  .firework-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .tp-filter-btn {
+    background-color: var(--tp-cream-light);
+    color: var(--tp-plum);
+    border: none;
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    font-family: var(--tp-font-body);
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .tp-filter-btn.is-active,
+  .tp-filter-btn:hover {
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+  }
+
+  .tp-grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.25rem;
+  }
+
+  .tp-persona-card {
+    background-color: var(--tp-cream-light);
+    border-radius: 14px;
+    padding: 1.6rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(43, 17, 41, 0.05);
+  }
+
+  .tp-persona-card h3 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    margin: 0 0 0.55rem 0;
+  }
+
+  .tp-persona-card p {
+    font-size: 0.88rem;
+    color: var(--tp-plum-muted);
+    margin: 0 0 1.25rem 0;
+  }
+
+  .tp-persona-action {
+    background: none;
+    border: none;
+    padding: 0.65rem 0 0 0;
+    border-top: 1px solid var(--tp-cream-warm);
+    font-family: var(--tp-font-body);
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--tp-plum);
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
-    height: 100%;
+  }
+
+  .tp-persona-action:hover {
+    color: var(--tp-spring-hover);
+  }
+
+  /* ─── 5. FOR PROPERTY OWNERS ─── */
+  .tp-owners-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .tp-owners-callout {
+    background-color: var(--tp-cream-light);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 0 2rem 0;
+    box-shadow: 0 4px 16px rgba(43, 17, 41, 0.05);
+  }
+
+  .tp-owners-callout p {
+    margin: 0;
+    font-weight: 800;
+    color: var(--tp-plum);
+  }
+
+  .tp-owners-callout span {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--tp-plum-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .tp-benefits-box {
+    background-color: var(--tp-cream-light);
+    border-radius: 16px;
+    padding: 2.25rem;
+    box-shadow: 0 6px 24px rgba(43, 17, 41, 0.06);
+  }
+
+  .tp-benefits-box h3 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--tp-plum) !important;
+    margin: 0 0 1.35rem 0;
+  }
+
+  .tp-benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+  }
+
+  .tp-benefit-item {
+    background-color: var(--tp-cream);
+    padding: 1rem 1.15rem;
+    border-radius: 10px;
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  /* ─── 6. OUR FIVE PILLARS ─── */
+  .tp-pillar-card {
+    background-color: var(--tp-cream-light);
+    border-radius: 14px;
+    padding: 1.75rem 1.4rem;
+    box-shadow: 0 4px 16px rgba(43, 17, 41, 0.05);
+  }
+
+  .tp-pillar-num {
+    font-family: var(--tp-font-heading);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--tp-plum-muted);
+    margin-bottom: 0.85rem;
+    display: block;
+  }
+
+  .tp-pillar-card h3 {
+    font-family: var(--tp-font-heading);
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .tp-pillar-card p {
+    font-size: 0.9rem;
+    color: var(--tp-plum-muted);
+    margin: 0;
+  }
+
+  /* ─── 7. ABOUT TRUST PROTOCOL & 8. FINAL CTA ─── */
+  .tp-about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: stretch;
+  }
+
+  .tp-about-box {
+    background-color: var(--tp-cream-light);
+    border-radius: 16px;
+    padding: 2.75rem;
+    box-shadow: 0 4px 20px rgba(43, 17, 41, 0.05);
+  }
+
+  .tp-about-box p {
+    font-size: 1.02rem;
+    color: var(--tp-plum-muted);
+    margin: 0 0 1.1rem 0;
+  }
+
+  .tp-about-box p:last-child {
+    margin-bottom: 0;
+    color: var(--tp-plum);
+    font-weight: 700;
+  }
+
+  .tp-final-cta-box {
+    background-color: var(--tp-plum);
+    color: var(--tp-cream-light);
+    border-radius: 16px;
+    padding: 2.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .tp-final-cta-box h2 {
+    color: var(--tp-cream-light) !important;
+  }
+
+  .tp-vision-bar {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--tp-plum-mid);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  /* ─── SMART HOME FINDER & PLAN B MODAL STYLES ─── */
+  .shf-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 11, 29, 0.82);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .shf-modal-backdrop.is-open {
+    display: flex;
+  }
+
+  .shf-modal-card {
+    background: var(--tp-cream-light);
+    width: 100%;
+    max-width: 680px;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
     overflow: hidden;
-    pointer-events: none;
-    z-index: 10;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
   }
 
-  .shooting-star {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    background: #ffd700;
+  .shf-modal-header {
+    background: var(--tp-cream-light);
+    color: var(--tp-plum);
+    padding: 1.25rem 1.5rem 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--tp-cream-warm);
+  }
+
+  .shf-modal-header h3 {
+    margin: 0;
+    font-family: var(--tp-font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--tp-plum) !important;
+  }
+
+  .shf-close-btn {
+    background: var(--tp-cream-warm);
+    color: var(--tp-plum);
+    border: none;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    box-shadow: 0 0 12px #ffd700, 0 0 24px #ffd700;
-    bottom: -15px;
-    left: -15px;
-    opacity: 0;
-    animation: fly-star 6s infinite ease-in-out;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  @keyframes fly-star {
-    0% {
-      bottom: -5%;
-      left: -5%;
-      opacity: 0;
-      transform: scale(0.5);
-    }
-
-    5% {
-      opacity: 1;
-      transform: scale(1.5);
-    }
-
-    22% {
-      bottom: 92%;
-      left: 92%;
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    23%,
-    100% {
-      bottom: 92%;
-      left: 92%;
-      opacity: 0;
-      transform: scale(0);
-    }
+  .shf-close-btn:hover {
+    background: var(--tp-plum);
+    color: var(--tp-cream-light);
   }
 
-  .firework-container .spark {
+  .shf-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+
+  .shf-form-group {
+    margin-bottom: 1.15rem;
+    text-align: left;
+  }
+
+  .shf-label {
+    display: block;
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: var(--tp-plum);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .shf-input,
+  .shf-select,
+  .shf-textarea {
+    width: 100%;
+    padding: 0.72rem 0.9rem;
+    background: var(--tp-cream);
+    border: 1.5px solid var(--tp-cream-warm);
+    border-radius: 10px;
+    font-family: var(--tp-font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--tp-plum);
+    box-sizing: border-box;
+  }
+
+  .shf-input:focus,
+  .shf-select:focus,
+  .shf-textarea:focus {
+    outline: none;
+    border-color: var(--tp-plum);
+    background: #ffffff;
+  }
+
+  .shf-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+  }
+
+  .shf-village-SuggestBox {
+    position: relative;
+  }
+
+  .shf-village-dropdown {
+    display: none;
     position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    opacity: 0;
-    animation: explode-sparks 6s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1.5px solid var(--tp-plum);
+    border-radius: 10px;
+    margin-top: 4px;
+    max-height: 210px;
+    overflow-y: auto;
+    z-index: 50;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
   }
 
-  .firework-container .spark-1 {
-    --dx: 38px;
-    --dy: -38px;
-    --color: #ff2a5f;
+  .shf-village-dropdown.is-visible {
+    display: block;
   }
 
-  .firework-container .spark-2 {
-    --dx: -38px;
-    --dy: -38px;
-    --color: #00f3ff;
+  .shf-village-option {
+    padding: 0.65rem 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.92rem;
+    color: var(--tp-plum);
+    font-weight: 600;
   }
 
-  .firework-container .spark-3 {
-    --dx: 45px;
-    --dy: 10px;
-    --color: #ffd700;
+  .shf-village-option:hover {
+    background: var(--tp-cream);
   }
 
-  .firework-container .spark-4 {
-    --dx: -45px;
-    --dy: 15px;
-    --color: #ff9f00;
+  .shf-village-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.55rem;
   }
 
-  .firework-container .spark-5 {
-    --dx: 0px;
-    --dy: -55px;
-    --color: #ff00ff;
+  .shf-village-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--tp-plum);
+    color: var(--tp-cream-light);
+    padding: 0.3rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 700;
   }
 
-  .firework-container .spark-6 {
-    --dx: 28px;
-    --dy: 42px;
-    --color: #00ff66;
+  .shf-village-tag button {
+    background: none;
+    border: none;
+    color: var(--tp-cream-light);
+    cursor: pointer;
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 0;
   }
 
-  @keyframes explode-sparks {
-
-    0%,
-    21% {
-      transform: translate(0, 0) scale(0);
-      opacity: 0;
-    }
-
-    22% {
-      transform: translate(0, 0) scale(1.2);
-      opacity: 1;
-      background: var(--color);
-      box-shadow: 0 0 12px var(--color), 0 0 24px var(--color);
-    }
-
-    40% {
-      transform: translate(var(--dx), var(--dy)) scale(0.9);
-      opacity: 0.9;
-    }
-
-    55%,
-    100% {
-      transform: translate(calc(var(--dx) * 1.3), calc(var(--dy) * 1.3)) scale(0);
-      opacity: 0;
-    }
+  .shf-btn-primary {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    background: var(--tp-spring);
+    color: var(--tp-plum-deep);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--tp-font-body);
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.15s ease;
   }
 
+  .shf-btn-primary:hover {
+    background: var(--tp-spring-hover);
+  }
 
+  .shf-btn-secondary {
+    padding: 0.78rem 1.25rem;
+    background: var(--tp-cream-warm);
+    color: var(--tp-plum);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--tp-font-body);
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
 
-  /* Responsive Grid Adjustments */
-  @media (max-width: 1200px) {
-    .glass-grid {
+  .shf-btn-secondary:hover {
+    background: #e5d8bf;
+  }
+
+  /* Responsive Breakpoints */
+  @media (max-width: 1080px) {
+    .tp-grid-5 {
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
     }
-
-    .glass-card:last-child {
-      display: none;
+    .tp-grid-4 {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
   @media (max-width: 900px) {
-    .glass-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .tp-hero-grid,
+    .tp-owners-grid,
+    .tp-about-grid {
+      grid-template-columns: 1fr;
+      gap: 2.25rem;
     }
-
-    .glass-card:nth-child(3) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .glass-grid {
-      display: flex;
-      overflow-x: auto;
-      gap: 1.25rem;
-      padding-bottom: 1rem;
-      scroll-snap-type: x mandatory;
-    }
-
-    .glass-card {
-      min-width: 290px;
-      max-width: 320px;
-      scroll-snap-align: start;
+    .tp-section {
+      padding: 4rem 0;
     }
   }
 
-  /* Testimonial Marquee Styles */
-  .testimonial-marquee-container {
-    overflow: hidden;
-    width: 100%;
-    max-width: 100%;
-    position: relative;
-    display: flex;
-    padding: 1.5rem 0;
-  }
-
-  .testimonial-marquee-track {
-    display: flex;
-    width: max-content;
-    animation: marquee-testimonial-left 35s linear infinite;
-    will-change: transform;
-  }
-
-  .testimonial-marquee-track:hover {
-    animation-play-state: paused;
-  }
-
-  .testimonial-marquee-group {
-    display: flex;
-    gap: 2.5rem;
-    align-items: center;
-    flex-shrink: 0;
-    padding-right: 2.5rem;
-  }
-
-  .testimonial-card {
-    flex: 0 0 380px;
-    width: 380px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(203, 163, 88, 0.25);
-    border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 8px 32px rgba(10, 61, 40, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .testimonial-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--color-gold);
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 20px 40px rgba(10, 61, 40, 0.08);
-  }
-
-  .testimonial-rating {
-    color: var(--color-gold);
-    font-size: 0.85rem;
-    margin-bottom: 1.25rem;
-    display: flex;
-    gap: 0.2rem;
-  }
-
-  .testimonial-quote {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--color-text-dark);
-    font-family: var(--font-body);
-    font-style: italic;
-    margin: 0 0 1.75rem 0;
-    flex-grow: 1;
-  }
-
-  .testimonial-user {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    padding-top: 1.25rem;
-  }
-
-  .testimonial-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--color-gold);
-  }
-
-  .testimonial-name {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-emerald-darkest);
-    font-family: var(--font-body);
-  }
-
-  .testimonial-role {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    font-weight: 500;
-  }
-
-  @keyframes marquee-testimonial-left {
-    0% {
-      transform: translateX(0);
+  @media (max-width: 640px) {
+    .tp-grid-4,
+    .tp-grid-5,
+    .tp-grid-2,
+    .shf-grid-2,
+    .tp-benefits-grid {
+      grid-template-columns: 1fr;
     }
-
-    100% {
-      transform: translateX(-50%);
+    .tp-why-banner {
+      padding: 1.5rem;
+    }
+    .tp-brief-card,
+    .tp-about-box,
+    .tp-final-cta-box {
+      padding: 1.5rem;
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="tp-landing">
 
-<!-- 1. HERO SECTION -->
-<section class="hero-container"
-  style="position: relative; overflow: hidden; width: 100%; min-height: 800px; height: 82vh; background: #000; padding: 0;">
-  <h1 class="visually-hidden-seo" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">TRUST Protocol — Verified Rental Properties, Apartments, Offices & Land for Rent in Uganda</h1>
-  <!-- Background Video Slider -->
-  <div class="hero-slider"
-    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1;">
-    {% if hero_videos %}
-    {% for v in hero_videos %}
-    <video class="hero-video-slide {% if forloop.first %}active{% endif %}" autoplay muted loop playsinline
-      style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: 100%; height: 100%; transform: translate(-50%, -50%); object-fit: cover; opacity: {% if forloop.first %}1{% else %}0{% endif %}; transition: opacity 1.5s ease-in-out;">
-      <source src="{{ v.video.url }}" type="video/mp4">
-    </video>
-    {% endfor %}
-    {% else %}
-    <!-- Fallback High Definition Background Overlay -->
-    <div class="slide-img active"
-      style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80'); opacity: 1;">
-    </div>
-    {% endif %}
-  </div>
-</section>
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       1. HERO SECTION
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="tp-hero">
+    <div class="tp-container">
+      <div class="tp-hero-grid">
 
-<!-- 2. SERVICES CIRCLES BLOCK (GREEN BUTTON TITLES ON DESKTOP, ICON-ONLY SINGLE ROW ON MOBILE) -->
-<div class="services-circular-block"
-  style="position: relative; z-index: 30; margin-top: -4.5rem; margin-bottom: 1.25rem;">
-  <style>
-    .service-circle-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      width: 100%;
-    }
+        <!-- Left Column: Core Headline & Value Proposition -->
+        <div>
+          <h1 class="tp-h1">Find a Safe, Verified Home</h1>
+          <p class="tp-hero-sub">
+            Stop chasing brokers. Stop worrying about scams. Stop wasting time viewing unsuitable houses.
+          </p>
 
-    .service-circle-card:hover .service-circle-img-wrapper {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 35px rgba(10, 61, 40, 0.3) !important;
-      border-color: #ffffff !important;
-    }
-
-    .service-circle-card:hover img {
-      transform: scale(1.08);
-    }
-
-    .service-btn {
-      background: #0b663b;
-      color: #ffffff !important;
-      padding: 0.45rem 1.25rem;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 800;
-      display: inline-block;
-      margin-top: 0.85rem;
-      margin-bottom: 0.35rem;
-      box-shadow: 0 6px 18px rgba(11, 102, 59, 0.3);
-      border: 1.5px solid #074d2b;
-      transition: all 0.3s ease;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .service-circle-card:hover .service-btn {
-      background: #074d2b;
-      color: #ffffff !important;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(11, 102, 59, 0.45);
-    }
-
-    @media (max-width: 992px) {
-      .services-circular-block {
-        margin-top: -3.5rem !important;
-        margin-bottom: 1rem !important;
-      }
-
-      .services-circular-grid {
-        grid-template-columns: repeat(5, 1fr) !important;
-        gap: 0.75rem !important;
-      }
-
-      .service-circle-img-wrapper {
-        width: 95px !important;
-        height: 95px !important;
-      }
-
-      .service-btn {
-        font-size: 0.85rem !important;
-        padding: 0.35rem 0.85rem !important;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .services-circular-block {
-        margin-top: -2.2rem !important;
-        margin-bottom: 0.5rem !important;
-      }
-
-      .services-circular-container {
-        padding: 0 0.5rem !important;
-      }
-
-      .services-circular-grid {
-        display: grid !important;
-        grid-template-columns: repeat(5, 1fr) !important;
-        gap: 0.4rem !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        justify-items: center !important;
-      }
-
-      .service-circle-card {
-        grid-column: auto !important;
-      }
-
-      .service-circle-img-wrapper {
-        width: 62px !important;
-        height: 62px !important;
-        border-width: 3px !important;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22) !important;
-      }
-
-      /* Hide button text on mobile view as requested */
-      .service-btn {
-        display: none !important;
-      }
-
-      .service-subtext {
-        display: none !important;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .services-circular-block {
-        margin-top: -1.8rem !important;
-        margin-bottom: 0.35rem !important;
-      }
-
-      .services-circular-grid {
-        gap: 0.35rem !important;
-      }
-
-      .service-circle-img-wrapper {
-        width: 54px !important;
-        height: 54px !important;
-        border-width: 2.5px !important;
-      }
-    }
-
-    @media (max-width: 360px) {
-      .services-circular-container {
-        padding: 0 0.25rem !important;
-      }
-
-      .services-circular-grid {
-        gap: 0.2rem !important;
-      }
-
-      .service-circle-img-wrapper {
-        width: 46px !important;
-        height: 46px !important;
-        border-width: 2px !important;
-      }
-    }
-  </style>
-
-  <div class="container services-circular-container" style="max-width: 1250px; margin: 0 auto; padding: 0 1rem;">
-    <div style="background: transparent; border: none; padding: 0; box-shadow: none;">
-
-      <!-- 5 Circular Service Cards Grid (GREEN BUTTON TITLES ON DESKTOP, ICON-ONLY SINGLE ROW ON MOBILE) -->
-      <div class="services-circular-grid"
-        style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; align-items: start; justify-items: center;">
-
-        <!-- 1. We Sale -->
-        <a href="/search/?for_sale=on" class="service-circle-card">
-          <div class="service-circle-img-wrapper"
-            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_sale.png' %}" alt="We Sale"
-              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
+          <div class="tp-hero-promise">
+            <p>We'll help you find a verified home that matches your needs.</p>
+            <strong>TRUST Protocol works for tenants.</strong>
           </div>
-          <span class="service-btn">We Sale</span>
-        </a>
 
-        <!-- 2. We Rent -->
-        <a href="/search/?for_rent=on" class="service-circle-card">
-          <div class="service-circle-img-wrapper"
-            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_rent.png' %}" alt="We Rent"
-              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
+          <div class="tp-hero-actions">
+            <button type="button" class="tp-btn-spring" onclick="openSmartHomeFinderModal()">
+              Tell Us What You Need
+            </button>
+            <a href="/search/" class="tp-btn-outline-cream">
+              Start Your Housing Search
+            </a>
           </div>
-          <span class="service-btn">We Rent</span>
-        </a>
+        </div>
 
-        <!-- 3. Offices -->
-        <a href="{% url 'offices' %}" class="service-circle-card">
-          <div class="service-circle-img-wrapper"
-            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_offices.png' %}" alt="Offices"
-              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
-          </div>
-          <span class="service-btn">Offices</span>
-        </a>
+        <!-- Right Column: Quick Housing Brief Interactive Form -->
+        <div class="tp-brief-card">
+          <h2>Simply tell us:</h2>
+          <p>Share your requirements below and we will match you with verified homes.</p>
 
-        <!-- 4. We Construct -->
-        <a href="{% url 'projects_list' %}" class="service-circle-card">
-          <div class="service-circle-img-wrapper"
-            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_construct.png' %}" alt="We Construct"
-              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
-          </div>
-          <span class="service-btn">We Construct</span>
-        </a>
+          <form id="heroQuickBriefForm" onsubmit="handleHeroQuickBriefSubmit(event)">
+            <!-- 1. Preferred Location (Villages) -->
+            <div class="tp-field-group">
+              <label class="tp-field-label" for="heroVillageInput">Your preferred location (Villages)</label>
+              <div class="shf-village-SuggestBox">
+                <input type="text" id="heroVillageInput" class="tp-input" autocomplete="off">
+                <div id="heroVillageDropdown" class="shf-village-dropdown"></div>
+              </div>
+              <div id="heroSelectedVillagesContainer" class="shf-village-tags"></div>
+            </div>
 
-        <!-- 5. Locate Land for You -->
-        <a href="/search/?q=land" class="service-circle-card">
-          <div class="service-circle-img-wrapper"
-            style="width: 135px; height: 135px; border-radius: 50%; overflow: hidden; border: 4px solid #ffffff; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22); transition: all 0.35s ease; background: #fff; display: flex; align-items: center; justify-content: center;">
-            <img src="{% static 'images/service_icon_land.png' %}" alt="Locate Land for You"
-              style="width: 80%; height: 80%; object-fit: contain; transition: transform 0.4s ease;">
-          </div>
-          <span class="service-btn">Locate Land for You</span>
-        </a>
+            <!-- 2. Your budget -->
+            <div class="tp-field-group">
+              <label class="tp-field-label">Your budget (UGX / Month)</label>
+              <div class="tp-grid-2">
+                <input type="number" id="heroMinBudget" class="tp-input" min="0" step="10000" placeholder="MIN" required>
+                <input type="number" id="heroMaxBudget" class="tp-input" min="10000" step="10000" placeholder="MAX" required>
+              </div>
+            </div>
+
+            <!-- 3. Preferred house type & 4. Your move-in date -->
+            <div class="tp-grid-2">
+              <div class="tp-field-group">
+                <label class="tp-field-label" for="heroHouseType">Preferred house type</label>
+                <select id="heroHouseType" class="tp-select" required>
+                  <option value=""></option>
+                  {% for opt in house_type_options %}
+                  <option value="{{ opt.value }}">{{ opt.label }}</option>
+                  {% empty %}
+                  <option value="single_room">Single Room</option>
+                  <option value="self_contained">Self-Contained Room</option>
+                  <option value="studio">Studio Apartment</option>
+                  <option value="1_bed">1 Bedroom Apartment</option>
+                  <option value="2_bed">2 Bedroom Apartment</option>
+                  <option value="3_plus_bed">3+ Bedroom Apartment</option>
+                  <option value="bungalow">Bungalow</option>
+                  <option value="standalone">Standalone House</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="tp-field-group">
+                <label class="tp-field-label" for="heroMoveInDate">Your move-in date</label>
+                <input type="date" id="heroMoveInDate" class="tp-input" required style="cursor: pointer;" onclick="if(this.showPicker) this.showPicker()">
+              </div>
+            </div>
+
+            <div id="heroBriefError" style="display: none; background: #fef2f2; color: #b91c1c; padding: 0.6rem 0.85rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.85rem;"></div>
+
+            <button type="submit" class="tp-btn-plum" style="width: 100%; margin-top: 0.35rem;">
+              Match Me With Verified Homes
+            </button>
+          </form>
+        </div>
 
       </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- 3. RECENTLY ADDED LANDINGS SECTION (POSITION 3: IMMEDIATELY AFTER SERVICES, 6 CARDS PER ROW, CENTERED TITLE & PRICE) -->
-<section style="padding: 1.5rem 0 2.5rem 0; background: #ffffff; width: 100%; border-bottom: none;">
-  <style>
-    .newly-added-grid-6col {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 1.25rem;
-    }
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       2. WHY TRUST PROTOCOL?
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="tp-section tp-section-cream">
+    <div class="tp-container">
+      <div class="tp-why-header">
+        <h2 class="tp-h2" style="margin-bottom: 0;">We Don't Start With Properties. We Start With You.</h2>
+      </div>
 
-    .newly-added-card {
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .newly-added-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .newly-added-card:hover .newly-added-img {
-      transform: scale(1.06);
-    }
-
-    @media (max-width: 1480px) {
-      .newly-added-grid-6col {
-        grid-template-columns: repeat(4, 1fr) !important;
-      }
-    }
-
-    @media (max-width: 1000px) {
-      .newly-added-grid-6col {
-        grid-template-columns: repeat(3, 1fr) !important;
-      }
-    }
-
-    @media (max-width: 680px) {
-      .newly-added-grid-6col {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.85rem !important;
-      }
-    }
-
-    .map-redirect-prompt {
-      text-align: center;
-      margin-top: 1.1rem;
-      font-size: 1.22rem;
-      font-weight: 700;
-      color: #292524;
-      line-height: 1.5;
-    }
-
-    .map-redirect-prompt a {
-      color: #047857;
-      text-decoration: underline;
-      font-weight: 800;
-      transition: color 0.2s ease;
-    }
-
-    .map-redirect-prompt a:hover {
-      color: #03543f;
-    }
-
-    @media (max-width: 768px) {
-      .map-redirect-prompt {
-        font-size: 0.95rem;
-        margin-top: 0.75rem;
-      }
-    }
-
-    /* Smart Home Finder Typing Banner & Modal Styles */
-    .smart-finder-banner {
-      max-width: 920px;
-      margin: 0 auto 1rem auto;
-      padding: 0.75rem 1rem;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      text-align: center;
-      position: relative;
-    }
-
-    .smart-finder-typing-wrap {
-      min-height: 2.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 0.75rem;
-    }
-
-    .smart-finder-typing-text {
-      font-family: var(--font-heading);
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: #032b1b;
-      line-height: 1.35;
-      letter-spacing: -0.2px;
-    }
-
-    .smart-finder-click-here {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #047857;
-      color: #ffffff !important;
-      font-size: 1.08rem;
-      font-weight: 800;
-      padding: 0.65rem 1.85rem;
-      border-radius: 50px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      box-shadow: 0 6px 18px rgba(4, 120, 87, 0.28);
-      transition: all 0.25s ease;
-    }
-
-    .smart-finder-click-here:hover {
-      background: #03543f;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 22px rgba(4, 120, 87, 0.38);
-    }
-
-    /* Modal Backdrop & Box */
-    .shf-modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(3, 20, 13, 0.76);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      overflow-y: auto;
-    }
-
-    .shf-modal-backdrop.is-open {
-      display: flex;
-    }
-
-    .shf-modal-card {
-      background: #ffffff;
-      width: 100%;
-      max-width: 680px;
-      border-radius: 20px;
-      border: 2px solid rgba(203, 163, 88, 0.45);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-      overflow: hidden;
-      max-height: 92vh;
-      display: flex;
-      flex-direction: column;
-      animation: shfModalSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes shfModalSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .shf-modal-header {
-      background: #ffffff;
-      color: #1e1b18;
-      padding: 1.25rem 1.5rem 0.85rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e7e5e4;
-    }
-
-    .shf-modal-header h3 {
-      margin: 0;
-      font-family: var(--font-heading);
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #1e1b18 !important;
-    }
-
-    .shf-close-btn {
-      background: #f5f5f4;
-      color: #1e1b18;
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 1.1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s ease;
-    }
-
-    .shf-close-btn:hover {
-      background: #e7e5e4;
-    }
-
-    .shf-modal-body {
-      padding: 1.5rem;
-      overflow-y: auto;
-    }
-
-    .shf-form-group {
-      margin-bottom: 1.15rem;
-      text-align: left;
-    }
-
-    .shf-label {
-      display: block;
-      font-size: 0.88rem;
-      font-weight: 800;
-      color: #1e1b18;
-      margin-bottom: 0.4rem;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .shf-input, .shf-select, .shf-textarea {
-      width: 100%;
-      padding: 0.72rem 0.9rem;
-      background: #fbf7f0;
-      border: 1.5px solid rgba(10, 92, 54, 0.28);
-      border-radius: 10px;
-      font-size: 0.96rem;
-      font-weight: 600;
-      color: #1e1b18;
-      box-sizing: border-box;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .shf-input:focus, .shf-select:focus, .shf-textarea:focus {
-      outline: none;
-      border-color: #047857;
-      box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.12);
-      background: #ffffff;
-    }
-
-    .shf-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.9rem;
-    }
-
-    /* Village Autocomplete & Chips */
-    .shf-village-SuggestBox {
-      position: relative;
-    }
-
-    .shf-village-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border: 1.5px solid #047857;
-      border-radius: 10px;
-      margin-top: 4px;
-      max-height: 210px;
-      overflow-y: auto;
-      z-index: 50;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-    }
-
-    .shf-village-dropdown.is-visible {
-      display: block;
-    }
-
-    .shf-village-option {
-      padding: 0.65rem 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      font-size: 0.92rem;
-      color: #1e1b18;
-      font-weight: 600;
-    }
-
-    .shf-village-option:hover {
-      background: #ecfdf5;
-      color: #047857;
-    }
-
-    .shf-village-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-top: 0.55rem;
-    }
-
-    .shf-village-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: #047857;
-      color: #ffffff;
-      padding: 0.32rem 0.75rem;
-      border-radius: 50px;
-      font-size: 0.84rem;
-      font-weight: 700;
-    }
-
-    .shf-village-tag button {
-      background: none;
-      border: none;
-      color: #ffffff;
-      cursor: pointer;
-      font-size: 0.95rem;
-      line-height: 1;
-      padding: 0;
-      opacity: 0.85;
-    }
-
-    .shf-village-tag button:hover {
-      opacity: 1;
-    }
-
-    .shf-btn-primary {
-      width: 100%;
-      padding: 0.88rem 1.5rem;
-      background: #047857;
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.02rem;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.55rem;
-      box-shadow: 0 6px 18px rgba(4, 120, 87, 0.28);
-      transition: all 0.2s ease;
-    }
-
-    .shf-btn-primary:hover {
-      background: #03543f;
-      transform: translateY(-1px);
-    }
-
-    .shf-btn-secondary {
-      padding: 0.75rem 1.25rem;
-      background: #f5f5f4;
-      color: #292524;
-      border: 1px solid #d6d3d1;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .shf-btn-secondary:hover {
-      background: #e7e5e4;
-    }
-
-    @media (max-width: 768px) {
-      .smart-finder-banner {
-        padding: 1.2rem 1rem;
-      }
-      .smart-finder-typing-text {
-        font-size: 1.12rem;
-      }
-      .shf-grid-2 {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-      }
-      .shf-modal-body {
-        padding: 1.15rem;
-      }
-    }
-  </style>
-
-  <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
-
-    <!-- LANDING PAGE SMART HOME FINDER TYPING PROMPT (Replaces old filter bar) -->
-    <div style="max-width: 1100px; width: 100%; margin: 0 auto 1.75rem auto; box-sizing: border-box;">
-      <div class="smart-finder-banner">
-        <div class="smart-finder-typing-wrap">
-          <span id="smartFinderTypewriter" class="smart-finder-typing-text"></span><span class="typewriter-cursor" style="font-size: 1.45rem; font-weight: 900; color: #047857; margin-left: 2px;">|</span>
+      <div class="tp-grid-4">
+        <div class="tp-clean-card">
+          <span class="tp-card-num">01</span>
+          <h3>What you need</h3>
+          <p>Bedroom count, compound security, parking space, and daily living requirements.</p>
         </div>
+
+        <div class="tp-clean-card">
+          <span class="tp-card-num">02</span>
+          <h3>Where you want to live</h3>
+          <p>Your preferred neighborhoods, commute routes, schools, hospitals, and workplace hubs.</p>
+        </div>
+
+        <div class="tp-clean-card">
+          <span class="tp-card-num">03</span>
+          <h3>What you can afford</h3>
+          <p>Clear monthly rent ranges and transparent terms with zero hidden broker fees.</p>
+        </div>
+
+        <div class="tp-clean-card">
+          <span class="tp-card-num">04</span>
+          <h3>What matters to you</h3>
+          <p>Peace of mind, verified landlords, reliable utilities, and accountable tenancy agreements.</p>
+        </div>
+      </div>
+
+      <div class="tp-why-banner">
         <div>
-          <button type="button" class="smart-finder-click-here" onclick="openSmartHomeFinderModal()">
-            Click here
+          <h3>Then we help you find the right property.</h3>
+          <p>Because finding a home should not be a gamble.</p>
+        </div>
+        <button type="button" class="tp-btn-spring" onclick="openSmartHomeFinderModal()">
+          Tell Us What You Need
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       3. HOW IT WORKS
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="tp-section tp-section-cream-alt">
+    <div class="tp-container">
+      <h2 class="tp-h2">How It Works</h2>
+      <p class="tp-lead">
+        Four structured steps designed to remove guesswork and protect your money.
+      </p>
+
+      <div class="tp-grid-4">
+        <!-- Step 1 -->
+        <div class="tp-step-card">
+          <div>
+            <span class="tp-step-tag">Step 1</span>
+            <h3>Tell Us What You're Looking For</h3>
+            <p>Submit a housing request with your exact specifications and special requirements.</p>
+          </div>
+          <ul class="tp-check-list">
+            <li><span class="tp-check-dot"></span> Number of bedrooms</li>
+            <li><span class="tp-check-dot"></span> Special requirements</li>
+          </ul>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="tp-step-card">
+          <div>
+            <span class="tp-step-tag">Step 2</span>
+            <h3>We Search</h3>
+            <p>Our team searches our network of landlords, agents, developers, and property owners for suitable matches.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="tp-step-card is-highlight">
+          <div>
+            <span class="tp-step-tag">Step 3</span>
+            <h3>We Verify</h3>
+            <p>Before recommending any property, our field team verifies:</p>
+          </div>
+          <ul class="tp-check-list">
+            <li><span class="tp-check-dot"></span> The property</li>
+            <li><span class="tp-check-dot"></span> The landlord</li>
+            <li><span class="tp-check-dot"></span> The documentation</li>
+            <li><span class="tp-check-dot"></span> The occupancy status</li>
+          </ul>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="tp-step-card">
+          <div>
+            <span class="tp-step-tag">Step 4</span>
+            <h3>You Move In With Confidence</h3>
+            <p>We help facilitate a transparent and documented process so you can focus on settling into your new home.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       4. WHO WE HELP
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="tp-section tp-section-cream">
+    <div class="tp-container">
+      <div class="tp-who-top">
+        <div>
+          <h2 class="tp-h2" style="margin-bottom: 0;">Who We Help</h2>
+        </div>
+      </div>
+
+      <div class="tp-grid-5" id="tpPersonaGrid">
+        <!-- 1. Young Professionals -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-briefcase" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Young Professionals</h3>
+            <p>Starting a new job? We'll help you find a home close to where you work.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Young Professional')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 2. Newly Employed Graduates -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-user-graduate" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Newly Employed Graduates</h3>
+            <p>First salary. First apartment. Let us help you avoid costly mistakes.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Newly Employed Graduate')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 3. Newly Married Couples -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-heart" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Newly Married Couples</h3>
+            <p>Building a life together starts with finding the right home.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Newly Married Couple')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 4. Teachers and Lecturers -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-chalkboard-user" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Teachers and Lecturers</h3>
+            <p>Relocating to a new school or university? We'll help you settle quickly.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Teacher / Lecturer')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 5. Bank Employees -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-building-columns" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Bank Employees</h3>
+            <p>Financial professionals deserve secure and verified housing.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Bank Employee')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 6. NGO Staff -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-earth-africa" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>NGO Staff</h3>
+            <p>Moving between projects and assignments? We'll help you find accommodation that fits your needs.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('NGO Staff')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 7. Civil Servants -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-landmark" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Civil Servants</h3>
+            <p>New posting? New district? Let us simplify your transition.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Civil Servant')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 8. Medical Workers -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-stethoscope" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Medical Workers</h3>
+            <p>Focus on serving others while we help you find a suitable home.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Medical Worker')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 9. University Students -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-graduation-cap" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>University Students</h3>
+            <p>Don't get scammed looking for accommodation. Find verified housing options.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('University Student')">
+            <span>Request Match</span> <span>&rarr;</span>
+          </button>
+        </div>
+
+        <!-- 10. Diaspora Ugandans -->
+        <div class="tp-persona-card">
+          <div>
+            <h3><i class="fa-solid fa-plane-arrival" style="color: var(--tp-plum); margin-right: 0.45rem;"></i>Diaspora Ugandans</h3>
+            <p>Returning home, renting, buying or building? We'll help you navigate the process with confidence.</p>
+          </div>
+          <button type="button" class="tp-persona-action" onclick="openSmartHomeFinderWithPersona('Diaspora Ugandan')">
+            <span>Request Match</span> <span>&rarr;</span>
           </button>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="newly-added-grid-6col">
-      {% for property in properties|slice:":12" %}
-      <a href="/property/{{ property.id }}/" class="newly-added-card" style="width: 100%;">
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       5. FOR PROPERTY OWNERS
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="tp-section tp-section-cream-alt">
+    <div class="tp-container">
+      <div class="tp-owners-grid">
 
-        <!-- Image Box with Rounded Corners (With For Sale / For Rent Badge) -->
-        <div
-          style="position: relative; width: 100%; height: 210px; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.06);">
-          {% if property.is_for_sale or property.listing_type == 'sale' %}
-          <span
-            style="position: absolute; top: 10px; right: 10px; background: #0284c7; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For
-            Sale</span>
-          {% else %}
-          <span
-            style="position: absolute; top: 10px; right: 10px; background: #047857; color: white; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">For
-            Rent</span>
-          {% endif %}
+        <div>
+          <h2 class="tp-h2">Looking For Quality Tenants?</h2>
+          <p class="tp-lead" style="margin-bottom: 1.25rem;">
+            TRUST Protocol connects landlords and property developers with genuine housing demand.
+          </p>
 
-          {% if property.hero_image %}
-          <img src="{{ property.hero_image.url }}" alt="{{ property.title }}" class="newly-added-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-          {% elif property.category == 'studio' %}
-          <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="newly-added-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-          {% elif property.category == '2_bed' or property.category == '1_bed' %}
-          <img src="https://images.unsplash.com/photo-1502672260266-1c1fe2d93688?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="newly-added-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-          {% else %}
-          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-            alt="{{ property.title }}" class="newly-added-img"
-            style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
-          {% endif %}
+          <div class="tp-owners-callout">
+            <p>We don't just advertise properties.</p>
+            <span>We help identify tenants actively looking for homes.</span>
+          </div>
+
+          <a href="/register/" class="tp-btn-spring">
+            List Your Property
+          </a>
         </div>
 
-        <!-- Centered Title & Price -->
-        <div style="padding: 0.65rem 0.25rem 0 0.25rem; text-align: center; width: 100%;">
-          <h4
-            style="font-size: 1.02rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.25rem 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-align: center;">
-            {{ property.title }}
-          </h4>
-          <div style="font-size: 0.92rem; color: #57534e; font-weight: 700; text-align: center;">
-            {% if property.is_for_sale or property.listing_type == 'sale' %}
-            UGX {{ property.price|floatformat:0|intcomma }}
-            {% else %}
-            UGX {{ property.price|floatformat:0|intcomma }} / mo
-            {% endif %}
+        <div class="tp-benefits-box">
+          <h3>Benefits include:</h3>
+          <div class="tp-benefits-grid">
+            <div class="tp-benefit-item">
+              <span class="tp-check-dot"></span> Tenant matching
+            </div>
+            <div class="tp-benefit-item">
+              <span class="tp-check-dot"></span> Tenant verification
+            </div>
+            <div class="tp-benefit-item">
+              <span class="tp-check-dot"></span> Property promotion
+            </div>
+            <div class="tp-benefit-item">
+              <span class="tp-check-dot"></span> Property inspections
+            </div>
+            <div class="tp-benefit-item">
+              <span class="tp-check-dot"></span> Property management services
+            </div>
+            <div class="tp-benefit-item">
+              <span class="tp-check-dot"></span> Secure payment protection
+            </div>
           </div>
         </div>
 
-      </a>
-      {% empty %}
-      <div style="text-align: center; padding: 5rem 0; color: #94a3b8; grid-column: 1 / -1;">
-        <i class="fa-solid fa-house-circle-xmark"
-          style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; display: block;"></i>
-        <p style="margin: 0; font-size: 0.95rem; font-weight: 500;">No recently added vetted properties found.</p>
       </div>
-      {% endfor %}
     </div>
+  </section>
 
-  </div>
-</section>
-
-<!-- 4. DREAM HOME & STATS SHOWCASE SECTION -->
-<section style="padding: 2.5rem 0 3.5rem 0; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.04); width: 100%;">
-  <div style="max-width: 1550px; margin: 0 auto; padding: 0 1.5rem; width: 100%; box-sizing: border-box;">
-
-    <!-- SPLIT CONTENT: SLIDER ON LEFT, COUNTDOWN CARDS ON RIGHT -->
-    <div class="showcase-split-grid"
-      style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3.5rem; align-items: stretch;">
-
-      <!-- LEFT SIDE: ADMIN-MANAGED LOOPED IMAGE SLIDER -->
-      <div class="showcase-image-box"
-        id="dream-home-slider"
-        style="position: relative; border-radius: 22px; overflow: hidden; height: 440px; background: transparent; -webkit-mask-image: radial-gradient(ellipse 95% 92% at 50% 50%, #000 68%, transparent 100%); mask-image: radial-gradient(ellipse 95% 92% at 50% 50%, #000 68%, transparent 100%);">
-        
-        <div class="showcase-slides-track" style="position: relative; width: 100%; height: 100%;">
-          {% if showcase_slides %}
-            {% for slide in showcase_slides %}
-            <div class="showcase-slide {% if forloop.first %}active{% endif %}"
-              style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: {% if forloop.first %}1{% else %}0{% endif %}; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: {% if forloop.first %}auto{% else %}none{% endif %};">
-              <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Dream Home Showcase' }}"
-                style="width: 100%; height: 100%; object-fit: cover; display: block;">
-              {% if slide.title %}
-              <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2.5rem 1.5rem 1.25rem; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%); color: white;">
-                <span style="font-size: 1.05rem; font-weight: 700; letter-spacing: 0.3px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">{{ slide.title }}</span>
-              </div>
-              {% endif %}
-            </div>
-            {% endfor %}
-          {% elif site_settings.pipeline_left_image %}
-            <div class="showcase-slide active" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 1;">
-              <img src="{{ site_settings.pipeline_left_image.url }}" alt="Dream Home Showcase"
-                style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-          {% else %}
-            <div class="showcase-slide active" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 1;">
-              <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80"
-                alt="Dream Home Showcase" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-          {% endif %}
-        </div>
-
-        {% if showcase_slides and showcase_slides|length > 1 %}
-        <!-- Navigation Arrows -->
-        <button type="button" class="showcase-arrow showcase-prev" onclick="changeShowcaseSlide(-1)" aria-label="Previous Slide"
-          style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); color: white; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s ease; z-index: 10; font-size: 1rem;">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <button type="button" class="showcase-arrow showcase-next" onclick="changeShowcaseSlide(1)" aria-label="Next Slide"
-          style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); color: white; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s ease; z-index: 10; font-size: 1rem;">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-
-        <!-- Slider Indicator Dots -->
-        <div class="showcase-dots" style="position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10;">
-          {% for slide in showcase_slides %}
-          <span class="showcase-dot {% if forloop.first %}active{% endif %}" onclick="goToShowcaseSlide({{ forloop.counter0 }})"
-            style="width: {% if forloop.first %}24px{% else %}10px{% endif %}; height: 10px; border-radius: {% if forloop.first %}10px{% else %}50%{% endif %}; background: {% if forloop.first %}#ffffff{% else %}rgba(255,255,255,0.45){% endif %}; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></span>
-          {% endfor %}
-        </div>
-        {% endif %}
-      </div>
-
-      <!-- RIGHT SIDE: ANIMATED COUNTDOWN STATS GRID (HOUSES, OFFICES, AGENTS, PROJECTS, MOVED-IN, DISTRICTS) -->
-      <div class="showcase-stats-grid"
-        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem 1rem; background: #faf7f2; padding: 2.25rem 1.75rem; border-radius: 22px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03); align-content: center;">
-        
-        <!-- 1. Houses -->
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
-            class="counter-num" data-target="{{ site_settings.stat_properties|default:120 }}">0+</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Houses</div>
-        </div>
-
-        <!-- 2. Offices -->
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
-            class="counter-num" data-target="{{ site_settings.stat_offices|default:45 }}">0+</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Offices</div>
-        </div>
-
-        <!-- 3. Agents -->
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
-            class="counter-num" data-target="{{ site_settings.stat_agents|default:32 }}">0+</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Agents</div>
-        </div>
-
-        <!-- 4. Projects -->
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
-            class="counter-num" data-target="{{ site_settings.stat_projects|default:28 }}">0+</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Projects</div>
-        </div>
-
-        <!-- 5. Moved-in -->
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
-            class="counter-num" data-target="{{ site_settings.stat_moved_in|default:380 }}">0+</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Moved-in</div>
-        </div>
-
-        <!-- 6. Districts -->
-        <div
-          style="text-align: center; padding: 1.1rem 0.5rem; background: #ffffff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02); min-height: 108px; display: flex; flex-direction: column; justify-content: center; contain: layout style;">
-          <div
-            style="font-size: 2.3rem; font-weight: 800; color: var(--color-emerald-darkest); font-family: var(--font-heading); line-height: 1.1; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; min-width: 72px; display: inline-block; margin: 0 auto;"
-            class="counter-num" data-target="{{ site_settings.stat_districts|default:14 }}">0+</div>
-          <div
-            style="font-size: 0.82rem; font-weight: 700; color: #78716c; margin-top: 0.45rem; text-transform: uppercase; letter-spacing: 0.5px;">
-            Districts</div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-<!-- 5. TESTIMONIALS SECTION -->
-<div style="text-align: center; padding: 3rem 0 1.25rem 0; background: #ffffff;">
-  <h3
-    style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--color-emerald-darkest); font-weight: 800; margin: 0; letter-spacing: -0.5px;">
-    Testimonies
-  </h3>
 </div>
-
-<section class="testimonials-section"
-  style="padding: 0.5rem 0 1.25rem 0; background: linear-gradient(180deg, #fdfbf7 0%, #eef5f1 100%); overflow: hidden; width: 100%; max-width: 100%; position: relative; border-bottom: 1px solid rgba(0,0,0,0.03);">
-
-  <!-- Premium City Skyline Image Watermark -->
-  <div
-    style="position: absolute; bottom: 0; left: 0; right: 0; top: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; opacity: 0.35; mix-blend-mode: multiply;">
-    <img src="{% static 'images/city_skyline_watermark.jpg' %}" alt="City Skyline Watermark"
-      style="width: 100%; height: 100%; object-fit: cover; object-position: bottom center;">
-  </div>
-
-  <div style="position: relative; z-index: 5;">
-    <!-- Testimonials Marquee Outer -->
-    <div class="testimonial-marquee-container" style="padding: 0.75rem 0;">
-      <div class="testimonial-marquee-track">
-        <!-- Group 1 -->
-        <div class="testimonial-marquee-group">
-          <!-- Testimonial 1 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my
-              landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">Joan Nakimera</h4>
-                <span class="testimonial-role">Verified Tenant • Entebbe</span>
-              </div>
-            </div>
-          </div>
-          <!-- Testimonial 2 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit
-              was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">Arthur Musoke</h4>
-                <span class="testimonial-role">Verified Tenant • Kira</span>
-              </div>
-            </div>
-          </div>
-          <!-- Testimonial 3 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On
-              TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">Grace Namubiru</h4>
-                <span class="testimonial-role">Verified Tenant • Kampala</span>
-              </div>
-            </div>
-          </div>
-          <!-- Testimonial 4 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was
-              legally certified. The inventory checklist made move-in flawless."</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">David Okello</h4>
-                <span class="testimonial-role">Verified Tenant • Bugolobi</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Group 2 (Duplicate for Seamless Loop) -->
-        <div class="testimonial-marquee-group">
-          <!-- Testimonial 1 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"Renting in Kampala was historically a gamble. With TRUST, I verified my
-              landlord's identity and signed a fully protected digital lease in minutes. Outstanding service!"</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">Joan Nakimera</h4>
-                <span class="testimonial-role">Verified Tenant • Entebbe</span>
-              </div>
-            </div>
-          </div>
-          <!-- Testimonial 2 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"The escrow safety feature completely won me over. Knowing my security deposit
-              was safe until inspection allowed me to move in with zero anxiety. 100% recommended!"</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">Arthur Musoke</h4>
-                <span class="testimonial-role">Verified Tenant • Kira</span>
-              </div>
-            </div>
-          </div>
-          <!-- Testimonial 3 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"I was tired of fake listings and fake agents asking for 'inspection fees'. On
-              TRUST, the property I saw online was exactly what I got physically. Clean and transparent."</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">Grace Namubiru</h4>
-                <span class="testimonial-role">Verified Tenant • Kampala</span>
-              </div>
-            </div>
-          </div>
-          <!-- Testimonial 4 -->
-          <div class="testimonial-card">
-
-            <p class="testimonial-quote">"Physical validation by authorized field agents meant my property condition was
-              legally certified. The inventory checklist made move-in flawless."</p>
-            <div class="testimonial-user">
-              <div>
-                <h4 class="testimonial-name">David Okello</h4>
-                <span class="testimonial-role">Verified Tenant • Bugolobi</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const slides = document.querySelectorAll('.hero-slider .slide-img');
-    let currentSlide = 0;
-
-    function nextSlide() {
-      slides[currentSlide].classList.remove('active');
-      currentSlide = (currentSlide + 1) % slides.length;
-      slides[currentSlide].classList.add('active');
-    }
-
-    // Cycle backgrounds gorgeously every 6 seconds
-    setInterval(nextSlide, 6000);
-
-    // Force Autoplay Background Video Programmatically (with load refresh)
-    const bgVid = document.querySelector('.video-bg');
-    if (bgVid) {
-      bgVid.muted = true;
-      bgVid.load(); // Force browser stream buffer to clear on refresh
-      bgVid.play().catch(function (err) {
-        console.log("Retrying autoplay with mute filter...");
-        bgVid.muted = true;
-        bgVid.play();
-      });
-    }
-
-    // =====================================================
-    // JS-DRIVEN MARQUEE — production-proof seamless loop
-    // Waits for ALL images to load before measuring width,
-    // so network latency never causes the blank-gap bug.
-    // =====================================================
-    (function initMarquee() {
-      const track = document.querySelector('.marquee-track');
-      const group1 = document.querySelector('.marquee-group');
-      if (!track || !group1) return;
-
-      // Pixels per frame. 60 fps × speed ≈ 45 s per full group width.
-      // We'll recalculate actual speed after images load.
-      const DURATION_S = 45; // desired loop duration in seconds
-      let speed = 1;         // will be set after measurement
-      let offset = 0;
-      let paused = false;
-      let rafId = null;
-
-      // Pause on hover
-      track.addEventListener('mouseenter', () => { paused = true; });
-      track.addEventListener('mouseleave', () => { paused = false; });
-
-      function step() {
-        if (!paused) {
-          offset += speed;
-          const groupWidth = group1.offsetWidth; // live measurement every frame
-          if (offset >= groupWidth) offset = 0;  // seamless reset
-          track.style.transform = 'translateX(-' + offset + 'px)';
-        }
-        rafId = requestAnimationFrame(step);
-      }
-
-      function start() {
-        // Measure group width AFTER images are loaded
-        const groupWidth = group1.offsetWidth;
-        // speed = pixels per frame so that one full group takes DURATION_S seconds at 60fps
-        speed = groupWidth / (DURATION_S * 60);
-        if (speed <= 0) speed = 0.5; // safety floor
-        offset = 0;
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(step);
-      }
-
-      // Wait for every marquee image to finish loading before starting
-      const imgs = track.querySelectorAll('img');
-      let pending = imgs.length;
-
-      if (pending === 0) {
-        start();
-        return;
-      }
-
-      function onImageSettled() {
-        pending--;
-        if (pending <= 0) start();
-      }
-
-      imgs.forEach(function (img) {
-        if (img.complete && img.naturalWidth > 0) {
-          onImageSettled();
-        } else {
-          img.addEventListener('load', onImageSettled, { once: true });
-          img.addEventListener('error', onImageSettled, { once: true });
-        }
-      });
-    })();
-
-    // Price Range Select Listener
-    document.getElementById('priceRangeSelect')?.addEventListener('change', function () {
-      const val = this.value;
-      if (val) {
-        const parts = val.split('-');
-        document.getElementById('minPriceInput').value = parts[0];
-        document.getElementById('maxPriceInput').value = parts[1];
-      } else {
-        document.getElementById('minPriceInput').value = '';
-        document.getElementById('maxPriceInput').value = '';
-      }
-    });
-
-    // Animated Stats Counter (IntersectionObserver Triggered Count-Up)
-    const counterElements = document.querySelectorAll('.counter-num');
-    const animateCounter = (counter) => {
-      const target = +counter.getAttribute('data-target');
-      if (!target || counter.classList.contains('counted')) return;
-      counter.classList.add('counted');
-
-      const duration = 1800; // ms
-      const startTime = performance.now();
-
-      const updateNumber = (now) => {
-        const progress = Math.min((now - startTime) / duration, 1);
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
-        const current = Math.floor(easeProgress * target);
-        counter.innerText = current.toLocaleString() + '+';
-
-        if (progress < 1) {
-          requestAnimationFrame(updateNumber);
-        } else {
-          counter.innerText = target.toLocaleString() + '+';
-        }
-      };
-      requestAnimationFrame(updateNumber);
-    };
-
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            animateCounter(entry.target);
-          }
-        });
-      }, { threshold: 0.15 });
-
-      counterElements.forEach(el => observer.observe(el));
-    } else {
-      counterElements.forEach(el => animateCounter(el));
-    }
-
-    // Dream Home Showcase Looped Image Slider
-    (function initShowcaseSlider() {
-      const slider = document.getElementById('dream-home-slider');
-      if (!slider) return;
-      const slides = slider.querySelectorAll('.showcase-slide');
-      const dots = slider.querySelectorAll('.showcase-dot');
-      if (slides.length <= 1) return;
-
-      let currentSlide = 0;
-      let slideTimer = null;
-      const intervalMs = 4000;
-
-      function showSlide(index) {
-        if (index >= slides.length) index = 0;
-        if (index < 0) index = slides.length - 1;
-        currentSlide = index;
-
-        slides.forEach((slide, idx) => {
-          if (idx === currentSlide) {
-            slide.style.opacity = '1';
-            slide.style.pointerEvents = 'auto';
-            slide.classList.add('active');
-          } else {
-            slide.style.opacity = '0';
-            slide.style.pointerEvents = 'none';
-            slide.classList.remove('active');
-          }
-        });
-
-        dots.forEach((dot, idx) => {
-          if (idx === currentSlide) {
-            dot.style.background = '#ffffff';
-            dot.style.width = '24px';
-            dot.style.borderRadius = '10px';
-          } else {
-            dot.style.background = 'rgba(255,255,255,0.45)';
-            dot.style.width = '10px';
-            dot.style.borderRadius = '50%';
-          }
-        });
-      }
-
-      function startTimer() {
-        stopTimer();
-        slideTimer = setInterval(() => {
-          showSlide(currentSlide + 1);
-        }, intervalMs);
-      }
-
-      function stopTimer() {
-        if (slideTimer) {
-          clearInterval(slideTimer);
-          slideTimer = null;
-        }
-      }
-
-      slider.addEventListener('mouseenter', stopTimer);
-      slider.addEventListener('mouseleave', startTimer);
-
-      window.changeShowcaseSlide = function(delta) {
-        showSlide(currentSlide + delta);
-        startTimer();
-      };
-
-      window.goToShowcaseSlide = function(index) {
-        showSlide(index);
-        startTimer();
-      };
-
-      showSlide(0);
-      startTimer();
-    })();
-  });
-</script>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      SMART HOME FINDER & TRUST PROTOCOL HOUSE-HUNTING AUTHORIZATION MODAL
@@ -2740,12 +1341,12 @@
         <form id="shfSearchForm" onsubmit="handleSmartHomeSearch(event)">
           <!-- 1. Preferred Location (Village Autocomplete + Multi-Tag List) -->
           <div class="shf-form-group">
-            <label class="shf-label"><i class="fa-solid fa-location-dot" style="color: #047857; margin-right: 4px;"></i> Preferred Location (Villages) *</label>
+            <label class="shf-label">Preferred Location (Villages) *</label>
             <div class="shf-village-SuggestBox">
               <input type="text" id="shfVillageInput" class="shf-input" autocomplete="off">
               <div id="shfVillageDropdown" class="shf-village-dropdown"></div>
             </div>
-            <div style="font-size: 0.78rem; color: #57534e; margin-top: 0.3rem;">
+            <div style="font-size: 0.78rem; color: var(--tp-plum-muted); margin-top: 0.3rem;">
               Type a village and click it from the list to add to your preferred locations. You can add multiple villages.
             </div>
             <div id="shfSelectedVillagesContainer" class="shf-village-tags"></div>
@@ -2753,7 +1354,7 @@
 
           <!-- 2. Budget Range (Min & Max UGX) -->
           <div class="shf-form-group">
-            <label class="shf-label"><i class="fa-solid fa-coins" style="color: #047857; margin-right: 4px;"></i> Budget Range (UGX / Month) *</label>
+            <label class="shf-label">Budget Range (UGX / Month) *</label>
             <div class="shf-grid-2">
               <div>
                 <input type="number" id="shfMinBudget" class="shf-input" min="0" step="10000" placeholder="MIN" required>
@@ -2767,7 +1368,7 @@
           <!-- 3. Type of House & 4. Number of Bedrooms -->
           <div class="shf-grid-2">
             <div class="shf-form-group">
-              <label class="shf-label"><i class="fa-solid fa-house" style="color: #047857; margin-right: 4px;"></i> Type of House *</label>
+              <label class="shf-label">Type of House *</label>
               <select id="shfHouseType" class="shf-select" required>
                 <option value=""></option>
                 {% for opt in house_type_options %}
@@ -2788,7 +1389,7 @@
             </div>
 
             <div class="shf-form-group">
-              <label class="shf-label"><i class="fa-solid fa-bed" style="color: #047857; margin-right: 4px;"></i> Number of Bedrooms *</label>
+              <label class="shf-label">Number of Bedrooms *</label>
               <select id="shfBedrooms" class="shf-select" required>
                 <option value="0">0 (Single Room / Studio)</option>
                 <option value="1" selected>1 Bedroom</option>
@@ -2802,47 +1403,44 @@
 
           <!-- 5. When do you need this house -->
           <div class="shf-form-group">
-            <label class="shf-label"><i class="fa-solid fa-calendar-check" style="color: #047857; margin-right: 4px;"></i> When do you need this house *</label>
+            <label class="shf-label">When do you need this house *</label>
             <input type="date" id="shfTimePeriod" class="shf-input" required style="cursor: pointer;" onclick="if(this.showPicker) this.showPicker()">
           </div>
 
           <!-- 6. Special Requirements (Description) -->
           <div class="shf-form-group">
-            <label class="shf-label"><i class="fa-solid fa-clipboard-list" style="color: #047857; margin-right: 4px;"></i> Special Requirements (Description)</label>
+            <label class="shf-label">Special Requirements (Description)</label>
             <textarea id="shfSpecialRequirements" class="shf-textarea" rows="3"></textarea>
           </div>
 
           <div id="shfStep1Error" style="display: none; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.65rem 0.9rem; border-radius: 10px; font-size: 0.88rem; font-weight: 700; margin-bottom: 1rem;"></div>
 
           <button type="submit" id="shfSearchSubmitBtn" class="shf-btn-primary">
-            <i class="fa-solid fa-magnifying-glass"></i> Find Verified Home
+            Find Verified Home
           </button>
         </form>
       </div>
 
       <!-- ─── STEP 2A: MATCHED DATABASE PROPERTIES ─── -->
       <div id="shfStepResults" style="display: none;">
-        <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.15rem; display: flex; align-items: center; gap: 0.75rem;">
-          <i class="fa-solid fa-circle-check" style="color: #047857; font-size: 1.5rem;"></i>
-          <div>
-            <div style="font-weight: 800; color: #064e3b; font-size: 0.98rem;">We found verified properties matching your request!</div>
-            <div id="shfMatchedSubtitle" style="font-size: 0.84rem; color: #047857; font-weight: 600;"></div>
-          </div>
+        <div style="background: var(--tp-cream); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.15rem;">
+          <div style="font-weight: 800; color: var(--tp-plum); font-size: 0.98rem;">We found verified properties matching your request!</div>
+          <div id="shfMatchedSubtitle" style="font-size: 0.84rem; color: var(--tp-plum-muted); font-weight: 600;"></div>
         </div>
 
         <div id="shfMatchedList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;"></div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; border-top: 1px solid #e7e5e4; padding-top: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; border-top: 1px solid var(--tp-cream-warm); padding-top: 1rem;">
           <button type="button" class="shf-btn-secondary" onclick="showShfStep('step1')">
-            <i class="fa-solid fa-arrow-left"></i> Edit Search
+            Edit Search
           </button>
-          <button type="button" class="shf-btn-secondary" style="border-color: #047857; color: #047857;" onclick="showShfStep('authorize')">
-            Not what you want? Authorize Custom Search <i class="fa-solid fa-arrow-right"></i>
+          <button type="button" class="shf-btn-secondary" onclick="showShfStep('authorize')">
+            Not what you want? Authorize Custom Search
           </button>
         </div>
       </div>
 
-      <!-- ─── STEP 2B: NO DATABASE MATCH -> AUTHORIZE TRUST PROTOCOL PROMPT ─── -->
+      <!-- ─── STEP 2B: NO DATABASE MATCH -> AUTHORIZE TRUST PROTOCOL PROMPT (PLAN B) ─── -->
       <div id="shfStepAuthorize" style="display: none; text-align: center; padding: 0.5rem 0;">
         <div style="margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center;">
           {% if site_settings and site_settings.pdf_logo %}
@@ -2854,29 +1452,29 @@
           {% endif %}
         </div>
 
-        <h4 style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: #1e1b18; margin: 0 0 0.65rem 0;">
+        <h4 style="font-family: var(--tp-font-heading); font-size: 1.35rem; font-weight: 700; color: var(--tp-plum); margin: 0 0 0.65rem 0;">
           Ohhh, Sorry
         </h4>
 
-        <p style="font-size: 0.96rem; color: #44403c; line-height: 1.6; max-width: 540px; margin: 0 auto 1.25rem auto;">
+        <p style="font-size: 0.96rem; color: var(--tp-plum-muted); line-height: 1.6; max-width: 540px; margin: 0 auto 1.25rem auto;">
           We currently do not have a property in our database matching your exact request. Would you like to grant authority to <strong>TRUST PROTOCOL</strong> to deploy our field inspection agents to locate and verify a house matching your specifications?
         </p>
 
-        <div style="background: #fbf7f0; border: 1.5px solid rgba(203, 163, 88, 0.5); border-radius: 14px; padding: 1rem 1.2rem; text-align: left; margin-bottom: 1.35rem; font-size: 0.9rem; color: #292524;">
-          <div style="font-weight: 800; color: #032215; margin-bottom: 0.4rem;">
+        <div style="background: var(--tp-cream); border-radius: 14px; padding: 1rem 1.2rem; text-align: left; margin-bottom: 1.35rem; font-size: 0.9rem; color: var(--tp-plum);">
+          <div style="font-weight: 800; color: var(--tp-plum); margin-bottom: 0.4rem;">
             Client Search Mandate Summary:
           </div>
           <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.65;">
             <li><strong>Preferred Village(s):</strong> <span id="shfAuthSummaryVillages"></span></li>
             <li><strong>Budget Range:</strong> <span id="shfAuthSummaryBudget"></span></li>
-            <li><strong>House Type & Bedrooms:</strong> <span id="shfAuthSummaryType"></span></li>
+            <li><strong>House Type &amp; Bedrooms:</strong> <span id="shfAuthSummaryType"></span></li>
             <li><strong>Time / Period:</strong> <span id="shfAuthSummaryTime"></span></li>
           </ul>
         </div>
 
         <div style="display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap;">
           <button type="button" class="shf-btn-secondary" onclick="showShfStep('step1')">
-            <i class="fa-solid fa-arrow-left"></i> Modify Request
+            Modify Request
           </button>
           <button type="button" class="shf-btn-primary" style="width: auto; padding: 0.85rem 1.75rem;" onclick="grantTrustAuthorization()">
             Proceed
@@ -2886,8 +1484,7 @@
 
       <!-- ─── STEP 3: PERSONAL INFORMATION & 20% SEARCH FEE PAYMENT ─── -->
       <div id="shfStepPersonal" style="display: none;">
-        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.15rem; font-size: 0.88rem; color: #065f46; font-weight: 600;">
-          <i class="fa-solid fa-user-check" style="margin-right: 6px; color: #047857;"></i>
+        <div style="background: var(--tp-cream); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.15rem; font-size: 0.88rem; color: var(--tp-plum); font-weight: 600;">
           Authorization granted. Please complete your personal details below to proceed with the <strong>20% Search Fee</strong>.
         </div>
 
@@ -2930,14 +1527,14 @@
           </div>
 
           <!-- 20% SEARCH FEE SUMMARY BOX -->
-          <div style="background: #fbf7f0; color: #1e1b18; border-radius: 14px; padding: 1.15rem 1.35rem; margin: 1.15rem 0; border: 1.5px solid #e7e5e4;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; font-size: 0.9rem; color: #57534e;">
+          <div style="background: var(--tp-cream); color: var(--tp-plum); border-radius: 14px; padding: 1.15rem 1.35rem; margin: 1.15rem 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; font-size: 0.9rem; color: var(--tp-plum-muted);">
               <span>Your Maximum Budget Range:</span>
-              <strong id="shfFeeMaxBudgetDisplay" style="color: #1e1b18;">UGX 0</strong>
+              <strong id="shfFeeMaxBudgetDisplay" style="color: var(--tp-plum);">UGX 0</strong>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.55rem; border-top: 1px solid #e7e5e4; font-size: 1.1rem;">
-              <span style="color: #1e1b18; font-weight: 800;">Search Fee (20% of Maximum Range):</span>
-              <strong id="shfFeeAmountDisplay" style="font-size: 1.25rem; color: #047857;">UGX 0</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.55rem; border-top: 1px solid var(--tp-cream-warm); font-size: 1.1rem;">
+              <span style="color: var(--tp-plum); font-weight: 800;">Search Fee (20% of Maximum Range):</span>
+              <strong id="shfFeeAmountDisplay" style="font-size: 1.25rem; color: var(--tp-plum);">UGX 0</strong>
             </div>
           </div>
 
@@ -2945,7 +1542,7 @@
 
           <div style="display: flex; gap: 0.75rem; align-items: center;">
             <button type="button" class="shf-btn-secondary" onclick="showShfStep('authorize')">
-              <i class="fa-solid fa-arrow-left"></i> Back
+              Back
             </button>
             <button type="submit" id="shfPaySubmitBtn" class="shf-btn-primary" style="flex: 1;">
               <span id="shfPayBtnLabel">Pay Now</span>
@@ -2960,38 +1557,29 @@
 
 <script>
   (function () {
-    // 1. Typing Animation on Landing Page
-    const targetPhrase = "Tell us your budget and preferred location. We'll help you find a verified home.";
-    const typeEl = document.getElementById('smartFinderTypewriter');
-    if (typeEl) {
-      let charIndex = 0;
-      let isDeleting = false;
+    // 1. Persona Filter Tabs ("Who We Help")
+    const filterContainer = document.getElementById('tpPersonaFilters');
+    const personaCards = document.querySelectorAll('#tpPersonaGrid .tp-persona-card');
+    if (filterContainer && personaCards.length) {
+      filterContainer.addEventListener('click', function (e) {
+        const btn = e.target.closest('.tp-filter-btn');
+        if (!btn) return;
+        const filter = btn.getAttribute('data-filter');
 
-      function tickTypewriter() {
-        if (!isDeleting) {
-          charIndex++;
-          typeEl.textContent = targetPhrase.slice(0, charIndex);
-          if (charIndex >= targetPhrase.length) {
-            isDeleting = true;
-            setTimeout(tickTypewriter, 3800);
-            return;
+        filterContainer.querySelectorAll('.tp-filter-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+
+        personaCards.forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
           }
-          setTimeout(tickTypewriter, 42);
-        } else {
-          charIndex--;
-          typeEl.textContent = targetPhrase.slice(0, charIndex);
-          if (charIndex <= 0) {
-            isDeleting = false;
-            setTimeout(tickTypewriter, 600);
-            return;
-          }
-          setTimeout(tickTypewriter, 18);
-        }
-      }
-      tickTypewriter();
+        });
+      });
     }
 
-    // 2. Village Autocomplete & Multi-Tag State
+    // 2. Shared Village Autocomplete & Multi-Tag State (Syncs Hero Form & Modal Form)
     let allVillages = [];
     let selectedVillages = [];
     let villagesLoaded = false;
@@ -3007,22 +1595,30 @@
         .catch(() => {});
     }
 
+    loadAllVillages();
+
     const villageInput = document.getElementById('shfVillageInput');
     const villageDropdown = document.getElementById('shfVillageDropdown');
     const selectedContainer = document.getElementById('shfSelectedVillagesContainer');
 
+    const heroVillageInput = document.getElementById('heroVillageInput');
+    const heroVillageDropdown = document.getElementById('heroVillageDropdown');
+    const heroSelectedContainer = document.getElementById('heroSelectedVillagesContainer');
+
     function renderSelectedVillages() {
-      if (!selectedContainer) return;
-      selectedContainer.innerHTML = '';
-      selectedVillages.forEach((vName, idx) => {
-        const tag = document.createElement('span');
-        tag.className = 'shf-village-tag';
-        tag.innerHTML = `<i class="fa-solid fa-location-dot" style="font-size: 0.75rem;"></i> <span>${vName}</span> <button type="button" aria-label="Remove" data-idx="${idx}">&times;</button>`;
-        tag.querySelector('button').addEventListener('click', function () {
-          selectedVillages.splice(idx, 1);
-          renderSelectedVillages();
+      [selectedContainer, heroSelectedContainer].forEach(container => {
+        if (!container) return;
+        container.innerHTML = '';
+        selectedVillages.forEach((vName, idx) => {
+          const tag = document.createElement('span');
+          tag.className = 'shf-village-tag';
+          tag.innerHTML = `<span>${vName}</span> <button type="button" aria-label="Remove" data-idx="${idx}">&times;</button>`;
+          tag.querySelector('button').addEventListener('click', function () {
+            selectedVillages.splice(idx, 1);
+            renderSelectedVillages();
+          });
+          container.appendChild(tag);
         });
-        selectedContainer.appendChild(tag);
       });
     }
 
@@ -3035,22 +1631,26 @@
       }
       if (villageInput) villageInput.value = '';
       if (villageDropdown) villageDropdown.classList.remove('is-visible');
+      if (heroVillageInput) heroVillageInput.value = '';
+      if (heroVillageDropdown) heroVillageDropdown.classList.remove('is-visible');
     }
 
-    if (villageInput && villageDropdown) {
-      villageInput.addEventListener('focus', function () {
+    function bindVillageAutocomplete(inputEl, dropdownEl) {
+      if (!inputEl || !dropdownEl) return;
+
+      inputEl.addEventListener('focus', function () {
         loadAllVillages();
         if (this.value.trim().length > 0) {
           this.dispatchEvent(new Event('input'));
         }
       });
 
-      villageInput.addEventListener('input', function () {
+      inputEl.addEventListener('input', function () {
         loadAllVillages();
         const query = this.value.trim().toLowerCase();
         if (!query) {
-          villageDropdown.classList.remove('is-visible');
-          villageDropdown.innerHTML = '';
+          dropdownEl.classList.remove('is-visible');
+          dropdownEl.innerHTML = '';
           return;
         }
 
@@ -3060,39 +1660,38 @@
           (v.district_name && v.district_name.toLowerCase().includes(query))
         ).slice(0, 10);
 
-        villageDropdown.innerHTML = '';
+        dropdownEl.innerHTML = '';
 
         matches.forEach(v => {
           const item = document.createElement('div');
           item.className = 'shf-village-option';
           const sub = [v.division_name, v.district_name].filter(Boolean).join(', ');
           item.innerHTML = `
-            <span><i class="fa-solid fa-location-dot" style="color: #047857; margin-right: 6px;"></i> ${v.name} <small style="color: #78716c; font-weight: 500;">${sub ? '(' + sub + ')' : ''}</small></span>
-            <span style="color: #047857; font-size: 0.8rem; font-weight: 800;">+ Add</span>
+            <span>${v.name} <small style="color: #78716c; font-weight: 500;">${sub ? '(' + sub + ')' : ''}</small></span>
+            <span style="color: #2B1129; font-size: 0.8rem; font-weight: 800;">+ Add</span>
           `;
           item.addEventListener('click', () => addPreferredVillage(v.name));
-          villageDropdown.appendChild(item);
+          dropdownEl.appendChild(item);
         });
 
-        // Allow adding exact typed village if not already listed
         if (!matches.some(m => m.name.toLowerCase() === query)) {
           const customItem = document.createElement('div');
           customItem.className = 'shf-village-option';
           customItem.innerHTML = `
-            <span><i class="fa-solid fa-plus-circle" style="color: #047857; margin-right: 6px;"></i> Add village "<strong>${this.value.trim()}</strong>"</span>
-            <span style="color: #047857; font-size: 0.8rem; font-weight: 800;">+ Add</span>
+            <span>Add village "<strong>${this.value.trim()}</strong>"</span>
+            <span style="color: #2B1129; font-size: 0.8rem; font-weight: 800;">+ Add</span>
           `;
           customItem.addEventListener('click', () => addPreferredVillage(this.value.trim()));
-          villageDropdown.appendChild(customItem);
+          dropdownEl.appendChild(customItem);
         }
 
-        villageDropdown.classList.add('is-visible');
+        dropdownEl.classList.add('is-visible');
       });
 
-      villageInput.addEventListener('keydown', function (e) {
+      inputEl.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && this.value.trim()) {
           e.preventDefault();
-          const firstOption = villageDropdown.querySelector('.shf-village-option');
+          const firstOption = dropdownEl.querySelector('.shf-village-option');
           if (firstOption) {
             firstOption.click();
           } else {
@@ -3102,11 +1701,14 @@
       });
 
       document.addEventListener('click', function (e) {
-        if (!villageInput.contains(e.target) && !villageDropdown.contains(e.target)) {
-          villageDropdown.classList.remove('is-visible');
+        if (!inputEl.contains(e.target) && !dropdownEl.contains(e.target)) {
+          dropdownEl.classList.remove('is-visible');
         }
       });
     }
+
+    bindVillageAutocomplete(villageInput, villageDropdown);
+    bindVillageAutocomplete(heroVillageInput, heroVillageDropdown);
 
     // 3. Modal Navigation Helpers
     window.openSmartHomeFinderModal = function () {
@@ -3116,6 +1718,15 @@
         modal.classList.add('is-open');
         showShfStep('step1');
       }
+    };
+
+    window.openSmartHomeFinderWithPersona = function (personaTitle) {
+      loadAllVillages();
+      const profInput = document.getElementById('shfProfession');
+      if (profInput && !profInput.value.trim()) {
+        profInput.value = personaTitle;
+      }
+      openSmartHomeFinderModal();
     };
 
     window.closeSmartHomeFinderModal = function () {
@@ -3153,13 +1764,46 @@
       return cookieValue || '{{ csrf_token }}';
     }
 
-    // 4. Step 1 Search Submission (Prioritizes Database Properties)
-    window.handleSmartHomeSearch = function (e) {
+    // 4. Hero Quick Housing Brief Submission -> Syncs into Modal & Executes Search
+    window.handleHeroQuickBriefSubmit = function (e) {
       e.preventDefault();
+      const errBox = document.getElementById('heroBriefError');
+      if (errBox) errBox.style.display = 'none';
+
+      if (heroVillageInput && heroVillageInput.value.trim()) {
+        addPreferredVillage(heroVillageInput.value.trim());
+      }
+
+      if (selectedVillages.length === 0) {
+        if (errBox) {
+          errBox.textContent = 'Please type and add at least one preferred village location.';
+          errBox.style.display = 'block';
+        }
+        return;
+      }
+
+      const minBudget = document.getElementById('heroMinBudget').value;
+      const maxBudget = document.getElementById('heroMaxBudget').value;
+      const houseType = document.getElementById('heroHouseType').value;
+      const moveInDate = document.getElementById('heroMoveInDate').value;
+
+      document.getElementById('shfMinBudget').value = minBudget;
+      document.getElementById('shfMaxBudget').value = maxBudget;
+      document.getElementById('shfHouseType').value = houseType;
+      document.getElementById('shfTimePeriod').value = moveInDate;
+
+      const modal = document.getElementById('smartHomeFinderModal');
+      if (modal) modal.classList.add('is-open');
+
+      handleSmartHomeSearch(new Event('submit'));
+    };
+
+    // 5. Step 1 Search Submission (Prioritizes Database Properties)
+    window.handleSmartHomeSearch = function (e) {
+      if (e && e.preventDefault) e.preventDefault();
       const errBox = document.getElementById('shfStep1Error');
       if (errBox) errBox.style.display = 'none';
 
-      // Auto-add any text left inside villageInput
       if (villageInput && villageInput.value.trim()) {
         addPreferredVillage(villageInput.value.trim());
       }
@@ -3192,7 +1836,7 @@
       const submitBtn = document.getElementById('shfSearchSubmitBtn');
       const origHtml = submitBtn.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Searching Verified Database...';
+      submitBtn.innerHTML = 'Searching Verified Database...';
 
       fetch('/api/smart-home-search/', {
         method: 'POST',
@@ -3215,7 +1859,6 @@
           submitBtn.disabled = false;
           submitBtn.innerHTML = origHtml;
 
-          // Populate summary fields for authorization & fee steps
           document.getElementById('shfAuthSummaryVillages').textContent = selectedVillages.join(', ');
           document.getElementById('shfAuthSummaryBudget').textContent = `UGX ${minBudget.toLocaleString()} – UGX ${maxBudget.toLocaleString()}`;
           document.getElementById('shfAuthSummaryType').textContent = `${houseTypeLabel} (${bedrooms} Bedroom${bedrooms === '1' ? '' : 's'})`;
@@ -3227,26 +1870,24 @@
           document.getElementById('shfPayBtnLabel').textContent = 'Pay Now';
 
           if (data.matched && data.properties && data.properties.length > 0) {
-            // Prioritize showing matching database properties
             const listEl = document.getElementById('shfMatchedList');
             const subEl = document.getElementById('shfMatchedSubtitle');
             subEl.textContent = `Showing ${data.properties.length} verified listing(s) matching your criteria.`;
             listEl.innerHTML = data.properties.map(p => `
-              <a href="${p.url}" style="text-decoration: none; color: inherit; border: 1.5px solid #e7e5e4; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; background: #fff; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+              <a href="${p.url}" style="text-decoration: none; color: inherit; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; background: #fff; box-shadow: 0 4px 14px rgba(43,17,41,0.08);">
                 <div style="height: 155px; width: 100%; overflow: hidden; position: relative;">
                   <img src="${p.image_url}" alt="${p.title}" style="width: 100%; height: 100%; object-fit: cover;">
-                  <span style="position: absolute; top: 8px; right: 8px; background: #047857; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 6px;">${p.category}</span>
+                  <span style="position: absolute; top: 8px; right: 8px; background: #2B1129; color: #FFFDF8; font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 6px;">${p.category}</span>
                 </div>
                 <div style="padding: 0.85rem;">
-                  <div style="font-weight: 800; font-size: 0.98rem; color: #1e1b18; margin-bottom: 0.25rem;">${p.title}</div>
-                  <div style="font-size: 0.82rem; color: #57534e; margin-bottom: 0.4rem;"><i class="fa-solid fa-location-dot" style="color: #047857;"></i> ${p.location}</div>
-                  <div style="font-weight: 800; font-size: 0.95rem; color: #047857;">${p.price_formatted} / mo</div>
+                  <div style="font-weight: 800; font-size: 0.98rem; color: #2B1129; margin-bottom: 0.25rem;">${p.title}</div>
+                  <div style="font-size: 0.82rem; color: #5A4257; margin-bottom: 0.4rem;">${p.location}</div>
+                  <div style="font-weight: 800; font-size: 0.95rem; color: #2B1129;">${p.price_formatted} / mo</div>
                 </div>
               </a>
             `).join('');
             showShfStep('results');
           } else {
-            // No database match -> Prompt user to authorize TRUST PROTOCOL
             showShfStep('authorize');
           }
         })
@@ -3260,12 +1901,12 @@
         });
     };
 
-    // 5. Step 2B -> Step 3 Transition (Grant Permission)
+    // 6. Step 2B -> Step 3 Transition (Grant Permission)
     window.grantTrustAuthorization = function () {
       showShfStep('personal');
     };
 
-    // 6. Step 3 Personal Information Submission & 20% Search Fee Payment Redirect
+    // 7. Step 3 Personal Information Submission & 20% Search Fee Payment Redirect
     window.handlePersonalFormSubmit = function (e) {
       e.preventDefault();
       const errBox = document.getElementById('shfStep3Error');
@@ -3288,7 +1929,7 @@
       const payBtn = document.getElementById('shfPaySubmitBtn');
       const origHtml = payBtn.innerHTML;
       payBtn.disabled = true;
-      payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing & Redirecting to Payment...';
+      payBtn.innerHTML = 'Processing & Redirecting to Payment...';
 
       fetch('/api/house-locate/submit/', {
         method: 'POST',
@@ -3335,5 +1976,4 @@
     };
   })();
 </script>
-
 {% endblock %}
