@@ -683,17 +683,18 @@
     font-size: 0.92rem;
   }
 
-  /* ─── SMART HOME FINDER & PLAN B MODAL STYLES ─── */
+  /* ─── SMART HOME FINDER & PLAN B MODAL STYLES (Butter Cream 60% | Deep Plum 30% | Spring Green 10%) ─── */
   .shf-modal-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(30, 11, 29, 0.82);
-    z-index: 9999;
+    background: rgba(30, 11, 29, 0.84);
+    z-index: 2147483647 !important;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 84px 1rem 1.25rem 1rem;
     overflow-y: auto;
+    box-sizing: border-box;
   }
 
   .shf-modal-backdrop.is-open {
@@ -701,70 +702,74 @@
   }
 
   .shf-modal-card {
-    background: var(--tp-cream-light);
+    background: var(--tp-cream);
     width: 100%;
-    max-width: 680px;
+    max-width: 640px;
     border-radius: 18px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 24px 60px rgba(15, 5, 14, 0.5);
     overflow: hidden;
-    max-height: 92vh;
+    max-height: calc(100vh - 104px);
+    margin: auto;
     display: flex;
     flex-direction: column;
   }
 
   .shf-modal-header {
-    background: var(--tp-cream-light);
-    color: var(--tp-plum);
-    padding: 1.25rem 1.5rem 0.9rem 1.5rem;
+    background: #047857;
+    color: #ffffff;
+    padding: 1rem 1.4rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--tp-cream-warm);
+    border-bottom: 3px solid var(--tp-spring);
+    flex-shrink: 0;
   }
 
   .shf-modal-header h3 {
     margin: 0;
     font-family: var(--tp-font-heading);
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--tp-plum) !important;
+    color: #ffffff !important;
   }
 
   .shf-close-btn {
-    background: var(--tp-cream-warm);
-    color: var(--tp-plum);
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
     border: none;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
 
   .shf-close-btn:hover {
-    background: var(--tp-plum);
-    color: var(--tp-cream-light);
+    background: var(--tp-spring);
+    color: var(--tp-plum-deep);
   }
 
   .shf-modal-body {
-    padding: 1.5rem;
+    padding: 1.25rem 1.4rem;
     overflow-y: auto;
+    background: var(--tp-cream);
   }
 
   .shf-form-group {
-    margin-bottom: 1.15rem;
+    margin-bottom: 0.9rem;
     text-align: left;
   }
 
   .shf-label {
     display: block;
-    font-size: 0.84rem;
+    font-size: 0.83rem;
     font-weight: 800;
     color: var(--tp-plum);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.38rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
@@ -774,14 +779,15 @@
   .shf-textarea {
     width: 100%;
     padding: 0.72rem 0.9rem;
-    background: var(--tp-cream);
-    border: 1.5px solid var(--tp-cream-warm);
+    background: var(--tp-cream-light);
+    border: 1.5px solid rgba(43, 17, 41, 0.25);
     border-radius: 10px;
     font-family: var(--tp-font-body);
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--tp-plum);
     box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
   .shf-input:focus,
@@ -789,6 +795,7 @@
   .shf-textarea:focus {
     outline: none;
     border-color: var(--tp-plum);
+    box-shadow: 0 0 0 3px rgba(0, 214, 127, 0.22);
     background: #ffffff;
   }
 
@@ -808,14 +815,14 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: #ffffff;
+    background: var(--tp-cream-light);
     border: 1.5px solid var(--tp-plum);
     border-radius: 10px;
     margin-top: 4px;
     max-height: 210px;
     overflow-y: auto;
     z-index: 50;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 28px rgba(43, 17, 41, 0.18);
   }
 
   .shf-village-dropdown.is-visible {
@@ -828,7 +835,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--tp-cream-warm);
     font-size: 0.92rem;
     color: var(--tp-plum);
     font-weight: 600;
@@ -848,10 +855,10 @@
   .shf-village-tag {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.45rem;
     background: var(--tp-plum);
     color: var(--tp-cream-light);
-    padding: 0.3rem 0.75rem;
+    padding: 0.32rem 0.8rem;
     border-radius: 50px;
     font-size: 0.82rem;
     font-weight: 700;
@@ -860,16 +867,17 @@
   .shf-village-tag button {
     background: none;
     border: none;
-    color: var(--tp-cream-light);
+    color: var(--tp-spring);
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: 800;
     line-height: 1;
     padding: 0;
   }
 
   .shf-btn-primary {
     width: 100%;
-    padding: 0.9rem 1.5rem;
+    padding: 0.92rem 1.5rem;
     background: var(--tp-spring);
     color: var(--tp-plum-deep);
     border: none;
@@ -891,8 +899,8 @@
 
   .shf-btn-secondary {
     padding: 0.78rem 1.25rem;
-    background: var(--tp-cream-warm);
-    color: var(--tp-plum);
+    background: var(--tp-plum);
+    color: var(--tp-cream-light);
     border: none;
     border-radius: 10px;
     font-family: var(--tp-font-body);
@@ -903,7 +911,7 @@
   }
 
   .shf-btn-secondary:hover {
-    background: #e5d8bf;
+    background: var(--tp-plum-mid);
   }
 
   /* Responsive Breakpoints */
@@ -1348,22 +1356,19 @@
       <!-- ─── STEP 1: PROPERTY PREFERENCES FORM ─── -->
       <div id="shfStep1">
         <form id="shfSearchForm" onsubmit="handleSmartHomeSearch(event)">
-          <!-- 1. Preferred Location (Village Autocomplete + Multi-Tag List) -->
+          <!-- 1. Location -->
           <div class="shf-form-group">
-            <label class="shf-label">Preferred Location (Villages) *</label>
+            <label class="shf-label">Location *</label>
             <div class="shf-village-SuggestBox">
               <input type="text" id="shfVillageInput" class="shf-input" autocomplete="off">
               <div id="shfVillageDropdown" class="shf-village-dropdown"></div>
             </div>
-            <div style="font-size: 0.78rem; color: var(--tp-plum-muted); margin-top: 0.3rem;">
-              Type a village and click it from the list to add to your preferred locations. You can add multiple villages.
-            </div>
             <div id="shfSelectedVillagesContainer" class="shf-village-tags"></div>
           </div>
 
-          <!-- 2. Budget Range (Min & Max UGX) -->
+          <!-- 2. Budget -->
           <div class="shf-form-group">
-            <label class="shf-label">Budget Range (UGX / Month) *</label>
+            <label class="shf-label">Budget *</label>
             <div class="shf-grid-2">
               <div>
                 <input type="number" id="shfMinBudget" class="shf-input" min="0" step="10000" placeholder="MIN" required>
@@ -1374,10 +1379,10 @@
             </div>
           </div>
 
-          <!-- 3. Type of House & 4. Number of Bedrooms -->
+          <!-- 3. House Type & 4. No. Bedrooms -->
           <div class="shf-grid-2">
             <div class="shf-form-group">
-              <label class="shf-label">Type of House *</label>
+              <label class="shf-label">House Type *</label>
               <select id="shfHouseType" class="shf-select" required>
                 <option value=""></option>
                 {% for opt in house_type_options %}
@@ -1398,7 +1403,7 @@
             </div>
 
             <div class="shf-form-group">
-              <label class="shf-label">Number of Bedrooms *</label>
+              <label class="shf-label">No. Bedrooms *</label>
               <select id="shfBedrooms" class="shf-select" required>
                 <option value="0">0 (Single Room / Studio)</option>
                 <option value="1" selected>1 Bedroom</option>
@@ -1416,10 +1421,16 @@
             <input type="date" id="shfTimePeriod" class="shf-input" required style="cursor: pointer;" onclick="if(this.showPicker) this.showPicker()">
           </div>
 
-          <!-- 6. Special Requirements (Description) -->
+          <!-- 6. Profession of Tenant (Textarea) -->
           <div class="shf-form-group">
-            <label class="shf-label">Special Requirements (Description)</label>
-            <textarea id="shfSpecialRequirements" class="shf-textarea" rows="3"></textarea>
+            <label class="shf-label">Profession *</label>
+            <textarea id="shfStep1Profession" class="shf-textarea" rows="2" required>{% if user.is_authenticated and user.profile and user.profile.profession %}{{ user.profile.profession }}{% endif %}</textarea>
+          </div>
+
+          <!-- 7. Notes -->
+          <div class="shf-form-group">
+            <label class="shf-label">Notes *</label>
+            <textarea id="shfSpecialRequirements" class="shf-textarea" rows="2" required></textarea>
           </div>
 
           <div id="shfStep1Error" style="display: none; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.65rem 0.9rem; border-radius: 10px; font-size: 0.88rem; font-weight: 700; margin-bottom: 1rem;"></div>
@@ -1768,8 +1779,12 @@
 
     window.openSmartHomeFinderWithPersona = function (personaTitle) {
       loadAllVillages();
+      const step1ProfInput = document.getElementById('shfStep1Profession');
+      if (step1ProfInput) {
+        step1ProfInput.value = personaTitle;
+      }
       const profInput = document.getElementById('shfProfession');
-      if (profInput && !profInput.value.trim()) {
+      if (profInput) {
         profInput.value = personaTitle;
       }
       openSmartHomeFinderModal();
@@ -1877,7 +1892,14 @@
       const houseTypeLabel = houseTypeSelect.options[houseTypeSelect.selectedIndex]?.text || houseType;
       const bedrooms = document.getElementById('shfBedrooms').value;
       const timePeriod = document.getElementById('shfTimePeriod').value.trim();
+      const step1Profession = (document.getElementById('shfStep1Profession')?.value || '').trim();
       const specialReq = document.getElementById('shfSpecialRequirements').value.trim();
+
+      // Sync Step 1 Profession into Step 3 Personal Details Profession field
+      const step3ProfInput = document.getElementById('shfProfession');
+      if (step3ProfInput && step1Profession) {
+        step3ProfInput.value = step1Profession;
+      }
 
       const submitBtn = document.getElementById('shfSearchSubmitBtn');
       const origHtml = submitBtn.innerHTML;
