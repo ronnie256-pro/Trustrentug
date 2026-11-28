@@ -251,73 +251,87 @@
     .blueprint-top-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
+        gap: 0.85rem;
+        margin-bottom: 1.65rem;
     }
 
-    /* Solid Green Interactive Button Metric Cards */
+    /* Solid Deep Plum + Butter Cream Metric Cards */
     .blueprint-metric-btn {
-        background: #059669;
-        border: 1px solid #047857;
-        border-radius: 12px;
-        padding: 1.1rem 0.85rem;
+        background: var(--tp-plum);
+        border: 1.5px solid var(--tp-plum-mid);
+        border-radius: 14px;
+        padding: 1.15rem 0.85rem;
         text-align: center;
-        box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+        box-shadow: 0 6px 18px rgba(43, 17, 41, 0.12);
         text-decoration: none;
-        display: block;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         cursor: pointer;
     }
 
     .blueprint-metric-btn:hover {
         transform: translateY(-3px);
-        background: #047857;
-        border-color: #065f46;
-        box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3);
+        background: var(--tp-plum-mid);
+        border-color: var(--tp-plum);
+        box-shadow: 0 10px 22px rgba(43, 17, 41, 0.22);
     }
 
     .blueprint-metric-num {
         font-family: var(--font-heading);
-        font-size: 1.75rem;
-        font-weight: 800;
-        color: #ffffff !important;
+        font-size: 1.85rem;
+        font-weight: 700;
+        color: var(--tp-cream) !important;
         line-height: 1.1;
-        margin-top: 0.35rem;
+        margin-top: 0.4rem;
+        transition: color 0.2s ease;
+    }
+
+    .blueprint-metric-btn:hover .blueprint-metric-num {
+        color: #ffffff !important;
     }
 
     .blueprint-metric-label {
         font-size: 0.72rem;
         font-weight: 700;
-        color: #ecfdf5 !important;
+        color: rgba(251, 245, 230, 0.82) !important;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
         line-height: 1.25;
+        transition: color 0.2s ease;
+    }
+
+    .blueprint-metric-btn:hover .blueprint-metric-label {
+        color: #ffffff !important;
     }
 
     .blueprint-main-grid {
         display: grid;
         grid-template-columns: 1.6fr 1fr 1fr;
         grid-template-rows: auto auto;
-        gap: 1.25rem;
+        gap: 1.35rem;
         margin-bottom: 2rem;
     }
 
     .blueprint-chart-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 1.25rem 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        background: var(--tp-cream-light);
+        border: 1.5px solid var(--tp-cream-border);
+        border-radius: 16px;
+        padding: 1.35rem 1.5rem;
+        box-shadow: 0 6px 20px rgba(43, 17, 41, 0.04);
         display: flex;
         flex-direction: column;
     }
 
     .blueprint-card-title {
         font-family: var(--font-heading);
-        font-size: 1.2rem;
-        font-weight: 800;
-        color: #0f172a;
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: var(--tp-plum);
         margin-bottom: 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--tp-cream-warm);
     }
 
     /* 2 Column Bottom Section (Left: Pending Progress Bars, Right: Need Action Prompts) */
@@ -330,11 +344,11 @@
 
     .pending-card,
     .need-action-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 1.35rem 1.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        background: var(--tp-cream-light);
+        border: 1.5px solid var(--tp-cream-border);
+        border-radius: 16px;
+        padding: 1.45rem 1.6rem;
+        box-shadow: 0 6px 20px rgba(43, 17, 41, 0.04);
         display: flex;
         flex-direction: column;
     }
@@ -342,12 +356,12 @@
     .pending-header,
     .need-action-header {
         font-family: var(--font-heading);
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #064e3b;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--tp-plum);
         margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #ecfdf5;
+        padding-bottom: 0.6rem;
+        border-bottom: 1.5px solid var(--tp-cream-warm);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -355,10 +369,10 @@
 
     .pending-badge {
         font-size: 0.75rem;
-        font-weight: 700;
-        background: #ecfdf5;
-        color: #047857;
-        border: 1px solid #a7f3d0;
+        font-weight: 800;
+        background: rgba(0, 214, 127, 0.16);
+        color: #007A48;
+        border: 1px solid rgba(0, 184, 107, 0.35);
         padding: 0.2rem 0.65rem;
         border-radius: 12px;
         text-transform: uppercase;
@@ -368,12 +382,12 @@
     .blueprint-progress-list {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.95rem;
     }
 
     .blueprint-progress-bar-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: var(--tp-cream);
+        border: 1.5px solid var(--tp-cream-border);
         border-radius: 10px;
         padding: 0.85rem 1.25rem;
         position: relative;
@@ -381,7 +395,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
     .blueprint-progress-fill {
@@ -389,10 +402,9 @@
         top: 0;
         bottom: 0;
         left: 0;
-        background: linear-gradient(90deg, #059669 0%, #10b981 100%) !important;
-        opacity: 0.95;
+        background: var(--tp-plum) !important;
         z-index: 1;
-        border-radius: 10px;
+        border-radius: 8px;
         transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -401,24 +413,25 @@
         z-index: 2;
         font-weight: 700;
         font-size: 0.92rem;
-        color: #ffffff;
+        color: var(--tp-cream-light);
     }
 
     .blueprint-progress-ratio {
         position: relative;
         z-index: 2;
-        font-weight: 800;
+        font-family: var(--font-heading);
+        font-weight: 700;
         font-size: 1.05rem;
-        color: #0f172a;
+        color: var(--tp-plum);
     }
 
     /* Need Action Right Column Scrollable List */
     .need-action-badge {
         font-size: 0.75rem;
         font-weight: 700;
-        background: #fef2f2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
+        background: var(--tp-cream-warm);
+        color: var(--tp-plum);
+        border: 1px solid var(--tp-cream-border);
         padding: 0.2rem 0.65rem;
         border-radius: 12px;
         text-transform: uppercase;
@@ -440,20 +453,20 @@
     }
 
     .need-action-list::-webkit-scrollbar-track {
-        background: #f1f5f9;
+        background: var(--tp-cream-warm);
         border-radius: 4px;
     }
 
     .need-action-list::-webkit-scrollbar-thumb {
-        background: #10b981;
+        background: var(--tp-plum);
         border-radius: 4px;
     }
 
     .need-action-item {
-        background: #fafafa;
-        border: 1px solid #f1f5f9;
-        border-left: 4px solid #10b981;
-        border-radius: 8px;
+        background: var(--tp-cream);
+        border: 1px solid var(--tp-cream-border);
+        border-left: 4px solid var(--tp-plum);
+        border-radius: 10px;
         padding: 0.85rem 1rem;
         display: flex;
         justify-content: space-between;
@@ -464,35 +477,34 @@
     }
 
     .need-action-item:hover {
-        background: #f0fdf4;
-        border-color: #a7f3d0;
-        border-left-color: #059669;
+        background: var(--tp-cream-warm);
+        border-color: var(--tp-plum);
+        border-left-color: var(--tp-plum);
     }
 
     .need-action-desc {
         font-size: 0.88rem;
         font-weight: 600;
-        color: #334155;
+        color: var(--tp-plum);
         line-height: 1.4;
     }
 
     .need-action-link {
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: #047857;
-        background: #ffffff;
-        border: 1px solid #a7f3d0;
-        padding: 0.35rem 0.85rem;
-        border-radius: 6px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: var(--tp-cream-light);
+        background: var(--tp-plum);
+        border: none;
+        padding: 0.42rem 0.95rem;
+        border-radius: 8px;
         text-decoration: none;
         white-space: nowrap;
         transition: all 0.2s ease;
     }
 
     .need-action-link:hover {
-        background: #059669;
+        background: var(--tp-plum-mid);
         color: #ffffff;
-        border-color: #059669;
     }
 
     @media (max-width: 1200px) {
@@ -552,10 +564,10 @@
         <div class="blueprint-metric-num">{{ overview_analytics.count_land_sale }}</div>
     </a>
 
-    <!-- 6. Landlords Button -->
-    <a href="{% url 'admin_dashboard' %}?tab=landlords" class="blueprint-metric-btn">
-        <div class="blueprint-metric-label">Landlords</div>
-        <div class="blueprint-metric-num">{{ overview_analytics.count_landlords }}</div>
+    <!-- 6. Agents Button -->
+    <a href="{% url 'admin_dashboard' %}?tab=agents" class="blueprint-metric-btn">
+        <div class="blueprint-metric-label">Agents</div>
+        <div class="blueprint-metric-num">{{ overview_analytics.total_agents|default:overview_analytics.count_landlords }}</div>
     </a>
 
     <!-- 7. Tenants Button -->
@@ -616,11 +628,11 @@
             <span>Pending</span>
         </div>
         <div class="blueprint-progress-list">
-            <!-- Progress Bar 1: Landlords -->
+            <!-- Progress Bar 1: Agents -->
             <div class="blueprint-progress-bar-card">
-                <div class="blueprint-progress-fill" style="width: 28%;"></div>
-                <div class="blueprint-progress-text">Landlords</div>
-                <div class="blueprint-progress-ratio">{{ overview_analytics.pending_landlords_val }}/{{ overview_analytics.total_landlords_val }}</div>
+                <div class="blueprint-progress-fill" style="width: 35%;"></div>
+                <div class="blueprint-progress-text">Active Agents</div>
+                <div class="blueprint-progress-ratio">{{ overview_analytics.total_agents|default:overview_analytics.pending_landlords_val }}/{{ overview_analytics.total_landlords_val }}</div>
             </div>
 
             <!-- Progress Bar 2: Rent Contracts -->
@@ -652,13 +664,13 @@
             <span>Need action</span>
         </div>
         <div class="need-action-list">
-            <!-- Prompt 1: Landlords Approval -->
+            <!-- Prompt 1: Tenant Search Requests -->
             <div class="need-action-item">
                 <div class="need-action-desc">
-                    <strong>{{ overview_analytics.pending_landlords_val|default:6 }} Landlord Profiles</strong> awaiting
-                    identity verification & document approval.
+                    <strong>{{ locate_request_stats.total|default:0 }} Tenant Search Requests</strong> awaiting agent
+                    assignment & property matching.
                 </div>
-                <a href="{% url 'admin_dashboard' %}?tab=landlords" class="need-action-link">Review &rarr;</a>
+                <a href="{% url 'admin_dashboard' %}?tab=tenant_requests" class="need-action-link">Assign &rarr;</a>
             </div>
 
             <!-- Prompt 2: Pending Property Verification -->
@@ -746,12 +758,12 @@
         easing: 'easeOutQuart'
     };
 
-    // Card 1: System Revenue Line Chart (Light Green Theme)
+    // Card 1: System Revenue Line Chart (Deep Plum & Butter Cream Theme)
     const ctxRevenue = document.getElementById('chartRevenueLine')?.getContext('2d');
     if (ctxRevenue && typeof Chart !== 'undefined') {
         const gradRev = ctxRevenue.createLinearGradient(0, 0, 0, 400);
-        gradRev.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
-        gradRev.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+        gradRev.addColorStop(0, 'rgba(43, 17, 41, 0.24)');
+        gradRev.addColorStop(1, 'rgba(43, 17, 41, 0.0)');
 
         new Chart(ctxRevenue, {
             type: 'line',
@@ -760,13 +772,15 @@
                 datasets: [{
                     label: 'Revenue (UGX)',
                     data: {{ overview_analytics.monthly_revenue_data|default:"[]"|safe }},
-            borderColor: '#10b981',
+            borderColor: '#2B1129',
             backgroundColor: gradRev,
             fill: true,
             tension: 0.35,
             borderWidth: 3,
-            pointRadius: 4,
-            pointBackgroundColor: '#10b981'
+            pointRadius: 4.5,
+            pointBackgroundColor: '#FBF5E6',
+            pointBorderColor: '#2B1129',
+            pointBorderWidth: 2.5
         }]
             },
     options: {
@@ -775,13 +789,13 @@
                 animation: chartAnimLineBar,
                     plugins: { legend: { display: false } },
         scales: {
-            x: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 13, weight: '700' }, color: '#334155' } },
+            x: { grid: { color: '#F2E8D5' }, ticks: { font: { size: 12, weight: '700' }, color: '#2B1129' } },
             y: {
                 beginAtZero: true,
-                    grid: { color: '#f1f5f9' },
+                    grid: { color: '#F2E8D5' },
                 ticks: {
-                    font: { size: 13, weight: '700' },
-                    color: '#334155',
+                    font: { size: 12, weight: '700' },
+                    color: '#2B1129',
                         callback: function(value) {
                             return (value / 1000000).toFixed(0) + 'M UGX';
                         }
@@ -792,7 +806,7 @@
         });
     }
 
-    // Card 2: Revenue Collections Bar Chart
+    // Card 2: Revenue Collections Bar Chart (Deep Plum & Warm Cream Tones)
     const ctxRevCol = document.getElementById('chartRevenueCollectionsBar')?.getContext('2d');
     if (ctxRevCol && typeof Chart !== 'undefined') {
         new Chart(ctxRevCol, {
@@ -802,7 +816,7 @@
                 datasets: [{
                     label: 'UGX Collections',
                     data: {{ overview_analytics.rev_collections_data|default:"[]"|safe }},
-        backgroundColor: ['#10b981', '#059669', '#34d399', '#047857', '#065f46', '#6ee7b7'],
+        backgroundColor: ['#2B1129', '#5A4257', '#3D1A3A', '#7A5C77', '#1E0B1D', '#9B7E98'],
         borderRadius: 6
                 }]
             },
@@ -812,13 +826,13 @@
                 animation: chartAnimLineBar,
                     plugins: { legend: { display: false } },
         scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 12, weight: '700' }, color: '#334155' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' }, color: '#2B1129' } },
             y: {
                 beginAtZero: true,
-                    grid: { color: '#f1f5f9' },
+                    grid: { color: '#F2E8D5' },
                 ticks: {
-                    font: { size: 12, weight: '700' },
-                    color: '#334155',
+                    font: { size: 11, weight: '700' },
+                    color: '#2B1129',
                         callback: function(val) { return (val / 1000000).toFixed(0) + 'M'; }
                 }
             }
@@ -827,7 +841,7 @@
         });
     }
 
-    // Card 3: Property Quantities Pie Chart
+    // Card 3: Property Quantities Pie Chart (Deep Plum & Warm Cream Tones)
     const ctxPropQty = document.getElementById('chartPropertyQuantitiesPie')?.getContext('2d');
     if (ctxPropQty && typeof Chart !== 'undefined') {
         new Chart(ctxPropQty, {
@@ -836,7 +850,7 @@
                 labels: {{ overview_analytics.prop_quantity_labels|default:"[]"|safe }},
                 datasets: [{
                     data: {{ overview_analytics.prop_quantity_counts|default:"[]"|safe }},
-        backgroundColor: ['#059669', '#10b981', '#34d399', '#047857', '#065f46']
+        backgroundColor: ['#2B1129', '#5A4257', '#3D1A3A', '#7A5C77', '#9B7E98']
                 }]
             },
     plugins: [slicePercentagePlugin],
@@ -847,14 +861,14 @@
                     plugins: {
             legend: {
                 position: 'right',
-                    labels: { boxWidth: 16, font: { size: 13, weight: '700' }, color: '#334155' }
+                    labels: { boxWidth: 16, font: { size: 12, weight: '700' }, color: '#2B1129' }
             }
         }
     }
         });
     }
 
-    // Card 4: Demand Geographical Divisions Pie Chart
+    // Card 4: Demand Geographical Divisions Pie Chart (Deep Plum & Warm Cream Tones)
     const ctxDemandGeo = document.getElementById('chartDemandGeoPie')?.getContext('2d');
     if (ctxDemandGeo && typeof Chart !== 'undefined') {
         new Chart(ctxDemandGeo, {
@@ -864,10 +878,8 @@
                 datasets: [{
                     data: {{ overview_analytics.area_counts|default:"[]"|safe }},
         backgroundColor: [
-        '#10b981', '#059669', '#34d399', '#047857', '#065f46',
-        '#6ee7b7', '#a7f3d0', '#0284c7', '#0369a1', '#0891b2',
-        '#0e7490', '#14b8a6', '#0d9488', '#15803d', '#166534',
-        '#22c55e', '#16a34a', '#86efac', '#4ade80', '#2dd4bf'
+        '#2B1129', '#5A4257', '#3D1A3A', '#7A5C77', '#1E0B1D',
+        '#9B7E98', '#4A2547', '#B59BB2', '#684B65', '#D2C0CF'
     ]
                 }]
             },
@@ -879,19 +891,19 @@
                     plugins: {
             legend: {
                 position: 'right',
-                    labels: { boxWidth: 16, font: { size: 13, weight: '700' }, color: '#334155' }
+                    labels: { boxWidth: 16, font: { size: 12, weight: '700' }, color: '#2B1129' }
             }
         }
     }
         });
     }
 
-    // Card 5: Monthly Sales Trend Line Chart (Green Theme)
+    // Card 5: Monthly Sales Trend Line Chart (Deep Plum & Butter Cream Theme)
     const ctxSalesTrend = document.getElementById('chartSalesTrendLine')?.getContext('2d');
     if (ctxSalesTrend && typeof Chart !== 'undefined') {
         const gradSales = ctxSalesTrend.createLinearGradient(0, 0, 0, 200);
-        gradSales.addColorStop(0, 'rgba(5, 150, 105, 0.25)');
-        gradSales.addColorStop(1, 'rgba(5, 150, 105, 0.0)');
+        gradSales.addColorStop(0, 'rgba(43, 17, 41, 0.24)');
+        gradSales.addColorStop(1, 'rgba(43, 17, 41, 0.0)');
 
         new Chart(ctxSalesTrend, {
             type: 'line',
@@ -900,13 +912,15 @@
                 datasets: [{
                     label: 'Monthly Sales',
                     data: {{ overview_analytics.monthly_sales_trend|default:"[]"|safe }},
-            borderColor: '#059669',
+            borderColor: '#2B1129',
             backgroundColor: gradSales,
             fill: true,
             tension: 0.35,
             borderWidth: 2.5,
-            pointRadius: 3,
-            pointBackgroundColor: '#059669'
+            pointRadius: 3.5,
+            pointBackgroundColor: '#FBF5E6',
+            pointBorderColor: '#2B1129',
+            pointBorderWidth: 2
         }]
             },
     options: {
@@ -915,13 +929,13 @@
                 animation: chartAnimLineBar,
                     plugins: { legend: { display: false } },
         scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 12, weight: '700' }, color: '#334155' } },
+            x: { grid: { display: false }, ticks: { font: { size: 11, weight: '700' }, color: '#2B1129' } },
             y: {
                 beginAtZero: true,
-                    grid: { color: '#f1f5f9' },
+                    grid: { color: '#F2E8D5' },
                 ticks: {
-                    font: { size: 12, weight: '700' },
-                    color: '#334155',
+                    font: { size: 11, weight: '700' },
+                    color: '#2B1129',
                         callback: function(val) { return (val / 1000000).toFixed(0) + 'M'; }
                 }
             }

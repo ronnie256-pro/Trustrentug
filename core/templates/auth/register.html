@@ -44,15 +44,17 @@
     margin: 0 !important;
   }
 
-  /* ─── 2-COLUMN FULL-SCREEN SPLIT LAYOUT ─── */
+  /* ─── 2-COLUMN FULL-SCREEN SPLIT LAYOUT (Fixed Left, Scrollable Right on Desktop) ─── */
   .tp-auth-screen {
     display: grid;
     grid-template-columns: 40% 60%;
-    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
     width: 100%;
+    overflow: hidden;
   }
 
-  /* ─── LEFT SHOWCASE PANEL (Spring Green + Floating Shapes + Synced Illustration & Text) ─── */
+  /* ─── LEFT SHOWCASE PANEL (Fixed 100vh on Desktop) ─── */
   .tp-auth-left {
     position: relative;
     background-color: var(--tp-spring-panel);
@@ -62,6 +64,7 @@
     align-items: center;
     justify-content: center;
     padding: 3rem 2.75rem;
+    height: 100vh;
     overflow: hidden;
     text-align: center;
     box-sizing: border-box;
@@ -207,52 +210,55 @@
     color: var(--tp-plum) !important;
   }
 
-  /* ─── RIGHT FORM PANEL (Clean Open Canvas) ─── */
+  /* ─── RIGHT FORM PANEL (Independently Scrollable Canvas on Desktop) ─── */
   .tp-auth-right {
     background-color: var(--tp-cream-light);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 2rem 2rem;
+    justify-content: flex-start;
+    height: 100vh;
+    padding: 3rem 2rem 3.5rem 2rem;
     box-sizing: border-box;
     overflow-y: auto;
+    scroll-behavior: smooth;
   }
 
   .tp-auth-form-container {
     width: 100%;
-    max-width: 470px;
+    max-width: 620px;
+    margin: auto 0;
   }
 
   .tp-auth-logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.15rem;
+    margin-bottom: 1.25rem;
     text-decoration: none;
   }
 
   .tp-auth-logo img {
-    height: 90px;
+    height: 94px;
     width: auto;
-    max-width: 300px;
+    max-width: 310px;
     object-fit: contain;
   }
 
   .tp-auth-heading {
     text-align: center;
     font-family: var(--tp-font-heading);
-    font-size: 1.75rem;
+    font-size: 1.88rem;
     font-weight: 700;
     color: var(--tp-plum) !important;
-    margin: 0 0 0.35rem 0;
+    margin: 0 0 0.4rem 0;
   }
 
   .tp-auth-subheading {
     text-align: center;
-    font-size: 0.92rem;
+    font-size: 0.96rem;
     color: var(--tp-plum-muted);
-    margin: 0 0 1.35rem 0;
+    margin: 0 0 1.45rem 0;
     font-weight: 500;
   }
 
@@ -260,12 +266,12 @@
   .tp-role-tabs {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    gap: 0.6rem;
     background-color: var(--tp-cream);
-    padding: 0.35rem;
+    padding: 0.4rem;
     border-radius: 10px;
     border: 1px solid var(--tp-cream-warm);
-    margin-bottom: 1.15rem;
+    margin-bottom: 1.3rem;
   }
 
   .tp-role-tab-label {
@@ -286,9 +292,9 @@
     align-items: center;
     justify-content: center;
     gap: 0.45rem;
-    padding: 0.65rem 0.85rem;
+    padding: 0.72rem 1rem;
     border-radius: 7px;
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     font-weight: 700;
     color: var(--tp-plum-muted);
     transition: background-color 0.15s ease, color 0.15s ease;
@@ -302,22 +308,75 @@
   .tp-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 1.05rem;
+  }
+
+  .tp-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.9rem;
   }
 
+  .tp-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.65rem;
+    background: var(--tp-cream);
+    border: 1.5px solid #d6d3c9;
+    border-radius: 8px;
+    padding: 0.9rem 1.05rem;
+  }
+
+  .tp-checkbox-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--tp-plum);
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .tp-checkbox-pill input[type="checkbox"] {
+    accent-color: var(--tp-spring-panel);
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .tp-agent-section-box {
+    background: var(--tp-cream);
+    border: 1.5px solid var(--tp-cream-warm);
+    border-radius: 10px;
+    padding: 1.15rem 1.25rem 0.5rem 1.25rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .tp-agent-section-title {
+    font-family: var(--tp-font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--tp-plum);
+    margin: 0 0 0.95rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--tp-cream-warm);
+  }
+
   .tp-auth-field {
-    margin-bottom: 0.95rem;
+    margin-bottom: 1.1rem;
   }
 
   .tp-auth-label-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
   }
 
   .tp-auth-label {
-    font-size: 0.84rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--tp-plum);
   }
@@ -330,12 +389,12 @@
 
   .tp-auth-input {
     width: 100%;
-    padding: 0.72rem 0.95rem;
+    padding: 0.8rem 1.05rem;
     background-color: #ffffff;
     border: 1.5px solid #d6d3c9;
     border-radius: 8px;
     font-family: var(--tp-font-body);
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--tp-plum);
     box-sizing: border-box;
@@ -426,6 +485,9 @@
   @media (max-width: 900px) {
     .tp-auth-screen {
       grid-template-columns: 1fr;
+      height: auto;
+      max-height: none;
+      overflow: visible;
     }
     .tp-auth-left {
       display: none;
@@ -437,15 +499,19 @@
       margin-top: 0;
     }
     .tp-auth-right {
+      height: auto;
       min-height: 100vh;
       padding: 2rem 1.25rem;
+      overflow-y: visible;
     }
   }
 
   @media (max-width: 580px) {
-    .tp-grid-2 {
+    .tp-grid-2,
+    .tp-grid-3,
+    .tp-checkbox-grid {
       grid-template-columns: 1fr;
-      gap: 0;
+      gap: 0.45rem;
     }
   }
 </style>
@@ -577,17 +643,46 @@
         {% endif %}
       </a>
 
-      <h1 class="tp-auth-heading">Create tenant account</h1>
-      <p class="tp-auth-subheading">Enter your details below to search and request verified properties</p>
+      <h1 class="tp-auth-heading">Create account</h1>
+      <p class="tp-auth-subheading">Select your account type and enter your details below</p>
 
       <form action="/register/" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="hidden" name="role" value="tenant">
 
-        <!-- Universal Fields (Email, Username, Phone) -->
+        <!-- Role Selector: Tenant vs Agent -->
+        <div class="tp-role-tabs">
+          <label class="tp-role-tab-label">
+            <input type="radio" name="role" value="tenant" checked onchange="toggleRegisterFields()">
+            <div class="tp-role-tab-btn">Tenant</div>
+          </label>
+          <label class="tp-role-tab-label">
+            <input type="radio" name="role" value="agent" onchange="toggleRegisterFields()">
+            <div class="tp-role-tab-btn">Agent</div>
+          </label>
+        </div>
+
+        <!-- 1. Agent Only: First Name & Second Name -->
+        <div id="agent-names-group" style="display: none;">
+          <div class="tp-grid-2">
+            <div class="tp-auth-field">
+              <div class="tp-auth-label-row">
+                <label class="tp-auth-label" for="first_name">First name *</label>
+              </div>
+              <input type="text" id="first_name" name="first_name" class="tp-auth-input" placeholder="First name">
+            </div>
+            <div class="tp-auth-field">
+              <div class="tp-auth-label-row">
+                <label class="tp-auth-label" for="last_name">Second name *</label>
+              </div>
+              <input type="text" id="last_name" name="last_name" class="tp-auth-input" placeholder="Second name">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 & 3. Universal Fields: Email, Username, Phone -->
         <div class="tp-auth-field">
           <div class="tp-auth-label-row">
-            <label class="tp-auth-label" for="email">Email address</label>
+            <label class="tp-auth-label" for="email">Email address *</label>
           </div>
           <input type="email" id="email" name="email" class="tp-auth-input" placeholder="you@example.com" required autocomplete="email">
         </div>
@@ -595,15 +690,151 @@
         <div class="tp-grid-2">
           <div class="tp-auth-field">
             <div class="tp-auth-label-row">
-              <label class="tp-auth-label" for="username">Username</label>
+              <label class="tp-auth-label" for="username">Username *</label>
             </div>
             <input type="text" id="username" name="username" class="tp-auth-input" placeholder="Choose a username" required autocomplete="username">
           </div>
           <div class="tp-auth-field">
             <div class="tp-auth-label-row">
-              <label class="tp-auth-label" for="phone">Phone number</label>
+              <label class="tp-auth-label" for="phone">Phone number *</label>
             </div>
             <input type="tel" id="phone" name="phone" class="tp-auth-input" placeholder="07XX XXX XXX" required>
+          </div>
+        </div>
+
+        <!-- Agent Extended Details & Documents -->
+        <div id="agent-details-group" style="display: none;">
+
+          <!-- 4. Location (District, Division, Village from system location structure) -->
+          <div class="tp-agent-section-box">
+            <div class="tp-agent-section-title">Location</div>
+            <div class="tp-grid-3">
+              <div class="tp-auth-field">
+                <div class="tp-auth-label-row">
+                  <label class="tp-auth-label" for="agent_district">District *</label>
+                </div>
+                <select id="agent_district" name="district" class="tp-auth-input" onchange="handleRegDistrictCascade(this.value)">
+                  <option value="">-- District --</option>
+                  {% for d in service_districts %}
+                  <option value="{{ d.id }}">{{ d.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="tp-auth-field">
+                <div class="tp-auth-label-row">
+                  <label class="tp-auth-label" for="agent_division">Division *</label>
+                </div>
+                <select id="agent_division" name="division" class="tp-auth-input" onchange="handleRegDivisionCascade(this.value)">
+                  <option value="">-- Division --</option>
+                </select>
+              </div>
+              <div class="tp-auth-field">
+                <div class="tp-auth-label-row">
+                  <label class="tp-auth-label" for="agent_village">Village *</label>
+                </div>
+                <select id="agent_village" name="village" class="tp-auth-input">
+                  <option value="">-- Village --</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 & 6. NIN Number & Education Level -->
+          <div class="tp-grid-2">
+            <div class="tp-auth-field">
+              <div class="tp-auth-label-row">
+                <label class="tp-auth-label" for="nin">NIN number *</label>
+              </div>
+              <input type="text" id="nin" name="nin" class="tp-auth-input" placeholder="CM1234567890...">
+            </div>
+            <div class="tp-auth-field">
+              <div class="tp-auth-label-row">
+                <label class="tp-auth-label" for="education_level">Education level *</label>
+              </div>
+              <select id="education_level" name="education_level" class="tp-auth-input">
+                <option value="">-- Select Education Level --</option>
+                <option value="Primary">Primary</option>
+                <option value="Secondary O-level">Secondary O-level</option>
+                <option value="A-Level">A-Level</option>
+                <option value="Diploma">Diploma</option>
+                <option value="University">University</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 7. Languages -->
+          <div class="tp-auth-field">
+            <div class="tp-auth-label-row">
+              <label class="tp-auth-label">Languages *</label>
+            </div>
+            <div class="tp-checkbox-grid">
+              <label class="tp-checkbox-pill"><input type="checkbox" name="languages" value="English"> English</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="languages" value="Luganda"> Luganda</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="languages" value="Lusoga"> Lusoga</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="languages" value="Lunyakole"> Lunyakole</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="languages" value="Acholi"> Acholi</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="languages" value="Kiswahili"> Kiswahili</label>
+            </div>
+          </div>
+
+          <!-- 8. What do you do? -->
+          <div class="tp-auth-field">
+            <div class="tp-auth-label-row">
+              <label class="tp-auth-label">What do you do? *</label>
+            </div>
+            <div class="tp-checkbox-grid" style="grid-template-columns: 1fr;">
+              <label class="tp-checkbox-pill"><input type="checkbox" name="what_do_you_do" value="I build houses"> I build houses</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="what_do_you_do" value="I do water plumbing"> I do water plumbing</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="what_do_you_do" value="I do electrical Installations"> I do electrical Installations</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="what_do_you_do" value="I do painting"> I do painting</label>
+              <label class="tp-checkbox-pill"><input type="checkbox" name="what_do_you_do" value="I do wood work"> I do wood work</label>
+            </div>
+          </div>
+
+          <!-- 9. Agent Document Uploads -->
+          <div class="tp-agent-section-box">
+            <div class="tp-agent-section-title">Upload Verification Documents</div>
+
+            <div class="tp-grid-2">
+              <div class="tp-auth-field">
+                <div class="tp-auth-label-row">
+                  <label class="tp-auth-label" for="national_id_doc">National ID *</label>
+                </div>
+                <input type="file" id="national_id_doc" name="national_id_doc" class="tp-auth-input" accept="image/*,.pdf" style="padding: 0.48rem 0.65rem; font-size: 0.82rem;">
+              </div>
+              <div class="tp-auth-field">
+                <div class="tp-auth-label-row">
+                  <label class="tp-auth-label" for="education_documents">Education documents *</label>
+                </div>
+                <input type="file" id="education_documents" name="education_documents" class="tp-auth-input" accept="image/*,.pdf" style="padding: 0.48rem 0.65rem; font-size: 0.82rem;">
+              </div>
+            </div>
+
+            <div class="tp-grid-2">
+              <div class="tp-auth-field">
+                <div class="tp-auth-label-row">
+                  <label class="tp-auth-label" for="lc1_letter">LC 1 Letter of residency (Approved by Police) *</label>
+                </div>
+                <input type="file" id="lc1_letter" name="lc1_letter" class="tp-auth-input" accept="image/*,.pdf" style="padding: 0.48rem 0.65rem; font-size: 0.82rem;">
+              </div>
+              <div class="tp-auth-field">
+                <div class="tp-auth-label-row">
+                  <label class="tp-auth-label" for="image">Profile picture *</label>
+                </div>
+                <input type="file" id="image" name="image" class="tp-auth-input" accept="image/*" style="padding: 0.48rem 0.65rem; font-size: 0.82rem;">
+              </div>
+            </div>
+
+            <div class="tp-auth-field">
+              <div class="tp-auth-label-row">
+                <label class="tp-auth-label">3 Pictures of proof of work *</label>
+              </div>
+              <div class="tp-grid-3">
+                <input type="file" id="proof_of_work_1" name="proof_of_work_1" class="tp-auth-input" accept="image/*" title="Proof of work picture 1" style="padding: 0.45rem 0.5rem; font-size: 0.78rem;">
+                <input type="file" id="proof_of_work_2" name="proof_of_work_2" class="tp-auth-input" accept="image/*" title="Proof of work picture 2" style="padding: 0.45rem 0.5rem; font-size: 0.78rem;">
+                <input type="file" id="proof_of_work_3" name="proof_of_work_3" class="tp-auth-input" accept="image/*" title="Proof of work picture 3" style="padding: 0.45rem 0.5rem; font-size: 0.78rem;">
+              </div>
+            </div>
           </div>
         </div>
 
@@ -689,7 +920,79 @@
     }
   }
 
+  function toggleRegisterFields() {
+    const checkedRole = document.querySelector('input[name="role"]:checked');
+    const role = checkedRole ? checkedRole.value : 'tenant';
+    const namesGroup = document.getElementById('agent-names-group');
+    const detailsGroup = document.getElementById('agent-details-group');
+
+    const requiredIds = [
+      'first_name', 'last_name', 'agent_district', 'agent_division', 'agent_village',
+      'nin', 'education_level', 'national_id_doc', 'education_documents',
+      'lc1_letter', 'image', 'proof_of_work_1', 'proof_of_work_2', 'proof_of_work_3'
+    ];
+
+    if (role === 'agent') {
+      if (namesGroup) namesGroup.style.display = 'block';
+      if (detailsGroup) detailsGroup.style.display = 'block';
+      requiredIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.setAttribute('required', 'required');
+      });
+    } else {
+      if (namesGroup) namesGroup.style.display = 'none';
+      if (detailsGroup) detailsGroup.style.display = 'none';
+      requiredIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.removeAttribute('required');
+      });
+    }
+  }
+
+  function handleRegDistrictCascade(districtId) {
+    const divisionSelect = document.getElementById('agent_division');
+    const villageSelect = document.getElementById('agent_village');
+    if (divisionSelect) divisionSelect.innerHTML = '<option value="">-- Division --</option>';
+    if (villageSelect) villageSelect.innerHTML = '<option value="">-- Village --</option>';
+    if (!districtId) return;
+
+    fetch('/api/location-cascade/?district_id=' + districtId)
+      .then(res => res.json())
+      .then(data => {
+        if (data.divisions && data.divisions.length > 0) {
+          data.divisions.forEach(div => {
+            const opt = document.createElement('option');
+            opt.value = div.id;
+            opt.textContent = div.name;
+            divisionSelect.appendChild(opt);
+          });
+        }
+      })
+      .catch(err => console.error('District cascade error:', err));
+  }
+
+  function handleRegDivisionCascade(divisionId) {
+    const villageSelect = document.getElementById('agent_village');
+    if (villageSelect) villageSelect.innerHTML = '<option value="">-- Village --</option>';
+    if (!divisionId) return;
+
+    fetch('/api/location-cascade/?division_id=' + divisionId)
+      .then(res => res.json())
+      .then(data => {
+        if (data.villages && data.villages.length > 0) {
+          data.villages.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.name;
+            villageSelect.appendChild(opt);
+          });
+        }
+      })
+      .catch(err => console.error('Division cascade error:', err));
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    toggleRegisterFields();
     const slides = document.querySelectorAll('#tpRegSlides .tp-auth-slide-item');
     const dots = document.querySelectorAll('#tpRegDots .tp-auth-dot');
     if (slides.length > 1) {

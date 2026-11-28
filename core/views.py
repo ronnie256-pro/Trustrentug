@@ -346,41 +346,141 @@ def password_reset_confirm_view(request, uidb64, token):
         return redirect('password_reset_form')
 
 def register_view(request):
+    from core.models import ServiceDistrict, ServiceDivision, ServiceVillage
+    service_districts = ServiceDistrict.objects.all().order_by('name')
+    service_divisions = ServiceDivision.objects.all().select_related('district').order_by('name')
+    service_villages = ServiceVillage.objects.all().select_related('division').order_by('name')
+
+    reg_context = {
+        'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY,
+        'service_districts': service_districts,
+        'service_divisions': service_divisions,
+        'service_villages': service_villages,
+    }
+
     if request.method == 'POST':
-        role = 'tenant'
-        username = request.POST.get('username')
-        phone = request.POST.get('phone')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-        email = request.POST.get('email', '')
+        role = request.POST.get('role', 'tenant')
+        if role not in ['tenant', 'agent']:
+            role = 'tenant'
+
+        username = request.POST.get('username', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+        email = request.POST.get('email', '').strip()
+
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        nin = request.POST.get('nin', '').strip()
 
         if len(password) < 6:
             messages.error(request, 'Password must be at least 6 characters long.')
-            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
+            return render(request, 'auth/register.html', reg_context)
 
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
-            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
+            return render(request, 'auth/register.html', reg_context)
 
         if User.objects.filter(username__iexact=username).exists():
             messages.error(request, 'This username is already taken. Please choose another username.')
-            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
+            return render(request, 'auth/register.html', reg_context)
 
-        if email and User.objects.filter(email=email).exists():
+        if email and User.objects.filter(email__iexact=email).exists():
             messages.error(request, 'A user with this email address already exists.')
-            return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
+            return render(request, 'auth/register.html', reg_context)
 
-        # Create tenant user (Agents are always added by Admin)
+        if role == 'agent':
+            if not first_name or not last_name or not email or not phone or not nin:
+                messages.error(request, 'First name, Second name, Phone number, Email address, and NIN number are required for agents.')
+                return render(request, 'auth/register.html', reg_context)
+
+            district_id = request.POST.get('district', '').strip()
+            division_id = request.POST.get('division', '').strip()
+            village_id = request.POST.get('village', '').strip()
+            education_level = request.POST.get('education_level', '').strip()
+            languages_list = request.POST.getlist('languages')
+            skills_list = request.POST.getlist('what_do_you_do')
+
+            district_obj = ServiceDistrict.objects.filter(id=district_id).first() if (district_id and district_id.isdigit()) else None
+            division_obj = ServiceDivision.objects.filter(id=division_id).first() if (division_id and division_id.isdigit()) else None
+            village_obj = ServiceVillage.objects.filter(id=village_id).first() if (village_id and village_id.isdigit()) else None
+
+            national_id_doc = request.FILES.get('national_id_doc')
+            education_documents = request.FILES.get('education_documents')
+            lc1_letter = request.FILES.get('lc1_letter')
+            profile_image = request.FILES.get('image')
+
+            proof_files = request.FILES.getlist('proof_of_work_photos')
+            proof_1 = proof_files[0] if len(proof_files) > 0 else request.FILES.get('proof_of_work_1')
+            proof_2 = proof_files[1] if len(proof_files) > 1 else request.FILES.get('proof_of_work_2')
+            proof_3 = proof_files[2] if len(proof_files) > 2 else request.FILES.get('proof_of_work_3')
+
+            languages_str = ", ".join(languages_list)
+            skills_str = ", ".join(skills_list)
+
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+            )
+
+            UserProfile.objects.create(
+                user=user,
+                role='agent',
+                phone=phone,
+                nin=nin,
+                is_approved=True,
+                district=district_obj,
+                division=division_obj,
+                village=village_obj,
+                education_level=education_level,
+                languages=languages_str,
+                what_do_you_do=skills_str,
+                national_id_or_passport=national_id_doc,
+                education_documents=education_documents,
+                lc1_letter=lc1_letter,
+                proof_of_work_1=proof_1,
+                proof_of_work_2=proof_2,
+                proof_of_work_3=proof_3,
+                image=profile_image,
+            )
+
+            InspectionAgent.objects.create(
+                user=user,
+                name=f"{first_name} {last_name}".strip(),
+                email=email,
+                phone=phone,
+                nin=nin,
+                district=district_obj,
+                division=division_obj,
+                village=village_obj,
+                education_level=education_level,
+                languages=languages_str,
+                what_do_you_do=skills_str,
+                national_id_doc=national_id_doc,
+                education_documents=education_documents,
+                lc1_letter=lc1_letter,
+                proof_of_work_1=proof_1,
+                proof_of_work_2=proof_2,
+                proof_of_work_3=proof_3,
+                image=profile_image,
+            )
+
+            messages.success(request, 'Agent registration successful! You can now sign in to your Agent Dashboard.')
+            return redirect('login')
+
+        # Create tenant user
         user = User.objects.create_user(
             username=username,
             email=email if email else f"{username}@tenant.trust",
             password=password,
         )
 
-        # Create tenant profile
         UserProfile.objects.create(
             user=user,
-            role=role,
+            role='tenant',
             phone=phone,
         )
 
@@ -392,9 +492,7 @@ def register_view(request):
         messages.success(request, 'Registration successful! You can now sign in.')
         return redirect('login')
 
-    return render(request, 'auth/register.html', {
-        'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY
-    })
+    return render(request, 'auth/register.html', reg_context)
 
 def landlord_dashboard(request):
     if not request.user.is_authenticated:

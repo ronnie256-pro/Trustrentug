@@ -209,6 +209,19 @@ class UserProfile(models.Model):
     totp_secret = models.CharField(max_length=64, blank=True, null=True)
     is_2fa_enabled = models.BooleanField(default=False)
 
+    # Agent Registration & Qualification fields
+    district = models.ForeignKey('ServiceDistrict', on_delete=models.SET_NULL, null=True, blank=True, related_name='user_profiles')
+    division = models.ForeignKey('ServiceDivision', on_delete=models.SET_NULL, null=True, blank=True, related_name='user_profiles')
+    village = models.ForeignKey('ServiceVillage', on_delete=models.SET_NULL, null=True, blank=True, related_name='user_profiles')
+    education_level = models.CharField(max_length=100, blank=True, null=True)
+    languages = models.CharField(max_length=255, blank=True, null=True)
+    what_do_you_do = models.CharField(max_length=255, blank=True, null=True)
+    education_documents = models.FileField(upload_to='documents/agents/education/', blank=True, null=True)
+    lc1_letter = models.FileField(upload_to='documents/agents/lc1/', blank=True, null=True)
+    proof_of_work_1 = models.FileField(upload_to='documents/agents/work_proof/', blank=True, null=True)
+    proof_of_work_2 = models.FileField(upload_to='documents/agents/work_proof/', blank=True, null=True)
+    proof_of_work_3 = models.FileField(upload_to='documents/agents/work_proof/', blank=True, null=True)
+
     def __str__(self):
         return f"{self.user.username} ({self.role})"
 
@@ -224,9 +237,20 @@ class InspectionAgent(models.Model):
     name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=50)
+    nin = models.CharField(max_length=100, blank=True, null=True)
     role = models.ForeignKey(AgentRole, on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
     district = models.ForeignKey('ServiceDistrict', on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
     division = models.ForeignKey('ServiceDivision', on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
+    village = models.ForeignKey('ServiceVillage', on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
+    education_level = models.CharField(max_length=100, blank=True, null=True)
+    languages = models.CharField(max_length=255, blank=True, null=True)
+    what_do_you_do = models.CharField(max_length=255, blank=True, null=True)
+    national_id_doc = models.FileField(upload_to='documents/agents/identity/', blank=True, null=True)
+    education_documents = models.FileField(upload_to='documents/agents/education/', blank=True, null=True)
+    lc1_letter = models.FileField(upload_to='documents/agents/lc1/', blank=True, null=True)
+    proof_of_work_1 = models.FileField(upload_to='documents/agents/work_proof/', blank=True, null=True)
+    proof_of_work_2 = models.FileField(upload_to='documents/agents/work_proof/', blank=True, null=True)
+    proof_of_work_3 = models.FileField(upload_to='documents/agents/work_proof/', blank=True, null=True)
     image = models.FileField(upload_to='agents/', null=True, blank=True)
     agent_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     joined_at = models.DateTimeField(auto_now_add=True)

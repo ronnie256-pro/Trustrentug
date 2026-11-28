@@ -8,10 +8,10 @@
     <link rel="icon" type="image/png" href="{{ site_settings.site_icon.url }}">
     <link rel="shortcut icon" type="image/png" href="{{ site_settings.site_icon.url }}">
     {% endif %}
-    <!-- Fonts -->
+    <!-- Fonts: Space Grotesk + Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {% load static %}
@@ -22,55 +22,146 @@
     <style>
         :root {
             --sidebar-width: 260px;
+            --tp-cream: #FBF5E6;
+            --tp-cream-light: #FFFDF8;
+            --tp-cream-warm: #F2E8D5;
+            --tp-cream-border: #E5D9C3;
+            --tp-plum: #2B1129;
+            --tp-plum-deep: #1E0B1D;
+            --tp-plum-mid: #3D1A3A;
+            --tp-plum-muted: #5A4257;
+            --tp-spring: #FBF5E6;
+            --tp-spring-panel: #2B1129;
+            --tp-spring-hover: #3D1A3A;
+            --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --color-emerald-darkest: #2B1129;
+            --color-emerald-dark: #2B1129;
+            --color-emerald: #2B1129;
+            --color-gold: #2B1129;
+            --color-border: #E5D9C3;
         }
+
         body {
-            background-color: #f8fafc;
+            background-color: var(--tp-cream) !important;
+            color: var(--tp-plum) !important;
+            font-family: var(--font-body) !important;
             margin: 0;
             display: flex;
             min-height: 100vh;
         }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading) !important;
+            color: var(--tp-plum);
+        }
+
+        /* ─── SIDEBAR (Solid Deep Plum + Butter Cream Active Pill) ─── */
         .admin-sidebar {
             width: var(--sidebar-width);
-            background-color: var(--color-emerald-darkest);
-            color: white;
+            background-color: var(--tp-plum);
+            color: var(--tp-cream-light);
             position: fixed;
             top: 0; bottom: 0; left: 0;
             display: flex;
             flex-direction: column;
             z-index: 1000;
             transition: transform 0.3s ease;
+            border-right: 1px solid rgba(255, 253, 248, 0.08);
         }
+
         .sidebar-brand {
-            padding: 2rem;
+            padding: 1.4rem 1.5rem;
             font-family: var(--font-heading);
-            font-size: 1.5rem;
-            color: var(--color-gold);
+            font-size: 1.45rem;
+            color: var(--tp-cream-light);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 253, 248, 0.08);
         }
+
+        .sidebar-brand .brand-text-container {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .sidebar-brand .brand-text-top {
+            color: #ffffff !important;
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            line-height: 1.05;
+            text-transform: uppercase;
+        }
+
+        .sidebar-brand .brand-text-bottom {
+            color: #ffffff !important;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            opacity: 0.95;
+            margin-top: 3px;
+        }
+
         .sidebar-nav {
             flex: 1;
-            padding: 1rem 0;
+            padding: 1rem 0.75rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
         }
+
         .nav-item {
             display: flex;
             align-items: center;
-            padding: 0.85rem 2rem;
-            color: rgba(255, 255, 255, 0.7);
+            padding: 0.75rem 1.1rem;
+            color: rgba(255, 253, 248, 0.78);
             text-decoration: none;
-            transition: all 0.3s ease;
-            gap: 1rem;
-            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            gap: 0.85rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            border-radius: 10px;
+            font-family: var(--font-body);
         }
-        .nav-item:hover, .nav-item.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
+
+        .nav-item i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+            color: rgba(255, 253, 248, 0.65);
+            transition: color 0.2s ease;
         }
+
+        .nav-item:hover {
+            color: var(--tp-cream-light);
+            background-color: var(--tp-plum-mid);
+        }
+
+        .nav-item:hover i {
+            color: var(--tp-spring);
+        }
+
         .nav-item.active {
-            border-left: 4px solid var(--color-gold);
-            color: var(--color-gold);
+            background-color: var(--tp-cream);
+            color: var(--tp-plum) !important;
+            font-weight: 800;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
         }
+
+        .nav-item.active i {
+            color: var(--tp-plum) !important;
+        }
+
         .nav-dropdown-toggle {
             width: 100%;
             background: none;
@@ -80,72 +171,89 @@
             box-sizing: border-box;
             font-family: inherit;
         }
+
         .nav-submenu {
             display: none;
-            background: rgba(0, 0, 0, 0.22);
-            padding: 0.35rem 0;
+            background: rgba(30, 11, 29, 0.45);
+            border-radius: 10px;
+            margin: 0.25rem 0 0.35rem 0;
+            padding: 0.35rem;
         }
+
         .nav-submenu.open {
             display: block;
         }
+
         .nav-subitem {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.65rem 2rem 0.65rem 3.5rem;
-            color: rgba(255, 255, 255, 0.68);
+            gap: 0.7rem;
+            padding: 0.6rem 0.9rem 0.6rem 2.35rem;
+            color: rgba(255, 253, 248, 0.72);
             text-decoration: none;
-            font-size: 0.88rem;
-            font-weight: 500;
+            font-size: 0.86rem;
+            font-weight: 600;
+            border-radius: 8px;
             transition: all 0.2s ease;
         }
-        .nav-subitem:hover, .nav-subitem.active {
-            color: var(--color-gold);
-            background: rgba(255, 255, 255, 0.06);
+
+        .nav-subitem:hover {
+            color: var(--tp-cream-light);
+            background: rgba(255, 253, 248, 0.08);
         }
+
         .nav-subitem.active {
-            font-weight: 700;
+            color: var(--tp-cream-light);
+            background: rgba(251, 245, 230, 0.16);
+            font-weight: 800;
         }
+
         .sidebar-footer {
-            padding: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0.75rem;
+            border-top: 1px solid rgba(255, 253, 248, 0.08);
         }
+
+        /* ─── MAIN WORKSPACE (60% Butter Cream Light Canvas) ─── */
         .admin-main {
             margin-left: var(--sidebar-width);
             flex: 1;
             display: flex;
             flex-direction: column;
             width: calc(100% - var(--sidebar-width));
+            background-color: var(--tp-cream);
         }
+
         .admin-topbar {
             height: 70px;
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
+            background: var(--tp-cream-light);
+            border-bottom: 1px solid var(--tp-cream-border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 3rem;
+            padding: 0 2.5rem;
             position: sticky;
             top: 0;
             z-index: 900;
         }
+
         .hamburger {
             display: none;
             background: none;
             border: none;
             font-size: 1.5rem;
-            color: var(--color-emerald-dark);
+            color: var(--tp-plum);
             cursor: pointer;
         }
+
         .admin-content {
-            padding: 3rem;
+            padding: 2rem 2.5rem;
         }
         
         .mobile-sidebar-close {
             display: none;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff;
+            background: rgba(255, 253, 248, 0.12);
+            border: 1px solid rgba(255, 253, 248, 0.25);
+            color: var(--tp-cream-light);
             width: 34px;
             height: 34px;
             border-radius: 8px;
@@ -157,8 +265,8 @@
         }
 
         .mobile-sidebar-close:hover {
-            background: rgba(255, 255, 255, 0.25);
-            color: var(--color-gold);
+            background: var(--tp-spring);
+            color: var(--tp-plum-deep);
         }
 
         .sidebar-overlay {
@@ -170,7 +278,7 @@
             bottom: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.5);
+            background: rgba(30, 11, 29, 0.55);
             backdrop-filter: blur(4px);
             z-index: 998;
             opacity: 0;
@@ -210,10 +318,10 @@
         }
         
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
+            background: var(--tp-cream-light);
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(43, 17, 41, 0.04);
+            border: 1.5px solid var(--tp-cream-border);
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -223,15 +331,18 @@
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="admin-sidebar" id="sidebar">
-        <div class="sidebar-brand" style="display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 1.75rem 1.25rem 1.75rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+        <div class="sidebar-brand">
+            <a href="/" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit;">
                 {% if site_settings.site_logo %}
-                    <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" style="max-height: 64px; max-width: 190px; width: auto; height: auto; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25)); display: block;">
+                    <img src="{{ site_settings.site_logo.url }}" alt="TRUST PROTOCOL" style="height: 44px; width: auto; max-width: 52px; object-fit: contain; border-radius: 6px; flex-shrink: 0;">
                 {% else %}
-                    <i class="fa-solid fa-shield-halved" style="font-size: 2.2rem; color: var(--color-gold);"></i>
-                    <span style="font-size: 1.6rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px;">{{ site_settings.site_name|default:"TRUST" }}</span>
+                    <i class="fa-solid fa-shield-halved" style="font-size: 2.1rem; color: var(--tp-spring); flex-shrink: 0;"></i>
                 {% endif %}
-            </div>
+                <div class="brand-text-container">
+                    <span class="brand-text-top">TRUST</span>
+                    <span class="brand-text-bottom">PROTOCOL</span>
+                </div>
+            </a>
             <button class="mobile-sidebar-close" onclick="toggleSidebar()" aria-label="Close menu">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -242,10 +353,10 @@
             </a>
             <div class="nav-dropdown-group">
                 <button type="button" onclick="toggleTenantsSubmenu()" class="nav-item nav-dropdown-toggle {% if current_tab == 'tenants' or current_tab == 'tenant_requests' %}active{% endif %}">
-                    <span style="display: inline-flex; align-items: center; gap: 1rem;">
+                    <span style="display: inline-flex; align-items: center; gap: 0.85rem;">
                         <i class="fa-solid fa-users"></i> Tenants
                     </span>
-                    <i id="tenants-submenu-chevron" class="fa-solid fa-chevron-down" style="font-size: 0.75rem; transition: transform 0.25s ease; {% if current_tab == 'tenants' or current_tab == 'tenant_requests' %}transform: rotate(180deg);{% endif %}"></i>
+                    <i id="tenants-submenu-chevron" class="fa-solid fa-chevron-down" style="font-size: 0.75rem; width: auto; transition: transform 0.25s ease; {% if current_tab == 'tenants' or current_tab == 'tenant_requests' %}transform: rotate(180deg);{% endif %}"></i>
                 </button>
                 <div id="tenants-submenu" class="nav-submenu {% if current_tab == 'tenants' or current_tab == 'tenant_requests' %}open{% endif %}">
                     <a href="/admin-dashboard/?tab=tenants" class="nav-subitem {% if current_tab == 'tenants' %}active{% endif %}">
@@ -285,7 +396,7 @@
             </a>
         </nav>
         <div class="sidebar-footer">
-            <form action="/logout/" method="post">
+            <form action="/logout/" method="post" style="margin: 0;">
                 {% csrf_token %}
                 <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; cursor: pointer; text-align: left;">
                     <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -299,9 +410,9 @@
             <button class="hamburger" onclick="toggleSidebar()">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <span style="font-weight: 500;">Admin User</span>
-                <div style="width: 40px; height: 40px; background: var(--color-emerald); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">A</div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-left: auto;">
+                <span style="font-family: var(--font-heading); font-weight: 700; font-size: 1rem; color: var(--tp-plum);">Admin User</span>
+                <div style="width: 38px; height: 38px; background: var(--tp-plum); color: var(--tp-cream-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 800; font-size: 0.95rem;">A</div>
             </div>
         </header>
         <div class="admin-content">
