@@ -6,9 +6,10 @@
         <!-- Modal Header -->
         <div style="background: #ecfdf5; padding: 1.25rem 2rem; color: #064e3b; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-gold);">
             <div>
-                <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #064e3b; font-weight: 700;">
-                    Add Property
+                <h3 id="addPropertyModalTitle" style="margin: 0; font-family: var(--font-heading); font-size: 1.4rem; color: #064e3b; font-weight: 700;">
+                    Add Found Property
                 </h3>
+                <p id="addPropertyModalSubtitle" style="display: none; margin: 0.25rem 0 0 0; font-size: 0.85rem; font-weight: 700; color: #047857;"></p>
             </div>
             <button type="button" onclick="closeAddPropertyModal()" style="background: rgba(6, 78, 59, 0.1); border: none; color: #064e3b; width: 36px; height: 36px; border-radius: 50%; font-size: 1.25rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(239,68,68,0.8)'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(6,78,59,0.1)'; this.style.color='#064e3b';">&times;</button>
         </div>
@@ -17,16 +18,9 @@
         <form action="{% url 'add_property' %}" method="POST" enctype="multipart/form-data" style="padding: 2rem; max-height: 80vh; overflow-y: auto;">
             {% csrf_token %}
 
-            <!-- TRUST Protocol Rent Collection Banner with Sentence and YES Checkbox after -->
-            <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.85rem; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);">
-                <span style="font-weight: 800; font-size: 0.98rem; color: #064e3b; margin: 0;">
-                    Do you want TRUST PROTOCOL to collect Rent from your tenants?
-                </span>
-                <label for="collect_rent_by_trust" style="display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 800; font-size: 0.95rem; color: #064e3b; cursor: pointer; margin: 0;">
-                    <input type="checkbox" id="collect_rent_by_trust" name="collect_rent_by_trust" checked style="width: 20px; height: 20px; accent-color: #10b981; cursor: pointer;">
-                    YES
-                </label>
-            </div>
+            <!-- Hidden flag for rent collection (handled by TRUST ecosystem) -->
+            <input type="hidden" name="collect_rent_by_trust" value="on">
+            <input type="hidden" id="respond_locate_request_id" name="locate_request_id" value="">
 
             <div class="section-header" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
                 <h4 style="margin: 0; color: var(--color-emerald-darkest); font-family: var(--font-heading); font-size: 1.15rem;">Core Property Details</h4>
@@ -279,6 +273,32 @@
 
 <script>
     function openAddPropertyModal() {
+        const reqInput = document.getElementById('respond_locate_request_id');
+        const titleEl = document.getElementById('addPropertyModalTitle');
+        const subEl = document.getElementById('addPropertyModalSubtitle');
+        if (reqInput) reqInput.value = '';
+        if (titleEl) titleEl.textContent = 'Add Property';
+        if (subEl) {
+            subEl.style.display = 'none';
+            subEl.textContent = '';
+        }
+        const modal = document.getElementById('addPropertyModal');
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function openRespondAssignmentModal(reqId, houseType, locationsStr, maxBudget) {
+        const reqInput = document.getElementById('respond_locate_request_id');
+        const titleEl = document.getElementById('addPropertyModalTitle');
+        const subEl = document.getElementById('addPropertyModalSubtitle');
+        if (reqInput) reqInput.value = reqId;
+        if (titleEl) titleEl.textContent = 'Respond to Assignment #REQ-' + reqId + ' — Add Found Property';
+        if (subEl) {
+            subEl.textContent = 'Target: ' + (houseType || 'Any Type') + ' | Areas: ' + (locationsStr || 'Any Area') + ' | Max Budget: UGX ' + (maxBudget || '');
+            subEl.style.display = 'block';
+        }
         const modal = document.getElementById('addPropertyModal');
         if (modal) {
             modal.style.display = 'block';

@@ -184,6 +184,7 @@ class Property(models.Model):
 class UserProfile(models.Model):
     ROLE_CHOICES = [
         ('tenant', 'Tenant'),
+        ('agent', 'Agent'),
         ('landlord', 'Landlord'),
         ('admin', 'Admin'),
     ]
@@ -219,6 +220,7 @@ class AgentRole(models.Model):
         return self.name
 
 class InspectionAgent(models.Model):
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='agent_record')
     name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=50)
@@ -898,6 +900,8 @@ class HouseLocateRequest(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='locate_requests')
+    assigned_agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_locate_requests')
+    located_property = models.ForeignKey('Property', on_delete=models.SET_NULL, null=True, blank=True, related_name='locate_requests')
 
     # Step 1: Property Requirements
     preferred_locations = models.JSONField(default=list, help_text="List of selected village names/IDs")

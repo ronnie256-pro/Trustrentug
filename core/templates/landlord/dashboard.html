@@ -1,405 +1,339 @@
 {% extends "landlord/base_landlord.html" %}
 {% load humanize %}
 
-{% block title %}Owner Dashboard | TRUST{% endblock %}
+{% block title %}Agent Dashboard | TRUST PROTOCOL{% endblock %}
 
-{% block extra_css %}
+{% block content %}
 <style>
-    .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    }
-    .dashboard-header h2 {
-        margin: 0;
-        font-size: 1.75rem;
-        color: #1e293b;
-    }
-    .dashboard-header p {
-        color: #64748b;
-        margin: 0.25rem 0 0 0;
-    }
-
-    .stats-row {
+    .tp-kpi-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    @media (max-width: 1200px) {
-        .stats-row { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 768px) {
-        .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-        .stats-row { grid-template-columns: 1fr; }
-        .content-card { overflow-x: auto; }
-        .dashboard-table { min-width: 750px; }
-        .dashboard-header .btn { width: 100%; text-align: center; }
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.35rem;
+        margin-bottom: 2.25rem;
     }
 
-    .stat-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
+    .tp-kpi-card {
+        background: var(--tp-cream-light);
+        padding: 1.45rem 1.6rem;
+        border-radius: 14px;
+        border: 1.5px solid var(--tp-cream-border);
+        box-shadow: 0 4px 14px rgba(43, 17, 41, 0.03);
+        transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .tp-kpi-card:hover {
+        border-color: var(--tp-plum);
+    }
+
+    .tp-kpi-label {
+        margin: 0;
+        font-size: 0.84rem;
+        color: var(--tp-plum-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .tp-kpi-value {
+        margin: 0.35rem 0 0 0;
+        font-family: var(--font-heading);
+        font-size: 1.95rem;
+        font-weight: 700;
+        color: var(--tp-plum) !important;
+    }
+
+    .tp-kpi-value.accent-green {
+        color: var(--tp-spring-hover) !important;
+    }
+
+    .tp-panel-card {
+        background: var(--tp-cream-light);
+        border: 1.5px solid var(--tp-cream-border);
+        border-radius: 16px;
+        padding: 1.85rem 2rem;
+        box-shadow: 0 6px 20px rgba(43, 17, 41, 0.04);
+    }
+
+    .tp-btn-spring {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 0.45rem;
+        background-color: var(--tp-spring);
+        color: var(--tp-plum-deep) !important;
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        font-weight: 800;
+        padding: 0.7rem 1.4rem;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.15s ease, color 0.15s ease;
     }
-    .stat-details h4 {
-        margin: 0;
+
+    .tp-btn-spring:hover {
+        background-color: var(--tp-plum);
+        color: var(--tp-cream-light) !important;
+    }
+
+    .tp-btn-outline-plum {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.52rem 1.05rem;
         font-size: 0.85rem;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-        text-align: center;
-    }
-    .stat-details .value {
-        font-size: 1.5rem;
         font-weight: 700;
-        margin: 0.5rem 0 0 0;
-        color: #1e293b;
-        text-align: center;
+        color: var(--tp-plum) !important;
+        background: var(--tp-cream);
+        border: 1.5px solid var(--tp-plum);
+        border-radius: 8px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease;
     }
 
-    .table-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
-    .table-header {
-        padding: 1.25rem 1.75rem;
-        border-bottom: 1px solid #e2e8f0;
-        text-align: center;
-    }
-    
-    .dashboard-table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: center;
-    }
-    .dashboard-table th {
-        background: #f8fafc;
-        padding: 1rem 1.25rem;
-        text-align: center;
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        color: #475569;
-        font-weight: 700;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    .dashboard-table td {
-        padding: 1.15rem 1.25rem;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: 0.92rem;
-        vertical-align: middle;
-        text-align: center;
+    .tp-btn-outline-plum:hover {
+        background: var(--tp-plum);
+        color: var(--tp-cream-light) !important;
     }
 
-    .status-pill {
-        padding: 0.25rem 0.75rem;
+    .tp-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.7rem;
         border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        display: inline-block;
+        font-size: 0.74rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
     }
-    .pill-active { background: #ecfdf5; color: #059669; }
-    .pill-pending { background: #fffbe6; color: #d48806; }
-</style>
-{% endblock %}
 
-{% block admin_content %}
-{% if not is_approved %}
-<div class="alert alert-warning" style="padding: 1.25rem 1.75rem; border-radius: 12px; border-left: 5px solid var(--color-gold); background-color: rgba(203, 163, 88, 0.08); color: #1e293b; margin-bottom: 2rem; box-shadow: var(--shadow-sm); border: 1px solid rgba(203, 163, 88, 0.25); text-align: center;">
-    <div>
-        <strong style="display: block; font-size: 1.05rem; color: var(--color-emerald-darkest); font-family: var(--font-heading); margin-bottom: 0.25rem;">Vetting Protocol Pending Manual Approval</strong>
-        <span style="font-size: 0.88rem; color: #475569; line-height: 1.5;">Your property owner account is currently under manual identity vetting by the TRUST administrator. You will not be able to list new properties or transact until your account verification is finalized.</span>
-    </div>
-</div>
-{% endif %}
+    .tp-badge-live {
+        background: rgba(0, 214, 127, 0.16);
+        color: #007A48;
+        border: 1px solid rgba(0, 184, 107, 0.35);
+    }
 
-{% if active_tab == 'rent' %}
-<!-- CONTINUOUS RENT COLLECTION TAB -->
-<div class="dashboard-header">
-    <div>
-        <h2>Rent Collection</h2>
-    </div>
-    {% if is_approved %}
-    <button type="button" onclick="openAddPropertyModal()" class="btn btn-gold" style="border: none; cursor: pointer; padding: 0.75rem 1.5rem; font-weight: 700;">
-        Submit New Property
-    </button>
-    {% endif %}
-</div>
+    .tp-badge-plum {
+        background: var(--tp-cream-warm);
+        color: var(--tp-plum);
+        border: 1px solid var(--tp-cream-border);
+    }
 
-<!-- Category Filter Pills -->
-<div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
-    <button onclick="filterRentUnits('all', this)" class="btn btn-sm rent-filter-pill active" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: var(--color-emerald-darkest); color: white; border: none; cursor: pointer;">
-        All Units ({{ rent_collections|length }})
-    </button>
-    <button onclick="filterRentUnits('paid', this)" class="btn btn-sm rent-filter-pill" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; cursor: pointer;">
-        Paid
-    </button>
-    <button onclick="filterRentUnits('pending', this)" class="btn btn-sm rent-filter-pill" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: #fffbe6; color: #b45309; border: 1px solid #fde68a; cursor: pointer;">
-        Pending / Overdue
-    </button>
-    <button onclick="filterRentUnits('vacant', this)" class="btn btn-sm rent-filter-pill" style="padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; cursor: pointer;">
-        Vacant Units
-    </button>
-</div>
-
-<!-- Property Units Blocks Display Grid -->
-<div style="background: white; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem; box-shadow: 0 4px 16px rgba(0,0,0,0.03); margin-bottom: 2rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
-        <h3 style="margin: 0; font-family: var(--font-heading); color: var(--color-emerald-darkest); font-size: 1.15rem; font-weight: 700;">
-            <i class="fa-solid fa-cubes-stacked" style="color: var(--color-gold); margin-right: 0.4rem;"></i> Property Unit Blocks Display
-        </h3>
-        <span style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Numbered per Property Category</span>
-    </div>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem;">
-        {% for rc in rent_collections %}
-        <div class="rent-unit-card" data-status="{{ rc.status }}" style="background: #ffffff; border: 1.5px solid {% if rc.status == 'paid' %}#10b981{% elif rc.status == 'pending' or rc.status == 'overdue' %}#f59e0b{% else %}#cbd5e1{% endif %}; border-radius: 12px; padding: 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.2s ease; position: relative;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-            
-            <!-- Unit Card Header -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                <div>
-                    <div style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 900; color: #0f172a;">
-                        {{ rc.unit_number }}
-                    </div>
-                    <small style="font-size: 0.75rem; color: #64748b; font-weight: 600; display: block; margin-top: 0.1rem;">
-                        <i class="fa-solid fa-building" style="color: var(--color-gold);"></i> {{ rc.property.title }}
-                    </small>
-                </div>
-
-                <!-- Status Badge -->
-                {% if rc.status == 'paid' %}
-                <span class="badge" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
-                    <i class="fa-solid fa-circle-check"></i> Paid
-                </span>
-                {% elif rc.status == 'pending' %}
-                <span class="badge" style="background: #fffbe6; color: #b45309; border: 1px solid #fde68a; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
-                    <i class="fa-solid fa-clock"></i> Pending
-                </span>
-                {% elif rc.status == 'overdue' %}
-                <span class="badge" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Overdue
-                </span>
-                {% else %}
-                <span class="badge" style="background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 20px;">
-                    Vacant
-                </span>
-                {% endif %}
-            </div>
-
-            <!-- Rent Amount -->
-            <div style="background: #f8fafc; border-radius: 8px; padding: 0.6rem 0.75rem; margin-bottom: 0.85rem; border: 1px solid #f1f5f9;">
-                <span style="font-size: 0.72rem; text-transform: uppercase; color: #64748b; font-weight: 700; display: block; letter-spacing: 0.03em;">Monthly Rent Rate</span>
-                <span style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 900; color: #047857;">
-                    UGX {{ rc.monthly_rent|floatformat:0|intcomma }}
-                </span>
-            </div>
-
-            <!-- Occupant Details -->
-            <div style="font-size: 0.82rem; color: #334155; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.3rem;">
-                <div style="display: flex; align-items: center; gap: 0.4rem;">
-                    <i class="fa-solid fa-user-circle" style="color: #64748b; font-size: 0.95rem;"></i>
-                    {% if rc.tenant %}
-                    <span style="font-weight: 700; color: #0f172a;">{{ rc.tenant.get_full_name|default:rc.tenant.username }}</span>
-                    {% else %}
-                    <span style="color: #94a3b8; font-style: italic;">No Tenant Assigned</span>
-                    {% endif %}
-                </div>
-                {% if rc.due_date %}
-                <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; padding-left: 1.35rem;">
-                    Due Date: <span style="color: #0f172a;">{{ rc.due_date|date:"d M Y" }}</span>
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Action Button -->
-            <button type="button" onclick="alert('TRUST Rent Collection request for {{ rc.unit_number }} sent to tenant!')" class="btn btn-gold" style="width: 100%; border: none; padding: 0.45rem 0.75rem; font-size: 0.8rem; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                <i class="fa-solid fa-paper-plane"></i> Collect Rent
-            </button>
-        </div>
-        {% empty %}
-        <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; color: #94a3b8;">
-            <div style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem;"><i class="fa-solid fa-coins"></i></div>
-            <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">No continuous rent collection units found yet.</p>
-            <small style="display: block; margin-top: 0.35rem; color: #64748b;">Submit a property with property categories to generate automated unit blocks.</small>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
-<script>
-    function filterRentUnits(status, btn) {
-        const pills = document.querySelectorAll('.rent-filter-pill');
-        pills.forEach(p => {
-            p.classList.remove('active');
-            p.style.background = '#f8fafc';
-            p.style.color = '#475569';
-        });
-        if (btn) {
-            btn.classList.add('active');
-            btn.style.background = 'var(--color-emerald-darkest)';
-            btn.style.color = 'white';
+    @media (max-width: 768px) {
+        .tp-kpi-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.75rem !important;
         }
-
-        const cards = document.querySelectorAll('.rent-unit-card');
-        cards.forEach(card => {
-            const cardStatus = card.getAttribute('data-status');
-            if (status === 'all' || cardStatus === status) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
-        });
+        .tp-kpi-card {
+            padding: 1rem !important;
+        }
+        .tp-kpi-value {
+            font-size: 1.45rem !important;
+        }
+        .tp-panel-card {
+            padding: 1.25rem !important;
+        }
+        .landlord-prop-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.85rem !important;
+        }
+        .landlord-prop-actions {
+            width: 100%;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
     }
-</script>
+</style>
 
-{% else %}
-<!-- OVERVIEW TAB -->
-<div class="dashboard-header">
-    <div>
-        <h2>Portfolio Overview</h2>
-        <p>Manage your properties through the TRUST verification pipeline.</p>
+{% if current_tab == 'assigned_requests' %}
+    <!-- ==================== ASSIGNMENTS TAB ==================== -->
+    <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="margin: 0; font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; color: var(--tp-plum);">
+                Assignments
+            </h2>
+        </div>
     </div>
-    {% if is_approved %}
-    <button type="button" onclick="openAddPropertyModal()" class="btn btn-gold" style="border: none; cursor: pointer; padding: 0.75rem 1.5rem; font-weight: 700;">
-        Submit New Property
-    </button>
-    {% else %}
-    <button class="btn btn-gold" disabled style="opacity: 0.6; cursor: not-allowed; display: inline-flex; align-items: center; border: none; padding: 0.75rem 1.5rem; font-weight: 700;" title="Account vetting pending manual approval">
-        Submit New Property
-    </button>
-    {% endif %}
-</div>
 
-<!-- Stats Overview -->
-<div class="stats-row">
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Total Units</h4>
-            <div class="value">{{ stats.total }}</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Listed & Available</h4>
-            <div class="value" style="color: var(--color-emerald);">{{ stats.available }}</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Pending Verification</h4>
-            <div class="value" style="color: var(--color-gold);">{{ stats.pending }}</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-details">
-            <h4>Est. Portfolio Value</h4>
-            <div class="value" style="color: var(--color-emerald-dark);">UGX {{ stats.revenue|floatformat:0|intcomma }}</div>
-        </div>
-    </div>
-</div>
-
-<!-- Property Table section -->
-<div class="table-card">
-    <div class="table-header">
-        <h3 style="margin:0; font-size: 1.15rem; font-family: var(--font-heading); color: var(--color-emerald-darkest);">My Listed Properties</h3>
-    </div>
-    <div style="overflow-x: auto;">
-        <table class="dashboard-table">
-            <thead>
-                <tr>
-                    <th style="text-align: center;">Property Name</th>
-                    <th style="text-align: center;">Category</th>
-                    <th style="text-align: center;">Units</th>
-                    <th style="text-align: center;">Status</th>
-                    <th style="text-align: center;">Monthly Rate</th>
-                    <th style="text-align: center;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for property in properties %}
-                <tr>
-                    <td style="font-weight: 700; text-align: center;">
-                        <a href="{% url 'property_detail' property.id %}" style="color: var(--color-emerald-darkest); text-decoration: none;" target="_blank">
-                            {{ property.title }}
-                        </a>
-                        <div style="font-size: 0.78rem; color: var(--color-text-muted); font-weight: normal; margin-top: 0.2rem;">{{ property.location }}</div>
-                    </td>
-                    <td style="text-align: center;">{{ property.get_category_display }}</td>
-                    <td style="text-align: center;">{% if property.is_multi_unit %}{{ property.units.count }} Units{% else %}Single Unit{% endif %}</td>
-                    <td style="text-align: center;">
-                        <span class="status-pill {% if property.status == 'available' %}pill-active{% else %}pill-pending{% endif %}">
-                            {{ property.get_status_display }}
-                        </span>
-                    </td>
-                    <td style="font-weight: 700; text-align: center;">
-                        {% if property.price_per_month %}
-                            UGX {{ property.price_per_month|floatformat:0|intcomma }}
-                        {% else %}
-                            UGX {{ property.price|floatformat:0|intcomma }}
-                        {% endif %}
-                    </td>
-                    <td style="text-align: center;">
-                        <form action="{% url 'delete_property' property.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this property listing? This action cannot be undone.');" style="margin: 0; display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0.25rem 0.5rem; font-weight: 600;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Property">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% if property.is_multi_unit %}
-                    {% for unit in property.units.all %}
-                    <tr style="background: #fafafa;">
-                        <td style="text-align: center; font-size: 0.85rem; color: #64748b;">— {{ unit.title }}</td>
-                        <td style="text-align: center; font-size: 0.8rem; color: #94a3b8;">Unit ({{ unit.get_category_display }})</td>
-                        <td style="text-align: center;">-</td>
-                        <td style="text-align: center;">
-                            <span class="status-pill {% if unit.status == 'available' %}pill-active{% else %}pill-pending{% endif %}" style="font-size: 0.7rem; opacity: 0.8;">
-                                {{ unit.get_status_display }}
-                            </span>
+    <div class="tp-panel-card" style="padding: 0; overflow: hidden;">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 820px;">
+                <thead>
+                    <tr style="background: var(--tp-cream-warm); border-bottom: 1.5px solid var(--tp-cream-border);">
+                        <th style="padding: 1rem 1.25rem; font-size: 0.78rem; text-transform: uppercase; color: var(--tp-plum); font-weight: 800; letter-spacing: 0.04em;">Mandate ID</th>
+                        <th style="padding: 1rem 1.25rem; font-size: 0.78rem; text-transform: uppercase; color: var(--tp-plum); font-weight: 800; letter-spacing: 0.04em;">Target Locations</th>
+                        <th style="padding: 1rem 1.25rem; font-size: 0.78rem; text-transform: uppercase; color: var(--tp-plum); font-weight: 800; letter-spacing: 0.04em;">House Type & Specs</th>
+                        <th style="padding: 1rem 1.25rem; font-size: 0.78rem; text-transform: uppercase; color: var(--tp-plum); font-weight: 800; letter-spacing: 0.04em;">Target Budget</th>
+                        <th style="padding: 1rem 1.25rem; font-size: 0.78rem; text-transform: uppercase; color: var(--tp-plum); font-weight: 800; letter-spacing: 0.04em;">Move-In Timeline & Notes</th>
+                        <th style="padding: 1rem 1.25rem; font-size: 0.78rem; text-transform: uppercase; color: var(--tp-plum); font-weight: 800; letter-spacing: 0.04em; text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in assigned_requests %}
+                    <tr style="border-bottom: 1px solid var(--tp-cream-warm);">
+                        <td style="padding: 1.1rem 1.25rem; vertical-align: top;">
+                            <div style="font-weight: 800; color: var(--tp-plum); font-size: 0.92rem;">#REQ-{{ req.id }}</div>
+                            <div style="font-size: 0.78rem; color: var(--tp-plum-muted); margin-top: 0.2rem;">{{ req.created_at|date:"d M Y" }}</div>
                         </td>
-                        <td style="text-align: center; font-size: 0.85rem; color: #64748b; font-weight: 600;">
-                            {% if unit.price_per_month %}
-                                UGX {{ unit.price_per_month|floatformat:0|intcomma }}
-                            {% else %}
-                                UGX {{ unit.price|floatformat:0|intcomma }}
+                        <td style="padding: 1.1rem 1.25rem; vertical-align: top;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; max-width: 240px;">
+                                {% for loc in req.preferred_locations %}
+                                <span class="tp-badge tp-badge-live" style="text-transform: none; font-size: 0.78rem;">
+                                    {{ loc }}
+                                </span>
+                                {% empty %}
+                                <span style="color: var(--tp-plum-muted); font-size: 0.85rem;">Any Area</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td style="padding: 1.1rem 1.25rem; vertical-align: top;">
+                            <div style="font-weight: 800; color: var(--tp-plum); font-size: 0.95rem;">{{ req.house_type }}</div>
+                            <div style="font-size: 0.82rem; color: var(--tp-plum-muted); font-weight: 600; margin-top: 0.15rem;">
+                                {% if req.bedrooms is not None %}{{ req.bedrooms }} Bedroom{{ req.bedrooms|pluralize }}{% else %}Any Bedrooms{% endif %}
+                            </div>
+                        </td>
+                        <td style="padding: 1.1rem 1.25rem; vertical-align: top;">
+                            <strong style="color: var(--tp-plum); font-size: 0.95rem;">UGX {{ req.max_budget|floatformat:0|intcomma }}</strong>
+                            <div style="font-size: 0.75rem; color: var(--tp-plum-muted);">per month</div>
+                        </td>
+                        <td style="padding: 1.1rem 1.25rem; vertical-align: top; max-width: 260px;">
+                            <div style="font-size: 0.84rem; font-weight: 700; color: var(--tp-plum); margin-bottom: 0.25rem;">
+                                Needed: {{ req.time_or_period|default:"Immediate" }}
+                            </div>
+                            {% if req.special_requirements %}
+                            <div style="font-size: 0.8rem; color: var(--tp-plum); background: var(--tp-cream); border: 1px solid var(--tp-cream-border); border-radius: 6px; padding: 0.4rem 0.6rem;">
+                                {{ req.special_requirements }}
+                            </div>
                             {% endif %}
                         </td>
-                        <td style="text-align: center;">
-                            <form action="{% url 'delete_property' unit.id %}" method="POST" onsubmit="return confirm('Are you absolutely sure you want to permanently delete this unit? This action cannot be undone.');" style="margin: 0; display: inline;">
-                                {% csrf_token %}
-                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.85rem; padding: 0.25rem 0.5rem; font-weight: 600;" onmouseover="this.style.color='#b91c1c'" onmouseout="this.style.color='#ef4444'" title="Delete Unit">
-                                    Delete
-                                </button>
-                            </form>
+                        <td style="padding: 1.1rem 1.25rem; vertical-align: middle; text-align: center;">
+                            <button type="button" onclick="openRespondAssignmentModal('{{ req.id }}', '{{ req.house_type|escapejs }}', '{{ req.preferred_locations|join:", "|escapejs }}', '{{ req.max_budget|floatformat:0 }}')" class="tp-btn-spring" style="padding: 0.48rem 1.15rem; font-size: 0.84rem;">
+                                Respond
+                            </button>
+                            {% if req.located_property %}
+                            <div style="font-size: 0.74rem; font-weight: 700; color: var(--tp-spring-hover); margin-top: 0.35rem;">
+                                <i class="fa-solid fa-circle-check"></i> {{ req.located_property.title|truncatechars:22 }}
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="padding: 3.5rem 1.5rem; text-align: center; color: var(--tp-plum-muted);">
+                            <p style="margin: 0; font-size: 1rem; font-weight: 600;">No assignments have been assigned to you yet.</p>
                         </td>
                     </tr>
                     {% endfor %}
-                {% endif %}
-                {% empty %}
-                <tr>
-                    <td colspan="6" style="text-align:center; padding: 3rem; color: var(--color-text-muted);">
-                        <p>No properties listed yet. Submit your first property to begin physical verification.</p>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+
+{% else %}
+    <!-- ==================== MY PROPERTIES TAB ==================== -->
+
+    <!-- KPI Summary Cards -->
+    <div class="tp-kpi-grid">
+        <div class="tp-kpi-card">
+            <p class="tp-kpi-label">Submitted Properties</p>
+            <h4 class="tp-kpi-value">{{ properties.count }}</h4>
+        </div>
+
+        <div class="tp-kpi-card">
+            <p class="tp-kpi-label">Verified & Live</p>
+            <h4 class="tp-kpi-value accent-green">{{ available_count|default:0 }}</h4>
+        </div>
+
+        <div class="tp-kpi-card">
+            <p class="tp-kpi-label">Pending Vetting</p>
+            <h4 class="tp-kpi-value">{{ pending_count|default:0 }}</h4>
+        </div>
+
+        <div class="tp-kpi-card">
+            <p class="tp-kpi-label">Assignments</p>
+            <h4 class="tp-kpi-value">{{ assigned_requests_count|default:0 }}</h4>
+        </div>
+    </div>
+
+    <!-- Active Assignments Quick Preview -->
+    {% if assigned_requests %}
+    <div class="tp-panel-card" style="background: var(--tp-cream-warm); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+                <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.2rem; color: var(--tp-plum); font-weight: 700;">
+                    Assignments ({{ assigned_requests|length }})
+                </h3>
+            </div>
+            <a href="{% url 'landlord_dashboard' %}?tab=assigned_requests" class="tp-btn-outline-plum">
+                View All Assignments &rarr;
+            </a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+            {% for req in assigned_requests|slice:":3" %}
+            <div style="background: var(--tp-cream-light); border: 1px solid var(--tp-cream-border); border-radius: 10px; padding: 1rem 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                    <span style="font-weight: 800; color: var(--tp-plum); font-size: 0.82rem;">#REQ-{{ req.id }}</span>
+                    <span class="tp-badge tp-badge-live">{{ req.get_status_display }}</span>
+                </div>
+                <div style="font-weight: 800; color: var(--tp-plum); font-size: 0.98rem;">{{ req.house_type }} {% if req.bedrooms %}({{ req.bedrooms }} Bed){% endif %}</div>
+                <div style="font-size: 0.85rem; color: var(--tp-spring-hover); font-weight: 700; margin-top: 0.2rem;">Budget: UGX {{ req.max_budget|floatformat:0|intcomma }}/mo</div>
+                <div style="font-size: 0.8rem; color: var(--tp-plum-muted); margin-top: 0.35rem;">
+                    <strong>Areas:</strong> {{ req.preferred_locations|join:", "|default:"Any Area" }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- My Properties List -->
+    <div class="tp-panel-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1.5px solid var(--tp-cream-warm); padding-bottom: 1.15rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h3 style="margin: 0; font-size: 1.35rem; font-weight: 700;">My Properties</h3>
+            </div>
+            <button type="button" onclick="openAddPropertyModal()" class="tp-btn-spring">
+                + New Property
+            </button>
+        </div>
+
+        {% for prop in properties %}
+        <div class="landlord-prop-row" style="display: flex; justify-content: space-between; align-items: center; padding: 1.35rem 0; {% if not forloop.last %}border-bottom: 1px solid var(--tp-cream-warm);{% endif %}">
+            <div>
+                <span class="tp-badge {% if prop.status == 'available' %}tp-badge-live{% else %}tp-badge-plum{% endif %}" style="margin-bottom: 0.5rem;">
+                    {% if prop.status == 'available' %}
+                        Verified & Live
+                    {% elif prop.status == 'rented' %}
+                        Rented
+                    {% else %}
+                        {{ prop.get_status_display }}
+                    {% endif %}
+                </span>
+                <h4 style="margin: 0 0 0.25rem 0; font-size: 1.15rem; font-weight: 700;">{{ prop.title }}</h4>
+                <p style="margin: 0; font-size: 0.86rem; color: var(--tp-plum-muted); font-weight: 500;">{{ prop.location }} &bull; Submitted {{ prop.created_at|date:"M d, Y" }}</p>
+            </div>
+            <div class="landlord-prop-actions" style="display: flex; gap: 0.75rem; align-items: center;">
+                <a href="{% url 'property_detail' prop.id %}" class="tp-btn-outline-plum">View Listing</a>
+                <form action="{% url 'delete_property' prop.id %}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete {{ prop.title }}? This action cannot be undone.');" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: #fef2f2; border: 1.5px solid #fecaca; color: #dc2626; padding: 0.52rem 1rem; font-size: 0.85rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem 1rem; color: var(--tp-plum-muted);">
+            <p style="font-weight: 500;">You haven't submitted any properties yet.</p>
+            <button type="button" onclick="openAddPropertyModal()" class="tp-btn-spring" style="margin-top: 0.5rem;">Submit Your First Property</button>
+        </div>
+        {% endfor %}
+    </div>
 {% endif %}
 
-<!-- Add Property Pop-up Modal -->
+<!-- Include Agent Add Property Pop-up Modal -->
 {% include "landlord/modal_add_property.html" %}
 {% endblock %}

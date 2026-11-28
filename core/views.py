@@ -156,20 +156,20 @@ def login_view(request):
                 messages.error(request, 'System Administrators must authenticate through the dedicated Admin Portal.')
                 return redirect('login')
 
-            # Check landlord profile vetting status
+            # Check profile role (only Agents and Tenants log in here)
             try:
                 profile = user.profile
-                if profile.role == 'landlord' and not profile.is_approved:
-                    messages.error(request, 'Your property owner account is pending vetting and manual approval by the administrator.')
+                if profile.role in ['agent', 'landlord'] and not profile.is_approved:
+                    messages.error(request, 'Your agent account is pending activation by the administrator.')
                     return redirect('login')
             except UserProfile.DoesNotExist:
                 pass
                 
             auth_login(request, user)
             
-            # Automatic role-based redirection (No dropdown required)
+            # Automatic role-based redirection (Agents -> Agent Dashboard, Tenants -> Search)
             try:
-                if user.profile.role == 'landlord':
+                if user.profile.role in ['agent', 'landlord']:
                     return redirect('landlord_dashboard')
             except UserProfile.DoesNotExist:
                 pass
@@ -347,17 +347,12 @@ def password_reset_confirm_view(request, uidb64, token):
 
 def register_view(request):
     if request.method == 'POST':
-        role = request.POST.get('role', 'tenant')
+        role = 'tenant'
         username = request.POST.get('username')
         phone = request.POST.get('phone')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-
-        # Optional for tenant, compulsory for landlord
-        first_name = request.POST.get('first_name', '')
-        last_name = request.POST.get('last_name', '')
         email = request.POST.get('email', '')
-        nin = request.POST.get('nin', '')
 
         if len(password) < 6:
             messages.error(request, 'Password must be at least 6 characters long.')
@@ -375,38 +370,22 @@ def register_view(request):
             messages.error(request, 'A user with this email address already exists.')
             return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
 
-        if role == 'landlord':
-            if not first_name or not last_name or not email or not nin:
-                messages.error(request, 'Full name, email, and NIN are required for property owners.')
-                return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
-            if not request.FILES.get('image'):
-                messages.error(request, 'Profile picture is compulsory for property owners.')
-                return render(request, 'auth/register.html', {'recaptcha_site_key': settings.RECAPTCHA_PUBLIC_KEY})
-
-        # Create user
+        # Create tenant user (Agents are always added by Admin)
         user = User.objects.create_user(
             username=username,
             email=email if email else f"{username}@tenant.trust",
             password=password,
-            first_name=first_name,
-            last_name=last_name
         )
 
-        # Create profile
+        # Create tenant profile
         UserProfile.objects.create(
             user=user,
             role=role,
             phone=phone,
-            nin=nin if role == 'landlord' else '',
-            image=request.FILES.get('image') if role == 'landlord' else None
         )
 
-        # Dispatch Resend Welcome Email
         try:
-            if role == 'landlord':
-                send_landlord_welcome_email(user)
-            else:
-                send_tenant_welcome_email(user)
+            send_tenant_welcome_email(user)
         except Exception:
             pass
 
@@ -419,26 +398,28 @@ def register_view(request):
 
 def landlord_dashboard(request):
     if not request.user.is_authenticated:
-        messages.error(request, 'Please log in to access the landlord dashboard.')
+        messages.error(request, 'Please log in to access the agent dashboard.')
         return redirect('login')
         
-    # Check approval status
-    is_approved = False
+    is_approved = True
     try:
-        if request.user.profile.role == 'landlord' and request.user.profile.is_approved:
-            is_approved = True
+        if request.user.profile.role in ['agent', 'landlord']:
+            is_approved = request.user.profile.is_approved
     except UserProfile.DoesNotExist:
         pass
         
-    # Fetch properties belonging to the logged-in owner
-    owner_properties = Property.objects.filter(owner=request.user, parent=None).prefetch_related('units')
+    # Fetch properties submitted by the logged-in agent
+    owner_properties = Property.objects.filter(owner=request.user, parent=None).prefetch_related('units').order_by('-created_at')
+    available_count = Property.objects.filter(owner=request.user, status='available').count()
+    pending_count = Property.objects.filter(owner=request.user, status='pending_verification').count()
+    
+    # Fetch Tenant Property Search Requests (HouseLocateRequest) assigned to this agent by Admin
+    assigned_requests = list(HouseLocateRequest.objects.filter(assigned_agent=request.user).order_by('-created_at'))
     
     stats = {
         'total': Property.objects.filter(owner=request.user).count(),
-        'available': Property.objects.filter(owner=request.user, status='available').count(),
-        'pending': Property.objects.filter(owner=request.user, status='pending_verification').count(),
-        # For simplicity, calculating total potential revenue
-        'revenue': sum(p.price for p in Property.objects.filter(owner=request.user, price__isnull=False))
+        'available': available_count,
+        'pending': pending_count,
     }
     
     buildings = Property.objects.filter(is_multi_unit=True)
@@ -462,32 +443,17 @@ def landlord_dashboard(request):
     ]
     
     active_tab = request.GET.get('tab', 'overview')
-    
-    # Rent Collection instances for logged in landlord
-    from core.models import RentCollection, ServiceDistrict, ServiceDivision, ServiceVillage
-    rent_collections = RentCollection.objects.filter(landlord=request.user).select_related('property', 'tenant')
-    
-    total_expected = sum(rc.monthly_rent for rc in rent_collections)
-    collected_rent = sum(rc.monthly_rent for rc in rent_collections if rc.status == 'paid')
-    pending_rent = sum(rc.monthly_rent for rc in rent_collections if rc.status in ['pending', 'overdue'])
-    total_units_count = rent_collections.count()
-    occupied_units_count = rent_collections.exclude(status='vacant').count()
-    
-    rent_stats = {
-        'total_expected': total_expected,
-        'collected': collected_rent,
-        'pending': pending_rent,
-        'total_units': total_units_count,
-        'occupied_units': occupied_units_count,
-        'occupancy_rate': round((occupied_units_count / total_units_count * 100), 1) if total_units_count > 0 else 0
-    }
-
+    from core.models import ServiceDistrict, ServiceDivision, ServiceVillage
     service_districts = ServiceDistrict.objects.all().order_by('name')
     service_divisions = ServiceDivision.objects.all().select_related('district').order_by('name')
     service_villages = ServiceVillage.objects.all().select_related('division').order_by('name')
     
     return render(request, 'landlord/dashboard.html', {
         'properties': owner_properties,
+        'available_count': available_count,
+        'pending_count': pending_count,
+        'assigned_requests': assigned_requests,
+        'assigned_requests_count': len(assigned_requests),
         'stats': stats,
         'is_approved': is_approved,
         'buildings': buildings,
@@ -498,9 +464,8 @@ def landlord_dashboard(request):
         'service_districts': service_districts,
         'service_divisions': service_divisions,
         'service_villages': service_villages,
-        'rent_collections': rent_collections,
-        'rent_stats': rent_stats,
         'active_tab': active_tab,
+        'current_tab': active_tab,
     })
 
 def is_admin_user(user):
@@ -642,46 +607,61 @@ def admin_dashboard(request):
             agent_name = request.POST.get('agent_name', '').strip()
             agent_email = request.POST.get('agent_email', '').strip()
             agent_phone = request.POST.get('agent_phone', '').strip()
+            agent_username = request.POST.get('agent_username', '').strip()
+            agent_password = request.POST.get('agent_password', '').strip()
+            agent_nin = request.POST.get('agent_nin', '').strip()
             agent_id_input = request.POST.get('agent_id', '').strip()
-            agent_role_id = request.POST.get('agent_role_id')
             agent_district_id = request.POST.get('agent_district')
             agent_division_id = request.POST.get('agent_division')
             agent_image = request.FILES.get('agent_image')
             
-            if agent_name and agent_email and agent_phone:
+            if agent_name and agent_email and agent_phone and agent_username and agent_password:
+                if User.objects.filter(username__iexact=agent_username).exists():
+                    messages.error(request, f"Username '{agent_username}' is already taken. Please choose a different username.")
+                    return redirect('/admin-dashboard/?tab=agents')
+                if User.objects.filter(email__iexact=agent_email).exists():
+                    messages.error(request, f"Email '{agent_email}' is already registered to another user.")
+                    return redirect('/admin-dashboard/?tab=agents')
+
                 try:
-                    role_obj = None
-                    if agent_role_id:
-                        role_obj = AgentRole.objects.get(id=agent_role_id)
+                    district_obj = ServiceDistrict.objects.filter(id=agent_district_id).first() if agent_district_id else None
+                    division_obj = ServiceDivision.objects.filter(id=agent_division_id).first() if agent_division_id else None
 
-                    district_obj = None
-                    if agent_district_id:
-                        district_obj = ServiceDistrict.objects.get(id=agent_district_id)
+                    name_parts = agent_name.split(' ', 1)
+                    first_name = name_parts[0]
+                    last_name = name_parts[1] if len(name_parts) > 1 else ''
 
-                    division_obj = None
-                    if agent_division_id:
-                        division_obj = ServiceDivision.objects.get(id=agent_division_id)
-                    
-                    # Validate custom agent ID format (numeric) if provided
-                    if agent_id_input and not agent_id_input.isdigit():
-                        messages.error(request, "Custom Agent ID must be numeric only.")
-                        return redirect('/admin-dashboard/?tab=agents')
-                        
+                    user_obj = User.objects.create_user(
+                        username=agent_username,
+                        email=agent_email,
+                        password=agent_password,
+                        first_name=first_name,
+                        last_name=last_name,
+                    )
+                    UserProfile.objects.create(
+                        user=user_obj,
+                        role='agent',
+                        phone=agent_phone,
+                        nin=agent_nin,
+                        image=agent_image,
+                        is_approved=True,
+                    )
+
                     InspectionAgent.objects.create(
+                        user=user_obj,
                         name=agent_name,
                         email=agent_email,
                         phone=agent_phone,
-                        role=role_obj,
                         district=district_obj,
                         division=division_obj,
                         image=agent_image,
-                        agent_id=agent_id_input if agent_id_input else None
+                        agent_id=agent_id_input if (agent_id_input and agent_id_input.isdigit()) else None
                     )
-                    messages.success(request, f"Inspection Agent '{agent_name}' has been registered successfully!")
+                    messages.success(request, f"Agent '{agent_name}' (@{agent_username}) has been registered and can now sign in via /login/!")
                 except Exception as e:
-                    messages.error(request, f"Error registering agent: An agent with this email or ID might already exist.")
+                    messages.error(request, f"Error registering agent: {str(e)}")
             else:
-                messages.error(request, "Name, Email, and Phone number are required to register an agent.")
+                messages.error(request, "Full Name, Email, Username, Password, and Phone number are required to register an agent.")
             return redirect('/admin-dashboard/?tab=agents')
 
         elif action == 'add_amenity':
@@ -1033,12 +1013,20 @@ def admin_dashboard(request):
             req_id = request.POST.get('request_id')
             new_status = request.POST.get('status')
             new_payment_status = request.POST.get('payment_status')
+            assigned_agent_id = request.POST.get('assigned_agent_id', '').strip()
             try:
                 locate_req = HouseLocateRequest.objects.get(id=req_id)
                 if new_status in dict(HouseLocateRequest.STATUS_CHOICES):
                     locate_req.status = new_status
                 if new_payment_status in ['pending_payment', 'paid', 'failed']:
                     locate_req.payment_status = new_payment_status
+                if assigned_agent_id and assigned_agent_id.isdigit():
+                    agent_user = User.objects.filter(id=int(assigned_agent_id)).first()
+                    locate_req.assigned_agent = agent_user
+                    if agent_user and locate_req.status == 'pending_payment':
+                        locate_req.status = 'paid_searching'
+                elif assigned_agent_id == '':
+                    locate_req.assigned_agent = None
                 locate_req.save()
                 messages.success(request, f"Tenant Search Request #{locate_req.id} ({locate_req.full_name}) updated successfully!")
             except HouseLocateRequest.DoesNotExist:
@@ -1053,8 +1041,9 @@ def admin_dashboard(request):
     else:
         properties = Property.objects.filter(parent=None).prefetch_related('units').order_by('-created_at')
     
-    # Fetch all registered landlords with their profile details (pending approval first)
-    landlords = User.objects.filter(profile__role='landlord').select_related('profile').order_by('profile__is_approved', '-date_joined')
+    # Fetch all registered agents with login accounts
+    landlords = User.objects.filter(profile__role__in=['agent', 'landlord']).select_related('profile').order_by('-date_joined')
+    agent_users = landlords
 
     # Fetch all registered tenants with their profile details and calculate renting progress dynamically
     tenants_raw = User.objects.filter(profile__role='tenant').select_related('profile').prefetch_related(
@@ -1189,7 +1178,7 @@ def admin_dashboard(request):
     }
     
     # Fetch agents and roles
-    agents = InspectionAgent.objects.all().select_related('role', 'district', 'division').order_by('-joined_at')
+    agents = InspectionAgent.objects.all().select_related('user', 'role', 'district', 'division').order_by('-joined_at')
     agent_roles = AgentRole.objects.all().order_by('name')
     inspections = Inspection.objects.all().select_related('property').prefetch_related('reports', 'reports__agent', 'reports__agent__role').order_by('-created_at')
     viewing_requests = ViewingRequest.objects.all().select_related('tenant', 'tenant__profile', 'property', 'property__owner', 'property__owner__profile', 'assigned_agent', 'assigned_agent__role').order_by('-created_at')
@@ -1856,7 +1845,7 @@ def admin_dashboard(request):
     office_applications = OfficeApplication.objects.all().select_related('property', 'user').order_by('-created_at')
 
     # Tenant Custom Property Locate Requests (HouseLocateRequest)
-    tenant_locate_requests = list(HouseLocateRequest.objects.select_related('user').order_by('-created_at'))
+    tenant_locate_requests = list(HouseLocateRequest.objects.select_related('user', 'assigned_agent').order_by('-created_at'))
     locate_request_stats = {
         'total': len(tenant_locate_requests),
         'paid': sum(1 for r in tenant_locate_requests if r.payment_status == 'paid' or r.status in ['paid_searching', 'property_located', 'completed']),
@@ -1880,6 +1869,7 @@ def admin_dashboard(request):
         'tenant_locate_requests': tenant_locate_requests,
         'locate_request_stats': locate_request_stats,
         'agents': agents,
+        'agent_users': agent_users,
         'agent_roles': agent_roles,
         'inspections': inspections,
         'viewing_requests': viewing_requests,
@@ -1972,16 +1962,19 @@ def admin_toggle_property_category(request, category_id):
 
 
 def delete_agent(request, agent_id):
-    if not request.user.is_authenticated or not request.user.is_superuser:
+    if not request.user.is_authenticated or not is_admin_user(request.user):
         messages.error(request, 'Access denied. Only system administrators can perform this action.')
         return redirect('login')
         
     if request.method == 'POST':
         try:
-            agent = InspectionAgent.objects.get(id=agent_id)
+            agent = InspectionAgent.objects.select_related('user').get(id=agent_id)
             name = agent.name
+            linked_user = agent.user
             agent.delete()
-            messages.success(request, f"Inspection Agent '{name}' has been permanently deleted.")
+            if linked_user and not linked_user.is_superuser:
+                linked_user.delete()
+            messages.success(request, f"Agent '{name}' has been permanently deleted.")
         except InspectionAgent.DoesNotExist:
             messages.error(request, "Agent not found.")
             
@@ -2194,7 +2187,20 @@ def add_property(request):
                     except Exception:
                         pass
 
-        messages.success(request, f"Property '{title}' was submitted successfully with unit rent collections and is pending manual security vetting by the TRUST board!")
+        # Link found property to the assigned HouseLocateRequest if submitted via "Respond"
+        locate_req_id = request.POST.get('locate_request_id', '').strip()
+        if locate_req_id and locate_req_id.isdigit():
+            try:
+                locate_req = HouseLocateRequest.objects.get(id=int(locate_req_id))
+                locate_req.located_property = property_obj
+                locate_req.status = 'property_located'
+                locate_req.save()
+                messages.success(request, f"Found property '{title}' submitted in response to Assignment #REQ-{locate_req.id}!")
+                return redirect('/landlord/?tab=assigned_requests')
+            except HouseLocateRequest.DoesNotExist:
+                pass
+
+        messages.success(request, f"Property '{title}' was submitted successfully and is pending manual security vetting by the TRUST board!")
         return redirect('landlord_dashboard')
         
     buildings = Property.objects.filter(is_multi_unit=True)
@@ -2857,118 +2863,10 @@ def checkout_view(request, property_id):
     return render(request, 'tenant/checkout.html', context)
 
 def agent_report_auth(request):
-    if request.method == 'POST':
-        agent_id = request.POST.get('agent_id', '').strip()
-        phone = request.POST.get('phone', '').strip()
-        email = request.POST.get('email', '').strip()
-        agent_type = request.POST.get('agent_type', 'inspection_agent').strip()
-        
-        agent = InspectionAgent.objects.filter(agent_id__iexact=agent_id).select_related('role').first()
-        
-        if agent:
-            # Flexible case-insensitive email match
-            email_matches = agent.email.strip().lower() == email.lower()
-            
-            # Flexible phone matching that ignores spaces, country code formats, etc.
-            def clean_phone(p_str):
-                return "".join(c for c in p_str if c.isdigit())
-            
-            input_phone_clean = clean_phone(phone)
-            db_phone_clean = clean_phone(agent.phone)
-            
-            phone_matches = False
-            if input_phone_clean and db_phone_clean:
-                if input_phone_clean == db_phone_clean:
-                    phone_matches = True
-                elif input_phone_clean.endswith(db_phone_clean) or db_phone_clean.endswith(input_phone_clean):
-                    if len(input_phone_clean) >= 9 and len(db_phone_clean) >= 9:
-                        phone_matches = input_phone_clean[-9:] == db_phone_clean[-9:]
-            
-            if email_matches and phone_matches:
-                if agent_type == 'chat_agent':
-                    request.session['verified_chat_agent_id'] = agent.id
-                    messages.success(request, f"Welcome back, Chatroom Agent {agent.name}! Live chat workspace active.")
-                    return redirect('chat_agent_dashboard')
-                else:
-                    request.session['verified_agent_id'] = agent.id
-                    messages.success(request, f"Welcome back, Inspector {agent.name}! Credentials successfully verified.")
-                    return redirect('agent_submit_report')
-            else:
-                messages.error(request, "Access Denied: Invalid Agent credentials. Please verify your ID, Phone, and Email address.")
-        else:
-            messages.error(request, "Access Denied: Invalid Agent ID. Please check the ID provided by the TRUST administrator.")
-            
-    return render(request, 'agent/auth_report.html')
+    return redirect('login')
 
 def agent_submit_report(request):
-    agent_id = request.session.get('verified_agent_id')
-    if not agent_id:
-        messages.error(request, "Please verify your Agent Credentials to access the Report Portal.")
-        return redirect('agent_report_auth')
-        
-    try:
-        agent = InspectionAgent.objects.select_related('role').get(id=agent_id)
-    except InspectionAgent.DoesNotExist:
-        request.session.pop('verified_agent_id', None)
-        messages.error(request, "Agent profile not found.")
-        return redirect('agent_report_auth')
-        
-    if request.method == 'POST':
-        property_id = request.POST.get('property_id', '').strip()
-        findings = request.POST.get('findings', '').strip()
-        status = request.POST.get('status', 'approved')
-        
-        property_obj = Property.objects.filter(property_id__iexact=property_id).first()
-        if not property_obj:
-            messages.error(request, f"Property ID '{property_id}' not found in the TRUST database. Please verify the code and try again.")
-        else:
-            # Create inspection and report
-            inspection, created = Inspection.objects.get_or_create(
-                property=property_obj,
-                defaults={'status': 'in_progress'}
-            )
-            
-            # Update status to under_inspection if it was pending
-            if property_obj.status == 'pending_verification':
-                property_obj.status = 'under_inspection'
-                property_obj.save()
-                
-            InspectionReport.objects.create(
-                inspection=inspection,
-                agent=agent,
-                findings=findings,
-                status=status
-            )
-            
-            # Check for GPS Coordinate inputs from agent during on-site inspection
-            lat_val = request.POST.get('latitude', '').strip()
-            lng_val = request.POST.get('longitude', '').strip()
-            if lat_val and lng_val:
-                try:
-                    property_obj.latitude = float(lat_val)
-                    property_obj.longitude = float(lng_val)
-                    property_obj.save()
-                except ValueError:
-                    pass
-
-            # Check for 360/180 panorama uploads
-            panorama_image = request.FILES.get('panorama_image')
-            if panorama_image and property_obj:
-                pano_title = request.POST.get('panorama_title', '').strip() or 'Main Room'
-                pano_type = request.POST.get('panorama_type', '360')
-                PropertyPanorama.objects.create(
-                    property=property_obj,
-                    title=pano_title,
-                    panorama_type=pano_type,
-                    image=panorama_image
-                )
-            
-            messages.success(request, f"Thank you, {agent.name}! Your {agent.role.name if agent.role else 'Inspector'} report for Property '{property_obj.title}' (ID: {property_obj.property_id}) has been recorded successfully.")
-            # Clear authentication session after successful logging
-            request.session.pop('verified_agent_id', None)
-            return redirect('agent_report_auth')
-            
-    return render(request, 'agent/submit_report.html', {'agent': agent})
+    return redirect('login')
 
 
 # --- NEARBY MAP VIEWS ---

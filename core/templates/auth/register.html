@@ -502,7 +502,7 @@
         <p>Create your account to request verified properties or list your house with TRUST Protocol protection.</p>
       </div>
 
-      <!-- Slide 2: Quality Tenant Matching (Apartment Building & Location Pin Illustration) -->
+      <!-- Slide 2: Dedicated Agent Search (Apartment Building & Location Pin Illustration) -->
       <div class="tp-auth-slide-item" data-idx="1">
         <div class="tp-auth-illustration-wrap">
           <svg viewBox="0 0 360 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
@@ -522,8 +522,8 @@
             <line x1="64" y1="234" x2="296" y2="234" stroke="#1E0B1D" stroke-width="2" stroke-linecap="round" stroke-opacity="0.35"/>
           </svg>
         </div>
-        <h2>Quality Tenant Matching</h2>
-        <p>Property owners connect directly with verified tenants actively searching for homes in their neighborhood.</p>
+        <h2>Dedicated Agent Search</h2>
+        <p>Authorize TRUST Protocol to deploy verified field agents to locate and inspect a home matching your exact budget.</p>
       </div>
 
       <!-- Slide 3: Zero Fake Broker Listings (Shield & Verified Contract Illustration) -->
@@ -577,41 +577,12 @@
         {% endif %}
       </a>
 
-      <h1 class="tp-auth-heading">Create account</h1>
-      <p class="tp-auth-subheading">Select your account type and enter your details below</p>
+      <h1 class="tp-auth-heading">Create tenant account</h1>
+      <p class="tp-auth-subheading">Enter your details below to search and request verified properties</p>
 
       <form action="/register/" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
-        <!-- Role Selector -->
-        <div class="tp-role-tabs">
-          <label class="tp-role-tab-label">
-            <input type="radio" name="role" value="tenant" checked onchange="toggleRegisterFields()">
-            <div class="tp-role-tab-btn">Tenant</div>
-          </label>
-          <label class="tp-role-tab-label">
-            <input type="radio" name="role" value="landlord" onchange="toggleRegisterFields()">
-            <div class="tp-role-tab-btn">Property Owner</div>
-          </label>
-        </div>
-
-        <!-- Landlord Only Fields (First Name, Last Name) -->
-        <div id="landlord-names-group" style="display: none;">
-          <div class="tp-grid-2">
-            <div class="tp-auth-field">
-              <div class="tp-auth-label-row">
-                <label class="tp-auth-label" for="first_name">First name</label>
-              </div>
-              <input type="text" id="first_name" name="first_name" class="tp-auth-input" placeholder="First name">
-            </div>
-            <div class="tp-auth-field">
-              <div class="tp-auth-label-row">
-                <label class="tp-auth-label" for="last_name">Last name</label>
-              </div>
-              <input type="text" id="last_name" name="last_name" class="tp-auth-input" placeholder="Last name">
-            </div>
-          </div>
-        </div>
+        <input type="hidden" name="role" value="tenant">
 
         <!-- Universal Fields (Email, Username, Phone) -->
         <div class="tp-auth-field">
@@ -633,24 +604,6 @@
               <label class="tp-auth-label" for="phone">Phone number</label>
             </div>
             <input type="tel" id="phone" name="phone" class="tp-auth-input" placeholder="07XX XXX XXX" required>
-          </div>
-        </div>
-
-        <!-- Landlord Verification Fields (NIN & Profile Picture) -->
-        <div id="landlord-verification-group" style="display: none;">
-          <div class="tp-grid-2">
-            <div class="tp-auth-field">
-              <div class="tp-auth-label-row">
-                <label class="tp-auth-label" for="nin">NIN number</label>
-              </div>
-              <input type="text" id="nin" name="nin" class="tp-auth-input" placeholder="CM1234567890...">
-            </div>
-            <div class="tp-auth-field">
-              <div class="tp-auth-label-row">
-                <label class="tp-auth-label" for="image">Profile picture</label>
-              </div>
-              <input type="file" id="image" name="image" class="tp-auth-input" accept="image/*" style="padding: 0.52rem 0.75rem;">
-            </div>
           </div>
         </div>
 
@@ -736,43 +689,7 @@
     }
   }
 
-  function toggleRegisterFields() {
-    const role = document.querySelector('input[name="role"]:checked').value;
-    const namesGroup = document.getElementById('landlord-names-group');
-    const verificationGroup = document.getElementById('landlord-verification-group');
-
-    const firstName = document.getElementById('first_name');
-    const lastName = document.getElementById('last_name');
-    const nin = document.getElementById('nin');
-    const image = document.getElementById('image');
-
-    if (role === 'landlord') {
-      namesGroup.style.display = 'block';
-      verificationGroup.style.display = 'block';
-
-      firstName.setAttribute('required', 'required');
-      lastName.setAttribute('required', 'required');
-      nin.setAttribute('required', 'required');
-      image.setAttribute('required', 'required');
-    } else {
-      namesGroup.style.display = 'none';
-      verificationGroup.style.display = 'none';
-
-      firstName.removeAttribute('required');
-      lastName.removeAttribute('required');
-      nin.removeAttribute('required');
-      image.removeAttribute('required');
-
-      firstName.value = '';
-      lastName.value = '';
-      nin.value = '';
-      image.value = '';
-    }
-  }
-
   document.addEventListener('DOMContentLoaded', function () {
-    toggleRegisterFields();
-
     const slides = document.querySelectorAll('#tpRegSlides .tp-auth-slide-item');
     const dots = document.querySelectorAll('#tpRegDots .tp-auth-dot');
     if (slides.length > 1) {
